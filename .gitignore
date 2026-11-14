@@ -37,3 +37,7 @@ outputs/
 # Large raw downloads with tidy extracts committed (see data/raw/generation/SOURCES.md)
 data/raw/generation/downloads/ember/india_monthly_full_release_long_format.csv
 data/raw/generation/downloads/owid/owid-energy-data.csv
+
+# Raw web pages: tidy CSVs and SOURCES.md keep the URLs
+data/**/raw/**/*.html
+data/**/raw/**/*.htm
