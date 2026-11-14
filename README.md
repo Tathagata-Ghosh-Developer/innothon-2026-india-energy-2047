@@ -31,7 +31,7 @@ The least-cost 2047 mix is about three-quarters non-fossil:
 | Offshore wind | 3.2% |
 | Nuclear | 2.2% |
 
-That mix emits 1,116 Mt CO2 a year, against about 1,480 Mt today.
+That mix emits 1,114 Mt CO2 a year, against about 1,480 Mt today.
 Details are in [docs/results.md](docs/results.md).
 
 ## Compliance rule
@@ -68,6 +68,7 @@ Full details are in [docs/methodology.md](docs/methodology.md).
 | [docs/data_audit.md](docs/data_audit.md) | Provenance of every input; generation-only compliance |
 | [docs/decisions.md](docs/decisions.md) | Design decisions and rejected alternatives |
 | [docs/team_plan.md](docs/team_plan.md) | Work plan to the final evaluation |
+| [docs/deck/](docs/deck/) | Midpoint review deck (PowerPoint, 12 slides, native charts) |
 
 ## Build
 

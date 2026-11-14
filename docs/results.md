@@ -83,7 +83,7 @@ National mix:
 | Gas | 0% |
 
 - Non-fossil share: **74.7 percent**.
-- CO2 from generation: **1,116 Mt** a year. The 2024-25 grid emitted about 0.71 t/MWh, so 2,080 TWh today means roughly 1,480 Mt.
+- CO2 from generation: **1,114 Mt** a year. The 2024-25 grid emitted about 0.71 t/MWh, so 2,080 TWh today means roughly 1,480 Mt.
 - Generation cost: about 197 billion USD a year.
 
 ### 3.2 How each region's strengths show up
@@ -137,12 +137,12 @@ That is 26 least-cost solves, which run in parallel in about 7 ms.
 
 | Setting | Effect on 2047 CO2 |
 | --- | --- |
-| Requirement (P10 vs P90) | About -350 to +340 Mt. This is the largest effect. |
-| Usable solar land (15% vs 35%) | +210 Mt to -340 Mt |
-| Usable wind land | +210 Mt to -200 Mt |
-| Coal cost (0.7x vs 1.3x) | +210 Mt to -330 Mt |
-| Carbon price of 60 USD/t | -330 Mt; the coal share falls from 25% to 17% |
-| Nuclear cost (0.7x vs 1.3x) | At 0.7x, coal falls to 18 percent and CO2 by about 330 Mt; at 1.3x, little change |
+| Requirement (P10 vs P90) | -342 Mt to +340 Mt. This is the largest effect. |
+| Usable solar land (15% vs 35%) | +208 Mt to -342 Mt |
+| Usable wind land (15% vs 35%) | +208 Mt to -196 Mt |
+| Coal cost (0.7x vs 1.3x) | +208 Mt to -328 Mt |
+| Carbon price of 60 USD/t | -336 Mt; the coal share falls from 25.3% to 17.5% |
+| Nuclear cost (0.7x vs 1.3x) | At 0.7x, coal falls to 17.8 percent and CO2 by 328 Mt; at 1.3x, +45 Mt |
 
 Two settings cannot be met with the other defaults:
 

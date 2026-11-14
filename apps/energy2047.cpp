@@ -161,6 +161,38 @@ int main(int argc, char** argv) {
       std::printf("  %-14s requirement %6.0f  net export LC %+6.0f  score %+6.0f TWh\n", region_name(r),
                   st.requirement[r], lc.net_export[r], st.score.net_export[r]);
     write_strategy(out, pl.allocation_inputs(), st);
+    {
+      CsvWriter w((out / "tornado.csv").string());
+      w.field("setting").field("low").field("high").field("co2_low_mt").field("co2_high_mt").field("coal_share_low");
+      w.field("coal_share_high").field("nonfossil_low").field("nonfossil_high").field("cost_low_busd").field(
+          "cost_high_busd");
+      w.endrow();
+      for (const auto& t : st.tornado) {
+        w.field(t.name).field(t.low_label).field(t.high_label);
+        auto put = [&](const AllocationResult& a, double v) { a.ok ? w.field(v, 6) : w.field("infeasible"); };
+        put(t.low, t.low.co2_mt);
+        put(t.high, t.high.co2_mt);
+        put(t.low, t.low.share(kCoal));
+        put(t.high, t.high.share(kCoal));
+        put(t.low, t.low.nonfossil_share());
+        put(t.high, t.high.nonfossil_share());
+        put(t.low, t.low.cost_busd);
+        put(t.high, t.high.cost_busd);
+        w.endrow();
+      }
+    }
+    {
+      CsvWriter w((out / "backtest.csv").string());
+      w.field("origin").field("year").field("actual_twh").field("fe_quad_twh").field("fe_gompertz_twh").field(
+          "damped_twh");
+      w.endrow();
+      for (const auto& b : fit.backtests)
+        for (const auto& p : b.points) {
+          w.field(b.origin).field(p.year).field(p.actual_twh).field(p.fe_quad_twh).field(p.fe_gompertz_twh).field(
+              p.damped_twh);
+          w.endrow();
+        }
+    }
     std::printf("outputs written to %s\n", out.string().c_str());
     return 0;
   } catch (const std::exception& e) {
