@@ -18,12 +18,15 @@ if(ENABLE_CUDA)
   include(CheckLanguage)
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
+    # Ship machine code (SASS) for the target GPU, not only PTX: a toolkit newer
+    # than the installed driver cannot JIT-compile its own PTX. RTX 30-series = 86.
+    # Other GPUs: configure with -DCMAKE_CUDA_ARCHITECTURES=native
+    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+      set(CMAKE_CUDA_ARCHITECTURES 86-real)
+    endif()
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 20)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-      set(CMAKE_CUDA_ARCHITECTURES 86)
-    endif()
   else()
     message(WARNING "No CUDA compiler found; building the CPU path only")
     set(ENABLE_CUDA OFF)
