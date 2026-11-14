@@ -13,6 +13,7 @@
 #include "forecast/backtest.hpp"
 #include "forecast/models.hpp"
 #include "forecast/panel.hpp"
+#include "regional/convergence.hpp"
 
 namespace fs = std::filesystem;
 using namespace e47;
@@ -85,6 +86,13 @@ int main(int argc, char** argv) {
         w.field(bg[r].a, 8).field(bg[r].b, 8).field(bg[r].c, 8).field(bg[r].d, 8);
         w.endrow();
       }
+    }
+
+    {
+      const ConvergenceResult cr = estimate_convergence(
+          (root / "data/raw/competition/renewable_energy_dataset.csv").string(), 2006, 2024, 4000, 99);
+      std::printf("state income convergence %d-%d: %d states, slope %.4f, lambda %.4f/yr (se %.4f)\n", cr.year0,
+                  cr.year1, cr.n_states, cr.slope, cr.lambda, cr.lambda_se);
     }
 
     CsvWriter bw((out / "backtest.csv").string());
