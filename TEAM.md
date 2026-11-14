@@ -15,7 +15,7 @@ Phone numbers and CGPA are not stored in this repository. Keep them in the regis
 ## Key dates
 
 | Date | Milestone |
-|------|-----------|
+| --- | --- |
 | 2026-11-13 | Kickoff, datasets released |
 | 2026-11-16 to 17 | Office hours, 18:00 to 20:00 |
 | 2026-11-18 | Midpoint review (mentor checkpoint, regional model review, sensitivity checks; top 24 teams) |

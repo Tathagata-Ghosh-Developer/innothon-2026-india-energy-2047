@@ -354,7 +354,7 @@ void App::tab_forecast() {
 void App::tab_regions() {
   const ForecastResult& f = cur_->forecast;
   const StrategyResult& s = cur_->strategy;
-  const AllocationInputs& ai = pl_->allocation_inputs();
+  const AllocationInputs& alloc = pl_->allocation_inputs();
   const size_t n = f.years.size(), last = n - 1;
   std::vector<double> x(f.years.begin(), f.years.end());
   ImGui::RadioButton("Medians with 50% bands", &region_view_, 0);
@@ -396,7 +396,7 @@ void App::tab_regions() {
     double gen[kRegions];
     for (int r = 0; r < kRegions; ++r) {
       gen[r] = 0;
-      for (int k = 0; k < kTechs; ++k) gen[r] += ai.base_twh[r][k];
+      for (int k = 0; k < kTechs; ++k) gen[r] += alloc.base_twh[r][k];
       gen_total += gen[r];
       req_total += s.requirement[r];
     }
@@ -428,7 +428,7 @@ void App::tab_regions() {
     for (int r = 0; r < kRegions; ++r) {
       const auto& q = f.quant.q[1 + r][last];
       double g24 = 0;
-      for (int k = 0; k < kTechs; ++k) g24 += ai.base_twh[r][k];
+      for (int k = 0; k < kTechs; ++k) g24 += alloc.base_twh[r][k];
       ImGui::TableNextRow();
       ImGui::TableNextColumn();
       ImGui::TextColored(kRegionColor[r], "%s", region_name(r));
@@ -456,7 +456,7 @@ void App::tab_regions() {
 
 void App::tab_mix() {
   const StrategyResult& s = cur_->strategy;
-  const AllocationInputs& ai = pl_->allocation_inputs();
+  const AllocationInputs& alloc = pl_->allocation_inputs();
   ImGui::RadioButton("Least-cost optimisation (LP)", &mix_method_, 0);
   ImGui::SameLine();
   ImGui::RadioButton("Resource-score allocation", &mix_method_, 1);
@@ -486,7 +486,7 @@ void App::tab_mix() {
   std::vector<double> vals(static_cast<size_t>(kTechs) * groups, 0.0);
   for (int k = 0; k < kTechs; ++k) {
     for (int r = 0; r < kRegions; ++r) {
-      vals[k * groups + 0] += ai.base_twh[r][k];
+      vals[k * groups + 0] += alloc.base_twh[r][k];
       vals[k * groups + 2 + r] = a.gen[r][k];
     }
     vals[k * groups + 1] = a.national[k];
@@ -556,7 +556,7 @@ void App::tab_mix() {
   if (mix_method_ == 0 && !a.corridor_flow.empty()) {
     ImGui::Text("Inter-regional flows (TWh, positive = first region to second):");
     for (size_t c = 0; c < a.corridor_flow.size(); ++c) {
-      const Corridor& k = ai.corridors[c];
+      const Corridor& k = alloc.corridors[c];
       const double cap = k.mw_2032 * s.policy.transfer_scale * s.policy.transfer_util * 8.76e-3;
       ImGui::SameLine();
       ImGui::Text(" %s %+.0f/%.0f", k.name.c_str(), a.corridor_flow[c], cap);
@@ -809,7 +809,7 @@ void App::tab_sensitivity() {
 }
 
 void App::tab_data() {
-  const AllocationInputs& ai = pl_->allocation_inputs();
+  const AllocationInputs& alloc = pl_->allocation_inputs();
   const DriverData& d = pl_->drivers();
   ImGui::TextWrapped(
       "Compliance: forecasting and comparison use energy generated only. Installed capacity and consumption are never "
@@ -856,14 +856,14 @@ void App::tab_data() {
       ImGui::TextColored(kRegionColor[r], "%s", region_name(r));
       for (int k = 0; k < kTechs; ++k) {
         ImGui::TableNextColumn();
-        ImGui::Text("%.0f / %.0f / %.0f", ai.base_twh[r][k], ai.potential_twh[r][k], ai.cost[r][k]);
+        ImGui::Text("%.0f / %.0f / %.0f", alloc.base_twh[r][k], alloc.potential_twh[r][k], alloc.cost[r][k]);
       }
     }
     ImGui::EndTable();
   }
   ImGui::Spacing();
   ImGui::Text("Derivation notes:");
-  for (const auto& n : ai.notes) ImGui::BulletText("%s", n.c_str());
+  for (const auto& n : alloc.notes) ImGui::BulletText("%s", n.c_str());
   ImGui::BulletText("GDP per capita growth %d-%d: mean %.2f%%, s.d. %.2f%%; income convergence %.3f/yr (s.e. %.3f).",
                     d.g_hist_from, d.g_hist_to, 100 * d.g_hist_mean, 100 * d.g_hist_sd,
                     pl_->fitted().convergence.lambda, pl_->fitted().convergence.lambda_se);

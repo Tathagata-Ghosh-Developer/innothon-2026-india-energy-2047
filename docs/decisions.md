@@ -34,6 +34,12 @@ The ensemble weights are inversely proportional to backtest error.
 - **Requirement.** The national generation forecast times the region's share.
   The share comes from state population, GSDP per capita and urban share, run through the same per-capita response as the national model.
   No consumption data is used.
+
+  The base-year split uses population and income only.
+  Urbanisation enters through each state's projected change in urban share.
+  We first applied the urban coefficient to cross-state urban levels, which gave the Southern region 33 percent of the 2026 requirement.
+  That is implausible, because the coefficient is estimated from changes within a country over time, not from differences between regions.
+  It was revised on 2026-11-15.
 - **Production.** Where generation is sited, chosen by the allocation step according to regional resource strengths.
 - **Net transfer.** Production minus requirement.
   It sums to zero nationally by construction.
@@ -56,6 +62,16 @@ Splitting the two concepts keeps the forecast free of consumption data and makes
 
 **Reason.** A scoring table can be checked by hand during questioning.
 The linear program shows whether a least-cost system agrees.
+
+**Constraints added after first runs.**
+
+- **Build-rate limits.** Without them the optimiser chose extreme corner solutions.
+  The limits are based on India's record annual generation increase for each source.
+- **National coal ceiling.** A national ceiling, with a looser regional limit, replaces per-region caps.
+  This lets coal run where the fleet and reserves are.
+- **Unserved-energy slack.** A high-cost slack keeps sensitivity runs feasible.
+- **Independent check.** Every solution is checked against the constraint rows.
+  That check found a matrix-start indexing bug in the first version.
 
 ## D5. Policy targets enter as generation shares, never as capacity
 
@@ -81,6 +97,17 @@ We publish timings for 1 thread, 16 threads and the GPU.
 **Reason.** The input data is small.
 The parallel work is the uncertainty analysis: millions of scenario draws and the sensitivity sweeps over the allocation.
 Those draws are independent, so they parallelize well, and the GPU lets the dashboard recompute the full ensemble while a slider moves.
+
+## D6b. Measured performance
+
+| Run | 1,048,576 scenarios |
+| --- | --- |
+| 1 CPU thread | 22.7 s |
+| 16 threads | 2.07 s |
+| RTX 3070 Ti Laptop GPU | 7.5 ms |
+
+The GPU kernel builds machine code for sm_86 directly (`86-real`).
+The toolkit (CUDA 13.5) is newer than the driver (CUDA 13.3), so the driver could not JIT-compile its PTX.
 
 ## D7. Dashboard: Dear ImGui and ImPlot
 
