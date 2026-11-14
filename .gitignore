@@ -41,3 +41,6 @@ data/raw/generation/downloads/owid/owid-energy-data.csv
 # Raw web pages: tidy CSVs and SOURCES.md keep the URLs
 data/**/raw/**/*.html
 data/**/raw/**/*.htm
+data/**/raw/**/*.tif
+data/**/raw/**/*.geojson
+data/**/raw/**/*.gz
