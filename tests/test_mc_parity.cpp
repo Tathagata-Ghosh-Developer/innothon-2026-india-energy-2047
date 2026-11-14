@@ -46,7 +46,7 @@ McInputs fixture(std::vector<float>& boot) {
     in.state_region[s] = s % kRegions;
     for (int t = 0; t < in.n_years; ++t) in.state_pop_share[s][t] = (1.0f + s) / total;
     in.state_ln_rel_income[s] = -0.5f + 0.1f * s;
-    in.state_urb_gap[s] = -0.1f + 0.02f * s;
+    for (int t = 0; t < in.n_years; ++t) in.state_urb_delta[s][t] = (0.002f + 0.0005f * s) * (t + 1);
   }
   in.conv_mean = 0.01f;
   in.conv_sd = 0.005f;

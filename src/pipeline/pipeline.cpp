@@ -144,6 +144,16 @@ Pipeline::Pipeline(std::string root, int replicates) : root_(std::move(root)) {
     drv_.g_hist_rho = den > 0 ? num / den : 0.0;
   }
 
+  {
+    const CsvTable t = CsvTable::read((r / "data/external/techno_economic/policy_targets.csv").string());
+    for (size_t i = 0; i < t.rows(); ++i) {
+      if (t.str(i, t.col("target")) != "Projected gross generation, Total (CEA NEP 2022-32)") continue;
+      const std::string fy = t.str(i, t.col("target_year"));  // "2031-32"
+      if (fy.size() < 4) continue;
+      drv_.nep_generation.push_back({std::stoi(fy.substr(0, 4)) + 0.75, t.num(i, t.col("value"))});
+    }
+  }
+
   // 3. States: Technical Group projections (1 July), grid regions, urban gap, relative income.
   {
     std::map<std::string, int> region_of;
@@ -168,7 +178,6 @@ Pipeline::Pipeline(std::string root, int replicates) : root_(std::move(root)) {
       pop[s][y] = t.num(i, t.col("population"));
       ush[s][y] = t.num(i, t.col("urban_share"));
     }
-    const double nat_urban_base = interp(ush.at("india"), last);
     std::map<std::string, double> rel;
     for (const auto& si : fit_.convergence.states) {
       auto it = si.ln_rel.find(2024);
@@ -180,7 +189,20 @@ Pipeline::Pipeline(std::string root, int replicates) : root_(std::move(root)) {
       if (rg == region_of.end()) continue;
       drv_.states.push_back(s);
       drv_.state_region.push_back(rg->second);
-      drv_.state_urb_gap.push_back(interp(ush.at(s), last) - nat_urban_base);
+      {
+        // State urban share path: projections to the last projected year, then the
+        // 5-year trend continued linearly; expressed as change since the base year.
+        const auto& us = ush.at(s);
+        const int ulast = us.rbegin()->first;
+        const double base_u = interp(us, last);
+        const double slope = (interp(us, ulast) - interp(us, ulast - 5)) / 5.0;
+        std::vector<double> delta;
+        for (int y : drv_.years) {
+          const double u = y <= ulast ? interp(us, y) : std::min(0.95, interp(us, ulast) + slope * (y - ulast));
+          delta.push_back(u - base_u);
+        }
+        drv_.state_urb_delta.push_back(std::move(delta));
+      }
       double lr = 0;
       if (rel.count(s))
         lr = rel[s];
@@ -267,8 +289,10 @@ McInputs Pipeline::build_inputs(const ScenarioControls& c) const {
   for (int s = 0; s < in.n_states; ++s) {
     in.state_region[s] = drv_.state_region[s];
     in.state_ln_rel_income[s] = static_cast<float>(drv_.state_ln_rel_income[s]);
-    in.state_urb_gap[s] = static_cast<float>(drv_.state_urb_gap[s]);
-    for (int t = 0; t < n; ++t) in.state_pop_share[s][t] = static_cast<float>(drv_.state_pop_share[s][t]);
+    for (int t = 0; t < n; ++t) {
+      in.state_pop_share[s][t] = static_cast<float>(drv_.state_pop_share[s][t]);
+      in.state_urb_delta[s][t] = static_cast<float>(drv_.state_urb_delta[s][t]);
+    }
   }
   in.conv_mean = static_cast<float>(fit_.convergence.lambda);
   in.conv_sd = static_cast<float>(fit_.convergence.lambda_se);
@@ -323,6 +347,10 @@ StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControl
   for (int r = 0; r < kRegions; ++r) s.requirement[r] *= national / sum;
   s.least_cost = solve_least_cost(alloc_in_, p, s.requirement);
   s.score = allocate_by_score(alloc_in_, p, s.requirement, s.least_cost.national);
+  Timer tt;
+  const double p10 = f.mc.quantile(f.inputs, 0, t, 0.10), p90 = f.mc.quantile(f.inputs, 0, t, 0.90);
+  s.tornado = policy_tornado(alloc_in_, p, s.requirement, p10 / national, p90 / national);
+  s.tornado_ms = tt.ms();
   return s;
 }
 

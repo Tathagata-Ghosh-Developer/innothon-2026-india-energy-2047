@@ -48,7 +48,11 @@ struct DriverData {
   std::vector<std::string> states;
   std::vector<int> state_region;
   std::vector<std::vector<double>> state_pop_share;  // [state][t]
-  std::vector<double> state_ln_rel_income, state_urb_gap;
+  std::vector<double> state_ln_rel_income;
+  std::vector<std::vector<double>> state_urb_delta;  // [state][t], change since base year
+  // Published generation projections for comparison (CEA NEP 2022-32, gross generation, TWh).
+  // x = fiscal-year midpoint (e.g. 2026-27 -> 2026.75).
+  std::vector<std::pair<double, double>> nep_generation;
 };
 
 struct Fitted {
@@ -87,6 +91,8 @@ struct StrategyResult {
   AllocationResult least_cost;
   AllocationResult score;
   PolicySettings policy;
+  std::vector<TornadoRow> tornado;
+  double tornado_ms = 0;
 };
 
 class Pipeline {

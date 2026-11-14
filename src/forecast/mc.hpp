@@ -71,7 +71,10 @@ struct McInputs {
   int state_region[kMaxStates];
   float state_pop_share[kMaxStates][kMaxYears];  // share of national population
   float state_ln_rel_income[kMaxStates];         // ln(state GDP pc / national GDP pc) at base
-  float state_urb_gap[kMaxStates];               // state urban share minus national, at base
+  // Change in each state's urban share since the base year (state projections).
+  // Base-year urban levels do not enter the split: the urban coefficient is a
+  // within-country (over time) effect, not a cross-state one.
+  float state_urb_delta[kMaxStates][kMaxYears];
   float conv_mean, conv_sd;                      // convergence speed of relative income, per year
 
   // Histogram ranges per series and year
@@ -85,6 +88,7 @@ E47_HD Real clamp01(Real v) {
 }
 
 // Per-state log index of generation per person, up to terms common to all states.
+// u is the change in the state's urban share since the base year.
 template <class Real>
 E47_HD Real state_log_index(int model, const float* p, Real y_k, Real u) {
   using std::exp;
@@ -175,8 +179,8 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
       const Real decay = exp(-lambda * Real(t + 1));
       for (int s = 0; s < in.n_states; ++s) {
         const Real ys = y * exp(Real(in.state_ln_rel_income[s]) * decay);
-        const Real us = clamp01(u + Real(in.state_urb_gap[s]));
-        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, us));
+        const Real dus = Real(in.state_urb_delta[s][t]);
+        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, dus));
         reg[in.state_region[s]] += w;
         total += w;
       }

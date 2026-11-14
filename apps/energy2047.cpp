@@ -91,6 +91,8 @@ int main(int argc, char** argv) {
                 fit.panel.countries.size(), fit.panel.n_obs(), fit.quad_stats.r2_within, fit.gomp_stats.r2_within);
     std::printf("weights (inverse 2010-origin MAPE): quad %.2f gomp %.2f damped %.2f\n", fit.backtest_weights[0],
                 fit.backtest_weights[1], fit.backtest_weights[2]);
+    std::printf("damped trend: alpha %.3f beta %.3f phi %.3f sigma %.4f level %.3f trend %.4f\n", fit.damped.alpha,
+                fit.damped.beta, fit.damped.phi, fit.damped.sigma, fit.damped.level, fit.damped.trend);
     std::printf("GDP pc growth %d-%d: mean %.4f sd %.4f rho %.2f | convergence lambda %.4f (se %.4f)\n",
                 drv.g_hist_from, drv.g_hist_to, drv.g_hist_mean, drv.g_hist_sd, drv.g_hist_rho,
                 fit.convergence.lambda, fit.convergence.lambda_se);

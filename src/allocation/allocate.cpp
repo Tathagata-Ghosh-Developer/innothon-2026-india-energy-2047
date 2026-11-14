@@ -4,7 +4,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <numeric>
+#include <string>
 
 namespace e47 {
 
@@ -48,7 +50,7 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
     auto& lo = b.lo[r];
     auto& hi = b.hi[r];
     lo[kCoal] = p.coal_floor * base[kCoal];
-    hi[kCoal] = std::max(lo[kCoal], p.coal_cap * base[kCoal]);
+    hi[kCoal] = std::max(lo[kCoal], p.coal_regional_max * base[kCoal]);
     lo[kGas] = 0;
     hi[kGas] = kHighsInf;
     lo[kNuclear] = base[kNuclear];
@@ -148,6 +150,13 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   rate_cap({kHydro}, {kHydro});
   rate_cap({kBio}, {kBio});
   rate_cap({kGas}, {kGas});
+  {
+    // National coal ceiling: existing plus under-construction fleet.
+    double base_coal = 0;
+    for (int r = 0; r < kRegions; ++r) base_coal += in.base_twh[r][kCoal];
+    const int row = rb.add(-kHighsInf, p.coal_cap * base_coal);
+    for (int r = 0; r < kRegions; ++r) rb.set(row, gvar(r, kCoal), 1.0);
+  }
 
   // Column-wise matrix for HiGHS.
   HighsLp lp;
@@ -240,6 +249,65 @@ double resource_score(const AllocationInputs& in, const Bounds& b, int r, int s)
     default:
       return b.hi[r][s];  // usable generation potential
   }
+}
+
+std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicySettings& base,
+                                       const std::array<double, kRegions>& req, double req_lo, double req_hi) {
+  struct Spec {
+    const char* name;
+    double lo, hi;
+    void (*apply)(PolicySettings&, double);
+    const char* fmt;
+  };
+  static const Spec specs[] = {
+      {"Non-fossil minimum share", 0.60, 0.85, [](PolicySettings& p, double v) { p.nonfossil_min = v; }, "%.0f%%"},
+      {"Coal floor (x 2024 coal)", 0.40, 0.80, [](PolicySettings& p, double v) { p.coal_floor = v; }, "%.2f"},
+      {"National firm share", 0.35, 0.55, [](PolicySettings& p, double v) { p.firm_national = v; }, "%.0f%%"},
+      {"Regional firm share", 0.15, 0.35, [](PolicySettings& p, double v) { p.firm_regional = v; }, "%.0f%%"},
+      {"Usable solar land", 0.15, 0.35, [](PolicySettings& p, double v) { p.solar_land = v; }, "%.0f%%"},
+      {"Usable wind land", 0.15, 0.35, [](PolicySettings& p, double v) { p.wind_land = v; }, "%.0f%%"},
+      {"Corridor capacity (x 2032 plan)", 1.0, 3.0, [](PolicySettings& p, double v) { p.transfer_scale = v; }, "%.1fx"},
+      {"Build-rate acceleration", 1.5, 3.0, [](PolicySettings& p, double v) { p.build_accel = v; }, "%.1fx"},
+      {"Carbon price (USD/t)", 0.0, 60.0, [](PolicySettings& p, double v) { p.carbon_price = v; }, "%.0f"},
+      {"Solar cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kSolar] = v; }, "%.1fx"},
+      {"Nuclear cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kNuclear] = v; }, "%.1fx"},
+      {"Coal cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kCoal] = v; }, "%.1fx"},
+  };
+  constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
+  const int nrow = ns + 1;  // + requirement uncertainty
+  std::vector<TornadoRow> rows(nrow);
+  auto label = [](const char* fmt, double v) {
+    char b[32];
+    const bool pct = std::string(fmt).find('%') != std::string::npos && std::string(fmt).find("%%") != std::string::npos;
+    std::snprintf(b, sizeof b, fmt, pct ? 100 * v : v);
+    return std::string(b);
+  };
+#pragma omp parallel for schedule(dynamic)
+  for (int k = 0; k < 2 * nrow; ++k) {
+    const int i = k / 2;
+    const bool high = k % 2 == 1;
+    PolicySettings p = base;
+    std::array<double, kRegions> r = req;
+    if (i < ns) {
+      specs[i].apply(p, high ? specs[i].hi : specs[i].lo);
+    } else {
+      for (double& x : r) x *= high ? req_hi : req_lo;
+    }
+    AllocationResult a = solve_least_cost(in, p, r);
+    if (high)
+      rows[i].high = std::move(a);
+    else
+      rows[i].low = std::move(a);
+  }
+  for (int i = 0; i < ns; ++i) {
+    rows[i].name = specs[i].name;
+    rows[i].low_label = label(specs[i].fmt, specs[i].lo);
+    rows[i].high_label = label(specs[i].fmt, specs[i].hi);
+  }
+  rows[ns].name = "2047 requirement (P10 / P90)";
+  rows[ns].low_label = "P10";
+  rows[ns].high_label = "P90";
+  return rows;
 }
 
 AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySettings& p,
