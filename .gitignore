@@ -1,0 +1,34 @@
+# Build output
+build/
+out/
+cmake-build-*/
+.vs/
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.lib
+*.exp
+*.o
+*.a
+
+# Editor and tool settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Python leftovers (project code is C++)
+__pycache__/
+*.pyc
+.venv/
+
+# Large downloaded source documents (CSV extracts are committed instead)
+data/**/raw/**/*.pdf
+data/**/raw/**/*.zip
+data/**/raw/**/*.xlsx
+data/**/raw/**/*.xls
+
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store
