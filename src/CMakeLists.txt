@@ -4,9 +4,11 @@ add_library(e47_core STATIC
   forecast/models.cpp
   forecast/backtest.cpp
   forecast/mc_cpu.cpp
-  regional/convergence.cpp)
+  regional/convergence.cpp
+  allocation/inputs.cpp
+  allocation/allocate.cpp)
 target_include_directories(e47_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(e47_core PUBLIC e47_flags e47_eigen)
+target_link_libraries(e47_core PUBLIC e47_flags e47_eigen highs)
 
 if(ENABLE_CUDA)
   target_sources(e47_core PRIVATE forecast/mc_gpu.cu)
