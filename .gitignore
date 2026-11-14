@@ -32,3 +32,4 @@ data/**/raw/**/*.xls
 Thumbs.db
 desktop.ini
 .DS_Store
+outputs/
