@@ -1,0 +1,502 @@
+fiscal_year,fy_end_year,region,state,row_type,source,source_detail,generation_gwh,is_subtotal,scope,source_id,note
+1947,1947,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1733.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,gas,Thermal - Gas,0.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,oil_diesel,Thermal - Diesel,144.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,thermal_total,Thermal - Total,1877.0,True,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",2195.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1947,1947,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1947,1947,All India,ALL,india_total,total,Total utilities,4073.0,True,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years
+1950,1950,All India,ALL,india_total,coal,Thermal - Coal/Lignite,2587.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,gas,Thermal - Gas,0.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,oil_diesel,Thermal - Diesel,200.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,thermal_total,Thermal - Total,2787.0,True,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",2519.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1950,1950,All India,ALL,india_total,total,Total utilities,5106.0,True,utilities,cea_growth_1947_2025_table_3,fiscal year label as printed; 1947 and 1950 rows may not be Apr-Mar years; printed components sum to 5306.00 GWh but printed total is 5106.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,coal,Thermal - Coal/Lignite,5367.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,gas,Thermal - Gas,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,oil_diesel,Thermal - Diesel,233.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,thermal_total,Thermal - Total,5600.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",4295.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA; printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1955-56,1956,All India,ALL,india_total,total,Total utilities,9662.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 9895.00 GWh but printed total is 9662.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,coal,Thermal - Coal/Lignite,9100.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,gas,Thermal - Gas,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,oil_diesel,Thermal - Diesel,368.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,thermal_total,Thermal - Total,9468.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",7837.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA; printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1960-61,1961,All India,ALL,india_total,total,Total utilities,16937.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 17305.00 GWh but printed total is 16937.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,coal,Thermal - Coal/Lignite,17765.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,gas,Thermal - Gas,69.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,oil_diesel,Thermal - Diesel,324.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,thermal_total,Thermal - Total,18158.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",15225.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA; printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1965-66,1966,All India,ALL,india_total,total,Total utilities,32990.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 33383.00 GWh but printed total is 32990.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,coal,Thermal - Coal/Lignite,26711.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,gas,Thermal - Gas,124.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,oil_diesel,Thermal - Diesel,194.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,thermal_total,Thermal - Total,27029.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",20723.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,nuclear,Nuclear,0.0,False,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA; printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1968-69,1969,All India,ALL,india_total,total,Total utilities,47434.0,True,utilities,cea_growth_1947_2025_table_3,printed components sum to 47752.00 GWh but printed total is 47434.00 GWh; values kept as printed
+1973-74,1974,All India,ALL,india_total,coal,Thermal - Coal/Lignite,34853.0,False,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,gas,Thermal - Gas,343.0,False,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,oil_diesel,Thermal - Diesel,125.0,False,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,thermal_total,Thermal - Total,35321.0,True,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",28972.0,False,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,nuclear,Nuclear,2396.0,False,utilities,cea_growth_1947_2025_table_3,
+1973-74,1974,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1973-74,1974,All India,ALL,india_total,total,Total utilities,66689.0,True,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,coal,Thermal - Coal/Lignite,52024.0,False,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,gas,Thermal - Gas,515.0,False,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,oil_diesel,Thermal - Diesel,55.0,False,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,thermal_total,Thermal - Total,52594.0,True,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",47159.0,False,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,nuclear,Nuclear,2770.0,False,utilities,cea_growth_1947_2025_table_3,
+1978-79,1979,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1978-79,1979,All India,ALL,india_total,total,Total utilities,102523.0,True,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,coal,Thermal - Coal/Lignite,55720.0,False,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,gas,Thermal - Gas,500.0,False,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,oil_diesel,Thermal - Diesel,53.0,False,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,thermal_total,Thermal - Total,56273.0,True,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",45478.0,False,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,nuclear,Nuclear,2876.0,False,utilities,cea_growth_1947_2025_table_3,
+1979-80,1980,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1979-80,1980,All India,ALL,india_total,total,Total utilities,104627.0,True,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,coal,Thermal - Coal/Lignite,96957.0,False,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,gas,Thermal - Gas,1834.0,False,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,oil_diesel,Thermal - Diesel,45.0,False,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,thermal_total,Thermal - Total,98836.0,True,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",53948.0,False,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,nuclear,Nuclear,4075.0,False,utilities,cea_growth_1947_2025_table_3,
+1984-85,1985,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),0.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1984-85,1985,All India,ALL,india_total,total,Total utilities,156859.0,True,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,coal,Thermal - Coal/Lignite,172643.0,False,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,gas,Thermal - Gas,5962.0,False,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,oil_diesel,Thermal - Diesel,85.0,False,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,thermal_total,Thermal - Total,178690.0,True,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",62116.0,False,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,nuclear,Nuclear,4625.0,False,utilities,cea_growth_1947_2025_table_3,
+1989-90,1990,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),6.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1989-90,1990,All India,ALL,india_total,total,Total utilities,245438.0,True,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,coal,Thermal - Coal/Lignite,197163.0,False,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,gas,Thermal - Gas,11450.0,False,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,oil_diesel,Thermal - Diesel,95.0,False,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,thermal_total,Thermal - Total,208708.0,True,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",72757.0,False,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,nuclear,Nuclear,5525.0,False,utilities,cea_growth_1947_2025_table_3,
+1991-92,1992,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),38.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1991-92,1992,All India,ALL,india_total,total,Total utilities,287029.0,True,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,coal,Thermal - Coal/Lignite,289378.0,False,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,gas,Thermal - Gas,26985.0,False,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,oil_diesel,Thermal - Diesel,679.0,False,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,thermal_total,Thermal - Total,317042.0,True,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",68901.0,False,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,nuclear,Nuclear,9071.0,False,utilities,cea_growth_1947_2025_table_3,
+1996-97,1997,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),876.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+1996-97,1997,All India,ALL,india_total,total,Total utilities,395889.0,True,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,coal,Thermal - Coal/Lignite,370884.0,False,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,gas,Thermal - Gas,47099.0,False,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,oil_diesel,Thermal - Diesel,4317.0,False,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,thermal_total,Thermal - Total,422300.0,True,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",73579.0,False,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,nuclear,Nuclear,19475.0,False,utilities,cea_growth_1947_2025_table_3,
+2001-02,2002,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),2085.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+2001-02,2002,All India,ALL,india_total,total,Total utilities,517439.0,True,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,coal,Thermal - Coal/Lignite,461794.0,False,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,gas,Thermal - Gas,64157.0,False,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,oil_diesel,Thermal - Diesel,2539.0,False,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,thermal_total,Thermal - Total,528490.0,True,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",113502.0,False,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,nuclear,Nuclear,18802.0,False,utilities,cea_growth_1947_2025_table_3,
+2006-07,2007,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),9860.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+2006-07,2007,All India,ALL,india_total,total,Total utilities,670654.0,True,utilities,cea_growth_1947_2025_table_3,
+2007-08,2008,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",560072.0,False,utilities,cea_general_review_2025_table_1.3,
+2007-08,2008,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",120877.0,False,utilities,cea_general_review_2025_table_1.3,
+2007-08,2008,All India,ALL,india_total,nuclear,Nuclear,16957.0,False,utilities,cea_general_review_2025_table_1.3,
+2007-08,2008,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),25210.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2007-08,2008,All India,ALL,india_total,total,Total utilities,723116.0,True,utilities,cea_general_review_2025_table_1.3,
+2008-09,2009,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",588282.0,False,utilities,cea_general_review_2025_table_1.3,
+2008-09,2009,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",110098.0,False,utilities,cea_general_review_2025_table_1.3,
+2008-09,2009,All India,ALL,india_total,nuclear,Nuclear,14927.0,False,utilities,cea_general_review_2025_table_1.3,
+2008-09,2009,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),27860.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2008-09,2009,All India,ALL,india_total,total,Total utilities,741167.0,True,utilities,cea_general_review_2025_table_1.3,
+2009-10,2010,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",640208.0,False,utilities,cea_general_review_2025_table_1.3,
+2009-10,2010,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",104059.0,False,utilities,cea_general_review_2025_table_1.3,
+2009-10,2010,All India,ALL,india_total,nuclear,Nuclear,18636.0,False,utilities,cea_general_review_2025_table_1.3,
+2009-10,2010,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),36947.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2009-10,2010,All India,ALL,india_total,total,Total utilities,799850.0,True,utilities,cea_general_review_2025_table_1.3,
+2010-11,2011,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",664822.0,False,utilities,cea_general_review_2025_table_1.3,
+2010-11,2011,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",114415.0,False,utilities,cea_general_review_2025_table_1.3,
+2010-11,2011,All India,ALL,india_total,nuclear,Nuclear,26266.0,False,utilities,cea_general_review_2025_table_1.3,
+2010-11,2011,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),39245.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2010-11,2011,All India,ALL,india_total,total,Total utilities,844748.0,True,utilities,cea_general_review_2025_table_1.3,
+2011-12,2012,All India,ALL,india_total,coal,Thermal - Coal/Lignite,612497.0,False,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,gas,Thermal - Gas,93281.0,False,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,oil_diesel,Thermal - Diesel,2649.0,False,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,thermal_total,Thermal - Total,708427.0,True,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",130511.0,False,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,nuclear,Nuclear,32287.0,False,utilities,cea_growth_1947_2025_table_3,
+2011-12,2012,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),51226.0,False,utilities,cea_growth_1947_2025_table_3,RES up to 2013-14 is normative generation per CEA
+2011-12,2012,All India,ALL,india_total,total,Total utilities,922451.0,True,utilities,cea_growth_1947_2025_table_3,
+2012-13,2013,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",760454.0,False,utilities,cea_general_review_2025_table_1.3,
+2012-13,2013,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",113720.0,False,utilities,cea_general_review_2025_table_1.3,
+2012-13,2013,All India,ALL,india_total,nuclear,Nuclear,32866.0,False,utilities,cea_general_review_2025_table_1.3,
+2012-13,2013,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),57449.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2012-13,2013,All India,ALL,india_total,total,Total utilities,964489.0,True,utilities,cea_general_review_2025_table_1.3,
+2013-14,2014,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",792054.0,False,utilities,cea_general_review_2025_table_1.3,
+2013-14,2014,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",134847.0,False,utilities,cea_general_review_2025_table_1.3,
+2013-14,2014,All India,ALL,india_total,nuclear,Nuclear,34228.0,False,utilities,cea_general_review_2025_table_1.3,
+2013-14,2014,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),65520.0,False,utilities,cea_general_review_2025_table_1.3,RES up to 2013-14 is normative generation per CEA
+2013-14,2014,All India,ALL,india_total,total,Total utilities,1026649.0,True,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",877941.0,False,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",129244.0,False,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,nuclear,Nuclear,36102.0,False,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),61719.0,True,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,total,Total utilities,1105006.0,True,utilities,cea_general_review_2025_table_1.3,
+2014-15,2015,All India,ALL,india_total,hydro_small,Small Hydro,8059.5,False,utilities,cea_growth_1947_2025_chart_15b,
+2014-15,2015,All India,ALL,india_total,wind,Wind,33768.3,False,utilities,cea_growth_1947_2025_chart_15b,
+2014-15,2015,All India,ALL,india_total,biomass,Biomass (incl. bagasse),14944.5,False,utilities,cea_growth_1947_2025_chart_15b,
+2014-15,2015,All India,ALL,india_total,other,Waste to Energy,347.92,False,utilities,cea_growth_1947_2025_chart_15b,
+2014-15,2015,All India,ALL,india_total,solar,Solar,4599.02,False,utilities,cea_growth_1947_2025_chart_15b,
+2015-16,2016,All India,ALL,india_total,thermal_total,"Thermal (steam, gas and diesel; not split in source)",943013.0,False,utilities,cea_general_review_2025_table_1.3,
+2015-16,2016,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",121377.0,False,utilities,cea_general_review_2025_table_1.3,
+2015-16,2016,All India,ALL,india_total,nuclear,Nuclear,37413.0,False,utilities,cea_general_review_2025_table_1.3,
+2015-16,2016,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),65781.0,True,utilities,cea_general_review_2025_table_1.3,
+2015-16,2016,All India,ALL,india_total,total,Total utilities,1167584.0,True,utilities,cea_general_review_2025_table_1.3,
+2015-16,2016,All India,ALL,india_total,hydro_small,Small Hydro,8354.51,False,utilities,cea_growth_1947_2025_chart_15b,
+2015-16,2016,All India,ALL,india_total,wind,Wind,33029.39,False,utilities,cea_growth_1947_2025_chart_15b,
+2015-16,2016,All India,ALL,india_total,biomass,Biomass (incl. bagasse),16680.5,False,utilities,cea_growth_1947_2025_chart_15b,
+2015-16,2016,All India,ALL,india_total,other,Waste to Energy,268.53,False,utilities,cea_growth_1947_2025_chart_15b,
+2015-16,2016,All India,ALL,india_total,solar,Solar,7447.92,False,utilities,cea_growth_1947_2025_chart_15b,
+2016-17,2017,All India,ALL,india_total,coal,Thermal - Coal/Lignite,944022.0,False,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,gas,Thermal - Gas,49094.0,False,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,oil_diesel,Thermal - Diesel,401.0,False,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,thermal_total,Thermal - Total,993516.0,True,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",122378.0,False,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,nuclear,Nuclear,37916.0,False,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),81548.0,True,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,total,Total utilities,1235358.0,True,utilities,cea_growth_1947_2025_table_3,
+2016-17,2017,All India,ALL,india_total,hydro_small,Small Hydro,7672.66,False,utilities,cea_growth_1947_2025_chart_15b,
+2016-17,2017,All India,ALL,india_total,wind,Wind,46004.34,False,utilities,cea_growth_1947_2025_chart_15b,
+2016-17,2017,All India,ALL,india_total,biomass,Biomass (incl. bagasse),14158.64,False,utilities,cea_growth_1947_2025_chart_15b,
+2016-17,2017,All India,ALL,india_total,other,Waste to Energy,213.16,False,utilities,cea_growth_1947_2025_chart_15b,
+2016-17,2017,All India,ALL,india_total,solar,Solar,13499.41,False,utilities,cea_growth_1947_2025_chart_15b,
+2017-18,2018,All India,ALL,india_total,coal,Thermal - Coal/Lignite,986591.0,False,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,gas,Thermal - Gas,50208.0,False,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,oil_diesel,Thermal - Diesel,348.0,False,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,thermal_total,Thermal - Total,1037146.0,True,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",126123.0,False,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,nuclear,Nuclear,38346.0,False,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),101839.0,True,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,total,Total utilities,1303455.0,True,utilities,cea_growth_1947_2025_table_3,
+2017-18,2018,All India,ALL,india_total,hydro_small,Small Hydro,7691.58,False,utilities,cea_growth_1947_2025_chart_15b,
+2017-18,2018,All India,ALL,india_total,wind,Wind,52666.09,False,utilities,cea_growth_1947_2025_chart_15b,
+2017-18,2018,All India,ALL,india_total,biomass,Biomass (incl. bagasse),15252.3,False,utilities,cea_growth_1947_2025_chart_15b,
+2017-18,2018,All India,ALL,india_total,other,Waste to Energy,358.45,False,utilities,cea_growth_1947_2025_chart_15b,
+2017-18,2018,All India,ALL,india_total,solar,Solar,25871.07,False,utilities,cea_growth_1947_2025_chart_15b,
+2018-19,2019,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1022265.0,False,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,gas,Thermal - Gas,49834.0,False,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,oil_diesel,Thermal - Diesel,215.0,False,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,thermal_total,Thermal - Total,1072314.0,True,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",134894.0,False,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,nuclear,Nuclear,37813.0,False,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),126759.0,True,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,total,Total utilities,1371779.0,True,utilities,cea_growth_1947_2025_table_3,
+2018-19,2019,All India,ALL,india_total,hydro_small,Small Hydro,8702.75,False,utilities,cea_growth_1947_2025_chart_15b,
+2018-19,2019,All India,ALL,india_total,wind,Wind,62036.38,False,utilities,cea_growth_1947_2025_chart_15b,
+2018-19,2019,All India,ALL,india_total,biomass,Biomass (incl. bagasse),16326.49,False,utilities,cea_growth_1947_2025_chart_15b,
+2018-19,2019,All India,ALL,india_total,other,Waste to Energy,425.28,False,utilities,cea_growth_1947_2025_chart_15b,
+2018-19,2019,All India,ALL,india_total,solar,Solar,39268.2,False,utilities,cea_growth_1947_2025_chart_15b,
+2019-20,2020,All India,ALL,india_total,coal,Thermal - Coal/Lignite,994197.0,False,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,gas,Thermal - Gas,48443.0,False,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,oil_diesel,Thermal - Diesel,199.0,False,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,thermal_total,Thermal - Total,1042838.0,True,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",155769.0,False,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,nuclear,Nuclear,46472.0,False,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),138337.0,True,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,total,Total utilities,1383417.0,True,utilities,cea_growth_1947_2025_table_3,
+2019-20,2020,All India,ALL,india_total,hydro_small,Small Hydro,9451.24,False,utilities,cea_growth_1947_2025_chart_15b,
+2019-20,2020,All India,ALL,india_total,wind,Wind,64646.38,False,utilities,cea_growth_1947_2025_chart_15b,
+2019-20,2020,All India,ALL,india_total,biomass,Biomass (incl. bagasse),13742.43,False,utilities,cea_growth_1947_2025_chart_15b,
+2019-20,2020,All India,ALL,india_total,other,Waste to Energy,365.88,False,utilities,cea_growth_1947_2025_chart_15b,
+2019-20,2020,All India,ALL,india_total,solar,Solar,50131.09,False,utilities,cea_growth_1947_2025_chart_15b,
+2020-21,2021,All India,ALL,india_total,coal,Thermal - Coal/Lignite,981443.0,False,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,gas,Thermal - Gas,50944.0,False,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,oil_diesel,Thermal - Diesel,224.0,False,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,thermal_total,Thermal - Total,1032611.0,True,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",150300.0,False,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,nuclear,Nuclear,43029.0,False,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),147248.0,True,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,total,Total utilities,1373187.0,True,utilities,cea_growth_1947_2025_table_3,
+2020-21,2021,All India,ALL,india_total,hydro_small,Small Hydro,10258.41,False,utilities,cea_growth_1947_2025_chart_15b,
+2020-21,2021,All India,ALL,india_total,wind,Wind,60149.95,False,utilities,cea_growth_1947_2025_chart_15b,
+2020-21,2021,All India,ALL,india_total,biomass,Biomass (incl. bagasse),14815.83,False,utilities,cea_growth_1947_2025_chart_15b,
+2020-21,2021,All India,ALL,india_total,other,Waste to Energy,1621.06,False,utilities,cea_growth_1947_2025_chart_15b,
+2020-21,2021,All India,ALL,india_total,solar,Solar,60402.26,False,utilities,cea_growth_1947_2025_chart_15b,
+2021-22,2022,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1078581.0,False,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,gas,Thermal - Gas,36016.0,False,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,oil_diesel,Thermal - Diesel,214.0,False,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,thermal_total,Thermal - Total,1114811.0,True,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",151627.0,False,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,nuclear,Nuclear,47112.0,False,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),170912.0,True,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,total,Total utilities,1484463.0,True,utilities,cea_growth_1947_2025_table_3,
+2021-22,2022,All India,ALL,india_total,hydro_small,Small Hydro,10463.54,False,utilities,cea_growth_1947_2025_chart_15b,
+2021-22,2022,All India,ALL,india_total,wind,Wind,68640.07,False,utilities,cea_growth_1947_2025_chart_15b,
+2021-22,2022,All India,ALL,india_total,biomass,Biomass (incl. bagasse),16056.58,False,utilities,cea_growth_1947_2025_chart_15b,
+2021-22,2022,All India,ALL,india_total,other,Waste to Energy,2268.17,False,utilities,cea_growth_1947_2025_chart_15b,
+2021-22,2022,All India,ALL,india_total,solar,Solar,73483.94,False,utilities,cea_growth_1947_2025_chart_15b,
+2022-23,2023,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1182096.0,False,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,gas,Thermal - Gas,23885.0,False,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,oil_diesel,Thermal - Diesel,409.0,False,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,thermal_total,Thermal - Total,1206390.0,True,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",162099.0,False,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,nuclear,Nuclear,45861.0,False,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),203555.0,True,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,total,Total utilities,1617905.0,True,utilities,cea_growth_1947_2025_table_3,
+2022-23,2023,All India,ALL,india_total,hydro_small,Small Hydro,11170.1,False,utilities,cea_growth_1947_2025_chart_15b,
+2022-23,2023,All India,ALL,india_total,wind,Wind,71814.16,False,utilities,cea_growth_1947_2025_chart_15b,
+2022-23,2023,All India,ALL,india_total,biomass,Biomass (incl. bagasse),16024.48,False,utilities,cea_growth_1947_2025_chart_15b,
+2022-23,2023,All India,ALL,india_total,other,Waste to Energy,2529.18,False,utilities,cea_growth_1947_2025_chart_15b,
+2022-23,2023,All India,ALL,india_total,solar,Solar,102014.24,False,utilities,cea_growth_1947_2025_chart_15b,
+2023-24,2024,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1294852.0,False,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,gas,Thermal - Gas,31296.0,False,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,oil_diesel,Thermal - Diesel,401.0,False,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,thermal_total,Thermal - Total,1326549.0,True,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",134054.0,False,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,nuclear,Nuclear,47937.0,False,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),225835.0,True,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,total,Total utilities,1734375.0,True,utilities,cea_growth_1947_2025_table_3,
+2023-24,2024,All India,ALL,india_total,hydro_small,Small Hydro,9485.04,False,utilities,cea_growth_1947_2025_chart_15b,
+2023-24,2024,All India,ALL,india_total,wind,Wind,83385.35,False,utilities,cea_growth_1947_2025_chart_15b,
+2023-24,2024,All India,ALL,india_total,biomass,Biomass (incl. bagasse),14242.78,False,utilities,cea_growth_1947_2025_chart_15b,
+2023-24,2024,All India,ALL,india_total,other,Waste to Energy,2746.55,False,utilities,cea_growth_1947_2025_chart_15b,
+2023-24,2024,All India,ALL,india_total,solar,Solar,115975.11,False,utilities,cea_growth_1947_2025_chart_15b,
+2024-25,2025,All India,ALL,india_total,coal,Thermal - Coal/Lignite,1331867.0,False,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,gas,Thermal - Gas,31580.0,False,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,oil_diesel,Thermal - Diesel,443.0,False,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,thermal_total,Thermal - Total,1363890.0,True,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,hydro_large,"Hydro (conventional, >25 MW)",148634.0,False,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,nuclear,Nuclear,56681.0,False,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,res_total,RES (renewables incl. small hydro),255009.0,True,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,total,Total utilities,1824214.0,True,utilities,cea_growth_1947_2025_table_3,
+2024-25,2025,All India,ALL,india_total,hydro_small,Small Hydro,11568.04,False,utilities,cea_growth_1947_2025_chart_15b,
+2024-25,2025,All India,ALL,india_total,wind,Wind,83347.19,False,utilities,cea_growth_1947_2025_chart_15b,
+2024-25,2025,All India,ALL,india_total,biomass,Biomass (incl. bagasse),13073.99,False,utilities,cea_growth_1947_2025_chart_15b,
+2024-25,2025,All India,ALL,india_total,other,Waste to Energy,2869.73,False,utilities,cea_growth_1947_2025_chart_15b,
+2024-25,2025,All India,ALL,india_total,solar,Solar,144150.23,False,utilities,cea_growth_1947_2025_chart_15b,
+1950,1950,All India,ALL,india_total,other,Captive - Total (breakup not available),1467.81,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1950,1950,All India,ALL,india_total,total,Captive - Total,1467.81,True,captive,cea_general_review_2025_table_1.6,
+1955-56,1956,All India,ALL,india_total,other,Captive - Total (breakup not available),2184.82,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1955-56,1956,All India,ALL,india_total,total,Captive - Total,2184.82,True,captive,cea_general_review_2025_table_1.6,
+1960-61,1961,All India,ALL,india_total,other,Captive - Total (breakup not available),3186.1,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1960-61,1961,All India,ALL,india_total,total,Captive - Total,3186.1,True,captive,cea_general_review_2025_table_1.6,
+1965-66,1966,All India,ALL,india_total,other,Captive - Total (breakup not available),3733.19,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1965-66,1966,All India,ALL,india_total,total,Captive - Total,3733.19,True,captive,cea_general_review_2025_table_1.6,
+1968-69,1969,All India,ALL,india_total,other,Captive - Total (breakup not available),4136.06,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1968-69,1969,All India,ALL,india_total,total,Captive - Total,4136.06,True,captive,cea_general_review_2025_table_1.6,
+1973-74,1974,All India,ALL,india_total,other,Captive - Total (breakup not available),6067.47,False,captive,cea_general_review_2025_table_1.6,breakup not available in source
+1973-74,1974,All India,ALL,india_total,total,Captive - Total,6067.47,True,captive,cea_general_review_2025_table_1.6,
+1978-79,1979,All India,ALL,india_total,hydro,Captive - Hydro,13.22,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,coal,Captive - Steam (mainly coal),7211.3,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,oil_diesel,Captive - Diesel,299.13,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,gas,Captive - Gas,48.97,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,res_total,Captive - RES,0.0,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,other,Captive - Railways,34.47,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1978-79,1979,All India,ALL,india_total,total,Captive - Total,7607.09,True,captive,cea_general_review_2025_table_1.6,
+1979-80,1980,All India,ALL,india_total,hydro,Captive - Hydro,15.06,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,coal,Captive - Steam (mainly coal),7225.6,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,oil_diesel,Captive - Diesel,825.71,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,gas,Captive - Gas,90.67,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,res_total,Captive - RES,0.0,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,other,Captive - Railways,35.67,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1979-80,1980,All India,ALL,india_total,total,Captive - Total,8192.71,True,captive,cea_general_review_2025_table_1.6,
+1984-85,1985,All India,ALL,india_total,hydro,Captive - Hydro,18.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,coal,Captive - Steam (mainly coal),9966.55,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,oil_diesel,Captive - Diesel,2001.18,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,gas,Captive - Gas,317.03,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,res_total,Captive - RES,0.0,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,other,Captive - Railways,42.8,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1984-85,1985,All India,ALL,india_total,total,Captive - Total,12345.85,True,captive,cea_general_review_2025_table_1.6,
+1989-90,1990,All India,ALL,india_total,hydro,Captive - Hydro,15.83,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,coal,Captive - Steam (mainly coal),19110.46,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,oil_diesel,Captive - Diesel,2757.27,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,gas,Captive - Gas,1313.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,res_total,Captive - RES,0.0,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,other,Captive - Railways,29.07,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1989-90,1990,All India,ALL,india_total,total,Captive - Total,23225.92,True,captive,cea_general_review_2025_table_1.6,
+1991-92,1992,All India,ALL,india_total,hydro,Captive - Hydro,17.57,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,coal,Captive - Steam (mainly coal),23409.35,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,oil_diesel,Captive - Diesel,3247.81,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,gas,Captive - Gas,1905.24,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,res_total,Captive - RES,0.0,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,other,Captive - Railways,22.52,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1991-92,1992,All India,ALL,india_total,total,Captive - Total,28602.49,True,captive,cea_general_review_2025_table_1.6,
+1996-97,1997,All India,ALL,india_total,hydro,Captive - Hydro,28.84,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,coal,Captive - Steam (mainly coal),29127.94,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,oil_diesel,Captive - Diesel,6573.38,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,gas,Captive - Gas,5039.22,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,res_total,Captive - RES,45.63,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,other,Captive - Railways,25.07,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+1996-97,1997,All India,ALL,india_total,total,Captive - Total,40840.08,True,captive,cea_general_review_2025_table_1.6,
+2000-01,2001,All India,ALL,india_total,hydro,Captive - Hydro,99.85,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2000-01,2001,All India,ALL,india_total,coal,Captive - Steam (mainly coal),40256.24,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2000-01,2001,All India,ALL,india_total,oil_diesel,Captive - Diesel,11397.99,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2000-01,2001,All India,ALL,india_total,gas,Captive - Gas,7782.34,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2000-01,2001,All India,ALL,india_total,res_total,Captive - RES,101.54,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2000-01,2001,All India,ALL,india_total,total,Captive - Total,59637.96,True,captive,cea_general_review_2025_table_1.6,
+2001-02,2002,All India,ALL,india_total,hydro,Captive - Hydro,116.59,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2001-02,2002,All India,ALL,india_total,coal,Captive - Steam (mainly coal),41853.85,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2001-02,2002,All India,ALL,india_total,oil_diesel,Captive - Diesel,10719.66,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2001-02,2002,All India,ALL,india_total,gas,Captive - Gas,8835.19,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2001-02,2002,All India,ALL,india_total,res_total,Captive - RES,155.53,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2001-02,2002,All India,ALL,india_total,total,Captive - Total,61680.82,True,captive,cea_general_review_2025_table_1.6,
+2002-03,2003,All India,ALL,india_total,hydro,Captive - Hydro,90.32,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after; printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed"
+2002-03,2003,All India,ALL,india_total,coal,Captive - Steam (mainly coal),42229.66,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after; printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed"
+2002-03,2003,All India,ALL,india_total,oil_diesel,Captive - Diesel,11155.33,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after; printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed"
+2002-03,2003,All India,ALL,india_total,gas,Captive - Gas,10198.16,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after; printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed"
+2002-03,2003,All India,ALL,india_total,res_total,Captive - RES,1176.43,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after; printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed"
+2002-03,2003,All India,ALL,india_total,total,Captive - Total,63849.9,True,captive,cea_general_review_2025_table_1.6,printed components sum to 64849.90 GWh but printed total is 63849.90 GWh; values kept as printed
+2003-04,2004,All India,ALL,india_total,hydro,Captive - Hydro,97.49,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2003-04,2004,All India,ALL,india_total,coal,Captive - Steam (mainly coal),39610.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2003-04,2004,All India,ALL,india_total,oil_diesel,Captive - Diesel,13403.31,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2003-04,2004,All India,ALL,india_total,gas,Captive - Gas,14874.38,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2003-04,2004,All India,ALL,india_total,res_total,Captive - RES,187.65,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2003-04,2004,All India,ALL,india_total,total,Captive - Total,68173.12,True,captive,cea_general_review_2025_table_1.6,
+2004-05,2005,All India,ALL,india_total,hydro,Captive - Hydro,112.77,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2004-05,2005,All India,ALL,india_total,coal,Captive - Steam (mainly coal),44016.99,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2004-05,2005,All India,ALL,india_total,oil_diesel,Captive - Diesel,12039.86,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2004-05,2005,All India,ALL,india_total,gas,Captive - Gas,15052.05,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2004-05,2005,All India,ALL,india_total,res_total,Captive - RES,194.95,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2004-05,2005,All India,ALL,india_total,total,Captive - Total,71416.62,True,captive,cea_general_review_2025_table_1.6,
+2005-06,2006,All India,ALL,india_total,hydro,Captive - Hydro,236.47,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2005-06,2006,All India,ALL,india_total,coal,Captive - Steam (mainly coal),46264.87,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2005-06,2006,All India,ALL,india_total,oil_diesel,Captive - Diesel,12253.22,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2005-06,2006,All India,ALL,india_total,gas,Captive - Gas,14664.72,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2005-06,2006,All India,ALL,india_total,res_total,Captive - RES,220.42,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2005-06,2006,All India,ALL,india_total,total,Captive - Total,73639.7,True,captive,cea_general_review_2025_table_1.6,
+2006-07,2007,All India,ALL,india_total,hydro,Captive - Hydro,217.81,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2006-07,2007,All India,ALL,india_total,coal,Captive - Steam (mainly coal),56184.04,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2006-07,2007,All India,ALL,india_total,oil_diesel,Captive - Diesel,9974.85,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2006-07,2007,All India,ALL,india_total,gas,Captive - Gas,15207.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2006-07,2007,All India,ALL,india_total,res_total,Captive - RES,215.88,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2006-07,2007,All India,ALL,india_total,total,Captive - Total,81799.76,True,captive,cea_general_review_2025_table_1.6,
+2007-08,2008,All India,ALL,india_total,hydro,Captive - Hydro,202.21,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2007-08,2008,All India,ALL,india_total,coal,Captive - Steam (mainly coal),53568.52,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2007-08,2008,All India,ALL,india_total,oil_diesel,Captive - Diesel,10737.96,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2007-08,2008,All India,ALL,india_total,gas,Captive - Gas,25584.58,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2007-08,2008,All India,ALL,india_total,res_total,Captive - RES,383.43,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2007-08,2008,All India,ALL,india_total,total,Captive - Total,90476.69,True,captive,cea_general_review_2025_table_1.6,
+2008-09,2009,All India,ALL,india_total,hydro,Captive - Hydro,146.01,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2008-09,2009,All India,ALL,india_total,coal,Captive - Steam (mainly coal),73626.49,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2008-09,2009,All India,ALL,india_total,oil_diesel,Captive - Diesel,10082.14,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2008-09,2009,All India,ALL,india_total,gas,Captive - Gas,15306.09,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2008-09,2009,All India,ALL,india_total,res_total,Captive - RES,560.43,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2008-09,2009,All India,ALL,india_total,total,Captive - Total,99721.16,True,captive,cea_general_review_2025_table_1.6,
+2009-10,2010,All India,ALL,india_total,hydro,Captive - Hydro,151.78,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2009-10,2010,All India,ALL,india_total,coal,Captive - Steam (mainly coal),77416.34,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2009-10,2010,All India,ALL,india_total,oil_diesel,Captive - Diesel,8217.22,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2009-10,2010,All India,ALL,india_total,gas,Captive - Gas,19738.71,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2009-10,2010,All India,ALL,india_total,res_total,Captive - RES,609.05,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2009-10,2010,All India,ALL,india_total,total,Captive - Total,106133.1,True,captive,cea_general_review_2025_table_1.6,
+2010-11,2011,All India,ALL,india_total,hydro,Captive - Hydro,148.79,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2010-11,2011,All India,ALL,india_total,coal,Captive - Steam (mainly coal),96657.13,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2010-11,2011,All India,ALL,india_total,oil_diesel,Captive - Diesel,7753.53,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2010-11,2011,All India,ALL,india_total,gas,Captive - Gas,15435.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2010-11,2011,All India,ALL,india_total,res_total,Captive - RES,922.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2010-11,2011,All India,ALL,india_total,total,Captive - Total,120916.91,True,captive,cea_general_review_2025_table_1.6,
+2011-12,2012,All India,ALL,india_total,hydro,Captive - Hydro,131.28,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2011-12,2012,All India,ALL,india_total,coal,Captive - Steam (mainly coal),104862.65,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2011-12,2012,All India,ALL,india_total,oil_diesel,Captive - Diesel,6244.32,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2011-12,2012,All India,ALL,india_total,gas,Captive - Gas,21971.57,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2011-12,2012,All India,ALL,india_total,res_total,Captive - RES,1178.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2011-12,2012,All India,ALL,india_total,total,Captive - Total,134387.98,True,captive,cea_general_review_2025_table_1.6,
+2012-13,2013,All India,ALL,india_total,hydro,Captive - Hydro,118.18,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2012-13,2013,All India,ALL,india_total,coal,Captive - Steam (mainly coal),113166.95,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2012-13,2013,All India,ALL,india_total,oil_diesel,Captive - Diesel,8205.22,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2012-13,2013,All India,ALL,india_total,gas,Captive - Gas,20768.88,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2012-13,2013,All India,ALL,india_total,res_total,Captive - RES,1750.42,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2012-13,2013,All India,ALL,india_total,total,Captive - Total,144009.65,True,captive,cea_general_review_2025_table_1.6,
+2013-14,2014,All India,ALL,india_total,hydro,Captive - Hydro,129.06,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2013-14,2014,All India,ALL,india_total,coal,Captive - Steam (mainly coal),118178.44,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2013-14,2014,All India,ALL,india_total,oil_diesel,Captive - Diesel,8866.47,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2013-14,2014,All India,ALL,india_total,gas,Captive - Gas,19911.64,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2013-14,2014,All India,ALL,india_total,res_total,Captive - RES,1902.62,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2013-14,2014,All India,ALL,india_total,total,Captive - Total,148988.22,True,captive,cea_general_review_2025_table_1.6,
+2014-15,2015,All India,ALL,india_total,hydro,Captive - Hydro,144.69,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2014-15,2015,All India,ALL,india_total,coal,Captive - Steam (mainly coal),128401.06,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2014-15,2015,All India,ALL,india_total,oil_diesel,Captive - Diesel,9919.57,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2014-15,2015,All India,ALL,india_total,gas,Captive - Gas,21135.25,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2014-15,2015,All India,ALL,india_total,res_total,Captive - RES,2656.43,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2014-15,2015,All India,ALL,india_total,total,Captive - Total,162257.0,True,captive,cea_general_review_2025_table_1.6,
+2015-16,2016,All India,ALL,india_total,hydro,Captive - Hydro,110.09,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2015-16,2016,All India,ALL,india_total,coal,Captive - Steam (mainly coal),136720.54,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2015-16,2016,All India,ALL,india_total,oil_diesel,Captive - Diesel,8412.16,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2015-16,2016,All India,ALL,india_total,gas,Captive - Gas,21083.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2015-16,2016,All India,ALL,india_total,res_total,Captive - RES,2046.08,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2015-16,2016,All India,ALL,india_total,total,Captive - Total,168372.16,True,captive,cea_general_review_2025_table_1.6,
+2016-17,2017,All India,ALL,india_total,hydro,Captive - Hydro,143.64,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2016-17,2017,All India,ALL,india_total,coal,Captive - Steam (mainly coal),137588.31,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2016-17,2017,All India,ALL,india_total,oil_diesel,Captive - Diesel,9181.74,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2016-17,2017,All India,ALL,india_total,gas,Captive - Gas,22855.31,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2016-17,2017,All India,ALL,india_total,res_total,Captive - RES,2277.02,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2016-17,2017,All India,ALL,india_total,total,Captive - Total,172046.03,True,captive,cea_general_review_2025_table_1.6,
+2017-18,2018,All India,ALL,india_total,hydro,Captive - Hydro,112.48,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2017-18,2018,All India,ALL,india_total,coal,Captive - Steam (mainly coal),143867.68,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2017-18,2018,All India,ALL,india_total,oil_diesel,Captive - Diesel,8106.89,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2017-18,2018,All India,ALL,india_total,gas,Captive - Gas,25362.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2017-18,2018,All India,ALL,india_total,res_total,Captive - RES,2328.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2017-18,2018,All India,ALL,india_total,total,Captive - Total,179777.39,True,captive,cea_general_review_2025_table_1.6,
+2018-19,2019,All India,ALL,india_total,hydro,Captive - Hydro,270.04,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2018-19,2019,All India,ALL,india_total,coal,Captive - Steam (mainly coal),184250.36,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2018-19,2019,All India,ALL,india_total,oil_diesel,Captive - Diesel,5334.32,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2018-19,2019,All India,ALL,india_total,gas,Captive - Gas,19545.09,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2018-19,2019,All India,ALL,india_total,res_total,Captive - RES,3673.92,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2018-19,2019,All India,ALL,india_total,total,Captive - Total,213073.73,True,captive,cea_general_review_2025_table_1.6,
+2019-20,2020,All India,ALL,india_total,hydro,Captive - Hydro,348.04,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2019-20,2020,All India,ALL,india_total,coal,Captive - Steam (mainly coal),205545.78,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2019-20,2020,All India,ALL,india_total,oil_diesel,Captive - Diesel,1919.32,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2019-20,2020,All India,ALL,india_total,gas,Captive - Gas,25443.15,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2019-20,2020,All India,ALL,india_total,res_total,Captive - RES,6310.47,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2019-20,2020,All India,ALL,india_total,total,Captive - Total,239566.76,True,captive,cea_general_review_2025_table_1.6,
+2020-21,2021,All India,ALL,india_total,hydro,Captive - Hydro,339.12,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2020-21,2021,All India,ALL,india_total,coal,Captive - Steam (mainly coal),193142.6,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2020-21,2021,All India,ALL,india_total,oil_diesel,Captive - Diesel,2504.19,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2020-21,2021,All India,ALL,india_total,gas,Captive - Gas,21683.55,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2020-21,2021,All India,ALL,india_total,res_total,Captive - RES,7157.94,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2020-21,2021,All India,ALL,india_total,total,Captive - Total,224827.4,True,captive,cea_general_review_2025_table_1.6,
+2021-22,2022,All India,ALL,india_total,hydro,Captive - Hydro,356.66,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2021-22,2022,All India,ALL,india_total,coal,Captive - Steam (mainly coal),179235.45,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2021-22,2022,All India,ALL,india_total,oil_diesel,Captive - Diesel,2104.51,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2021-22,2022,All India,ALL,india_total,gas,Captive - Gas,20801.17,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2021-22,2022,All India,ALL,india_total,res_total,Captive - RES,6812.98,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2021-22,2022,All India,ALL,india_total,total,Captive - Total,209310.77,True,captive,cea_general_review_2025_table_1.6,
+2022-23,2023,All India,ALL,india_total,hydro,Captive - Hydro,290.7,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2022-23,2023,All India,ALL,india_total,coal,Captive - Steam (mainly coal),179831.2,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2022-23,2023,All India,ALL,india_total,oil_diesel,Captive - Diesel,2035.36,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2022-23,2023,All India,ALL,india_total,gas,Captive - Gas,21086.63,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2022-23,2023,All India,ALL,india_total,res_total,Captive - RES,8687.92,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2022-23,2023,All India,ALL,india_total,total,Captive - Total,211931.81,True,captive,cea_general_review_2025_table_1.6,
+2023-24,2024,All India,ALL,india_total,hydro,Captive - Hydro,273.57,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2023-24,2024,All India,ALL,india_total,coal,Captive - Steam (mainly coal),183093.29,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2023-24,2024,All India,ALL,india_total,oil_diesel,Captive - Diesel,10157.69,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2023-24,2024,All India,ALL,india_total,gas,Captive - Gas,21677.33,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2023-24,2024,All India,ALL,india_total,res_total,Captive - RES,8700.81,False,captive,cea_general_review_2025_table_1.6,"plants in industries with demand >=1 MW before FY2021-22, >=0.5 MW after"
+2023-24,2024,All India,ALL,india_total,total,Captive - Total,223902.69,True,captive,cea_general_review_2025_table_1.6,
+1947,1947,All India,ALL,india_total,other,Captive - Total (breakup not available),856.91,False,captive,cea_growth_1947_2025_table_7,breakup not available in source
+1947,1947,All India,ALL,india_total,total,Captive - Total,856.91,True,captive,cea_growth_1947_2025_table_7,
+2024-25,2025,All India,ALL,india_total,hydro,Captive - Hydro,380.0,False,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)
+2024-25,2025,All India,ALL,india_total,coal,Captive - Steam (mainly coal),186900.0,False,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)
+2024-25,2025,All India,ALL,india_total,oil_diesel,Captive - Diesel,12010.0,False,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)
+2024-25,2025,All India,ALL,india_total,gas,Captive - Gas,23008.0,False,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)
+2024-25,2025,All India,ALL,india_total,res_total,Captive - RES,12800.0,False,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)
+2024-25,2025,All India,ALL,india_total,total,Captive - Total,235098.0,True,captive,cea_growth_1947_2025_table_7,estimated (marked @ in source)

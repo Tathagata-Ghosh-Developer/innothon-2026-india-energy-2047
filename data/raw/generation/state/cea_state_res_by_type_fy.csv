@@ -1,0 +1,589 @@
+fiscal_year,fy_end_year,region,state,row_type,source,source_detail,generation_gwh,is_subtotal,scope,source_id,note
+2022-23,2023,Northern,Chandigarh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,solar,Solar,12.61,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Chandigarh,state,res_total,Total RES,12.61,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,solar,Solar,236.11,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,other,Waste to Energy,294.09,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Delhi,state,res_total,Total RES,530.2,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,solar,Solar,555.2,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,biomass,Biomass,356.07,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,biomass,Bagasse,203.01,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,hydro_small,Small Hydro (<=25 MW),241.9,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,other,Waste to Energy,63.55,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Haryana,state,res_total,Total RES,1419.73,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,solar,Solar,58.76,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,hydro_small,Small Hydro (<=25 MW),2854.07,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Himachal Pradesh,state,res_total,Total RES,2912.83,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,solar,Solar,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,hydro_small,Small Hydro (<=25 MW),393.2,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Jammu and Kashmir,state,res_total,Total RES,393.2,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,solar,Solar,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Ladakh,state,res_total,Total RES,0.0,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,solar,Solar,2778.66,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,biomass,Biomass,497.68,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,biomass,Bagasse,210.76,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,hydro_small,Small Hydro (<=25 MW),682.48,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Punjab,state,res_total,Total RES,4169.58,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,wind,Wind,6111.41,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,solar,Solar,34474.43,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,biomass,Biomass,397.05,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,hydro_small,Small Hydro (<=25 MW),7.17,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Rajasthan,state,res_total,Total RES,40990.05,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,solar,Solar,3674.02,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,biomass,Biomass,66.35,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,biomass,Bagasse,3183.67,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,hydro_small,Small Hydro (<=25 MW),234.69,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,other,Waste to Energy,58.45,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttar Pradesh,state,res_total,Total RES,7217.18,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,solar,Solar,331.8,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,biomass,Bagasse,248.52,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,hydro_small,Small Hydro (<=25 MW),352.07,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,Uttarakhand,state,res_total,Total RES,932.39,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,wind,Wind,6111.41,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,solar,Solar,42121.59,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,biomass,Biomass,1317.15,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,biomass,Bagasse,3845.96,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),4765.58,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,other,Waste to Energy,416.08,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Northern,ALL,region_total,res_total,Total RES,58577.77,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,solar,Solar,635.42,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,biomass,Biomass,1194.6,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,biomass,Bagasse,17.1,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,hydro_small,Small Hydro (<=25 MW),155.92,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Chhattisgarh,state,res_total,Total RES,2003.05,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,wind,Wind,19206.22,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,solar,Solar,10335.32,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,biomass,Bagasse,5.76,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,hydro_small,Small Hydro (<=25 MW),213.1,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,other,Waste to Energy,2.24,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Gujarat,state,res_total,Total RES,29762.63,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,wind,Wind,4486.72,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,solar,Solar,3839.3,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,biomass,Biomass,38.76,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,biomass,Bagasse,113.05,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,hydro_small,Small Hydro (<=25 MW),357.97,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,other,Waste to Energy,36.93,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Madhya Pradesh,state,res_total,Total RES,8872.72,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,wind,Wind,7243.06,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,solar,Solar,4387.85,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,biomass,Biomass,236.48,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,biomass,Bagasse,4572.03,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,hydro_small,Small Hydro (<=25 MW),766.73,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,other,Waste to Energy,0.44,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Maharashtra,state,res_total,Total RES,17206.59,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,solar,Solar,27.4,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,biomass,Biomass,3.22,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Dadra and Nagar Haveli and Daman and Diu,state,res_total,Total RES,30.62,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,solar,Solar,14.87,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,other,Waste to Energy,5.09,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,Goa,state,res_total,Total RES,19.96,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,wind,Wind,30935.99,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,solar,Solar,19240.16,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,biomass,Biomass,1473.06,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,biomass,Bagasse,4707.94,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,hydro_small,Small Hydro (<=25 MW),1493.72,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,other,Waste to Energy,44.7,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Western,ALL,region_total,res_total,Total RES,57895.56,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,wind,Wind,7426.46,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,solar,Solar,8140.72,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,biomass,Biomass,54.86,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,biomass,Bagasse,99.93,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,hydro_small,Small Hydro (<=25 MW),410.9,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,other,Waste to Energy,279.04,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Andhra Pradesh,state,res_total,Total RES,16411.91,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,wind,Wind,279.23,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,solar,Solar,6745.46,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,biomass,Biomass,21.48,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,biomass,Bagasse,132.94,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,hydro_small,Small Hydro (<=25 MW),91.71,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,other,Waste to Energy,159.08,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Telangana,state,res_total,Total RES,7429.89,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,wind,Wind,9967.89,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,solar,Solar,14153.79,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,biomass,Biomass,106.9,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,biomass,Bagasse,3037.31,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,hydro_small,Small Hydro (<=25 MW),2308.59,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Karnataka,state,res_total,Total RES,29574.48,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,wind,Wind,179.32,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,solar,Solar,879.75,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,biomass,Bagasse,62.85,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,hydro_small,Small Hydro (<=25 MW),824.34,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Kerala,state,res_total,Total RES,1946.26,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,wind,Wind,16913.85,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,solar,Solar,9419.39,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,biomass,Biomass,126.93,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,biomass,Bagasse,869.56,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,hydro_small,Small Hydro (<=25 MW),296.71,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Tamil Nadu,state,res_total,Total RES,27626.45,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,solar,Solar,0.1,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Lakshadweep,state,res_total,Total RES,0.1,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,solar,Solar,12.24,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,Puducherry,state,res_total,Total RES,12.24,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,wind,Wind,34766.76,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,solar,Solar,39351.45,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,biomass,Biomass,310.17,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,biomass,Bagasse,4202.58,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),3932.25,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,other,Waste to Energy,438.12,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Southern,ALL,region_total,res_total,Total RES,83001.33,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,solar,Solar,23.94,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,hydro_small,Small Hydro (<=25 MW),13.94,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Andaman and Nicobar Islands,state,res_total,Total RES,37.88,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,solar,Solar,169.53,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,biomass,Bagasse,106.68,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,hydro_small,Small Hydro (<=25 MW),12.63,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Bihar,state,res_total,Total RES,288.85,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,solar,Solar,19.7,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,hydro_small,Small Hydro (<=25 MW),2.4,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Jharkhand,state,res_total,Total RES,22.1,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,solar,Solar,706.24,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,biomass,Biomass,60.95,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,hydro_small,Small Hydro (<=25 MW),424.92,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Odisha,state,res_total,Total RES,1192.1,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,solar,Solar,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,hydro_small,Small Hydro (<=25 MW),12.35,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,Sikkim,state,res_total,Total RES,12.35,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,solar,Solar,125.04,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,hydro_small,Small Hydro (<=25 MW),204.44,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,other,Waste to Energy,1629.64,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,West Bengal,state,res_total,Total RES,1959.12,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,wind,Wind,0.0,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,solar,Solar,1044.45,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,biomass,Biomass,60.95,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,biomass,Bagasse,106.68,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),670.69,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,other,Waste to Energy,1629.64,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,Eastern,ALL,region_total,res_total,Total RES,3512.41,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,solar,Solar,22.27,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,hydro_small,Small Hydro (<=25 MW),2.55,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,other,Waste to Energy,0.03,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Arunachal Pradesh,state,res_total,Total RES,24.85,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,solar,Solar,216.35,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,hydro_small,Small Hydro (<=25 MW),62.66,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Assam,state,res_total,Total RES,279.01,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,solar,Solar,8.17,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,other,Waste to Energy,0.63,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Manipur,state,res_total,Total RES,8.79,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,solar,Solar,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,hydro_small,Small Hydro (<=25 MW),72.16,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Meghalaya,state,res_total,Total RES,72.16,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,solar,Solar,3.21,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,hydro_small,Small Hydro (<=25 MW),59.06,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Mizoram,state,res_total,Total RES,62.27,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,solar,Solar,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,hydro_small,Small Hydro (<=25 MW),111.95,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Nagaland,state,res_total,Total RES,111.95,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,wind,Wind,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,solar,Solar,6.58,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,Tripura,state,res_total,Total RES,6.58,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,wind,Wind,0.0,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,solar,Solar,256.58,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,biomass,Biomass,0.0,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,biomass,Bagasse,0.0,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),308.38,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,other,Waste to Energy,0.65,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,North-Eastern,ALL,region_total,res_total,Total RES,565.61,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,wind,Wind,71814.16,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,solar,Solar,102014.24,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,biomass,Biomass,3161.32,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,biomass,Bagasse,12863.16,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,hydro_small,Small Hydro (<=25 MW),11170.61,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,other,Waste to Energy,2529.18,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2022-23,2023,All India,ALL,india_total,res_total,Total RES,203552.68,True,utilities,cea_general_review_2024_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,solar,Solar,11.7,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Chandigarh,state,res_total,Total RES,11.7,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,solar,Solar,206.53,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,other,Waste to Energy,522.28,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Delhi,state,res_total,Total RES,728.81,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,solar,Solar,992.91,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,biomass,Biomass,294.12,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,biomass,Bagasse,83.6,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,hydro_small,Small Hydro (<=25 MW),222.05,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,other,Waste to Energy,58.82,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Haryana,state,res_total,Total RES,1651.5,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,solar,Solar,59.54,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,hydro_small,Small Hydro (<=25 MW),2526.98,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Himachal Pradesh,state,res_total,Total RES,2586.52,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,solar,Solar,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,hydro_small,Small Hydro (<=25 MW),408.69,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Jammu and Kashmir,state,res_total,Total RES,408.69,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,solar,Solar,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Ladakh,state,res_total,Total RES,0.0,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,solar,Solar,2673.99,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,biomass,Biomass,613.44,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,biomass,Bagasse,197.99,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,hydro_small,Small Hydro (<=25 MW),636.97,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Punjab,state,res_total,Total RES,4122.4,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,wind,Wind,8390.67,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,solar,Solar,38363.28,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,biomass,Biomass,387.55,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,hydro_small,Small Hydro (<=25 MW),7.45,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Rajasthan,state,res_total,Total RES,47148.96,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,solar,Solar,3971.31,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,biomass,Biomass,46.65,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,biomass,Bagasse,2923.55,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,hydro_small,Small Hydro (<=25 MW),175.24,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,other,Waste to Energy,84.85,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttar Pradesh,state,res_total,Total RES,7201.59,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,solar,Solar,331.8,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,biomass,Bagasse,248.52,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,hydro_small,Small Hydro (<=25 MW),350.62,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,Uttarakhand,state,res_total,Total RES,930.94,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,wind,Wind,8390.67,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,solar,Solar,46611.07,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,biomass,Biomass,1341.76,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,biomass,Bagasse,3453.66,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),4328.01,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,other,Waste to Energy,665.95,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Northern,ALL,region_total,res_total,Total RES,64791.12,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,solar,Solar,943.75,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,biomass,Biomass,1368.61,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,biomass,Bagasse,19.54,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,hydro_small,Small Hydro (<=25 MW),145.54,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Chhattisgarh,state,res_total,Total RES,2477.44,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,wind,Wind,24794.5,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,solar,Solar,13468.91,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,biomass,Bagasse,2.13,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,hydro_small,Small Hydro (<=25 MW),217.68,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Gujarat,state,res_total,Total RES,38483.22,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,wind,Wind,4949.78,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,solar,Solar,4025.19,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,biomass,Biomass,84.62,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,biomass,Bagasse,97.01,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,hydro_small,Small Hydro (<=25 MW),469.6,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,other,Waste to Energy,28.83,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Madhya Pradesh,state,res_total,Total RES,9655.02,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,wind,Wind,8228.97,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,solar,Solar,5814.13,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,biomass,Biomass,304.61,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,biomass,Bagasse,3495.82,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,hydro_small,Small Hydro (<=25 MW),888.48,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,other,Waste to Energy,33.4,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Maharashtra,state,res_total,Total RES,18765.41,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,solar,Solar,15.74,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,biomass,Biomass,13.12,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Dadra and Nagar Haveli and Daman and Diu,state,res_total,Total RES,28.86,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,solar,Solar,59.99,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,other,Waste to Energy,7.96,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,Goa,state,res_total,Total RES,67.95,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,wind,Wind,37973.25,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,solar,Solar,24327.7,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,biomass,Biomass,1770.96,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,biomass,Bagasse,3614.5,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,hydro_small,Small Hydro (<=25 MW),1721.3,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,other,Waste to Energy,70.19,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Western,ALL,region_total,res_total,Total RES,69477.9,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,wind,Wind,8644.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,solar,Solar,8300.03,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,biomass,Biomass,18.75,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,biomass,Bagasse,66.63,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,hydro_small,Small Hydro (<=25 MW),127.1,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,other,Waste to Energy,307.97,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Andhra Pradesh,state,res_total,Total RES,17464.48,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,wind,Wind,304.63,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,solar,Solar,6884.68,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,biomass,Biomass,10.57,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,biomass,Bagasse,95.08,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,hydro_small,Small Hydro (<=25 MW),58.87,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,other,Waste to Energy,155.29,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Telangana,state,res_total,Total RES,7509.1,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,wind,Wind,10950.2,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,solar,Solar,15404.09,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,biomass,Biomass,47.45,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,biomass,Bagasse,2754.06,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,hydro_small,Small Hydro (<=25 MW),1370.76,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Karnataka,state,res_total,Total RES,30526.55,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,wind,Wind,214.53,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,solar,Solar,1195.28,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,biomass,Bagasse,78.08,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,hydro_small,Small Hydro (<=25 MW),716.31,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,other,Waste to Energy,0.04,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Kerala,state,res_total,Total RES,2204.24,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,wind,Wind,16908.08,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,solar,Solar,11737.48,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,biomass,Biomass,129.14,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,biomass,Bagasse,622.61,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,hydro_small,Small Hydro (<=25 MW),206.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Tamil Nadu,state,res_total,Total RES,29603.31,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,solar,Solar,0.09,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Lakshadweep,state,res_total,Total RES,0.09,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,solar,Solar,12.24,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,Puducherry,state,res_total,Total RES,12.24,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,wind,Wind,37021.43,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,solar,Solar,43533.89,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,biomass,Biomass,205.91,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,biomass,Bagasse,3616.46,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),2479.03,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,other,Waste to Energy,463.31,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Southern,ALL,region_total,res_total,Total RES,87320.02,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,solar,Solar,27.5,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,hydro_small,Small Hydro (<=25 MW),12.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Andaman and Nicobar Islands,state,res_total,Total RES,39.5,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,solar,Solar,195.19,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,biomass,Bagasse,140.98,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,hydro_small,Small Hydro (<=25 MW),5.92,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Bihar,state,res_total,Total RES,342.08,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,solar,Solar,17.64,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,hydro_small,Small Hydro (<=25 MW),5.52,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Jharkhand,state,res_total,Total RES,23.16,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,solar,Solar,757.69,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,biomass,Biomass,96.07,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,hydro_small,Small Hydro (<=25 MW),407.97,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Odisha,state,res_total,Total RES,1261.72,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,solar,Solar,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,hydro_small,Small Hydro (<=25 MW),12.35,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,Sikkim,state,res_total,Total RES,12.35,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,solar,Solar,168.32,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,biomass,Biomass,2.49,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,hydro_small,Small Hydro (<=25 MW),204.46,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,other,Waste to Energy,1545.13,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,West Bengal,state,res_total,Total RES,1920.39,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,wind,Wind,0.0,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,solar,Solar,1166.33,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,biomass,Biomass,98.55,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,biomass,Bagasse,140.98,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),648.22,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,other,Waste to Energy,1545.13,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,Eastern,ALL,region_total,res_total,Total RES,3599.2,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,solar,Solar,1.89,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,hydro_small,Small Hydro (<=25 MW),0.66,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Arunachal Pradesh,state,res_total,Total RES,2.55,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,solar,Solar,316.31,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,hydro_small,Small Hydro (<=25 MW),64.2,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,other,Waste to Energy,0.75,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Assam,state,res_total,Total RES,381.26,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,solar,Solar,7.73,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,other,Waste to Energy,1.23,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Manipur,state,res_total,Total RES,8.96,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,solar,Solar,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,hydro_small,Small Hydro (<=25 MW),66.55,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Meghalaya,state,res_total,Total RES,66.55,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,solar,Solar,3.19,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,hydro_small,Small Hydro (<=25 MW),95.93,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Mizoram,state,res_total,Total RES,99.11,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,solar,Solar,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,hydro_small,Small Hydro (<=25 MW),81.14,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Nagaland,state,res_total,Total RES,81.14,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,wind,Wind,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,solar,Solar,7.01,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,biomass,Biomass,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,biomass,Bagasse,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,hydro_small,Small Hydro (<=25 MW),0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,other,Waste to Energy,0.0,False,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,Tripura,state,res_total,Total RES,7.01,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,wind,Wind,0.0,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,solar,Solar,336.12,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,biomass,Biomass,0.0,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,biomass,Bagasse,0.0,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,hydro_small,Small Hydro (<=25 MW),308.48,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,other,Waste to Energy,1.98,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,North-Eastern,ALL,region_total,res_total,Total RES,646.59,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,wind,Wind,83385.35,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,solar,Solar,115975.11,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,biomass,Biomass,3417.19,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,biomass,Bagasse,10825.59,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,hydro_small,Small Hydro (<=25 MW),9485.04,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,other,Waste to Energy,2746.55,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table
+2023-24,2024,All India,ALL,india_total,res_total,Total RES,225834.83,True,utilities,cea_general_review_2025_table_4.7,RES of central-sector plants is allocated to host states in this table

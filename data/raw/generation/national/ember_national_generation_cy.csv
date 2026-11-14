@@ -1,0 +1,370 @@
+year,region,state,source,source_detail,generation_gwh,is_subtotal,scope,source_id
+1985,All India,ALL,biomass,Bioenergy,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,coal,Coal,116040.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,gas,Gas,2160.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,hydro,Hydro,51810.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,nuclear,Nuclear,4510.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,oil_diesel,Other fossil,11870.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,total,Total generation,186390.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1985,All India,ALL,wind,Wind,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,biomass,Bioenergy,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,coal,Coal,129900.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,gas,Gas,3680.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,hydro,Hydro,52570.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,nuclear,Nuclear,5020.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,oil_diesel,Other fossil,11500.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,total,Total generation,202670.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1986,All India,ALL,wind,Wind,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,biomass,Bioenergy,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,coal,Coal,152800.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,gas,Gas,4240.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,hydro,Hydro,48960.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,nuclear,Nuclear,5320.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,oil_diesel,Other fossil,12350.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,total,Total generation,223670.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1987,All India,ALL,wind,Wind,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,biomass,Bioenergy,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,coal,Coal,164680.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,gas,Gas,3600.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,hydro,Hydro,54610.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,nuclear,Nuclear,6080.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,oil_diesel,Other fossil,12330.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,total,Total generation,241300.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1988,All India,ALL,wind,Wind,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,biomass,Bioenergy,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,coal,Coal,184980.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,gas,Gas,7280.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,hydro,Hydro,63370.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,nuclear,Nuclear,4020.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,oil_diesel,Other fossil,12810.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,total,Total generation,272460.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1989,All India,ALL,wind,Wind,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,biomass,Bioenergy,40.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,coal,Coal,191630.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,gas,Gas,9960.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,hydro,Hydro,66400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,nuclear,Nuclear,6390.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,oil_diesel,Other fossil,13310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,total,Total generation,287760.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1990,All India,ALL,wind,Wind,30.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,biomass,Bioenergy,100.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,coal,Coal,214120.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,gas,Gas,13350.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,hydro,Hydro,73920.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,nuclear,Nuclear,5410.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,oil_diesel,Other fossil,13440.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,total,Total generation,320450.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1991,All India,ALL,wind,Wind,110.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,biomass,Bioenergy,120.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,coal,Coal,229410.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,gas,Gas,16260.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,hydro,Hydro,70060.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,nuclear,Nuclear,6400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,oil_diesel,Other fossil,14810.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,total,Total generation,337150.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1992,All India,ALL,wind,Wind,90.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,biomass,Bioenergy,250.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,coal,Coal,252780.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,gas,Gas,17880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,hydro,Hydro,70730.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,nuclear,Nuclear,6230.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,oil_diesel,Other fossil,14210.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,total,Total generation,362170.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1993,All India,ALL,wind,Wind,90.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,biomass,Bioenergy,380.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,coal,Coal,264610.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,gas,Gas,21880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,hydro,Hydro,80210.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,nuclear,Nuclear,4950.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,oil_diesel,Other fossil,15750.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,total,Total generation,387970.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1994,All India,ALL,wind,Wind,190.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,biomass,Bioenergy,560.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,coal,Coal,296290.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,gas,Gas,29430.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,hydro,Hydro,75920.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,nuclear,Nuclear,7610.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,oil_diesel,Other fossil,16830.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,solar,Solar,0.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,total,Total generation,427140.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1995,All India,ALL,wind,Wind,500.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,biomass,Bioenergy,760.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,coal,Coal,312230.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,gas,Gas,32020.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,hydro,Hydro,69060.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,nuclear,Nuclear,8400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,oil_diesel,Other fossil,19850.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,total,Total generation,443210.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1996,All India,ALL,wind,Wind,880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,biomass,Bioenergy,980.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,coal,Coal,325830.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,gas,Gas,40180.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,hydro,Hydro,70210.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,nuclear,Nuclear,10070.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,oil_diesel,Other fossil,20890.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,total,Total generation,469160.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1997,All India,ALL,wind,Wind,990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,biomass,Bioenergy,1290.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,coal,Coal,336480.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,gas,Gas,50170.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,hydro,Hydro,83630.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,nuclear,Nuclear,11370.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,oil_diesel,Other fossil,21040.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,total,Total generation,505070.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1998,All India,ALL,wind,Wind,1080.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,biomass,Bioenergy,1690.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,coal,Coal,365440.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,gas,Gas,59010.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,hydro,Hydro,82250.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,nuclear,Nuclear,12730.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,oil_diesel,Other fossil,24800.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,total,Total generation,547380.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+1999,All India,ALL,wind,Wind,1450.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,biomass,Bioenergy,1690.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,coal,Coal,390230.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,gas,Gas,55960.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,hydro,Hydro,76990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,nuclear,Nuclear,15770.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,oil_diesel,Other fossil,29160.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,total,Total generation,571390.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2000,All India,ALL,wind,Wind,1580.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,biomass,Bioenergy,2070.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,coal,Coal,408290.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,gas,Gas,55930.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,hydro,Hydro,72020.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,nuclear,Nuclear,18890.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,oil_diesel,Other fossil,26790.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,total,Total generation,586090.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2001,All India,ALL,wind,Wind,2090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,biomass,Bioenergy,2140.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,coal,Coal,426700.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,gas,Gas,62880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,hydro,Hydro,68540.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,nuclear,Nuclear,19350.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,oil_diesel,Other fossil,27930.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,total,Total generation,609640.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2002,All India,ALL,wind,Wind,2090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,biomass,Bioenergy,2710.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,coal,Coal,441470.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,gas,Gas,72800.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,hydro,Hydro,69300.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,nuclear,Nuclear,18140.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,oil_diesel,Other fossil,31090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,solar,Solar,20.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,total,Total generation,638130.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2003,All India,ALL,wind,Wind,2600.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,biomass,Bioenergy,3310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,coal,Coal,463010.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,gas,Gas,76580.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,hydro,Hydro,100640.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,nuclear,Nuclear,21260.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,oil_diesel,Other fossil,28270.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,solar,Solar,20.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,total,Total generation,698320.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2004,All India,ALL,wind,Wind,5230.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,biomass,Bioenergy,4040.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,coal,Coal,478480.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,gas,Gas,75470.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,hydro,Hydro,97420.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,nuclear,Nuclear,17730.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,oil_diesel,Other fossil,25370.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,solar,Solar,20.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,total,Total generation,704520.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2005,All India,ALL,wind,Wind,5990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,biomass,Bioenergy,5590.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,coal,Coal,505460.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,gas,Gas,74700.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,hydro,Hydro,112620.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,nuclear,Nuclear,17630.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,oil_diesel,Other fossil,19080.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,solar,Solar,10.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,total,Total generation,744430.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2006,All India,ALL,wind,Wind,9340.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,biomass,Bioenergy,7400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,coal,Coal,533270.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,gas,Gas,90050.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,hydro,Hydro,122610.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,nuclear,Nuclear,17830.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,oil_diesel,Other fossil,13360.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,solar,Solar,60.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,total,Total generation,796260.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2007,All India,ALL,wind,Wind,11680.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,biomass,Bioenergy,9300.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,coal,Coal,573120.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,gas,Gas,85880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,hydro,Hydro,115170.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,nuclear,Nuclear,15230.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,oil_diesel,Other fossil,15270.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,solar,Solar,60.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,total,Total generation,828410.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2008,All India,ALL,wind,Wind,14380.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,biomass,Bioenergy,10560.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,coal,Coal,611110.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,gas,Gas,104370.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,hydro,Hydro,106340.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,nuclear,Nuclear,16820.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,oil_diesel,Other fossil,13080.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,solar,Solar,80.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,total,Total generation,878630.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2009,All India,ALL,wind,Wind,16270.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,biomass,Bioenergy,13220.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,coal,Coal,642970.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,gas,Gas,118030.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,hydro,Hydro,108740.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,nuclear,Nuclear,23080.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,oil_diesel,Other fossil,10780.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,solar,Solar,110.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,total,Total generation,936390.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2010,All India,ALL,wind,Wind,19460.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,biomass,Bioenergy,15460.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,coal,Coal,701250.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,gas,Gas,117560.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,hydro,Hydro,131700.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,nuclear,Nuclear,32220.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,oil_diesel,Other fossil,9350.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,solar,Solar,830.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,total,Total generation,1032320.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2011,All India,ALL,wind,Wind,23950.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,biomass,Bioenergy,16520.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,coal,Coal,787130.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,gas,Gas,96250.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,hydro,Hydro,115780.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,nuclear,Nuclear,33140.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,oil_diesel,Other fossil,10070.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,solar,Solar,2100.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,total,Total generation,1088420.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2012,All India,ALL,wind,Wind,27430.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,biomass,Bioenergy,17570.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,coal,Coal,847970.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,gas,Gas,66310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,hydro,Hydro,131980.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,nuclear,Nuclear,33310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,oil_diesel,Other fossil,10650.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,solar,Solar,3430.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,total,Total generation,1141230.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2013,All India,ALL,wind,Wind,30010.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,biomass,Bioenergy,21140.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,coal,Coal,949930.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,gas,Gas,64010.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,hydro,Hydro,139000.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,nuclear,Nuclear,34690.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,oil_diesel,Other fossil,11550.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,solar,Solar,4910.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,total,Total generation,1258680.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2014,All India,ALL,wind,Wind,33450.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,biomass,Bioenergy,18360.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,coal,Coal,1006550.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,gas,Gas,64770.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,hydro,Hydro,133480.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,nuclear,Nuclear,38310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,oil_diesel,Other fossil,9260.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,solar,Solar,7090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,total,Total generation,1310560.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2015,All India,ALL,wind,Wind,32740.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,biomass,Bioenergy,17200.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,coal,Coal,1073600.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,gas,Gas,72620.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,hydro,Hydro,128550.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,nuclear,Nuclear,37900.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,oil_diesel,Other fossil,9410.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,solar,Solar,12200.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,total,Total generation,1394930.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2016,All India,ALL,wind,Wind,43450.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,biomass,Bioenergy,14990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,coal,Coal,1115240.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,gas,Gas,74990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,hydro,Hydro,135980.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,nuclear,Nuclear,37410.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,oil_diesel,Other fossil,8790.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,solar,Solar,22360.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,total,Total generation,1462390.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2017,All India,ALL,wind,Wind,52630.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,biomass,Bioenergy,18400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,coal,Coal,1198860.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,gas,Gas,71260.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,hydro,Hydro,139920.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,nuclear,Nuclear,39050.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,oil_diesel,Other fossil,6400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,solar,Solar,37450.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,total,Total generation,1571650.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2018,All India,ALL,wind,Wind,60310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,biomass,Bioenergy,18990.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,coal,Coal,1198760.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,gas,Gas,71950.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,hydro,Hydro,162290.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,nuclear,Nuclear,45160.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,oil_diesel,Other fossil,3070.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,solar,Solar,37450.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,total,Total generation,1600980.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2019,All India,ALL,wind,Wind,63310.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,biomass,Bioenergy,19880.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,coal,Coal,1143780.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,gas,Gas,74790.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,hydro,Hydro,163940.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,nuclear,Nuclear,44610.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,oil_diesel,Other fossil,3090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,solar,Solar,51532.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,total,Total generation,1562052.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2020,All India,ALL,wind,Wind,60430.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,biomass,Bioenergy,21200.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,coal,Coal,1255560.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,gas,Gas,60400.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,hydro,Hydro,160570.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,nuclear,Nuclear,43920.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,oil_diesel,Other fossil,3390.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,solar,Solar,64015.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,total,Total generation,1677145.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2021,All India,ALL,wind,Wind,68090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,biomass,Bioenergy,23290.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,coal,Coal,1344420.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,gas,Gas,46170.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,hydro,Hydro,175090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,nuclear,Nuclear,46190.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,oil_diesel,Other fossil,3480.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,solar,Solar,94357.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,total,Total generation,1803047.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2022,All India,ALL,wind,Wind,70050.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,biomass,Bioenergy,23010.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,coal,Coal,1445440.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,gas,Gas,50800.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,hydro,Hydro,149430.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,nuclear,Nuclear,48200.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,oil_diesel,Other fossil,3850.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,solar,Solar,114012.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,total,Total generation,1916852.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2023,All India,ALL,wind,Wind,82110.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,biomass,Bioenergy,22250.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,coal,Coal,1517900.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,gas,Gas,56440.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,hydro,Hydro,156530.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,nuclear,Nuclear,54700.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,oil_diesel,Other fossil,4090.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,solar,Solar,141665.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,total,Total generation,2035115.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2024,All India,ALL,wind,Wind,81540.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,biomass,Bioenergy,23033.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,coal,Coal,1474156.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,gas,Gas,48516.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,hydro,Hydro,177950.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,nuclear,Nuclear,53811.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,oil_diesel,Other fossil,4095.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,solar,Solar,194599.0,False,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,total,Total generation,2080163.0,True,utilities+captive (Ember national estimate),ember_yearly_global
+2025,All India,ALL,wind,Wind,104002.0,False,utilities+captive (Ember national estimate),ember_yearly_global
