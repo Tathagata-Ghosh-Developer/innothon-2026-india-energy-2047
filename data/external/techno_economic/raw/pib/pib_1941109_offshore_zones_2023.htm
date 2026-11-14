@@ -1,0 +1,1149 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power &amp; NRE Minister Shri R. K. Singh" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=1941109" /><meta property="og:description" content="The Government has taken several steps to enhance the offshore wind power generation capacity in the country. These, inter alia, include;
+
+
+	
+	
+		Government notified ‘Offshore Wind Energy Policy’" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqxzvmju2xy3yqq-f-f09ca9e91-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":23,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"576a863","ak.r":40698,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":59960,"ak.gh":"23.205.88.159","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794694689","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==G0n0hzKVL6o3RvUukj4HwmbMnsF5BWVm64Rn7uTFqaU9qHf3cvaL4Ym1PrZW/lZedWWxawy4f4XSwDh2K8/umQTGTNOCyUZr62nfDemVDFHC+RswH7KvvjuEAVkzKndo3Piv/IdRNxhs1vQ2Mne9x1NLHHJ81FQQ3HFVc6xv8P14RfNtQsV64eHg3/dljajjguJCHK3SHcs6i+7ixgGVfV4y97YDKDUq4jAShoPtQMaaKfa3bJb6FWiGI5HGKz5Ks1NXRDSuAMp5Vs8Xn6cvJ8aOkO8FeYkaLF8C63Z1VNHpDyVln02ZS2hgxhqOu6dOMJAK9aFVYRh6bQRPNrkkIY9xcOaErUhR3v+KM8A1l0agmdI/MuBbbVdReVTnr+5GNFgYc/8HMaPTrhbBAp/hG9YpNi3s35lIZGmOyqlJ6RY=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=1941109&amp;reg=48&amp;lang=2" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639191042600000000" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="ZgxUSKS2tJ7SES8E1NCmC57UOEcFgXtXorNj41mkIqPTZZx1jPKrNX2IoShajCJ+zw5MEfxkKeiKDNR50P/W6UVkrw5nWLKNc7VE1Doh485tNl2aFWDv49BEz+soXggemSTD7OlVHKhqdtwX/LGYvJaYI6s0aA6EI+FomdH+0zDMdvygre+gGOeQ3IkTygXr3fYJefT+ef9LWUVBAH+C7N1lfxJSvwu4/oi8RPSk92freL6PRIjyzTOecPUvXn+H7j3FPiOWe8Pwo2kd83wETWmQtqc=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="1941109" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Ministry of New and Renewable Energy 
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"></span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              20 JUL 2023 6:01PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The Government has taken several steps to enhance the offshore wind power generation capacity in the country. These, <em>inter alia</em>, include;</span></span></p>
+
+<ul>
+	<li style="list-style-type:none">
+	<ul style="list-style-type:disc">
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Government notified &lsquo;Offshore Wind Energy Policy&rsquo; in October 2015 to provide framework for the development of offshore wind energy in the country.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">National Institute of Wind Energy had issued &lsquo;Guidelines for Offshore wind Power Assessment, Studies and Surveys&rsquo; in September, 2018 in order to facilitate the offshore wind studies/surveys by interested developers.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">For initial phase of developments, potential offshore wind zones off the coast of Gujarat and Tamil Nadu have been identified through meso-scale study.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">NIWE installed a LiDAR off the coast of Gujarat in Nov, 2017 and collected 02 years wind data. NIWE has also conducted Geophysical, Geotechnical study, Rapid EIA study, Oceanographic study (Wave, Tide &amp; current) for a site off the coast of Gujarat</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Geotechnical study at three bore hole locations and Rapid EIA study for installation and commissioning of a LiDAR off Tamil Nadu coast has been carried out.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Ministry has issued a &lsquo;Strategy Paper for Establishment of Offshore Wind Energy Projects&rsquo; in July, 2022 indicating various development models.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">For seabed leasing of initial 04 GW offshore wind capacity sites off Tamil Nadu coast, the draft tender document along with contractual agreements have been been prepared and circulated for stakeholder comments.</span></span></li>
+	</ul>
+	</li>
+</ul>
+
+<p style="margin-right:6pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">&middot; The &lsquo;Offshore Wind Energy Lease Rules&rsquo; to regulate the allocation of offshore wind sea blocks to developers has been prepared and legally vetted.</span></span></p>
+
+<ul>
+	<li style="list-style-type:none">
+	<ul style="list-style-type:disc">
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Central Transmission Utility (CTU) has completed the planning for initial 10 GW offshore transmission capacity (05 GW each off Gujarat and Tamil Nadu coast).</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Offshore Wind has been included in the list of activities to be considered for trading of Carbon Credits under bilateral/co-operative approaches as per Article 6.2 Mechanism of Paris Agreement.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Waiver of Inter-State Transmission (ISTS) Charges has been extended for offshore wind power projects commissioned on or before 31.12.2032 with graded ISTS charges thereafter.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Waiver of additional surcharge is granted for electricity produced from offshore wind projects commissioned up to December, 2032 and supplied to Open Access Consumers.</span></span></li>
+	</ul>
+	</li>
+</ul>
+
+<p style="margin-left:5pt; margin-right:0cm; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Presently, there is no offshore wind power capacity under commissioning in the country.</span></span></p>
+
+<p style="margin-right:21.5pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This information was given by The Union Minister of New Renewable Energy &amp; Power Sh. R. K. Singh in Lok Sabha in a written reply today.</span></span></p>
+
+<p style="margin-left:7pt; margin-right:5.6pt; text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">*****</span></span></p>
+
+<p style="margin-left:7pt; margin-right:5.6pt; text-align:justify"><strong><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">AM/DP</span></span></strong></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 1941109)</span>
+                <span id="lblViews">Visitor Counter : 1737</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                
+                
+                
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d1941109"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d1941109"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d1941109"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d1941109"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d1941109"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Ministry of New and Renewable Energy 
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          20 JUL 2023 6:01PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The Government has taken several steps to enhance the offshore wind power generation capacity in the country. These, <em>inter alia</em>, include;</span></span></p>
+
+<ul>
+	<li style="list-style-type:none">
+	<ul style="list-style-type:disc">
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Government notified &lsquo;Offshore Wind Energy Policy&rsquo; in October 2015 to provide framework for the development of offshore wind energy in the country.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">National Institute of Wind Energy had issued &lsquo;Guidelines for Offshore wind Power Assessment, Studies and Surveys&rsquo; in September, 2018 in order to facilitate the offshore wind studies/surveys by interested developers.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">For initial phase of developments, potential offshore wind zones off the coast of Gujarat and Tamil Nadu have been identified through meso-scale study.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">NIWE installed a LiDAR off the coast of Gujarat in Nov, 2017 and collected 02 years wind data. NIWE has also conducted Geophysical, Geotechnical study, Rapid EIA study, Oceanographic study (Wave, Tide &amp; current) for a site off the coast of Gujarat</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Geotechnical study at three bore hole locations and Rapid EIA study for installation and commissioning of a LiDAR off Tamil Nadu coast has been carried out.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Ministry has issued a &lsquo;Strategy Paper for Establishment of Offshore Wind Energy Projects&rsquo; in July, 2022 indicating various development models.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">For seabed leasing of initial 04 GW offshore wind capacity sites off Tamil Nadu coast, the draft tender document along with contractual agreements have been been prepared and circulated for stakeholder comments.</span></span></li>
+	</ul>
+	</li>
+</ul>
+
+<p style="margin-right:6pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">&middot; The &lsquo;Offshore Wind Energy Lease Rules&rsquo; to regulate the allocation of offshore wind sea blocks to developers has been prepared and legally vetted.</span></span></p>
+
+<ul>
+	<li style="list-style-type:none">
+	<ul style="list-style-type:disc">
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Central Transmission Utility (CTU) has completed the planning for initial 10 GW offshore transmission capacity (05 GW each off Gujarat and Tamil Nadu coast).</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Offshore Wind has been included in the list of activities to be considered for trading of Carbon Credits under bilateral/co-operative approaches as per Article 6.2 Mechanism of Paris Agreement.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Waiver of Inter-State Transmission (ISTS) Charges has been extended for offshore wind power projects commissioned on or before 31.12.2032 with graded ISTS charges thereafter.</span></span></li>
+		<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Waiver of additional surcharge is granted for electricity produced from offshore wind projects commissioned up to December, 2032 and supplied to Open Access Consumers.</span></span></li>
+	</ul>
+	</li>
+</ul>
+
+<p style="margin-left:5pt; margin-right:0cm; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Presently, there is no offshore wind power capacity under commissioning in the country.</span></span></p>
+
+<p style="margin-right:21.5pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This information was given by The Union Minister of New Renewable Energy &amp; Power Sh. R. K. Singh in Lok Sabha in a written reply today.</span></span></p>
+
+<p style="margin-left:7pt; margin-right:5.6pt; text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">*****</span></span></p>
+
+<p style="margin-left:7pt; margin-right:5.6pt; text-align:justify"><strong><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">AM/DP</span></span></strong></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 1941109)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&text=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh&body=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&title=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&text=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh&body=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=1941109&title=Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power & NRE Minister Shri R. K. Singh&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="Potential offshore wind zones off the coast of Gujarat and Tamil Nadu identified; Planning completed for offshore transmission capacity for 05 GW each off Gujarat and Tamil Nadu coast: Union Power &amp; NRE Minister Shri R. K. Singh" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The Government has taken several steps to enhance the offshore wind power generation capacity in the country. These, &lt;em>inter alia&lt;/em>, include;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;ul>
+	&lt;li style=&quot;list-style-type:none&quot;>
+	&lt;ul style=&quot;list-style-type:disc&quot;>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Government notified &amp;lsquo;Offshore Wind Energy Policy&amp;rsquo; in October 2015 to provide framework for the development of offshore wind energy in the country.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>National Institute of Wind Energy had issued &amp;lsquo;Guidelines for Offshore wind Power Assessment, Studies and Surveys&amp;rsquo; in September, 2018 in order to facilitate the offshore wind studies/surveys by interested developers.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>For initial phase of developments, potential offshore wind zones off the coast of Gujarat and Tamil Nadu have been identified through meso-scale study.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>NIWE installed a LiDAR off the coast of Gujarat in Nov, 2017 and collected 02 years wind data. NIWE has also conducted Geophysical, Geotechnical study, Rapid EIA study, Oceanographic study (Wave, Tide &amp;amp; current) for a site off the coast of Gujarat&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Geotechnical study at three bore hole locations and Rapid EIA study for installation and commissioning of a LiDAR off Tamil Nadu coast has been carried out.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Ministry has issued a &amp;lsquo;Strategy Paper for Establishment of Offshore Wind Energy Projects&amp;rsquo; in July, 2022 indicating various development models.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>For seabed leasing of initial 04 GW offshore wind capacity sites off Tamil Nadu coast, the draft tender document along with contractual agreements have been been prepared and circulated for stakeholder comments.&lt;/span>&lt;/span>&lt;/li>
+	&lt;/ul>
+	&lt;/li>
+&lt;/ul>
+
+&lt;p style=&quot;margin-right:6pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&amp;middot; The &amp;lsquo;Offshore Wind Energy Lease Rules&amp;rsquo; to regulate the allocation of offshore wind sea blocks to developers has been prepared and legally vetted.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;ul>
+	&lt;li style=&quot;list-style-type:none&quot;>
+	&lt;ul style=&quot;list-style-type:disc&quot;>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Central Transmission Utility (CTU) has completed the planning for initial 10 GW offshore transmission capacity (05 GW each off Gujarat and Tamil Nadu coast).&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Offshore Wind has been included in the list of activities to be considered for trading of Carbon Credits under bilateral/co-operative approaches as per Article 6.2 Mechanism of Paris Agreement.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Waiver of Inter-State Transmission (ISTS) Charges has been extended for offshore wind power projects commissioned on or before 31.12.2032 with graded ISTS charges thereafter.&lt;/span>&lt;/span>&lt;/li>
+		&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Waiver of additional surcharge is granted for electricity produced from offshore wind projects commissioned up to December, 2032 and supplied to Open Access Consumers.&lt;/span>&lt;/span>&lt;/li>
+	&lt;/ul>
+	&lt;/li>
+&lt;/ul>
+
+&lt;p style=&quot;margin-left:5pt; margin-right:0cm; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Presently, there is no offshore wind power capacity under commissioning in the country.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-right:21.5pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>This information was given by The Union Minister of New Renewable Energy &amp;amp; Power Sh. R. K. Singh in Lok Sabha in a written reply today.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:7pt; margin-right:5.6pt; text-align:center&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>*****&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:7pt; margin-right:5.6pt; text-align:justify&quot;>&lt;strong>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>AM/DP&lt;/span>&lt;/span>&lt;/strong>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+<input type="hidden" name="__ncforminfo" value="_iSw0cyRUh6GPRnXc3WBoKIWz2EWD7os2w9DPr7y9H1Uw1nzBbcxR_-tjNVb5IC9nLH1EUqt99pa9cAW_7lFZNx8KY4IdKj23L8TnRCkTQL6UslEIZvqKA=="/></form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>

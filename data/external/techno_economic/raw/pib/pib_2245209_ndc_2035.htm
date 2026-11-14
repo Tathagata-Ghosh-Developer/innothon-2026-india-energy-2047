@@ -1,0 +1,1234 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=2245209" /><meta property="og:description" content="In a significant step towards strengthening India’s action, the Union Cabinet, under the chairmanship of Prime Minister Shri Narendra Modi, has approved India’s Nationally Determined Contribution (NDC" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqxzvmju2xy3zpa-f-f08739bca-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":37,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"576d60c","ak.r":40698,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":65161,"ak.gh":"23.205.88.159","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794694750","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==ZdGgbzRNQyeqq+GNCSjUTBS5HxBqHzGTlZrEQyWr3Y8VSrYfHdfznZEBtDQXyBkfBZEnSY3ohCo2Oku8nOznrUTGki7JkIW1X2yN2bI3iuR5rrt/lLURw+pDsu8hw/7Qi5IVWWhTDp3BNfTUMP89EICffh/DALmI7R9PgsdkNpGa/tATJxxVl6qcyHJdCvx0SzQFw0ubfIkI0NVKzV+I7Pb6nv2YEqDQscsxx7gB/Jy1mjW3nCfXGpnFuHYmLNfLpE/1HFNqgXeUE+pGBTEqTznECKrsthFu+1B++kOjIxeMDfzDRte0xBCLDH4Y2BLMO6LVcwNmU1vrRFvKPSoE+62t8M3wpG8jp6ha7YSPJ2jTBDXa1gfzk15NwHkvjVSQTRjoRs//Q1WzkfnKarPAf0soS9bJXoX71tak0de6VE0=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=2245209&amp;reg=3&amp;lang=1" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639246315009809930" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="YjbVT70f4YoZmPp0KUl333RcH7KyFHYKh/IYaWWdVtXsfREV78khGohohrsak1nBaJf7w0UEK9jIGnQLXTuGEIgDi2eKrdhlbWvKuLSSB8Lj5auP4Nx+lx93nZhIRlJaTASh/76tI8J3KAN7H1f7fNkMqrhgUn11EjLm6NUSVGIcumDvgY53P5Os6KOhvzcXaiAIZdZncjvVAAu0hsJHMiOfXxA8hnoldLHCLbmZhrhJIzkZH5l7lhS3XVQiDxI8J9jOPQ+Ht1xA/z6KmkKWuEDbRBI=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="2245209" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Cabinet
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"><br/>India commits to reduce Emissions Intensity of its GDP by 47 percent by 2035 from 2005 level<br/><br/>India to achieve 60 percent cumulative electric power installed capacity from non-fossil fuel-based energy resources by 2035<br/><br/>India to create Carbon Sink of 3.5 to 4.0 billion tonnes of CO₂ eq. through Forest and Tree Cover by 2035 from 2005 level<br/><br/>India&#39;s commitments are aligned with vision of Viksit Bharat @2047 and Net-Zero by 2070<br/></span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              25 MAR 2026 5:35PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">In a significant step towards strengthening India&rsquo;s action, the Union Cabinet, under the chairmanship of&nbsp;Prime Minister&nbsp;Shri Narendra Modi, has approved India&rsquo;s Nationally Determined Contribution (NDC) for the period 2031 to 2035, enhancing the country&rsquo;s ambition under the UNFCCC and its Paris Agreement while reinforcing its commitment to sustainable development and climate justice.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s NDC for 2031-35 is guided by the vision of Viksit Bharat, which is not just a goal for 2047, but a commitment to act today to build a prosperous, and climate resilient Bharat for the future generations. India&rsquo;s successive climate targets build upon India&rsquo;s earlier commitments, many of which have already been achieved ahead of schedule, reflecting country&rsquo;s consistent track record of delivering on climate action. The five qualitative targets, are intended to embed sustainability into everyday life and governance systems, promote climate-resilient development pathways, and enable a just and inclusive transition for all sections of the society. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>From Early Achievement to Higher Ambition:</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Embarking on its commitments towards positive climate actions, India has been periodically raising its ambition towards mitigating greenhouse gas emissions and after the update in 2022, has now announced its targets for 2031-35 marking a significant step towards the goal of achieving net-zero by 2070.&nbsp; India&rsquo;s original climate commitments i.e NDC submitted in 2015, laid a strong foundation, with targets by 2030 of 33&ndash;35% reduction in the emissions intensity of GDP and 40% share of non-fossil resources based electric power installed capacity, both of which were met, 11 years and 9 years ahead of the committed timelines, demonstrating a credible and action-oriented approach to climate governance.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Our emissions intensity has since reduced by 36% during 2005 to 2020, and the target has now been enhanced to 47% to be achieved by 2035. Towards the updated NDC&rsquo;s goal on enhancing share of non-fossil fuel energy resources in installed electric power capacity, the country has achieved 52.57 % non-fossil capacity (February 2026), successfully meeting the target five years ahead of the timeline and now the ambition has been further raised to 60% share of non-fossil fuel-based energy resources in installed electric power capacity to be achieved by 2035.&nbsp; Further on the NDC goal of creating additional carbon sink through forest and tree cover, India has already created 2.29 billion tonnes of CO<sub>2</sub> equivalent by 2021 Afforestation and ecosystem restoration efforts continue to contribute towards India&rsquo;s carbon sink targets while supporting rural livelihoods.&nbsp; Our afforestation efforts have been duly acknowledged by independent agencies such as Food and Agriculture Organisation (FAO) which has ranked India as third in terms of net gain in forest area and ninth in terms of area under forest. This progress is a testimony to the fact that India has maintained a balance between economy and ecology even as it maintains a high GDP growth rate. Now, we have further enhanced the ambition of creating carbon sink through forest and tree cover to 3.5-4.0 billion tonnes of CO<sub>2</sub> equivalent by 2035 from 2005 level.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate action has been sustained and ambitious, and its track record clearly shows the achievement of our targets ahead of time, which provides strong confidence in our ability to deliver on future commitments and demonstrates India&#39;s commitment to ambitious climate action.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Accelerating Clean Energy and Green Growth</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate strategy is implemented through a series of measures including those on large-scale renewable energy expansion, battery storage systems, and green energy corridors, cleaner manufacturing, ensuring reliable and sustainable infrastructure across the country.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">It also lays emphasis on strengthening institutional capacity, innovation ecosystems, and local-level adaptation measures, ensuring that climate considerations are integrated across key sectors of the economy through various schemes, including Green Hydrogen Mission, PM Surya Ghar: Muft Bijli Yojana; Production Linked Incentive (PLI) schemes, PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha Evam Utthaan Mahabhiyan); push for Carbon Capture, Utilization and Storage (CCUS); and nuclear energy. Further India is pursuing a positive climate action agenda by forging partnerships at international levels through initiatives such as International Solar Alliance (ISA), Coalition for Disaster Resilient Infrastructure (CDRI), Global Bio-fuel Alliance (GBA) and Leadership Group for Industry Transition (Lead-IT) etc.&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Enhancing Climate Adaptation</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate approach extends beyond mitigation actions and focuses on scaling-up adaptation actions. Recognizing that climate change impacts are already being felt, India has placed strong emphasis on adaptation and disaster resilience across the key actors of its economy. Some of the key measures towards the achievement of goals on adaptation are protection of vulnerable coastlines through mangrove restoration, coastal regulation, and climate-resilient infrastructure; early warning systems for cyclones and storm surges; targeted programmes for glacier monitoring, biodiversity conservation, and sustainable livelihoods in Himalayan states; climate-resilient infrastructure to address risks from landslides and glacial lake outburst floods; and implementation of Heat Action Plans across the States; community-based disaster preparedness and resilience programmes, etc. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Under its Climate Action framework, India&rsquo;s NDC is operationalized through the National Action Plan on Climate Change (NAPCC) and its nine national missions, as well as the State Action Plans on Climate Change (SAPCC). The framework is implemented in convergence with various schemes and programs of the central and State Governments ensuring a coordinated, whole of government approach for climate-resilient and low-carbon development.&rdquo;</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate action is being implemented at local level through various schemes and programme such as Jal Jeevan Mission, National Mission on Sustainable Agriculture, Sustainable Habitat, MISHTI (Mangrove Initiative for Shoreline Habitats &amp; Tangible Incomes), National Disaster Management Plan, Soil Health Card and Pradhan Mantri Krishi Sinchayee Yojana (PMKSY), etc.&nbsp;&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>People-Centric Approach</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate efforts are centered around the principle of &ldquo;Lifestyle for Environment (LiFE),&rdquo; which is transforming sustainable living into a mass movement and the initiatives like &lsquo;Ek Ped Maa Ke Nam&rsquo; to transform tree plantation into a people-driven climate action. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Approach to NDC (2031-35)</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">In shaping India&rsquo;s NDC for 2031&ndash;2035, the Government has considered the outcomes of the first Global Stocktake (GST), principle of Common but differentiated responsibilities and Respective Capabilities (CBDR-RC), and equity with a view to harmonize national realities, developmental priorities, energy security and the need for greater ambition in climate action, in line with the purpose and long-term goals of the Paris Agreement.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s successive climate commitments are the outcome of wide-ranging stakeholder consultations and studies by the ten working groups in NITI Aayog. These ten groups comprised of Central Ministries, domain experts, industry bodies, and civil society organizations, etc. Sector-specific inputs were carefully assessed across energy, industry, transport, agriculture, water, and urban development, ensuring that the revised targets are ambitious, achievable, and grounded in domestic capabilities. The process ensured a whole-of-government and whole-of-society approach, aligning national development priorities with climate objectives. The consultative approach reflects India&rsquo;s commitment to inclusive and participatory climate policymaking, while safeguarding growth, livelihoods, and energy and food security.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s successive climate commitments are likely to generate new opportunities for youth and women, making them key partners in green transition. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">With strong policy direction, technological innovation, and people&rsquo;s participation, India continues to demonstrate that economic growth and environmental responsibility can go hand in hand. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Cabinet&rsquo;s approval of India&rsquo;s Nationally Determined Contribution for the period 2031 to 2035 marks a major milestone in India&rsquo;s journey towards a low-carbon, climate-resilient future, further strengthening its role as a global leader in climate action.</span></span></p>
+
+<p style="text-align:center"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">*****</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>MJPS</strong></span></span></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 2245209)</span>
+                <span id="lblViews">Visitor Counter : 70370</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                <div class="ReleaseLang">Read this release in: 
+                
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245644' target="_blank">
+                            Bengali </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245345' target="_blank">
+                            Urdu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245317' target="_blank">
+                            हिन्दी </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245446' target="_blank">
+                            Marathi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245366' target="_blank">
+                            Assamese </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245600' target="_blank">
+                            Manipuri </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245571' target="_blank">
+                            Punjabi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245258' target="_blank">
+                            Gujarati </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245473' target="_blank">
+                            Odia </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2270066' target="_blank">
+                            Tamil </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245455' target="_blank">
+                            Telugu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245375' target="_blank">
+                            Kannada </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2245836' target="_blank">
+                            Malayalam </a>
+                    
+                </div>
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2245209"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2245209"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2245209"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2245209"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2245209"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Cabinet
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            <div style='height:30px;width:100%;'></div>India commits to reduce Emissions Intensity of its GDP by 47 percent by 2035 from 2005 level<div style='height:30px;width:100%;'></div><div style='height:30px;width:100%;'></div>India to achieve 60 percent cumulative electric power installed capacity from non-fossil fuel-based energy resources by 2035<div style='height:30px;width:100%;'></div><div style='height:30px;width:100%;'></div>India to create Carbon Sink of 3.5 to 4.0 billion tonnes of CO₂ eq. through Forest and Tree Cover by 2035 from 2005 level<div style='height:30px;width:100%;'></div><div style='height:30px;width:100%;'></div>India&#39;s commitments are aligned with vision of Viksit Bharat @2047 and Net-Zero by 2070<div style='height:30px;width:100%;'></div>
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          25 MAR 2026 5:35PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">In a significant step towards strengthening India&rsquo;s action, the Union Cabinet, under the chairmanship of&nbsp;Prime Minister&nbsp;Shri Narendra Modi, has approved India&rsquo;s Nationally Determined Contribution (NDC) for the period 2031 to 2035, enhancing the country&rsquo;s ambition under the UNFCCC and its Paris Agreement while reinforcing its commitment to sustainable development and climate justice.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s NDC for 2031-35 is guided by the vision of Viksit Bharat, which is not just a goal for 2047, but a commitment to act today to build a prosperous, and climate resilient Bharat for the future generations. India&rsquo;s successive climate targets build upon India&rsquo;s earlier commitments, many of which have already been achieved ahead of schedule, reflecting country&rsquo;s consistent track record of delivering on climate action. The five qualitative targets, are intended to embed sustainability into everyday life and governance systems, promote climate-resilient development pathways, and enable a just and inclusive transition for all sections of the society. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>From Early Achievement to Higher Ambition:</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Embarking on its commitments towards positive climate actions, India has been periodically raising its ambition towards mitigating greenhouse gas emissions and after the update in 2022, has now announced its targets for 2031-35 marking a significant step towards the goal of achieving net-zero by 2070.&nbsp; India&rsquo;s original climate commitments i.e NDC submitted in 2015, laid a strong foundation, with targets by 2030 of 33&ndash;35% reduction in the emissions intensity of GDP and 40% share of non-fossil resources based electric power installed capacity, both of which were met, 11 years and 9 years ahead of the committed timelines, demonstrating a credible and action-oriented approach to climate governance.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Our emissions intensity has since reduced by 36% during 2005 to 2020, and the target has now been enhanced to 47% to be achieved by 2035. Towards the updated NDC&rsquo;s goal on enhancing share of non-fossil fuel energy resources in installed electric power capacity, the country has achieved 52.57 % non-fossil capacity (February 2026), successfully meeting the target five years ahead of the timeline and now the ambition has been further raised to 60% share of non-fossil fuel-based energy resources in installed electric power capacity to be achieved by 2035.&nbsp; Further on the NDC goal of creating additional carbon sink through forest and tree cover, India has already created 2.29 billion tonnes of CO<sub>2</sub> equivalent by 2021 Afforestation and ecosystem restoration efforts continue to contribute towards India&rsquo;s carbon sink targets while supporting rural livelihoods.&nbsp; Our afforestation efforts have been duly acknowledged by independent agencies such as Food and Agriculture Organisation (FAO) which has ranked India as third in terms of net gain in forest area and ninth in terms of area under forest. This progress is a testimony to the fact that India has maintained a balance between economy and ecology even as it maintains a high GDP growth rate. Now, we have further enhanced the ambition of creating carbon sink through forest and tree cover to 3.5-4.0 billion tonnes of CO<sub>2</sub> equivalent by 2035 from 2005 level.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate action has been sustained and ambitious, and its track record clearly shows the achievement of our targets ahead of time, which provides strong confidence in our ability to deliver on future commitments and demonstrates India&#39;s commitment to ambitious climate action.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Accelerating Clean Energy and Green Growth</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate strategy is implemented through a series of measures including those on large-scale renewable energy expansion, battery storage systems, and green energy corridors, cleaner manufacturing, ensuring reliable and sustainable infrastructure across the country.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">It also lays emphasis on strengthening institutional capacity, innovation ecosystems, and local-level adaptation measures, ensuring that climate considerations are integrated across key sectors of the economy through various schemes, including Green Hydrogen Mission, PM Surya Ghar: Muft Bijli Yojana; Production Linked Incentive (PLI) schemes, PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha Evam Utthaan Mahabhiyan); push for Carbon Capture, Utilization and Storage (CCUS); and nuclear energy. Further India is pursuing a positive climate action agenda by forging partnerships at international levels through initiatives such as International Solar Alliance (ISA), Coalition for Disaster Resilient Infrastructure (CDRI), Global Bio-fuel Alliance (GBA) and Leadership Group for Industry Transition (Lead-IT) etc.&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Enhancing Climate Adaptation</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate approach extends beyond mitigation actions and focuses on scaling-up adaptation actions. Recognizing that climate change impacts are already being felt, India has placed strong emphasis on adaptation and disaster resilience across the key actors of its economy. Some of the key measures towards the achievement of goals on adaptation are protection of vulnerable coastlines through mangrove restoration, coastal regulation, and climate-resilient infrastructure; early warning systems for cyclones and storm surges; targeted programmes for glacier monitoring, biodiversity conservation, and sustainable livelihoods in Himalayan states; climate-resilient infrastructure to address risks from landslides and glacial lake outburst floods; and implementation of Heat Action Plans across the States; community-based disaster preparedness and resilience programmes, etc. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Under its Climate Action framework, India&rsquo;s NDC is operationalized through the National Action Plan on Climate Change (NAPCC) and its nine national missions, as well as the State Action Plans on Climate Change (SAPCC). The framework is implemented in convergence with various schemes and programs of the central and State Governments ensuring a coordinated, whole of government approach for climate-resilient and low-carbon development.&rdquo;</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate action is being implemented at local level through various schemes and programme such as Jal Jeevan Mission, National Mission on Sustainable Agriculture, Sustainable Habitat, MISHTI (Mangrove Initiative for Shoreline Habitats &amp; Tangible Incomes), National Disaster Management Plan, Soil Health Card and Pradhan Mantri Krishi Sinchayee Yojana (PMKSY), etc.&nbsp;&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>People-Centric Approach</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s climate efforts are centered around the principle of &ldquo;Lifestyle for Environment (LiFE),&rdquo; which is transforming sustainable living into a mass movement and the initiatives like &lsquo;Ek Ped Maa Ke Nam&rsquo; to transform tree plantation into a people-driven climate action. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>Approach to NDC (2031-35)</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">In shaping India&rsquo;s NDC for 2031&ndash;2035, the Government has considered the outcomes of the first Global Stocktake (GST), principle of Common but differentiated responsibilities and Respective Capabilities (CBDR-RC), and equity with a view to harmonize national realities, developmental priorities, energy security and the need for greater ambition in climate action, in line with the purpose and long-term goals of the Paris Agreement.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s successive climate commitments are the outcome of wide-ranging stakeholder consultations and studies by the ten working groups in NITI Aayog. These ten groups comprised of Central Ministries, domain experts, industry bodies, and civil society organizations, etc. Sector-specific inputs were carefully assessed across energy, industry, transport, agriculture, water, and urban development, ensuring that the revised targets are ambitious, achievable, and grounded in domestic capabilities. The process ensured a whole-of-government and whole-of-society approach, aligning national development priorities with climate objectives. The consultative approach reflects India&rsquo;s commitment to inclusive and participatory climate policymaking, while safeguarding growth, livelihoods, and energy and food security.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">India&rsquo;s successive climate commitments are likely to generate new opportunities for youth and women, making them key partners in green transition. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">With strong policy direction, technological innovation, and people&rsquo;s participation, India continues to demonstrate that economic growth and environmental responsibility can go hand in hand. </span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Cabinet&rsquo;s approval of India&rsquo;s Nationally Determined Contribution for the period 2031 to 2035 marks a major milestone in India&rsquo;s journey towards a low-carbon, climate-resilient future, further strengthening its role as a global leader in climate action.</span></span></p>
+
+<p style="text-align:center"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">*****</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>MJPS</strong></span></span></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 2245209)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&text=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&title=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&text=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2245209&title=Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="Cabinet approves India’s Nationally Determined Contribution (2031-2035) to be communicated to the United Nations Framework Convention on Climate Change" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" value="&lt;br/>India commits to reduce Emissions Intensity of its GDP by 47 percent by 2035 from 2005 level&lt;br/>&lt;br/>India to achieve 60 percent cumulative electric power installed capacity from non-fossil fuel-based energy resources by 2035&lt;br/>&lt;br/>India to create Carbon Sink of 3.5 to 4.0 billion tonnes of CO₂ eq. through Forest and Tree Cover by 2035 from 2005 level&lt;br/>&lt;br/>India&amp;#39;s commitments are aligned with vision of Viksit Bharat @2047 and Net-Zero by 2070&lt;br/>" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>In a significant step towards strengthening India&amp;rsquo;s action, the Union Cabinet, under the chairmanship of&amp;nbsp;Prime Minister&amp;nbsp;Shri Narendra Modi, has approved India&amp;rsquo;s Nationally Determined Contribution (NDC) for the period 2031 to 2035, enhancing the country&amp;rsquo;s ambition under the UNFCCC and its Paris Agreement while reinforcing its commitment to sustainable development and climate justice.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s NDC for 2031-35 is guided by the vision of Viksit Bharat, which is not just a goal for 2047, but a commitment to act today to build a prosperous, and climate resilient Bharat for the future generations. India&amp;rsquo;s successive climate targets build upon India&amp;rsquo;s earlier commitments, many of which have already been achieved ahead of schedule, reflecting country&amp;rsquo;s consistent track record of delivering on climate action. The five qualitative targets, are intended to embed sustainability into everyday life and governance systems, promote climate-resilient development pathways, and enable a just and inclusive transition for all sections of the society. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>From Early Achievement to Higher Ambition:&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>Embarking on its commitments towards positive climate actions, India has been periodically raising its ambition towards mitigating greenhouse gas emissions and after the update in 2022, has now announced its targets for 2031-35 marking a significant step towards the goal of achieving net-zero by 2070.&amp;nbsp; India&amp;rsquo;s original climate commitments i.e NDC submitted in 2015, laid a strong foundation, with targets by 2030 of 33&amp;ndash;35% reduction in the emissions intensity of GDP and 40% share of non-fossil resources based electric power installed capacity, both of which were met, 11 years and 9 years ahead of the committed timelines, demonstrating a credible and action-oriented approach to climate governance.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>Our emissions intensity has since reduced by 36% during 2005 to 2020, and the target has now been enhanced to 47% to be achieved by 2035. Towards the updated NDC&amp;rsquo;s goal on enhancing share of non-fossil fuel energy resources in installed electric power capacity, the country has achieved 52.57 % non-fossil capacity (February 2026), successfully meeting the target five years ahead of the timeline and now the ambition has been further raised to 60% share of non-fossil fuel-based energy resources in installed electric power capacity to be achieved by 2035.&amp;nbsp; Further on the NDC goal of creating additional carbon sink through forest and tree cover, India has already created 2.29 billion tonnes of CO2 equivalent by 2021 Afforestation and ecosystem restoration efforts continue to contribute towards India&amp;rsquo;s carbon sink targets while supporting rural livelihoods.&amp;nbsp; Our afforestation efforts have been duly acknowledged by independent agencies such as Food and Agriculture Organisation (FAO) which has ranked India as third in terms of net gain in forest area and ninth in terms of area under forest. This progress is a testimony to the fact that India has maintained a balance between economy and ecology even as it maintains a high GDP growth rate. Now, we have further enhanced the ambition of creating carbon sink through forest and tree cover to 3.5-4.0 billion tonnes of CO2 equivalent by 2035 from 2005 level.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s climate action has been sustained and ambitious, and its track record clearly shows the achievement of our targets ahead of time, which provides strong confidence in our ability to deliver on future commitments and demonstrates India&amp;#39;s commitment to ambitious climate action.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>Accelerating Clean Energy and Green Growth&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s climate strategy is implemented through a series of measures including those on large-scale renewable energy expansion, battery storage systems, and green energy corridors, cleaner manufacturing, ensuring reliable and sustainable infrastructure across the country.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>It also lays emphasis on strengthening institutional capacity, innovation ecosystems, and local-level adaptation measures, ensuring that climate considerations are integrated across key sectors of the economy through various schemes, including Green Hydrogen Mission, PM Surya Ghar: Muft Bijli Yojana; Production Linked Incentive (PLI) schemes, PM-KUSUM (Pradhan Mantri Kisan Urja Suraksha Evam Utthaan Mahabhiyan); push for Carbon Capture, Utilization and Storage (CCUS); and nuclear energy. Further India is pursuing a positive climate action agenda by forging partnerships at international levels through initiatives such as International Solar Alliance (ISA), Coalition for Disaster Resilient Infrastructure (CDRI), Global Bio-fuel Alliance (GBA) and Leadership Group for Industry Transition (Lead-IT) etc.&amp;nbsp; &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>Enhancing Climate Adaptation&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s climate approach extends beyond mitigation actions and focuses on scaling-up adaptation actions. Recognizing that climate change impacts are already being felt, India has placed strong emphasis on adaptation and disaster resilience across the key actors of its economy. Some of the key measures towards the achievement of goals on adaptation are protection of vulnerable coastlines through mangrove restoration, coastal regulation, and climate-resilient infrastructure; early warning systems for cyclones and storm surges; targeted programmes for glacier monitoring, biodiversity conservation, and sustainable livelihoods in Himalayan states; climate-resilient infrastructure to address risks from landslides and glacial lake outburst floods; and implementation of Heat Action Plans across the States; community-based disaster preparedness and resilience programmes, etc. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>Under its Climate Action framework, India&amp;rsquo;s NDC is operationalized through the National Action Plan on Climate Change (NAPCC) and its nine national missions, as well as the State Action Plans on Climate Change (SAPCC). The framework is implemented in convergence with various schemes and programs of the central and State Governments ensuring a coordinated, whole of government approach for climate-resilient and low-carbon development.&amp;rdquo;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s climate action is being implemented at local level through various schemes and programme such as Jal Jeevan Mission, National Mission on Sustainable Agriculture, Sustainable Habitat, MISHTI (Mangrove Initiative for Shoreline Habitats &amp;amp; Tangible Incomes), National Disaster Management Plan, Soil Health Card and Pradhan Mantri Krishi Sinchayee Yojana (PMKSY), etc.&amp;nbsp;&amp;nbsp; &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>People-Centric Approach&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s climate efforts are centered around the principle of &amp;ldquo;Lifestyle for Environment (LiFE),&amp;rdquo; which is transforming sustainable living into a mass movement and the initiatives like &amp;lsquo;Ek Ped Maa Ke Nam&amp;rsquo; to transform tree plantation into a people-driven climate action. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>Approach to NDC (2031-35)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>In shaping India&amp;rsquo;s NDC for 2031&amp;ndash;2035, the Government has considered the outcomes of the first Global Stocktake (GST), principle of Common but differentiated responsibilities and Respective Capabilities (CBDR-RC), and equity with a view to harmonize national realities, developmental priorities, energy security and the need for greater ambition in climate action, in line with the purpose and long-term goals of the Paris Agreement.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s successive climate commitments are the outcome of wide-ranging stakeholder consultations and studies by the ten working groups in NITI Aayog. These ten groups comprised of Central Ministries, domain experts, industry bodies, and civil society organizations, etc. Sector-specific inputs were carefully assessed across energy, industry, transport, agriculture, water, and urban development, ensuring that the revised targets are ambitious, achievable, and grounded in domestic capabilities. The process ensured a whole-of-government and whole-of-society approach, aligning national development priorities with climate objectives. The consultative approach reflects India&amp;rsquo;s commitment to inclusive and participatory climate policymaking, while safeguarding growth, livelihoods, and energy and food security.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>India&amp;rsquo;s successive climate commitments are likely to generate new opportunities for youth and women, making them key partners in green transition. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>With strong policy direction, technological innovation, and people&amp;rsquo;s participation, India continues to demonstrate that economic growth and environmental responsibility can go hand in hand. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>The Cabinet&amp;rsquo;s approval of India&amp;rsquo;s Nationally Determined Contribution for the period 2031 to 2035 marks a major milestone in India&amp;rsquo;s journey towards a low-carbon, climate-resilient future, further strengthening its role as a global leader in climate action.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:center&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>*****&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>MJPS&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+</form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>

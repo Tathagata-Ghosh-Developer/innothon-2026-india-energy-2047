@@ -1,0 +1,1187 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=2064702" /><meta property="og:description" content="Union Minister Shri Manohar Lal addressed Brainstorming Session on the Indian Power Sector Scenario 2047 in New Delhi today. 
+
+At the two-day Brainstorming Session on the Indian Power Sector Scenari" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqx3e2ks2xy35ba-f-5390962ff-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":49,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"107b434a","ak.r":41962,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":65153,"ak.gh":"23.217.52.119","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794694978","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==56bKigrCBIsm7zCNWEzGF67zI5PyooljffL+FfedjHptSAINnS2IYrB9fsWw36S5oA2GracR0gMFC6SNnfRl0xrs6GoQsU0H3FXBETBP937FPBOZ9OsSZm9Xljig/VlZxKGGi2ZUarUNYUeo2ZxH/iY7hxCaVHfKWylVHP9axS5JCWvBi+D1enntEWaYkiErecWePFQCXPmAbfb5ie4WhjORTZfgRKfjAXRnJxMNlMzMW1kAvGlGhe3P6/3LFIE/RNjXPB5quVvDJCt03RjUASHupw++wBz72YtdYIo+UXp/hwKsED8yVMaXNI62cU3L67QIA9mu5xkt6sCrkr9q0cMf1rgidgBHr08t1QTw0aq3HLCLHFp0bfZha8J6VJW0RQ9inOr61UYsNyVZnK6d5nJ2ko75MBMAItvAxhVrMvk=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=2064702&amp;reg=48&amp;lang=2" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639246315009809930" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="5OApqq4PPZbJgj1ogBBzgnR9KQq4v2CmQbBEYIOVctP5xpur2YOYT/HD3Rt18MPnBdYW8cMoC2MxIJCAW3zSxqeCbdTDpBd/xwWX6Ruuo9NiZTdQ7Z9o9YwywEOJZjSrNGyJh+9T754Znw2WUzjyW0xf7CYm+60hpSG3FH6W9wzR1m08H8Oah+GhU7eeHlTiLqIi3RRTMRij50aKKuSGacFFcEZmunIM2heHjo8Mpy6mcUqr2o6f8+KN5uGYIDTgAYEFputRhcbymAxGcS4A0QaMSs8=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="2064702" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Ministry of Power
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"><br/>All Power Sector Stakeholders to collaborate to achieve 2,100GW by 2047: Shri Manohar Lal<br/><br/>Need to quickly shift towards a more diverse and cleaner energy mix: Shri Shripad Yesso Naik<br/><br/>National Electricity Plan (Transmission) launched; targets achieving 500GW of renewable energy installed capacity by 2030 and over 600 GW by 2032</span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              14 OCT 2024 5:18PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Union Minister Shri Manohar Lal addressed Brainstorming Session on the Indian Power Sector Scenario 2047 in New Delhi today. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">At the two-day <strong>Brainstorming Session on the Indian Power Sector Scenario 2047&nbsp; Union Minister for Power and Housing &amp; Urban Affairs, Shri Manohar Lal,</strong> outlined the government&#39;s strategy to meet the country&#39;s burgeoning energy needs while transitioning to cleaner sources of power.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">&quot;By 2047, we anticipate our power demand to reach 708 gigawatts. To meet this, we need to increase our capacity by four times, i.e. 2,100 gigawatts,&quot; <strong>Union Minister Manohar Lal </strong>stated, highlighting the scale of the challenge ahead. &quot;This is not just about increasing capacity; it&#39;s about reimagining our entire energy landscape.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>The Union Minister</strong> emphasised the critical role of renewable energy in India&#39;s future power mix. &quot;We have set an ambitious target of 500 GW of non-fossil energy capacity by 2030, effectively doubling our current capacity,&quot; he said. This push towards green energy aligns with India&#39;s commitment to reducing carbon emissions by one billion tonnes by 2030 and achieving net-zero emissions by 2070.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Manohar Lal p</strong>raised the CEA for its pivotal role in shaping the sector&#39;s future, citing the National Electricity Plan, which was launched at the session. &quot;This plan will provide crucial guidance to state governments and investors, fostering a collaborative approach to sector development,&quot; he noted.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The National Electricity Plan (Transmission), developed in consultation with various stakeholders, outlines a comprehensive strategy to achieve the government&#39;s energy transition goals. It details the transmission infrastructure required to support 500 gigawatts of renewable energy capacity by 2030, increasing to over 600 gigawatts by 2032. The plan incorporates innovative elements such as the integration of 10 gigawatts of offshore wind farms, 47 gigawatts of battery energy storage systems, and 30 GW of pumped storage plants. It also addresses the power needs of green hydrogen and green ammonia manufacturing hubs, and includes cross-border interconnections. With a planned addition of 190,000 circuit kilometres of transmission lines and 1,270 GPA of transformation capacity over the next decade, the plan presents an investment opportunity of over 9 lakh crore rupees in the transmission sector.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The minister also addressed the challenges of integrating variable renewable energy sources into the grid, emphasising the need for advanced storage solutions. &quot;We are exploring innovative technologies in pump storage facilities and battery storage to ensure 24/7 power availability to our citizens,&quot; <strong>the Union Minster explained.</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Recognising the transformative impact of rapid urbanisation and industrialisation on power demand, the government is focusing on grid infrastructure expansion and upgradation. <strong>The Union Minister</strong> stressed the importance of creating a skilled workforce to support this modernisation, stating, &quot;We must develop a workforce capable of meeting the demands of a 21st-century energy system.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">On occasion, <strong>Minister of State for Power and New &amp; Renewable Energy</strong>, <strong>Shri Shripad Yesso Naik, </strong>emphasised the need for meticulous planning to align the power sector with emerging priorities. He called for a swift transition towards a diverse and cleaner energy mix, driven by ambitious sustainability targets. &quot;Significant investment will be needed in renewable technologies, energy storage solutions and grid modernisation,&quot; <strong>Shri Naik stated</strong>. He highlighted the pivotal role of the Central Electricity Authority in shaping the sector&#39;s transformation, noting its wide-ranging responsibilities from formulating national electricity plans to setting technical standards. <strong>&nbsp;MoS </strong>stressed the importance of developing new skills, regulatory frameworks, and market structures to manage the evolving energy landscape, asserting that &quot;electricity is not just a commodity, but a catalyst for growth, development and a sustainable future.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Among other speakers at the inaugural session, <strong>Shri Pankaj Agarwal, Secretary, Ministry of Power,</strong> outlined India&rsquo;s roadmap for a modern, energy-efficient power sector, emphasizing India&#39;s critical role in the vision of ONE SUN, ONE WORLD, ONE GRID for a sustainable future. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">He underscored the multifaceted nature of energy security, stating that it encompasses three critical elements: affordability, adequacy coupled with reliability, and sustainability. He further alluded to the recent G20 New Delhi Leaders&rsquo; Declaration, highlighting the ambitious targets set for the sector. &quot;The G20 members have resolved to triple renewable energy capacity and double the rate of improvement in energy efficiency,&quot; he noted. Looking ahead to COP29, the Secretary added, &quot;We anticipate a requirement for a sixfold increase in storage capacity.&rdquo; He also underlined the need for a comprehensive planning framework to meet demand optimally and securely while calling for the flexibilisation of Power Purchase Agreements and reduced power costs for consumers.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Ms. Debashree Mukherjee, Secretary, Department of Water Resources, River Development &amp; Ganga Rejuvenation,</strong> highlighted the critical link between water and power in driving India&rsquo;s economic growth. She emphasized the need for sustainable energy solutions and the close collaboration between CEA and Central Water Commission in hydropower development for 2047.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Prashant Kumar Singh, Secretary, Ministry of New and Renewable Energy,</strong> highlighted India&rsquo;s ambitious strides in renewable energy, focusing on solar, wind, and innovative green initiatives to power Viksit Bharat.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri R.V. Shahi, Former Secretary, Ministry of Power </strong>highlighted the crucial role of financial planning and policy-making in India&#39;s power sector growth and the steps needed for Viksit Bharat by 2047&rdquo;.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Ghanshyam Prasad, Chairperson, CEA,</strong> presented a comprehensive roadmap for the power sector&#39;s evolution, tracing its growth from a mere 1 GW peak demand at independence to now targeting to four times the capacity to 2053 GW by 2047. This ambitious plan includes a significant shift towards renewable energy, with targets of 1,200 gigawatts of solar and over 400 gigawatts of wind power by 2047. A key focus is on hydro pump storage plants, with capacity expected to surge from the current 4.7 gigawatts to 116 gigawatts. The plan addresses critical areas such as flexible operation of thermal and nuclear plants, skill development, research and development, financing for energy transition, and innovative solutions in transmission and distribution. He emphasised the need for a collaborative approach among all stakeholders to achieve the vision of a world-class Indian power sector by 2047, coinciding with the country&#39;s centenary of independence.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Shri<strong> Subhrakant Panda, Immediate Past President, FICCI and and Managing Director, Indian Metals &amp; Ferro Alloys,</strong> said, &ldquo;India&#39;s power sector, now surplus with 450+ GW capacity, presents vast opportunities in the transition to clean energy by 2070. The expanding renewable energy sector offers promising growth prospects. Enhancing local manufacturing and R&amp;D investment will open new avenues for innovation and industry development; while improving ease of business, extending ISTS waivers, and strengthening the transmission and power evacuation system will further boost sector growth, creating numerous opportunities for investors and businesses.&rdquo;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The conclave is being organised in collaboration with a broad range of stakeholders, including FICCI and CBIP, who serve as the programme partners, among a host of other organisations, reflecting its industry-wide significance.&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The CEA has unveiled its vision for the power sector&#39;s development through 2047, emphasising sustainable growth, technological innovation, and meeting the challenges of a rapidly expanding economy.</span></span></p>
+
+<p style="text-align:center">******</p>
+
+<p style="text-align:justify"><strong><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">JN/ Sushil Kumar </span></span></strong></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 2064702)</span>
+                <span id="lblViews">Visitor Counter : 6692</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                <div class="ReleaseLang">Read this release in: 
+                
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2064837' target="_blank">
+                            Odia </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2064762' target="_blank">
+                            Urdu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2064783' target="_blank">
+                            हिन्दी </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2065171' target="_blank">
+                            Punjabi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2064763' target="_blank">
+                            Tamil </a>
+                    
+                </div>
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2064702"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2064702"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2064702"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2064702"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2064702"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Ministry of Power
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            <div style='height:30px;width:100%;'></div>All Power Sector Stakeholders to collaborate to achieve 2,100GW by 2047: Shri Manohar Lal<div style='height:30px;width:100%;'></div><div style='height:30px;width:100%;'></div>Need to quickly shift towards a more diverse and cleaner energy mix: Shri Shripad Yesso Naik<div style='height:30px;width:100%;'></div><div style='height:30px;width:100%;'></div>National Electricity Plan (Transmission) launched; targets achieving 500GW of renewable energy installed capacity by 2030 and over 600 GW by 2032
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          14 OCT 2024 5:18PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Union Minister Shri Manohar Lal addressed Brainstorming Session on the Indian Power Sector Scenario 2047 in New Delhi today. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">At the two-day <strong>Brainstorming Session on the Indian Power Sector Scenario 2047&nbsp; Union Minister for Power and Housing &amp; Urban Affairs, Shri Manohar Lal,</strong> outlined the government&#39;s strategy to meet the country&#39;s burgeoning energy needs while transitioning to cleaner sources of power.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">&quot;By 2047, we anticipate our power demand to reach 708 gigawatts. To meet this, we need to increase our capacity by four times, i.e. 2,100 gigawatts,&quot; <strong>Union Minister Manohar Lal </strong>stated, highlighting the scale of the challenge ahead. &quot;This is not just about increasing capacity; it&#39;s about reimagining our entire energy landscape.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>The Union Minister</strong> emphasised the critical role of renewable energy in India&#39;s future power mix. &quot;We have set an ambitious target of 500 GW of non-fossil energy capacity by 2030, effectively doubling our current capacity,&quot; he said. This push towards green energy aligns with India&#39;s commitment to reducing carbon emissions by one billion tonnes by 2030 and achieving net-zero emissions by 2070.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Manohar Lal p</strong>raised the CEA for its pivotal role in shaping the sector&#39;s future, citing the National Electricity Plan, which was launched at the session. &quot;This plan will provide crucial guidance to state governments and investors, fostering a collaborative approach to sector development,&quot; he noted.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The National Electricity Plan (Transmission), developed in consultation with various stakeholders, outlines a comprehensive strategy to achieve the government&#39;s energy transition goals. It details the transmission infrastructure required to support 500 gigawatts of renewable energy capacity by 2030, increasing to over 600 gigawatts by 2032. The plan incorporates innovative elements such as the integration of 10 gigawatts of offshore wind farms, 47 gigawatts of battery energy storage systems, and 30 GW of pumped storage plants. It also addresses the power needs of green hydrogen and green ammonia manufacturing hubs, and includes cross-border interconnections. With a planned addition of 190,000 circuit kilometres of transmission lines and 1,270 GPA of transformation capacity over the next decade, the plan presents an investment opportunity of over 9 lakh crore rupees in the transmission sector.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The minister also addressed the challenges of integrating variable renewable energy sources into the grid, emphasising the need for advanced storage solutions. &quot;We are exploring innovative technologies in pump storage facilities and battery storage to ensure 24/7 power availability to our citizens,&quot; <strong>the Union Minster explained.</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Recognising the transformative impact of rapid urbanisation and industrialisation on power demand, the government is focusing on grid infrastructure expansion and upgradation. <strong>The Union Minister</strong> stressed the importance of creating a skilled workforce to support this modernisation, stating, &quot;We must develop a workforce capable of meeting the demands of a 21st-century energy system.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">On occasion, <strong>Minister of State for Power and New &amp; Renewable Energy</strong>, <strong>Shri Shripad Yesso Naik, </strong>emphasised the need for meticulous planning to align the power sector with emerging priorities. He called for a swift transition towards a diverse and cleaner energy mix, driven by ambitious sustainability targets. &quot;Significant investment will be needed in renewable technologies, energy storage solutions and grid modernisation,&quot; <strong>Shri Naik stated</strong>. He highlighted the pivotal role of the Central Electricity Authority in shaping the sector&#39;s transformation, noting its wide-ranging responsibilities from formulating national electricity plans to setting technical standards. <strong>&nbsp;MoS </strong>stressed the importance of developing new skills, regulatory frameworks, and market structures to manage the evolving energy landscape, asserting that &quot;electricity is not just a commodity, but a catalyst for growth, development and a sustainable future.&quot;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Among other speakers at the inaugural session, <strong>Shri Pankaj Agarwal, Secretary, Ministry of Power,</strong> outlined India&rsquo;s roadmap for a modern, energy-efficient power sector, emphasizing India&#39;s critical role in the vision of ONE SUN, ONE WORLD, ONE GRID for a sustainable future. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">He underscored the multifaceted nature of energy security, stating that it encompasses three critical elements: affordability, adequacy coupled with reliability, and sustainability. He further alluded to the recent G20 New Delhi Leaders&rsquo; Declaration, highlighting the ambitious targets set for the sector. &quot;The G20 members have resolved to triple renewable energy capacity and double the rate of improvement in energy efficiency,&quot; he noted. Looking ahead to COP29, the Secretary added, &quot;We anticipate a requirement for a sixfold increase in storage capacity.&rdquo; He also underlined the need for a comprehensive planning framework to meet demand optimally and securely while calling for the flexibilisation of Power Purchase Agreements and reduced power costs for consumers.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Ms. Debashree Mukherjee, Secretary, Department of Water Resources, River Development &amp; Ganga Rejuvenation,</strong> highlighted the critical link between water and power in driving India&rsquo;s economic growth. She emphasized the need for sustainable energy solutions and the close collaboration between CEA and Central Water Commission in hydropower development for 2047.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Prashant Kumar Singh, Secretary, Ministry of New and Renewable Energy,</strong> highlighted India&rsquo;s ambitious strides in renewable energy, focusing on solar, wind, and innovative green initiatives to power Viksit Bharat.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri R.V. Shahi, Former Secretary, Ministry of Power </strong>highlighted the crucial role of financial planning and policy-making in India&#39;s power sector growth and the steps needed for Viksit Bharat by 2047&rdquo;.</span></span></p>
+
+<p style="text-align:justify"><br />
+<span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Shri Ghanshyam Prasad, Chairperson, CEA,</strong> presented a comprehensive roadmap for the power sector&#39;s evolution, tracing its growth from a mere 1 GW peak demand at independence to now targeting to four times the capacity to 2053 GW by 2047. This ambitious plan includes a significant shift towards renewable energy, with targets of 1,200 gigawatts of solar and over 400 gigawatts of wind power by 2047. A key focus is on hydro pump storage plants, with capacity expected to surge from the current 4.7 gigawatts to 116 gigawatts. The plan addresses critical areas such as flexible operation of thermal and nuclear plants, skill development, research and development, financing for energy transition, and innovative solutions in transmission and distribution. He emphasised the need for a collaborative approach among all stakeholders to achieve the vision of a world-class Indian power sector by 2047, coinciding with the country&#39;s centenary of independence.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Shri<strong> Subhrakant Panda, Immediate Past President, FICCI and and Managing Director, Indian Metals &amp; Ferro Alloys,</strong> said, &ldquo;India&#39;s power sector, now surplus with 450+ GW capacity, presents vast opportunities in the transition to clean energy by 2070. The expanding renewable energy sector offers promising growth prospects. Enhancing local manufacturing and R&amp;D investment will open new avenues for innovation and industry development; while improving ease of business, extending ISTS waivers, and strengthening the transmission and power evacuation system will further boost sector growth, creating numerous opportunities for investors and businesses.&rdquo;</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The conclave is being organised in collaboration with a broad range of stakeholders, including FICCI and CBIP, who serve as the programme partners, among a host of other organisations, reflecting its industry-wide significance.&nbsp; </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The CEA has unveiled its vision for the power sector&#39;s development through 2047, emphasising sustainable growth, technological innovation, and meeting the challenges of a rapidly expanding economy.</span></span></p>
+
+<p style="text-align:center">******</p>
+
+<p style="text-align:justify"><strong><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">JN/ Sushil Kumar </span></span></strong></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 2064702)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&text=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&title=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&text=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2064702&title=Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="Shri Manohar Lal addresses Brainstorming Session on the Indian Power Sector Scenario 2047" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" value="&lt;br/>All Power Sector Stakeholders to collaborate to achieve 2,100GW by 2047: Shri Manohar Lal&lt;br/>&lt;br/>Need to quickly shift towards a more diverse and cleaner energy mix: Shri Shripad Yesso Naik&lt;br/>&lt;br/>National Electricity Plan (Transmission) launched; targets achieving 500GW of renewable energy installed capacity by 2030 and over 600 GW by 2032" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Union Minister Shri Manohar Lal addressed Brainstorming Session on the Indian Power Sector Scenario 2047 in New Delhi today. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>At the two-day &lt;strong>Brainstorming Session on the Indian Power Sector Scenario 2047&amp;nbsp; Union Minister for Power and Housing &amp;amp; Urban Affairs, Shri Manohar Lal,&lt;/strong> outlined the government&amp;#39;s strategy to meet the country&amp;#39;s burgeoning energy needs while transitioning to cleaner sources of power.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&amp;quot;By 2047, we anticipate our power demand to reach 708 gigawatts. To meet this, we need to increase our capacity by four times, i.e. 2,100 gigawatts,&amp;quot; &lt;strong>Union Minister Manohar Lal &lt;/strong>stated, highlighting the scale of the challenge ahead. &amp;quot;This is not just about increasing capacity; it&amp;#39;s about reimagining our entire energy landscape.&amp;quot;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>The Union Minister&lt;/strong> emphasised the critical role of renewable energy in India&amp;#39;s future power mix. &amp;quot;We have set an ambitious target of 500 GW of non-fossil energy capacity by 2030, effectively doubling our current capacity,&amp;quot; he said. This push towards green energy aligns with India&amp;#39;s commitment to reducing carbon emissions by one billion tonnes by 2030 and achieving net-zero emissions by 2070.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Shri Manohar Lal p&lt;/strong>raised the CEA for its pivotal role in shaping the sector&amp;#39;s future, citing the National Electricity Plan, which was launched at the session. &amp;quot;This plan will provide crucial guidance to state governments and investors, fostering a collaborative approach to sector development,&amp;quot; he noted.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The National Electricity Plan (Transmission), developed in consultation with various stakeholders, outlines a comprehensive strategy to achieve the government&amp;#39;s energy transition goals. It details the transmission infrastructure required to support 500 gigawatts of renewable energy capacity by 2030, increasing to over 600 gigawatts by 2032. The plan incorporates innovative elements such as the integration of 10 gigawatts of offshore wind farms, 47 gigawatts of battery energy storage systems, and 30 GW of pumped storage plants. It also addresses the power needs of green hydrogen and green ammonia manufacturing hubs, and includes cross-border interconnections. With a planned addition of 190,000 circuit kilometres of transmission lines and 1,270 GPA of transformation capacity over the next decade, the plan presents an investment opportunity of over 9 lakh crore rupees in the transmission sector.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The minister also addressed the challenges of integrating variable renewable energy sources into the grid, emphasising the need for advanced storage solutions. &amp;quot;We are exploring innovative technologies in pump storage facilities and battery storage to ensure 24/7 power availability to our citizens,&amp;quot; &lt;strong>the Union Minster explained.&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Recognising the transformative impact of rapid urbanisation and industrialisation on power demand, the government is focusing on grid infrastructure expansion and upgradation. &lt;strong>The Union Minister&lt;/strong> stressed the importance of creating a skilled workforce to support this modernisation, stating, &amp;quot;We must develop a workforce capable of meeting the demands of a 21st-century energy system.&amp;quot;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>On occasion, &lt;strong>Minister of State for Power and New &amp;amp; Renewable Energy&lt;/strong>, &lt;strong>Shri Shripad Yesso Naik, &lt;/strong>emphasised the need for meticulous planning to align the power sector with emerging priorities. He called for a swift transition towards a diverse and cleaner energy mix, driven by ambitious sustainability targets. &amp;quot;Significant investment will be needed in renewable technologies, energy storage solutions and grid modernisation,&amp;quot; &lt;strong>Shri Naik stated&lt;/strong>. He highlighted the pivotal role of the Central Electricity Authority in shaping the sector&amp;#39;s transformation, noting its wide-ranging responsibilities from formulating national electricity plans to setting technical standards. &lt;strong>&amp;nbsp;MoS &lt;/strong>stressed the importance of developing new skills, regulatory frameworks, and market structures to manage the evolving energy landscape, asserting that &amp;quot;electricity is not just a commodity, but a catalyst for growth, development and a sustainable future.&amp;quot;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Among other speakers at the inaugural session, &lt;strong>Shri Pankaj Agarwal, Secretary, Ministry of Power,&lt;/strong> outlined India&amp;rsquo;s roadmap for a modern, energy-efficient power sector, emphasizing India&amp;#39;s critical role in the vision of ONE SUN, ONE WORLD, ONE GRID for a sustainable future. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>He underscored the multifaceted nature of energy security, stating that it encompasses three critical elements: affordability, adequacy coupled with reliability, and sustainability. He further alluded to the recent G20 New Delhi Leaders&amp;rsquo; Declaration, highlighting the ambitious targets set for the sector. &amp;quot;The G20 members have resolved to triple renewable energy capacity and double the rate of improvement in energy efficiency,&amp;quot; he noted. Looking ahead to COP29, the Secretary added, &amp;quot;We anticipate a requirement for a sixfold increase in storage capacity.&amp;rdquo; He also underlined the need for a comprehensive planning framework to meet demand optimally and securely while calling for the flexibilisation of Power Purchase Agreements and reduced power costs for consumers.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;br />
+&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Ms. Debashree Mukherjee, Secretary, Department of Water Resources, River Development &amp;amp; Ganga Rejuvenation,&lt;/strong> highlighted the critical link between water and power in driving India&amp;rsquo;s economic growth. She emphasized the need for sustainable energy solutions and the close collaboration between CEA and Central Water Commission in hydropower development for 2047.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Shri Prashant Kumar Singh, Secretary, Ministry of New and Renewable Energy,&lt;/strong> highlighted India&amp;rsquo;s ambitious strides in renewable energy, focusing on solar, wind, and innovative green initiatives to power Viksit Bharat.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;br />
+&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Shri R.V. Shahi, Former Secretary, Ministry of Power &lt;/strong>highlighted the crucial role of financial planning and policy-making in India&amp;#39;s power sector growth and the steps needed for Viksit Bharat by 2047&amp;rdquo;.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;br />
+&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Shri Ghanshyam Prasad, Chairperson, CEA,&lt;/strong> presented a comprehensive roadmap for the power sector&amp;#39;s evolution, tracing its growth from a mere 1 GW peak demand at independence to now targeting to four times the capacity to 2053 GW by 2047. This ambitious plan includes a significant shift towards renewable energy, with targets of 1,200 gigawatts of solar and over 400 gigawatts of wind power by 2047. A key focus is on hydro pump storage plants, with capacity expected to surge from the current 4.7 gigawatts to 116 gigawatts. The plan addresses critical areas such as flexible operation of thermal and nuclear plants, skill development, research and development, financing for energy transition, and innovative solutions in transmission and distribution. He emphasised the need for a collaborative approach among all stakeholders to achieve the vision of a world-class Indian power sector by 2047, coinciding with the country&amp;#39;s centenary of independence.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Shri&lt;strong> Subhrakant Panda, Immediate Past President, FICCI and and Managing Director, Indian Metals &amp;amp; Ferro Alloys,&lt;/strong> said, &amp;ldquo;India&amp;#39;s power sector, now surplus with 450+ GW capacity, presents vast opportunities in the transition to clean energy by 2070. The expanding renewable energy sector offers promising growth prospects. Enhancing local manufacturing and R&amp;amp;D investment will open new avenues for innovation and industry development; while improving ease of business, extending ISTS waivers, and strengthening the transmission and power evacuation system will further boost sector growth, creating numerous opportunities for investors and businesses.&amp;rdquo;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The conclave is being organised in collaboration with a broad range of stakeholders, including FICCI and CBIP, who serve as the programme partners, among a host of other organisations, reflecting its industry-wide significance.&amp;nbsp; &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The CEA has unveiled its vision for the power sector&amp;#39;s development through 2047, emphasising sustainable growth, technological innovation, and meeting the challenges of a rapidly expanding economy.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:center&quot;>******&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;strong>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>JN/ Sushil Kumar &lt;/span>&lt;/span>&lt;/strong>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+</form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>

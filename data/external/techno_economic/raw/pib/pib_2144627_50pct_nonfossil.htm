@@ -1,0 +1,1791 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=2144627" /><meta property="og:description" content="India has achieved a landmark in its energy transition journey by reaching 50% of its installed electricity capacity from non-fossil fuel sources—five years ahead of the target set under its Nationall" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqxzvmju2xy3zpq-f-8098b52da-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":23,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"20d62be8","ak.r":40698,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":65164,"ak.gh":"23.205.88.150","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794694751","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==OptAFZV2Op3/NJnlt0ZdnOjhIk8K+bDMJGtAEUUt9fGhiEGxfI7QQuzlBP2sVIpJZRxZdyQHBze/WRyXGIUS6glKSIilIjaoRePgFT/hsS2Db66RvpO+tLXisxoEzcMW2bnfzI6iCFX2Lpr2dlysmvWRgN5dB0JFj1RlIDu0it9KZlf6C7BrsokM+eUM2SSldiydbgNe5Xc12Rt8qWQYgV09JL1g1V9LdPZMw1ERmQJRpLLF+vCaFaFbF0eEUJu6kwtf1RZwtOJZyAy5ZtCn/rfsrmF4SXMAs43CKNG9EGkTBt0UN7t9rOwPb/ndh1d5OBcMMICfuP2Uj3Dsg12Qzz45ZI/vJiVago6oM2XeGD+KtxRWuoIB9M/v6KcG+saikFMjcTaMp2r7LR8BL83+YYcZa6tX5w3Qn13U3Edc1iI=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=2144627&amp;reg=3&amp;lang=2" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639191042600000000" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="DjfnnqCW4YY+wvcAhJVil35JIIVvS87CbkXnMeKBm29JQDne1EEgeN3exu6YL/RBKX97lUoa916XFBRJpZ8NGFpnIAJptpQjZIasTNfnIXw70zpbz9bhtxqDn/EunbDJuwRliV8GEAkNWOE4awzqJ0OEk7+zMLIJHIFdXN/stA4jCVMvu4SAL2IYuQ23Ef4X4HdSBAPQzKpruDk82ZGIM/99a/0ThUo0Ec3uf8fL/xsQ/TvgK7hUaeqQpC3vXoHGb8LQcRC0jSrKPE8Kofd6QZrb1wA=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="2144627" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Ministry of New and Renewable Energy 
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"><br/>Achieves 50% clean power capacity five years ahead of target, setting global benchmark for sustainable growth</span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              14 JUL 2025 6:37PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India has achieved a landmark in its energy transition journey by reaching 50% of its installed electricity capacity from non-fossil fuel sources&mdash;five years ahead of the target set under its Nationally Determined Contributions (NDCs) to the Paris Agreement. This significant milestone underscores the country&rsquo;s steadfast commitment to climate action and sustainable development, and signals that India&rsquo;s clean energy transition is not only real but also accelerating under the leadership of Prime Minister Shri Narendra Modi.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Union Minister of New and Renewable Energy Shri Pralhad Joshi said &ldquo;In a world seeking climate solutions, India is showing the way. Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian. Prime Minister Shri Narendra Modi&rsquo;s leadership continues to drive Bharat&rsquo;s green transformation &mdash; paving the path towards a self-reliant and sustainable future.&rdquo;</span></span></p>
+
+<center><blockquote class="twitter-tweet"><p lang="en" dir="ltr">In a world seeking climate solutions, India is showing the way.<br><br>Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian.<br><br>Hon&#39;ble PM Shri <a href="https://twitter.com/narendramodi?ref_src=twsrc%5Etfw">@narendramodi</a> ji’s leadership continues to drive Bharat’s green transformation — paving… <a href="https://t.co/ydzWErWQNC">pic.twitter.com/ydzWErWQNC</a></p>&mdash; Pralhad Joshi (@JoshiPralhad) <a href="https://twitter.com/JoshiPralhad/status/1944719387933458688?ref_src=twsrc%5Etfw">July 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></center>
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Policy-Driven Progress Fuelling Clean Energy Growth</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This achievement reflects the success of visionary policy design, bold implementation, and the country&rsquo;s deep commitment to equity and climate responsibility. Flagship programmes such as PM-KUSUM, PM Surya Ghar: Muft Bijli Yojana, solar park development, and the National Wind-Solar Hybrid Policy have laid a strong foundation for this transformation. The bioenergy sector, which was once on the margins, has now become an important contributor to both rural livelihoods and clean energy generation.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) has empowered lakhs of farmers by providing solar-powered pumps, enabling energy-secure and sustainable agriculture. The scheme has also opened avenues for agrovoltaics and feeder-level solarisation. The PM Surya Ghar scheme, launched in 2024, has brought about a rooftop revolution by making solar energy accessible to one crore households, fostering decentralised energy generation and empowering citizens as energy owners.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Expanding Renewable Base with Co-Benefits</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Solar parks across the country have facilitated utility-scale renewable energy installations at record-low tariffs. Wind energy, particularly in states such as Gujarat and Tamil Nadu, continues to play a vital role in meeting the country&rsquo;s evening peak power demand. The bioenergy sector has advanced considerably, contributing to circular economy objectives and providing significant employment opportunities in rural areas.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">These initiatives have not only decarbonised the power sector but have also delivered widespread co-benefits&mdash;enhanced energy access, employment generation, reduced air pollution, better public health outcomes, and stronger rural incomes. India&rsquo;s clean energy revolution is as much about inclusive growth and social justice as it is about reducing emissions.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>India&rsquo;s Global Leadership in Climate Action</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India&rsquo;s progress assumes greater significance in the global context. Despite having one of the lowest per capita emissions globally, India remains among the few G20 countries that are on track to meet&mdash;or even exceed&mdash;their NDC commitments. At international platforms such as the G20 and the Conference of Parties (COP) to the United Nations Framework Convention on Climate Change, India has consistently advocated for climate equity, sustainable lifestyles, and low-carbon development pathways.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">By achieving the 50% non-fossil milestone well ahead of schedule, India further reinforces its leadership as a clean energy frontrunner, demonstrating that economic growth and environmental stewardship can go hand in hand.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Towards a Modern, Inclusive Energy Future</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This early achievement provides an opportunity to aim even higher. The next phase of India&rsquo;s energy transition must prioritise quality, equity, and resilience in clean energy access. Key focus areas include doubling per capita clean electricity consumption, especially in rural and underserved regions, by promoting distributed renewable systems and energy-efficient appliances. There is a need to build a robust, digitally integrated electricity grid that can effectively manage high levels of renewable energy penetration, demand fluctuations, and two-way power flows. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Expanding the deployment of Battery Energy Storage Systems (BESS) and pumped hydro storage will be critical to ensure grid reliability and round-the-clock power availability. Simultaneously, promoting circularity in the lifecycle of solar panels, wind turbine blades, and batteries will support sustainable and responsible material use. Accelerated investments in green hydrogen as a future-ready industrial fuel will also play a vital role in deepening decarbonisation across sectors.Technology as the Force Multiplier</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>AI and Digitisation in Renewable Energy</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Artificial Intelligence (AI) is set to emerge as the backbone of India&rsquo;s future energy infrastructure. AI will play a central role in demand forecasting, predictive maintenance, automated grid management, and system efficiency enhancement. With AI-driven platforms, rooftop solar, electric vehicles, and smart meters will function within intelligent energy marketplaces, enabling consumers to become active energy producers&mdash;so-called &lsquo;prosumers&rsquo;.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">At the same time, increased digitalisation brings new challenges. As the power sector becomes increasingly reliant on data and digital infrastructure, cybersecurity must be prioritised. Protecting critical infrastructure from cyber threats, data breaches, and algorithmic manipulation is integral to ensuring a secure and resilient energy system.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Road Ahead</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India&rsquo;s achievement of 50% non-fossil fuel installed capacity ahead of the target year is a testament to its ambition, innovation, and commitment to sustainable development. It affirms that development and decarbonisation are not contradictory goals, but can in fact reinforce each other.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">As the country moves toward the goal of 500 GW of non-fossil capacity by 2030 and net-zero emissions by 2070, the path forward must be bold, inclusive, and technology-driven. India has already lit the lamp. The time has now come to let it shine brighter&mdash;for the nation and for the world.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Annexure:</strong></span></span></p>
+
+<ol style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Installed Electricity Capacity by Source as on 30.06.2025 (RE + Large Hydro Combined)</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">8.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(1.81%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">RE (including Large Hydro)</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">234.00 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(48.27%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<ol start="2" style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Installed Electricity Capacity by Source as on 30.06.2025 (Large Hydro and RE Shown Separately)</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">8.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(1.81%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Large Hydro</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">49.38 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(10.19%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">RE </span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">184.62 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(38.08%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<ol start="3" style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Fossil vs Non-Fossil Energy Share in Installed Capacity as on 30.06.2025</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Non-Fossil Fuel (RE+ LH+Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(50.08%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<p style="text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">***</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Navin Sreejith</strong></span></span></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 2144627)</span>
+                <span id="lblViews">Visitor Counter : 7142</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                <div class="ReleaseLang">Read this release in: 
+                
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2144661' target="_blank">
+                            Urdu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2144660' target="_blank">
+                            हिन्दी </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2144725' target="_blank">
+                            Marathi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2144683' target="_blank">
+                            Odia </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2144710' target="_blank">
+                            Kannada </a>
+                    
+                </div>
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2144627"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2144627"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2144627"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2144627"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2144627"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Ministry of New and Renewable Energy 
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            <div style='height:30px;width:100%;'></div>Achieves 50% clean power capacity five years ahead of target, setting global benchmark for sustainable growth
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          14 JUL 2025 6:37PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India has achieved a landmark in its energy transition journey by reaching 50% of its installed electricity capacity from non-fossil fuel sources&mdash;five years ahead of the target set under its Nationally Determined Contributions (NDCs) to the Paris Agreement. This significant milestone underscores the country&rsquo;s steadfast commitment to climate action and sustainable development, and signals that India&rsquo;s clean energy transition is not only real but also accelerating under the leadership of Prime Minister Shri Narendra Modi.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Union Minister of New and Renewable Energy Shri Pralhad Joshi said &ldquo;In a world seeking climate solutions, India is showing the way. Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian. Prime Minister Shri Narendra Modi&rsquo;s leadership continues to drive Bharat&rsquo;s green transformation &mdash; paving the path towards a self-reliant and sustainable future.&rdquo;</span></span></p>
+
+<center><blockquote class="twitter-tweet"><p lang="en" dir="ltr">In a world seeking climate solutions, India is showing the way.<br><br>Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian.<br><br>Hon&#39;ble PM Shri <a href="https://twitter.com/narendramodi?ref_src=twsrc%5Etfw">@narendramodi</a> ji’s leadership continues to drive Bharat’s green transformation — paving… <a href="https://t.co/ydzWErWQNC">pic.twitter.com/ydzWErWQNC</a></p>&mdash; Pralhad Joshi (@JoshiPralhad) <a href="https://twitter.com/JoshiPralhad/status/1944719387933458688?ref_src=twsrc%5Etfw">July 14, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></center>
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Policy-Driven Progress Fuelling Clean Energy Growth</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This achievement reflects the success of visionary policy design, bold implementation, and the country&rsquo;s deep commitment to equity and climate responsibility. Flagship programmes such as PM-KUSUM, PM Surya Ghar: Muft Bijli Yojana, solar park development, and the National Wind-Solar Hybrid Policy have laid a strong foundation for this transformation. The bioenergy sector, which was once on the margins, has now become an important contributor to both rural livelihoods and clean energy generation.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) has empowered lakhs of farmers by providing solar-powered pumps, enabling energy-secure and sustainable agriculture. The scheme has also opened avenues for agrovoltaics and feeder-level solarisation. The PM Surya Ghar scheme, launched in 2024, has brought about a rooftop revolution by making solar energy accessible to one crore households, fostering decentralised energy generation and empowering citizens as energy owners.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Expanding Renewable Base with Co-Benefits</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Solar parks across the country have facilitated utility-scale renewable energy installations at record-low tariffs. Wind energy, particularly in states such as Gujarat and Tamil Nadu, continues to play a vital role in meeting the country&rsquo;s evening peak power demand. The bioenergy sector has advanced considerably, contributing to circular economy objectives and providing significant employment opportunities in rural areas.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">These initiatives have not only decarbonised the power sector but have also delivered widespread co-benefits&mdash;enhanced energy access, employment generation, reduced air pollution, better public health outcomes, and stronger rural incomes. India&rsquo;s clean energy revolution is as much about inclusive growth and social justice as it is about reducing emissions.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>India&rsquo;s Global Leadership in Climate Action</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India&rsquo;s progress assumes greater significance in the global context. Despite having one of the lowest per capita emissions globally, India remains among the few G20 countries that are on track to meet&mdash;or even exceed&mdash;their NDC commitments. At international platforms such as the G20 and the Conference of Parties (COP) to the United Nations Framework Convention on Climate Change, India has consistently advocated for climate equity, sustainable lifestyles, and low-carbon development pathways.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">By achieving the 50% non-fossil milestone well ahead of schedule, India further reinforces its leadership as a clean energy frontrunner, demonstrating that economic growth and environmental stewardship can go hand in hand.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Towards a Modern, Inclusive Energy Future</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">This early achievement provides an opportunity to aim even higher. The next phase of India&rsquo;s energy transition must prioritise quality, equity, and resilience in clean energy access. Key focus areas include doubling per capita clean electricity consumption, especially in rural and underserved regions, by promoting distributed renewable systems and energy-efficient appliances. There is a need to build a robust, digitally integrated electricity grid that can effectively manage high levels of renewable energy penetration, demand fluctuations, and two-way power flows. </span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Expanding the deployment of Battery Energy Storage Systems (BESS) and pumped hydro storage will be critical to ensure grid reliability and round-the-clock power availability. Simultaneously, promoting circularity in the lifecycle of solar panels, wind turbine blades, and batteries will support sustainable and responsible material use. Accelerated investments in green hydrogen as a future-ready industrial fuel will also play a vital role in deepening decarbonisation across sectors.Technology as the Force Multiplier</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>AI and Digitisation in Renewable Energy</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Artificial Intelligence (AI) is set to emerge as the backbone of India&rsquo;s future energy infrastructure. AI will play a central role in demand forecasting, predictive maintenance, automated grid management, and system efficiency enhancement. With AI-driven platforms, rooftop solar, electric vehicles, and smart meters will function within intelligent energy marketplaces, enabling consumers to become active energy producers&mdash;so-called &lsquo;prosumers&rsquo;.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">At the same time, increased digitalisation brings new challenges. As the power sector becomes increasingly reliant on data and digital infrastructure, cybersecurity must be prioritised. Protecting critical infrastructure from cyber threats, data breaches, and algorithmic manipulation is integral to ensuring a secure and resilient energy system.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Road Ahead</strong></span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">India&rsquo;s achievement of 50% non-fossil fuel installed capacity ahead of the target year is a testament to its ambition, innovation, and commitment to sustainable development. It affirms that development and decarbonisation are not contradictory goals, but can in fact reinforce each other.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">As the country moves toward the goal of 500 GW of non-fossil capacity by 2030 and net-zero emissions by 2070, the path forward must be bold, inclusive, and technology-driven. India has already lit the lamp. The time has now come to let it shine brighter&mdash;for the nation and for the world.</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Annexure:</strong></span></span></p>
+
+<ol style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Installed Electricity Capacity by Source as on 30.06.2025 (RE + Large Hydro Combined)</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">8.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(1.81%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">RE (including Large Hydro)</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">234.00 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(48.27%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<ol start="2" style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Installed Electricity Capacity by Source as on 30.06.2025 (Large Hydro and RE Shown Separately)</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">8.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(1.81%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Large Hydro</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">49.38 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(10.19%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">RE </span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">184.62 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(38.08%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<ol start="3" style="list-style-type:upper-alpha">
+	<li style="text-align: justify;"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Fossil vs Non-Fossil Energy Share in Installed Capacity as on 30.06.2025</strong></span></span></li>
+</ol>
+
+<table align="center" border="1" bordercolor="#ccc" cellpadding="5" cellspacing="0" class="Table" style="border-collapse:collapse">
+	<tbody>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Sector</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Capacity (in GW)</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Percentage</strong></span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Thermal</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.04 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(49.92%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">Non-Fossil Fuel (RE+ LH+Nuclear</span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">242.78 GW</span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">(50.08%)</span></span></p>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:138.7pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Total</strong></span></span></p>
+			</td>
+			<td style="width:133.95pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>484.82 GW</strong></span></span></p>
+			</td>
+			<td style="width:159.0pt">
+			<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>(100%)</strong></span></span></p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<p style="text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px">***</span></span></p>
+
+<p style="text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><strong>Navin Sreejith</strong></span></span></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 2144627)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&text=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&title=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&text=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2144627&title=India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="India’s Renewable Rise: Non-Fossil Sources Now Power Half the Nation’s Grid" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" value="&lt;br/>Achieves 50% clean power capacity five years ahead of target, setting global benchmark for sustainable growth" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>India has achieved a landmark in its energy transition journey by reaching 50% of its installed electricity capacity from non-fossil fuel sources&amp;mdash;five years ahead of the target set under its Nationally Determined Contributions (NDCs) to the Paris Agreement. This significant milestone underscores the country&amp;rsquo;s steadfast commitment to climate action and sustainable development, and signals that India&amp;rsquo;s clean energy transition is not only real but also accelerating under the leadership of Prime Minister Shri Narendra Modi.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Union Minister of New and Renewable Energy Shri Pralhad Joshi said &amp;ldquo;In a world seeking climate solutions, India is showing the way. Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian. Prime Minister Shri Narendra Modi&amp;rsquo;s leadership continues to drive Bharat&amp;rsquo;s green transformation &amp;mdash; paving the path towards a self-reliant and sustainable future.&amp;rdquo;&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;>In a world seeking climate solutions, India is showing the way.&lt;br>&lt;br>Achieving 50% non-fossil fuel capacity five years ahead of the 2030 target is a proud moment for every Indian.&lt;br>&lt;br>Hon&amp;#39;ble PM Shri &lt;a href=&quot;https://twitter.com/narendramodi?ref_src=twsrc%5Etfw&quot;>@narendramodi&lt;/a> ji’s leadership continues to drive Bharat’s green transformation — paving… &lt;a href=&quot;https://t.co/ydzWErWQNC&quot;>pic.twitter.com/ydzWErWQNC&lt;/a>&lt;/p>&amp;mdash; Pralhad Joshi (@JoshiPralhad) &lt;a href=&quot;https://twitter.com/JoshiPralhad/status/1944719387933458688?ref_src=twsrc%5Etfw&quot;>July 14, 2025&lt;/a> 
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Policy-Driven Progress Fuelling Clean Energy Growth&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>This achievement reflects the success of visionary policy design, bold implementation, and the country&amp;rsquo;s deep commitment to equity and climate responsibility. Flagship programmes such as PM-KUSUM, PM Surya Ghar: Muft Bijli Yojana, solar park development, and the National Wind-Solar Hybrid Policy have laid a strong foundation for this transformation. The bioenergy sector, which was once on the margins, has now become an important contributor to both rural livelihoods and clean energy generation.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>The Pradhan Mantri Kisan Urja Suraksha evam Utthaan Mahabhiyan (PM-KUSUM) has empowered lakhs of farmers by providing solar-powered pumps, enabling energy-secure and sustainable agriculture. The scheme has also opened avenues for agrovoltaics and feeder-level solarisation. The PM Surya Ghar scheme, launched in 2024, has brought about a rooftop revolution by making solar energy accessible to one crore households, fostering decentralised energy generation and empowering citizens as energy owners.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Expanding Renewable Base with Co-Benefits&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Solar parks across the country have facilitated utility-scale renewable energy installations at record-low tariffs. Wind energy, particularly in states such as Gujarat and Tamil Nadu, continues to play a vital role in meeting the country&amp;rsquo;s evening peak power demand. The bioenergy sector has advanced considerably, contributing to circular economy objectives and providing significant employment opportunities in rural areas.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>These initiatives have not only decarbonised the power sector but have also delivered widespread co-benefits&amp;mdash;enhanced energy access, employment generation, reduced air pollution, better public health outcomes, and stronger rural incomes. India&amp;rsquo;s clean energy revolution is as much about inclusive growth and social justice as it is about reducing emissions.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>India&amp;rsquo;s Global Leadership in Climate Action&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>India&amp;rsquo;s progress assumes greater significance in the global context. Despite having one of the lowest per capita emissions globally, India remains among the few G20 countries that are on track to meet&amp;mdash;or even exceed&amp;mdash;their NDC commitments. At international platforms such as the G20 and the Conference of Parties (COP) to the United Nations Framework Convention on Climate Change, India has consistently advocated for climate equity, sustainable lifestyles, and low-carbon development pathways.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>By achieving the 50% non-fossil milestone well ahead of schedule, India further reinforces its leadership as a clean energy frontrunner, demonstrating that economic growth and environmental stewardship can go hand in hand.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Towards a Modern, Inclusive Energy Future&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>This early achievement provides an opportunity to aim even higher. The next phase of India&amp;rsquo;s energy transition must prioritise quality, equity, and resilience in clean energy access. Key focus areas include doubling per capita clean electricity consumption, especially in rural and underserved regions, by promoting distributed renewable systems and energy-efficient appliances. There is a need to build a robust, digitally integrated electricity grid that can effectively manage high levels of renewable energy penetration, demand fluctuations, and two-way power flows. &lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Expanding the deployment of Battery Energy Storage Systems (BESS) and pumped hydro storage will be critical to ensure grid reliability and round-the-clock power availability. Simultaneously, promoting circularity in the lifecycle of solar panels, wind turbine blades, and batteries will support sustainable and responsible material use. Accelerated investments in green hydrogen as a future-ready industrial fuel will also play a vital role in deepening decarbonisation across sectors.Technology as the Force Multiplier&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>AI and Digitisation in Renewable Energy&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Artificial Intelligence (AI) is set to emerge as the backbone of India&amp;rsquo;s future energy infrastructure. AI will play a central role in demand forecasting, predictive maintenance, automated grid management, and system efficiency enhancement. With AI-driven platforms, rooftop solar, electric vehicles, and smart meters will function within intelligent energy marketplaces, enabling consumers to become active energy producers&amp;mdash;so-called &amp;lsquo;prosumers&amp;rsquo;.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>At the same time, increased digitalisation brings new challenges. As the power sector becomes increasingly reliant on data and digital infrastructure, cybersecurity must be prioritised. Protecting critical infrastructure from cyber threats, data breaches, and algorithmic manipulation is integral to ensuring a secure and resilient energy system.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Road Ahead&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>India&amp;rsquo;s achievement of 50% non-fossil fuel installed capacity ahead of the target year is a testament to its ambition, innovation, and commitment to sustainable development. It affirms that development and decarbonisation are not contradictory goals, but can in fact reinforce each other.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>As the country moves toward the goal of 500 GW of non-fossil capacity by 2030 and net-zero emissions by 2070, the path forward must be bold, inclusive, and technology-driven. India has already lit the lamp. The time has now come to let it shine brighter&amp;mdash;for the nation and for the world.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Annexure:&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+
+
+	&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Installed Electricity Capacity by Source as on 30.06.2025 (RE + Large Hydro Combined)&lt;/strong>&lt;/span>&lt;/span>&lt;/li>
+
+
+&lt;table align=&quot;center&quot; border=&quot;1&quot; bordercolor=&quot;#ccc&quot; cellpadding=&quot;5&quot; cellspacing=&quot;0&quot; class=&quot;Table&quot; style=&quot;border-collapse:collapse&quot;>
+	&lt;tbody>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Sector&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Capacity (in GW)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Percentage&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Thermal&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>242.04 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(49.92%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Nuclear&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>8.78 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(1.81%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>RE (including Large Hydro)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>234.00 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(48.27%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Total&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>484.82 GW&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>(100%)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+	&lt;/tbody>
+&lt;/table>
+
+&lt;p style=&quot;text-align:justify&quot;>&amp;nbsp;&lt;/p>
+
+
+	&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Installed Electricity Capacity by Source as on 30.06.2025 (Large Hydro and RE Shown Separately)&lt;/strong>&lt;/span>&lt;/span>&lt;/li>
+
+
+&lt;table align=&quot;center&quot; border=&quot;1&quot; bordercolor=&quot;#ccc&quot; cellpadding=&quot;5&quot; cellspacing=&quot;0&quot; class=&quot;Table&quot; style=&quot;border-collapse:collapse&quot;>
+	&lt;tbody>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Sector&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Capacity (in GW)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Percentage&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Thermal&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>242.04 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(49.92%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Nuclear&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>8.78 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(1.81%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Large Hydro&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>49.38 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(10.19%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>RE &lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>184.62 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(38.08%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Total&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>484.82 GW&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>(100%)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+	&lt;/tbody>
+&lt;/table>
+
+&lt;p style=&quot;text-align:justify&quot;>&amp;nbsp;&lt;/p>
+
+
+	&lt;li style=&quot;text-align: justify;&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Fossil vs Non-Fossil Energy Share in Installed Capacity as on 30.06.2025&lt;/strong>&lt;/span>&lt;/span>&lt;/li>
+
+
+&lt;table align=&quot;center&quot; border=&quot;1&quot; bordercolor=&quot;#ccc&quot; cellpadding=&quot;5&quot; cellspacing=&quot;0&quot; class=&quot;Table&quot; style=&quot;border-collapse:collapse&quot;>
+	&lt;tbody>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Sector&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Capacity (in GW)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Percentage&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Thermal&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>242.04 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(49.92%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>Non-Fossil Fuel (RE+ LH+Nuclear&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>242.78 GW&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>(50.08%)&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+		&lt;tr>
+			&lt;td style=&quot;width:138.7pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Total&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:133.95pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>484.82 GW&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+			&lt;td style=&quot;width:159.0pt&quot;>
+			&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>(100%)&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+			&lt;/td>
+		&lt;/tr>
+	&lt;/tbody>
+&lt;/table>
+
+&lt;p style=&quot;text-align:justify&quot;>&amp;nbsp;&lt;/p>
+
+&lt;p style=&quot;text-align:center&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>***&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;strong>Navin Sreejith&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+</form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>

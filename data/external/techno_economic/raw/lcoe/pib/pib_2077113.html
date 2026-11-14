@@ -1,0 +1,1103 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=2077113" /><meta property="og:description" content="The Cabinet Committee on Economic Affairs, chaired by the Prime Minister Shri Narendra Modi has approved investment of Rs.1750 crore for construction of Tato-I Hydro Electric Project (HEP) in Shi Yomi" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqxzvmkg2xy36iq-f-920f2671d-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":23,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"577c096","ak.r":40698,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":58820,"ak.gh":"23.205.88.159","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794695057","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==WRt750ahJa5uK77ULOWDn8taf3qmSjgRSAYnQY4Ye5a52EryaiTlkYYOiXJeMMkOSHN5PaxlmDcOmkedeIk1AmG6WtWDMk+6ws3qVAefHeauy3PmOjaExstL3/YSyzpjydOaqbzLg0AvsnDNY4pRA2NxjWsxCGZSWvkSmJtdU2/WNbXWhjhXTTzPRsBimnRtfMkPloCCESnLdyK0n8mhDSsZJ5LGj4bNpsG9jV4+xr1nTk5THv/gv1Ley7UFmdVliHr9ERSSzmEpBsS+vIRLvC6LpiMMLWBtTuPiLHqAzRxHKrwHaM/6hMXeyJ7LjH/YmPiP1FX7icXK4aHB+7HoOQJ0LVeRpYkPo4/flFlVFCRkWSjbyoUUUjIDM+OPnFh5uwn7rZ49FKKdkxqM5Vzu/OgZW4sRjO12QBTDrHdL00Y=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=2077113&amp;reg=48&amp;lang=2" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="AgpZzRlmap/23xqD9HxMxdIxKH8XC6X7rt+l8R2wQcgG8WM1TNVkjEQAtUP9vPfnaVRBD04JYmCgOTdfvv3tIITi86VQDaO7dftIulgfZC0WFkxY3sY+cXzWFXtHTNS8eNlsJ8Uo1J8f1Bgph2w0dtfGIk6/1pw3sdSEjzLFHaWmmv6WY0FDP18TrzmWtTwVSoSSgxIpMv1WVL4dhg85MwyQO1lg7QF0x5c8aBV4YZF93At0Y0YnV6bftdPuXbCp5C60tJRMycS4l0WUxP6AzGMCqf+9pVt2YuIxolPQPIUeQ+2KOl3oMSV8A3MSUcOKpvDE/WtavTsemPKCZCRxBQO4oxO+fHYCA+ASIR7OMXedFzHtFQj7qVCyt6g3Wwis8Wv1sPFAdLPRHL5tYe5NMTAUPaVc0GdLGzrJ3vS+ZgVP5ZrBx09Iny5gB6X4UZcHrXEavAZGFo02olHC21YwO00gVUW2GkzkFzHBuDwM9XbQZB/lVcr3m40RO1yzAka4+ViPQaLq4jgvSyVlysaik3cGyXd3XVTddOU9ToXXDTLR+ftcbjSE2ZxYGW241sHBXjW5dpR8QE3X1f8IfzQeevfKeLdszIlEjUzCUMGE9ilV/0y5bTc2qRfD/sjMYUgQ9bERt1fbon9pvE4XpzqHFew0T5hVsHAR/0f8fzxj8cRxNC0bZLPtQlDr7tnbitqPcNFIR3/8GIbO+5vF4yWWp+KEFLGHYlvILLsdvrr5snBGctlrFfcg1wMc8/oVytrSHlrax2CwXJx7CT42vZnPm0fHtFyssdIaX1vwqsY8I9bKYTG6LQEG2IvMYHuKVaoDqu6HiRRbxFzWfzqQWS8Yg+iHXMTgdNVCpvJlcbvPEPVvQYORkb+Sr5SkS+WedKRk9no/K10Mb9mM73LBlWyNzBXsfSM5Sv5uD8+yS/xNjHRE+Nq1hT4kOw0gTQQD90H5go660QC9/Zxy2TkF5EqJM3J3h2m3jW2vMh0Ldpy6ZkSqiVpETSSVabuTPM8MEN9zSL8FGGRwibLkgVV0QLggcuTEsfwtuTErxjbltKXwv+m79W3uKMsIq2yLKr8ML3A6bYToHCN2OITlit8wLdkMSHDpMTTdi2A/hWNZi4SziJMnXki//h/bdbcTTGQQKlvmFCdFpEnvvAYLWWVJd7dtTuPg6eArmRFVIGZdLKD2D84ch01W60lbh/7ZRCnaplPcSbZV5QuTczUN3f7oSPDi0ijrPbU6FZGIzQ4l8KtK09Wdokbse9C9diDXGRGA7hneCwlBUsFYEB5UsZsIJUwd/QoGri1e+x+P3kbV/45Ye35BeIBkZZSej4sU+/2NdwJA6P1rHTXuhca8pKPKNd0OTa5lhu9thDbK2aLW1pHOZtCkW16GvmQBBIp7lr6dFVyQvGWIHgGfFCWWyTh9vX75rKur4GJLYSUhraITROQnB3iugDSPRKnp7ZMtUQjcMzxAd8A3HFy6BrIYQjM78ROEiZbOb6WQQ7z+K7u8UhI2Lokhjxf1Rq9XZ993DdCwVAkIlH44qw8j3x27pLAdkLJWPMyAt92deznSXloSZFD8Ka4TNm6px8bM5Z0Ac0mnl6LrduzhTSXPpR9hCTz9LZ3fXLwHIdD/DPG7AMKePLmin4HmDvfENPQ08GGyYQ1ZFvn016UBvqabIDCdR3OhKImO9vzWgn/KFug/8RpJurkO/gwVhCWn0DDzSy20Ss/XNw3COkVSGu+GQM7a+daPJwQNgelNwCHNnc/dEtpBH0pnjg1VS13qjfcFjPQcMPB9hUxF7/QVybyXHvhMWEif1fYnu/Pd3E2i33cd0zWbnlgUZLSJDaEePvUj9gLa8fGvtP9WdtYtwPp252tAOxYZqgbovM3OnshfZObd9w+T5MWe02qK2JTuBYrJqfhTHSFGkT2D8c664L5gCy9hA3AoJQBC+NoO9Gxz0EYRRvGetEZcHbKg1lA7qkds9+GJVXdK70ZEU2eDohaezpwre/tDye3HdeO+aHHH7pIcqyKJ31qEcaSgyhtxUTJxUnJoOC3Pmk+la8cx1bYY+aTnoqahHJtTEpGXsiWDXYJLivVRpRsVFkf8Wd0DEcQL3YFptyH07e5CEDxELSg0PwOsz7Qnb0CZaKvcMZPw6/4qJyqs2FPOUW9bWcoIInwGK/7YhxMjnHDgiBnexiiyT7DuotmQiDRQ4wXfBqIDNRTnzN56YSxujKiJzM2qV28ngMzeYB7gjumX3zla4QT+wMVkjKot6Ay1ARxTa0hChzpDgTV7BG6RovrocsWaMWBA0l9C2X9WTR8Pc0uNMy/dJDm/GSc2BpaLH6p+RNIfIAsTCqUQWO6cTsBKoSs2Dc63H+Deje+Es/wfD8HXw+U577KKwJpes/N+CNK3hx2352A7okMCZYBdfATg1/745y+dfGbn0cynfech+2ayOLyOJcII6kzXvIoRYqk0CNVY3bToVDzIp+mOaG03N+qm3aZJRZQbLPMkMjj7Zmf4WTdjENWP9rQF+mkHYjpVS3/ARe6i7Znvc5IYKnSCFDJvVQq2qzJTFGKD7gElE6/frUlsTJuWisqWGQPPPNbTzerR3yzOYi/ZwpVXRDhn+3xcrgycdibsAhoi35yqytbkp/I0ZKaM81CRXFBdTosNjdDLtbicsdZhxy5yNYXRzstYy8KCV9a3FBKvYQ5F/oeqAxqfHn0DrirG1kfQ++LZZU9Eb2VTvtDXxTy4mbPyaVgSoBz1fOWqp8FY0RPkDs30UlVcWfYj4JP46NSWrVkxT+1Uo9Fo+EqLZdc9oZOpICj+FV4wKA5as+Oy1wMceDz0n86Y2O+Sm4m4QnW/9BhHlOhcNgh29E6/Lrpw4oJxY4IOFoLhFpQ3/tEL126CFzojHyR/oifGP7iWH9Zu94QC6/h4Ot+09yYBtZhkstbFm0huP/2FGxuFBEIlKwbvhF12vAwXr7Ub0shjMrExEN6xtKo93hsy3wUp76By0zGvO7FlgXbq5DsYsbxB9HwAJcZa27AwHIDFWD32BsgJaHVmTD4GAIqmnMb1THKqGxLL8ONITPuVbt1coo4yRMEbPGcNk7rkDxe5H05PdWK6Q61vxztEj6pBgsajmqG+j/Q6y1eNrCAApO/e7pVAbxxIwXeNo6jGSANpwvBjQmkHNQXtRxU5u4Y4YGPILUwDOFQppJEF8xlNaZFOcQ6s6W9f8iQgReQaSVAweQNKGdtAC/qcXsNIxvQ2vQmhO6b/zv8u1C6D2IPpr7FNb/W5aN5XSKtSDpH+nnK1uoIfTYjzK5MmoeuWQ73tFXKtCcO+0yrGLVCewFLFWl0ZWhjoM511uRjr7WdCuxvh/W6z0iJcd4TlTwNh/DbEyqT4QZW5L7eZ7aoE3HZqKyTdCn6Pw1H23aiqhaJJOS/BRT9poGs5e88161yUNt2LjvwYsYK5qAM+R2ZcOxclWkzq4SShn8XwL/ARGetIxrze7Mjhy9FvqyNoRRl1vjI3ek0iZS7d+A9RYvM48BuSPVD+5x6mJiaRclawFZwZhzWSGhvN+p/sJQeBA1Ne791UBV8207MqxS9YvnVBEZUen3euD1bsM/H6D9TBftjJ5DjIqk8xitn8JZVfxCYRPupS7PfoF8Bo94D04McgeX4NzqBDLGMIw6tTOSXcAN+5aryPh2/dVFsRVUYZcsOrR9PwhFrxuEvt9vbR2C1HDTvYco5j7pklrrn2iNI0HGupsvANAyGk78Gn+N21OqW3sE79gKlLjRU3Fci//RpFvNWve9hVEQuf6/Xfjpu34Lv/s2Ri63e5MrYUwMdRDURWWF4/BBI8jn+YYtEMbO8cg7PV0BAO7EmwJLVIbGhoxLnvlDBR5OeKw1kaHY1NQJrjDPwMEefgC9ARY3caahoZIT6qiY9cHDUW8RmRG1iCMCCH0lJDmeE4B31YxPzt2T5ZK4rNs8SQ6OGQ+eVJzqEPgE0caAbU8Ivqt123dXTJiZYRMBJNg4u41WZkboUH5PSdDq639wJrz8W+rfnMwtepGh3UH+hhSFpqYUdcXse1YS+Ze6HUs8pTrRG1k2dE0YIepfLbzSq6kdDkp6XC0rpR/TeU02Q5k3djjuNnTA3hWLhi9a0rzo9BALlfH7w4DcUy4bgtwWbgtDJymOV3JYXRscS6i4QzSScYBfCoumUqC9QVo9Lbu0syfjxaJtuArs2PAaF7tLQL+vlMlhutlkVnHc/IZD20VzF/VLvHqNPlnxTyLQ4XAOZCrfOlYedpFmpStZy4kcw1HT0GYMd37kMEFY+qrqnuvgxH+TKKXeCntoCT2vfSzxf7cMMCDUvkT9pEqb21bJEVPHO49SW5TGKPfhliTst8cjgLm2WIApgj8lcTYKa6VOKPif81POrMNxhfrUs5/7rRIuJqcVcynfZ/ZWyzApb4HdGjrJHqNUGE0muHM8s2QmwP0RaMbD1jIqQRCwRoYte2MPkYYVWTEdm0rnk4291fy0vvx83MuS/Xhr0Bnd5A036ejGYMzAibrAc/HRCyq4GFsChB4KKPouwAsEccvz8uqvfcjhK6nNUBRrlWw6X9KmJxYRFVXcpr23MVV717daG1PBOMGVJ2d+PmbV7nGhVBXXfDR0pjngOwZKAXSIsrrRlt53/oe/b6fkUNKwcnD2NuGUkB/gYGmP+vRC7FCrtEyXsPneH/WElT0rrdDKQrn9umRgKdvGatNE2ljLWn0IeR/ynvPvhaOGGExqabWbs/rz5P1vUFDnoG765IfG8KH/LyBIoAG1D6DVOTrX/iG/1hMZUvYAMxvWj6PH6izvvY/MZbDk+Umnyd9JW3FviIQFl1lury51cAPbytiwlybGQRZXVyzgZz1/Goa4K2MPf2FOZZHI5A2LexDmlyXsY18Yc2zio48XCUljuMMEpR0aYRDovPsYTd7T/sp6ihU+2Ki40koqzC0KTLzyTl8P0XEFsKr5I8DL4llXSUPwgwRWCisiw+AljUKBi0FBYBW5PfEb+CKCGdBw6mcu6ekYc6jb0+burivRgu/r7NMqKEcnkyLjmwSPdj8HhHghxiv5l+czac7caVQbEo5OR6rM7nO5Y2hphaiaun9rG/D134giy5/gEQBiCvxsZ9K6RbxRZkCKKoOyeozQIRl+KULPB1Kx+aIAMCPjuckb7UCTAlhxn5S1BfhKQDgIyNVxbCKIDjT2SSVmAr46fZ/tePa6u9nxTpVF1FrRQusqZopi6fGOYM30UEcvw784fvhprLzt4v3jqX7hy4fKYvJKgKdtesF11SEjB9Z2u6Yrb0DsJMZ4wNKHmqMdG35rL2q/O51b0NEZDBBnNt02o/ai5G7lzzPkNE8jVw2ODV7aY0FHM0HN3wQydaVpLi9fnvZjhwfyGDrUrD9Bbqh2BpmzrynTP52XR0JqAGNguLAkuJY7leSG6rJdVl6D/R6Z/TsihM6/AzUnp7c9OVAC50s8KY2fgC1jheu5EZUSo+0MTIaRaL4G1oY/vx/u8djaToFzEJgFOzl5HHxc4bRMHTygfjs77BJIRHR/EgIDnlpat3+2bpz7yh9EApBbEeS1PUx8LuKThri0CZl37G6/MCcXM9mRHubKxBBjf5916xccN/cGtzw994VmD7LC1fd2YIyu2NHbnOma9YqeddsYYGUOfnot/CQOBJwX+zfim4C/TGPeCCVJATeNvjZbx7pYI6QjnQYr9CURpVheZfaKgwD6wFqNyK6jTwYhhDeUnAQ8jYasvbewkJJcfakHxf2ujl1LK/33PgC0pGyMOQiR4WxAgAzXjY7Zez4alTL5GlnJ9cWzD93wR3ay1OLDEeHsCqUs4nGc6rQKNPUFlKEdBzv9lFeU/FMlTivlAzDQmPCjZb5Yh7VrvUwwovwRPO2vDChWgGQ4jeyJVYUXyIX2R3yFxq7o/ET2gCsuh5iLZgEc8XM8IphB3dEUCyao6vTQFp+8VBYbSC1LjETj/XXkBJUKLQ211oa/uRKOdjYeKTJu+nSs1KUYdv24zfAuvwtPFoFtV87nGfPloNRlWKFT7crL41dZW/eAmEUIwEHJKbH9bwTvznLEI8z3Eqnk/DnCLdjhHLrDI2HN042pvXtS+rryfHrJhRKM7w2lMIA7kLUYAQtwePbprWX9VhtgLUYQl0HI0CR9OPLAOqSvoXglRZ9LnRfz+irRjiJTc4hppfQhgMBsByNtyQWnwic3ReX5IosMMdc2X/XzV/4iCqYpCJBECMtoGM+unZFcUgC7jC9pV1iWioNLa9ZjNOMnxzk7AXeMnVhSDhwxVVv59u9m2dj93Fz3Wo7fwYe1PTXxyP1wCF7Za7i5DkZzk6O3DLP8Tc4fwLrc7TMSkDkGK6XWGWUM0z+47J1KrjMMNhputKSz4oIBGQBw0/n4TN6KS5nnKqtqWgDuxFNh6ar9DMkILa5Jo83Vb0goWmRTNvX+VFkV2mZ+MWltivJele3/qHpAknIGCespvIC9BPYDfkZ/+bekK/cC6omHxrv8F4ysrVAgShncRQQlSxADVtxgh0H1LFAWo2Oe7dy15afovuboLVu2QSpXD55Aecblr91PCWoLef82Zp80qHYU2o6hf7cMFnlM5Z0VOwbl8Y0wEC3IowUk5OKXfI8YjPzq3SBqUWzIG+KSzrsXsAhdgL6TWS57ZzKYLdtbY5FS1HIl6eC5RlACaDHSzI3A2YIrAzPbyGYQ+sn7/mb8fj8824yZO247VZETKVM7l7Xc+0M21FjAOcpaYYNe0mFb6o0jx6B+W7gyJISeGEjLEHaVUcCb7UkNkRRrxpN4TngmtjJhxjY5/Gz8hOMQtUqpL1SrXXn8N6b/bq/dAqGml5GvyRpfopht/MfpZbgdm4MMI5F2hIm8qyTbNiEiZfVMXHMqocSWAobNP7GFbfoq16/eSiagGyAQgWmwg6w7WIN1B01iqpWwqMGG5Zh2/JmnVdxvLm0pAqouVQB9PHmBPUQZnhRL8bvGOBh8nchx679+0VJ4NaKZr2G5lB1e7kyyT66EsVKQr1AC3kS0Vh0bufxw+3YXi9VuysD0jbkOisyl2NNKK7OOJx1hTj/ojnnthzz9HonyJoCV5W1yd0XmfbY78xXExYWAEyKDZT2dbAQTQten5WY4FYi/YT+uS9TN30qtejwMV9iAu3jeib3MDGIABsfEr36rXr0FwbhnvWyM6ApZwJ4Sdozs8dHeb7vqeFW8tYcHlU2BzNDBgXr3Cc2K9AnC7DjCmANp1sL1WLaSjdWFkrKbWguy+wB6rcnN056yDK9TS92s+buzYcRbZThaxMT9Vzf9cKGsUyHPxyGtAR4MDyqBst0kFovgbFaD0VmbI02LAH+TMU1/l+s44LSS7FLW1dLla/g8wNwEsYZubmB7mNCpx3CE6VJk3b+7VkNkrIZ8I7C3nBn6NtR5v8eAS9dylM56dE99NvaXrgGWkqr9J8qcZAfGM73O/3XvOJdvn5x5g957/19XUwAQ/Dgr6yRWVrCbH8+M5Fdvk4sUNuKIqLI0tgzGBtUJWKnQwZ/mXVFMRbGR5GDAAcxHXqYWgdHPjrPWlxM+WuzzQeZPoGJkuztYBCo7Gogqhq3xYwndGywTC0gwD05UY4DbuUqBaYg83v17cWlOg6CVvpwgiSX1VbnmUy6A85RvjTgIcUHAChRZNvxgSIUocH2+kWCh7DschTDRlUayFdmMS7pwZoYrjNrcF7gJpUWig1jYMDIeyP2yh+h6kvBueRerNjODdJWX1JSuJyXsiq0jDYLi5d4Cxnn63vt7gRjTsI7dZZrf0cg+0q96OjsmfAfNxXEExkgK7mjn9luoXBy6BNKtaXroZjXZewDHn6kek2YqjcZN1Hmg0LOGx++arVUl76ufyLvgDaVMqsnGyY5iPdI+hI9RPLmQiF9MCqffAv+WnKwcsjLg+cEKu+gpWQbAp6OwNfwNjm5FSQaR/egHWWbTSm3wJ8dKIi1eQXifwFao+WJjPn4h4o6Xa/GPMg27RGTsFa8bpkmom8+8XGSd8M8Y48f+Gz8DXFSg6PR3n78w5D/W3qkSDMUyv86DFlZk3oYAOo9ZBg34OyqoVaQzOvqnMwf96ROYtO8nphSUD2LVmvrS0FtdUvd8DfI/43/1bhnFCZoQZv04f6IGsdMj0SW/w54Y1TC3/ao3KyMvJS3QQBa3rctwfPmJ9rCEKdVjvifz8D8OI4pYmVGe9HsRLgUufZ1bHWsJREOKnIJioCR9SmcaIWoVEv4Nxni8FpE2CprpPTWpx06HY1EfQOfuRnURroeGGQi2GfA8RA7iAEItiObAmqVcRNxf+qYY/lT4PxzBLqZrDxQg+4xDwARY0/oXSsoX3A4jF6Je4LJUnhZSgjYFvrzy0sFcZ9LVfRp4xfntozT6t24gs7grVUr6+642/Y/6j3pq8DYtdHGoWo0lnYO+WE1ua67t6DB4ZoUUwHJzCoAwe7aPNjzjrvavdnFZi+m/UVjZLqdSFpU2lQTf8qt1xs/ThJEgMQ27bfm1saUTv3IT1d/yjKBiRbEicnso1b1UQZUaYjtxHCPaXXyfzuNAR0FbPpC4L+nCJluMlocOSzM7GDYg82Vgo/VlOZ5BfvANK7KnPC39yc9L2jigX4kvQiJfEqLF7tDlp/uqd3CxI6vfNOlTr0s/k18H5UsHuKbeIo7NmE+6nf/38iiK+p9k75q9XF2+CzwcWI9XMToNv+Fl8B5JB14AXpRGXpNgfdpfxvHFgI+FkfuodubHTgah1rSorr+qBpcQtYbvIF7Unth1J07AvAcMRJecXNTvaWqvVvyucAoghQLCYbW6YpOapHRYvGn/68eZIjr+yKvBfOGF51IUuzEx6ix79t90SbroAtELTv7YH6leinFhlgl141ypeRiJ0DNMBoVHNmBKbSTv7JKY4a4VkN8xQtgnYdoZiyincAkqADi+8dur5buIxp4oCgvWWL+aYJwMmSpTmwXTiuIEduBCHYkTh4T4cFqsv+UaJwHhUn7trxM6UirqNEUIiVrc0tPLsRf4w4/AwKYZZIJVaYxgvdubbaaWpx6K99bPIx/V3nm980zYD6r8W+8fBabC+wf4OxWhL92mi3S1IQ7fwoezpH4H3su+hsiHHecf5uBFm/j1OVO60+NZRjfaE7WhRKZTs/MnDHUR86gi00nCnA8IIXbpomg+IwRxqTo4EXErqUnQURIOZ6bdr+NW9GxTrjKb5xy73k+xjW1PONuKdl8kedmlJryR0OZk1agYfcZoZlKshUtg0803kAKVZEkADLf/e09jBzqb+1HcDng/S7GX+ORtQlvOxPldci3WFSB6iPOvrFGGVq+QhdOa5SAxMG8jMwyxJDpa+Jn6nay9ruonGeF+UBsceDhjp8HnAIV9UZo8oStVXWTgCET+24JKH0bicY4UmZuuGOKzlSO1TfsLQMWdXjnqjMkMYDNC4wv2CCQKvDhZNYPgmCfi1zKtZYQz1lPWvmbCrl2qLN06OOmh6cLJjgrLmlxQWmmqcqdUs/K1c4sLl8XXEh6KNx4h0dYdnG7df/G8tEtcSfQhqJTam4digASWZREKDFKJ2osuZGziFDSv/HL84H9E8ORNFExqSNvTn0EKZhVLjoGhzZkVZqPnU8+ZRourhc6wz6/rftFH1wII5Em75WvzXRdbSNx70iA9Fexs3Ln4q8oBMUx8x0Azm96kk/pk6TuXtdp6xAYXyCy8Vye1J0GCB0MFhjJDgL0cL5PXbSPvmwyIp6zV3uqOJZOMUUehX+mMWzGa4k1VwmpretVepG3sKaFk/HG46TfZItb9jCrAbXobrZLs2z6f3p2qjGneCp63svB78t4UM13HSS1cvb10MQE2VO2at4y9uSBhDAA2/nsGQSUl+qdEA6EE//n7S+yN9JmXZVEQi9L8h9axtGRBUJUG9VNJoodg8dsPUuHFt/zcfIvDaoWnHjr9Lgu7m0PcxF8zKnIuaFemSlgE3n3s5LeXJ6FjqpNhuhEIXx8aGkLEvND2Qkw9Orr2rbz4R6NjqaW7v0yJi7CbnANTA8HgOzy29ytavKvFTe0OHj23A0G1eKqYPhHF54IDfz21HOSBqNFg4GFSIFDwRGOzEW0BzMGtDgK2Dniwgvw1o85qE958K9Uu/DHP+FYgx83wWtI2xuFVKZ8gajpW9BpauBNFGtjgNjCMXf+BI9LR3eTO82FJjhGDYfyUOGbr5d9mug4M6kY7F0wvVqmLCH1fmVlQZbGUiukIUjGcFzDt9C/k3bTnz5ySXm8rJ+KVlowXuuqUT9gRDgNSoKafaw4ZPg9XTnOtyJkHY8hONDfPtdMCpbt+/Zaf6/dX4I7oWCk/9fEskaAYzpTi4jQ19MguGTdOBLePpl/ZZnc7OeoVQlJckgEZ3i3xNBfLxf33A2QpY73Dg115VAdlCUXXYQhXigg6fH/p89+iLuv6jR8Y3h/9Vby9uqYZZD39tmWpF7bvZigu7WOA0ltUXxxCpyMh15ByS8Wtg+G92kBFl0+CnSj3qDIZaE2y0SreTjrwoK9xXsJT68sVttqy1PXTS4sBflDQ4ezicdc0jK7IrdqCaerKsaNNN6BEdsWPj/SKh1Cl78N7ccca2q9vGGtqptaqMHPkmAJK8ClMLAwjEkOzBfUIX6iEPdWrU9B2efwaZXaT4wAEMxAcSIhKg6VPdQxgey+d5wEgeISXAWN/hNn+EPYLS+b9YeH96UJn86qmnMLJmajRji8MrDlbtRykwljxg0k6/IvsLQ86ARU2xJZ6AjY3M/4cGahaH+lJGIr1WAai1M/Yxs9CUx8YHQQdct6trzluiNshr2tYFk2o1Y8F7kKbBfg0u5qDY6bx2RHCM9kvAI+yPlY5T7JG8tLIoHRY14tkQY5CYdm/L1DCeNNonvK769+geasCJBZW+eYKeJKaNEGallRnwR0CXXFrblw5Y1pneSKP7xL8HjZ/bgCsutAtDl+96XZ5gyqlJXejvxjAWDFxVYsZq+/s+KeMwt9vA/iWh9NwdWPyuPobchMAuAkhjVZlsYxL6s3BtUS0Q2EJc5M1z2+mnkSAMWoCFXEgq5t7bRDmHMoOnseZx6mQyc33kShUmIQIeOcHqOMeMCQfNe9C0wMURJdhxX+zP+Y05D4aBj7MwU3/cPciBbx6EqQVYpBBuUGKg1w9M+/Jl1grekXAj30dyVdD7JbCp+w0oq0Kpz2WXKQvpQojoXycRCVsz/rtm2XYyYgDMhGxh69yV5tL8lXcSWht3LzkW0DKuziknhYfeROJyXmoFpuZPf3lC0kWydvzQlsrkZDAWCcL1Aw24GKG8e247jnNXx4GGC5M3nEefjHTUzJx8qnuKq/zv4CipYve9LXwBgwr7Jd7DrqmlxGJetj6JVXlpxHLLh2N3b3oj9FdVjSVviRa2YV47ivfXlrBTqZYQ2MY/ewviEhqW+y6p+L3WfYwmT2bImjGqSZYw3yKb0kZ+8WsL049U+tN4ln66yKe1Of70UuojqTS9v1xrTWqZpH48dLYOzjIEqmZ9hSgsRFrn7GTAZz3OxYlFN1GGo4HcxM4q7WrHwduqR02sBa2LpIpYdvC0CQ624t0igZrBCxiS2OAveSTFi9FUgEEPi3AHvMvcsBgV0JXwRBpDEy3/xNwjj38CFJe/melckoMt4xBBYGl07kT0/jhZLK50NXZvdnZZwEUTwTnMK1JfLT4iRI3P9MJ3fuOIdR5Ivbzdjjf4o9bspyrpYKLmGon0iIBcfklTD0xjnoHvKfVlYLBSDRBgco9SxtzlHf8kE7b6rtC4qTHD+Uf361X/vzsXkp8g2TSaG0eKCaGuvgPy4rbNCKywsxu+pC0m7t92teFb51DF2UfeuRlckHzX2x3290Tpbf+ubzBWfrPKjN16jhDI6kqBD4UCVm7BkrJOUi4k7CgLHzwQSmkUa040nGql/O6H77RvrzuIXe0Z1Ii7FrdVLTDzB+Ez8zhXrNaH5/+PIiyyZXSOHqiDQyLrt+OxbCFdVlZbaQkbm4Och7+dRCX7qlrrk/6sCAUFgGPeLG1S9m6eVLsDA0YhWDmpa7QwJ9LEUBe8Hcy3cKIeIuQlEHM1X0QE7+AKx9HuHXraStwyXpuBRTybysBhXUQw3WdvWr67M1NwiSUn8ltUIBI/mH3ar/gd7TlgIBMQXctxNprSAt7p089KZ9lponw6inX1vU+vbeTQYKG4klX4lsOt/cHlNyhIwxy0/RulzootBUs/6c0Rv+CQEWAMkzT+rN3U9gUHx5Gv7+nUOrZSX/eWrtYm+J0CIuwYtdJhYmZVFVv8zI3+UjLn12bjXirMfmTNLhKz6kZtPU8465Z8/AILhd/n0LeZkTMV6MX5eVMPacRmhlUXgQ6/GobJknCKlicIToz9Bu2CUoKlxN3gTBVW1V2N/ynh3HzMZqLz3/MtM55XBY7jv+gYpA4XiEf0TIiizLR5QP2IKAOszlgx9yaQmnM/sxm+flFfNcSBq3pe1HX4/2xFvWjChyatdVcVlyMM4dDSug6WCaIAQjy/ZqXjKrGFWb1jJO6Rg/429bDudiT087ny8HJtDH9S5cnscEDQ++KdqSIPpfvWOTQXHx2Uhsv27yp0nn7mM3c4X5bMiNMWqKBA+tQW2zAnqVTqOVnldIN6TJ1hHyA2li2oR9F6ax0ae9weci8iJSlt49CDll/AvFQyZRtpHJBj8EJ+uR9dHhhs7772G+Oauz/NxeHWiiadgMqXc5IXn76Tu0UZr8CfOk50hIZIBoc1dmYTBsjqjKHQhGlTJGtzDvaUY2Aya6qqTGcAipMAi/DLiGdzagFUUuArrmSljSeco6vYZ7yVFG155tGDR8b/C4KgUCyXYdL56OrU4qpfrHxKZHYLaiSu8H67xsk5/BS1gmLqYEWHTwGQdHdhMiAr9kb8J6v31qRabyzXOhgGd34OhpYk17XV3kafAKHTCKxlxcDLaeCV+oHY5H7t7AgGUpMSgkTWeaulXNnz2sAHDcCgwe7T5ud4f3QbkaKvD91oLBSjecKGDdrUYnlhvv8kRhP3ExRouyCR4V4qVQp2YAlOhSyQEftDYhyoVbVEjXX0CVpps+hKY2blwW4BtRejKJ9OPMBnqgcoBqOXlJIRfk4aNOpFOwvkMKCb3J8dIGFRPSk+e1MBBkhwyiiYeCcvKt1KxqiQs8w3uPGKzzNUzVYue4BJlgM7Muq7m7AdUFj3fTUUwwF5+A5tlkOzEthwdeuq2Pems5Hn3E0MVtlbTO9WjdIL3Ey8F8gZVscTDBovr/eg/whCGYYwjQP4j/wHPvm83B18T9SlmeeJZf7Lx2ZdkUgkHQqlMTeEmkr1xEvk/kq2RdVg4ar2vZP6kcdKtjimVmGUzFbRLNBY0SGRiVG6paYXycO+3BOdBOWDazMNwn8jwBpPMhs0beuFjyYj23O3e0+C6ghIy8WYjcJebwJSy+4A10I7ou45K0I67Efw1TOUPzDYhzTYOGygDRcZ7qqZhtWX3gEEkT70kbRIIn9pjE2gvAz7lpQogRngAmulbnfpKyEuNzTr6R8nhYFGbxCzKDsF3D5kzEY5MZKmu+xzWDqkC3nTH7RLfSULaX3xnVpmvg9UDBDWBv47GQPx/7kbkIsLlKWED4rmF/DO4VYu/3Kg3eGzXQNPod/Clg5hiOo27AaRZcieOSJPN14ZDP58w8UGAUFHwQbk3GmeAJh3Qduf9veUlSBbQcrQEbUpjGUm3rJlqFvgdKmNbtgeC77tZ7ZCGikVk4aEj0Ig8U8M0at3v/G4VKUL3RF0m6fV351seXEn7Z1UCWZGIbnsC9XwQdAAx4TlLINagkqkyJKn6iNIXJgPJPLxjtDRhVysPeAn28D4pFkmh1RqYGDOpG6E6lTCEJcqxi3kaaCGuAqiIGUlVBCxEPm8fs8eO3PG7ltxekxAI9dhID6jaCco1UkMNqUe6W19IJgGTk06P5IyCwUXwjeEfISSYZKFIZgq+TET/WLFjm4MbR2OHHiXeUfHQAjYgt43weMkRwqL1DYSs5bvDIQOUR7q5/iSwUCAF7NuX7thgF28nfpyg6N3StqScZOwMuWY3TNRpgJVYRUtXzZDCv1Egp2nhHJGg+aSHZiOh0K+i4V0uUN5ArkdIMBxE9gSc5EKPlTB3tMs55GU/H0otfG+vX7ZXNFBd6iJLTvHN0Ri7X+16DXGC/ZjQK/8FKp2KMA4ppW76OKBBGUE7NZ1XRC7EHG74h+SPUKhD2MN4yFSO747e7M8npq4SI+A2UkiGkDvJChe1YRzB9Xa1MUo9qXgQhy+NLutiyE4cnLTa8sx+LqdMII6HyOjwYkInubhJW51Nxh9mkYeEIkTF+6HS1Uex2zh8897YZzG/Jmmr31Bm8cMvV45u+Ig19y6zFhw+xdByGVIeZgvE3aGFKUGUYlboa6ADiBQ+dEVb22zCRa9acZJqfW6aKB0VW6k/UTPYGH3TA5OuEYyIkEo7XhOjzdgkHrA0Z8UthdW9Wa+0a0X2VsatXD+YJwhFuy3HdnYyfoRsAbSJhW80XBgGnrp4UMToh6peasq9pEnfMHjYQMcxvJTKN5npBdBuzpy+FYcSEbaKHlau5TrMudNH/C4wF/yhoTI+EGiJSuheRtq9xaojNJbRqcWvJOtUjmk55XXWWEcw5vlJzi3qMvv1PTS0ZqO1XQSmlAB9DRL9pToGT8BfgfWOz3NnNEWFgGAq874lyG/TOKzuKT7vS9Qox6eTTRSayFlmtohhMeM+1QCr77h7OIorrh8aU6isiui/dZD9BeTDrMxWyYEhGfAe485vUrN9QONH4jQ422CAK2ZGxx1zLyJqtVeTx8joukVD+kShPYEJyMpL6DZG3g/IaubYiy1BVjw9QmRmHIpfVfMKM/ysj53cyzT48qdv2SWCX1jq6bQjFiP0AJU6ubwDAnJmUSWu+uQVaVCcu+umu8zKoAJtraUjwi66EZA6V+ShT54hKmZrzI5A+e1esED/aJgZlv2opd5lDGrOCSBbfusjh4TZdCYojy+ewwN/xjO3709QmaynjEB8flp/ttWUNuxb5YZHl2VMFy1rudstcKAJWUqDHll0oNEn3JtqXmRjJe0f5R00SDDZe2hF3GCtsjfrUQEewXJlHI7xjNbD423VuG+rUOSf6p8ioFg4Gr0Upi4Bgw6bY5oogtbjH0xwwQ74S26ZjehHn99L/WSHFoRUQOMbPL+3h/o551kcbIrfByW4nwljtr+jD7D2+sgCjh/qjzq/AcUibFSAKGU3GzwDOal6axFAcj0/uPx/AJq8A97DHv/tKa8HfHMfw6L8DjJwItDfFI3Heynla9MtiRynFRgPhUi79eJIY2stAhREsrWXvkWRw8/R0k4pAPSMQZS4oLFrBVfkZXAMRTw9xIUYUBSKxxj2iu/SpP7aUPgSzEeu2uBSaFEgGWYvrG7YEc17G42nLD6D/54+HtuGWT3iZE7wYNJFwyu3flH1sR5N0TKiQGOqMW43yamH58VJW4+T5m77REEIkYZZHorIQ/aACU+YpPyqJvd5paQlCVVca6P+fdqEF0GoXUy1YDrC15NlWPfbwnSyM7Rm41S943OBAhHVkDoArWBPjEoKMdF44iiPfNZ5j4EfrR6mK1V0cKPNa0mOXEt0QIcc58rQw7oZcL/8N8/i9V/iIW2ieE3ZaFF32KjVZ1Iy7RHQqFAzeAz/DOAxvu+KY1gcNepeJ3/unaMinFK2kZvuaEAranRxv3SZYCSrlydTkeJ7axzMkQnAagxFT1ss6q+qmav9/FiGS0Dzk4eVHUN2dzPhOHNgMJ0q1luoeG4fwl1RIzdD7/IUR73TNWxmMyrRii4i4cybg4Rlmd4/jRwyHIRCITOunibYpwRqz6MX74httezy9gpGbehpyIUJwroyKVPt5wfKonF2SAEG3+fn7Rd+VQvicO7JvBpJ16g9OpM5Iwwvwm7/WG0lLazZcipJ3UGtRUdDgAIPjVMhpwec09wBam7yIKCYG9K4jHiiYUZWGx/SDdhSRn6bD0aqAko6kdVJaw4rvihOz7+a+cgVN9eA9VOZH6FYF6KvxIhLXJdW+A4rAfMsIthl07Xod4Fh7e6ThzlPnnszcky6oEs+vA6EuA7Yg+a/I/VaLxtfqUtIh3YWynsJm9is84VdvL7a3mTrULErXmtYDCMbmQoGoy70WaLzrJ/2mSyMXhMrAQDnJVM7wAEWGbN9GsaXUuKZffV4qRUJCsnGmv/PfIWrCVosCREYC0WcPkg8qfzA1v+tX/bDA87biCfoFzqC4SEifvh+mfzhU+yqHhH5JwItXAeFnX7muy/wtjqRoqtyVa3qJ4k+vVf/Iq7CV16OhpI2eCH3FPS2Dt93mDeqURetVA1Tlcp2bjJ2iZPq6uJjh9qL08FlqlUiiBYNQFAwKNSKPBrOP5Mdd7pT5JwvUPbqFxNX9AstPtfLgsFQ6LHX5Pl9LEcNtsZsGSVxhI5hdxRtQd5Bpu/khv56T0M3Zh/R06j9ee/iV3KRlx1h8meHDU7jGfUFT+/ymnPm5jw9SdnoDIon3fa7XpwdEpb8UHZG6I0/exYHXuu8mCL2LnI/SVARTmBVmxIPBEUpnI77mp5tAGr9rXxtvTiUEcdqZr37CZikOZPOpCG+fBrXxgafjV098Eix3sdD5S9z4h+J0quHkoM4WESh9z2T5XXWzLxD6DeCZTDZUJoTiaxzz+ml3s94NSPfzCi/SIfHxq2u341CeBAtAgYkuNO8fhsoY1yNfOQopmGMMWClBc5+2CEbbMgHJmZ2gnUQUK2TV1aHHzQ4MNo615oWGOsDYAjJMECFAkX+UhvD+T/fL9sVWGWnmJb54tm1FnnydtOTpUrtr5SOlI4TKnk7Ns+2325YZ2ElSHcIONFhqq2vnLagWIhC8K/5YxcgDEjCSXs29VFgpqKdYl6aifqP6Ucu+EZFYS/+o6tlLv1nu0WXLz6sWavfpAcOZzN94+E8FvoPVI3+3um/9xv8Ad+Kwvf8W+F0glmyDL8/fpUONzhWzVnh1DkUFYcb+bZAiIDIMZOvIpRW6HZEJpkpDpO87oR2QKW4aYD/m/QpDZACsaQf8IjogHaua3FFOt6a2uhlVA77b6xDYt+nSRZnsFkyZy7/gArJxocv4yftAXiijkb8wYvZfIcI6z4SOxm5tirLdg8J73qTaV1wJZ+SO6nUCE+iORFoXtgdN1eKtMlsCa4BSbTIp9Y3alwiFsvdQxp2Dwb88T45zouRXQaReM+9UekryOZ5O2usfned60IrIVNb/0fpFWPNmzDmnOlpoXbXpptPYFKLLdf1KibfkhvIb/srREtfa7BpbPx2bVSe2C0y6yDY0exeONA/scOMhu9/1/C95X/FIj9YO1dCEfIYxGPp60pjNL0RnY5WR8fZk/YgrdKbsycp4H+fbjJWT16rXlxZ57N7c9Snhu5vKmZiovZbSqH79BGE9zNgB7SJTG2VXFM4ew+EoxK3YMoRcew8KIr94Nuv1WnS6VEQTlRNMUTr02LnH8+BMQ4s9EOegOXH+aYe+QGSldnbfwKZ0vANIWiae0rwpr0AKj+WSpYewNdt9QJoAJvGdC/73ounI0H+jYAazkU4sNL7s0duN1wKqhnbrLgQf2Cpowx/JFlDous33Oc2qoADLBK27xYv81r6gyEQAixN1PatUGwTbNu97faDyxEeZ8xrv0VJOQ682H9rncWaA4eJTq9Ui52J8vqJwpdpCPEzr48rYS1o94jVHzc+LKQVigJAtRNJ0Z4nuSFF1qKN/y596ohl4P0BCtByrnwB2SyM2rl2CYOzqYi8Y3GP8YebGWAez5O7kRf/Hc5f2IaGsAKa6Yr7hISaLbiIqH39xNncLHbacUlmh+DP3Wsgxgef8XNe4NDVvR23Py7nAOFvAj7tHmMMvEbtcyJ/xg7b6CJmpTz2bxJ0MFpcqeC+eKUOIa8v27pEzK0NEpKkRwqeMzEhMa3y1Mk022993jl0f3Sk+RmS8qHDsH9d9TgB24AtxIDOEYPiiwMxI8jx+Kl9I399N4cXzAynRmiyfoIDhafXkt3yJJADTHztPz+q6m062NEdapyqneeiZ6F72BUBeIKfAWfxfDsMDtCKjtkH0gCNDLb1ZTYXW6I7APgblT8HbGyLO3aFaia1XqZHQrgPSqHtMSDEP1Ioli4PSZZljUZK3bztcbcZd07L2MSfjsga0c1dHHFwuxhC9YobuucmjBPaEZf0WsOFAsvi4HbOyu+jrYMY+RT3dnStSqFM86sAwizSgRVXsIG90pFoxWgg79Nf1JgzRv6QxbpACAyQAPpnvEq0gQARccGLUkbctaWjQAvsLP+5xZFFXCiwcRGWtgQ7KuCXWrzuE0azLe3yRQLkYEom5qbg6TItrw31vCQQS1B4NXLN8hQ/JQRVbtVasKEUvUOdDtuUzeczzAZo8fBflxRdAqw+jcI=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639191042600000000" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="y+1ph/dtjRR+IMYMnlHUuhsjJQHjppkrpQ5Oggai/KjgHADZR/m0DsXz1haGqmLtqAQmr1PT69vDgkt7+n85JA8DLUBAbD17WUMr827UrFDPh5q8so/JiCPfJ9FWT7x+JET1e50aXFQqQK/bRr0ciEd6Q62YoNw1UQjVYduVzGKu9SlmF4hjBn9E0mu4Rh/Xfyws3w82gfsW9nl49DDXtzUHJj90JH8Y/EoZrkUdtfcp2NQIY/yQ51vq7do6i8+kHos8IPS/5OIiF4L36hJ45lI42V0=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="2077113" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Ministry of Power
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"></span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              25 NOV 2024 8:51PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The Cabinet Committee on Economic Affairs, chaired by the Prime Minister Shri Narendra Modi has approved investment of Rs.1750 crore for construction of Tato-I Hydro Electric Project (HEP) in Shi Yomi District of Arunachal Pradesh. The estimated completion period for the project is 50 months.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The project with an installed capacity of 186 MW (3 x 62 MW) would produce 802 Million Units (MU) of energy. The Power generated from the Project will help improve the power supply position in the state of Arunachal Pradesh and will also help in balancing of the national Grid.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The Project will be implemented through a Joint Venture Company between North Eastern Electric Power Corporation Ltd. (NEEPCO) &nbsp;and the Government of Arunachal Pradesh. Government of India shall extend Rs.77.37 crore as budgetary support for construction of roads, bridges and associated transmission line under enabling infrastructure besides Central Financial Assistance of Rs.120.43 crore towards equity share of the State.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The state would be benefitted from 12% free power and another 1% towards Local Area Development Fund (LADF) besides significant infrastructure improvement and socio-economic development of the region.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">There will be significant improvement in infrastructure, including the development of around 10 kilometres of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit&nbsp; from the construction of essential infrastructure such as hospitals, schools, vocational training institutes like ITIs, marketplaces, playgrounds, etc. to be financed from dedicated project funds of Rs.15 crore. Local populace shall also be benefitted from many sorts of compensations, employment and CSR activities.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff"><strong>*****</strong></span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff"><strong>MJPS/BM</strong></span></span></span></span></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 2077113)</span>
+                <span id="lblViews">Visitor Counter : 1977</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                <div class="ReleaseLang">Read this release in: 
+                
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077303' target="_blank">
+                            Urdu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077335' target="_blank">
+                            हिन्दी </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077301' target="_blank">
+                            Marathi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077260' target="_blank">
+                            Punjabi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077518' target="_blank">
+                            Telugu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2077168' target="_blank">
+                            Malayalam </a>
+                    
+                </div>
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2077113"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2077113"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2077113"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2077113"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2077113"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Ministry of Power
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          25 NOV 2024 8:51PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The Cabinet Committee on Economic Affairs, chaired by the Prime Minister Shri Narendra Modi has approved investment of Rs.1750 crore for construction of Tato-I Hydro Electric Project (HEP) in Shi Yomi District of Arunachal Pradesh. The estimated completion period for the project is 50 months.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The project with an installed capacity of 186 MW (3 x 62 MW) would produce 802 Million Units (MU) of energy. The Power generated from the Project will help improve the power supply position in the state of Arunachal Pradesh and will also help in balancing of the national Grid.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The Project will be implemented through a Joint Venture Company between North Eastern Electric Power Corporation Ltd. (NEEPCO) &nbsp;and the Government of Arunachal Pradesh. Government of India shall extend Rs.77.37 crore as budgetary support for construction of roads, bridges and associated transmission line under enabling infrastructure besides Central Financial Assistance of Rs.120.43 crore towards equity share of the State.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">The state would be benefitted from 12% free power and another 1% towards Local Area Development Fund (LADF) besides significant infrastructure improvement and socio-economic development of the region.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff">There will be significant improvement in infrastructure, including the development of around 10 kilometres of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit&nbsp; from the construction of essential infrastructure such as hospitals, schools, vocational training institutes like ITIs, marketplaces, playgrounds, etc. to be financed from dedicated project funds of Rs.15 crore. Local populace shall also be benefitted from many sorts of compensations, employment and CSR activities.</span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:center"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff"><strong>*****</strong></span></span></span></span></p>
+
+<p style="margin-left:0in; margin-right:1.3pt; text-align:justify"><span style="font-family:Times New Roman,Times,serif"><span style="font-size:16px"><span style="color:#222222"><span style="background-color:#ffffff"><strong>MJPS/BM</strong></span></span></span></span></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 2077113)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&text=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&title=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&text=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2077113&title=Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="Cabinet approves Investment Proposal for construction of 186 MW Tato-I Hydro Electric Project in Shi Yomi District of Arunachal Pradesh with an outlay of Rs.1750 crore  and completion period of  50 months" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>The Cabinet Committee on Economic Affairs, chaired by the Prime Minister Shri Narendra Modi has approved investment of Rs.1750 crore for construction of Tato-I Hydro Electric Project (HEP) in Shi Yomi District of Arunachal Pradesh. The estimated completion period for the project is 50 months.&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>The project with an installed capacity of 186 MW (3 x 62 MW) would produce 802 Million Units (MU) of energy. The Power generated from the Project will help improve the power supply position in the state of Arunachal Pradesh and will also help in balancing of the national Grid.&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>The Project will be implemented through a Joint Venture Company between North Eastern Electric Power Corporation Ltd. (NEEPCO) &amp;nbsp;and the Government of Arunachal Pradesh. Government of India shall extend Rs.77.37 crore as budgetary support for construction of roads, bridges and associated transmission line under enabling infrastructure besides Central Financial Assistance of Rs.120.43 crore towards equity share of the State.&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>The state would be benefitted from 12% free power and another 1% towards Local Area Development Fund (LADF) besides significant infrastructure improvement and socio-economic development of the region.&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>There will be significant improvement in infrastructure, including the development of around 10 kilometres of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit&amp;nbsp; from the construction of essential infrastructure such as hospitals, schools, vocational training institutes like ITIs, marketplaces, playgrounds, etc. to be financed from dedicated project funds of Rs.15 crore. Local populace shall also be benefitted from many sorts of compensations, employment and CSR activities.&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:center&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>&lt;strong>*****&lt;/strong>&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;margin-left:0in; margin-right:1.3pt; text-align:justify&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;color:#222222&quot;>&lt;span style=&quot;background-color:#ffffff&quot;>&lt;strong>MJPS/BM&lt;/strong>&lt;/span>&lt;/span>&lt;/span>&lt;/span>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+<input type="hidden" name="__ncforminfo" value="8_wqhtBki0gggPMgi5UxOwa6ZslJDBqb8V_Mz399cogOiO9lPScth1pSpLDMR57UTvfgriiA-0u59w97BpDr57pFg_7CVeP36AN_q2OZXt_yVLXi5BRK7g=="/></form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>

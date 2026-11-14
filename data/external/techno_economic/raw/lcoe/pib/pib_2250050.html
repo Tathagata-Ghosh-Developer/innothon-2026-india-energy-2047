@@ -1,0 +1,1115 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head id="Head1"><title>
+	Press Release Page | Press Information Bureau
+</title><link href="css/style.css?v=1" rel="stylesheet" type="text/css" /><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="alternate stylesheet" href="css/change.css?v=1" media="screen" title="change" /><link rel="alternate stylesheet" href="css/green.css?v=1" media="screen" title="green" /><link rel="alternate stylesheet" href="css/yellow.css" media="screen" title="yellow" /><link rel="stylesheet" type="text/css" href="css/prtint.css" media="print" /><link rel="stylesheet" href="css/style3.1.css" type="text/css" /><link id="pibA11yCss" rel="stylesheet" href="/css/accessibility.css?v=7" type="text/css" />
+    <script type="text/javascript">
+        (function (d) {
+            var t = "";
+            try {
+                t = window.localStorage.getItem("pibStyle") || "";
+            } catch (e) {
+                t = "";
+            }
+            if (t === "orange") {
+                t = "yellow";
+            }
+            var c = t === "change" ? " pib-hc"
+                : t === "green" ? " pib-theme-green"
+                : t === "yellow" ? " pib-theme-yellow" : "";
+            d.documentElement.className += c + " pib-a11y-content";
+        }(document));
+    </script>
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/accessibility.js?v=7"></script>
+
+    <script type="text/javascript">
+            $(document).ready(function () {
+                  function getParameterByName(name) {
+                        var url = window.location.href;
+                        name = name.replace(/[\[\]]/g, '\\$&');
+                        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                              results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+                  }
+                  let prid = parseInt(getParameterByName('PRID'), 10);
+
+                  if (!isNaN(prid) && prid > 0) {
+                        $.ajax({
+                              type: "POST",
+                              url: "AjaxMethod.aspx/UpdatePRHitCount",
+                              async: false,
+                              data: JSON.stringify({ 'PermId': prid }),
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function (response) {
+                                    console.log(response);
+                              },
+                              error: function (error) {
+                                    console.log("Error in AJAX request", error);
+                              }
+                        });
+                  } else {
+                        console.log("Invalid parameters:", prid);
+                  }
+            });
+    </script>
+    <style type="text/css">
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        full-width {
+            width: 100%;
+        }
+
+        .logo-left, .logo-center, .countdown {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-left img, .logo-center img {
+                height: 70px;
+            }
+
+        .countdown {
+            text-align: center;
+            background-color: var(--dbim-text, #150202);
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid grey;
+        }
+
+        .firstnumber {
+            color: #000000;
+            position: absolute;
+            top: 50px;
+            right: 90px;
+            font-size: 30px;
+        }
+
+        .secondnumber {
+            position: absolute;
+            color: #000000;
+            right: 45px;
+            top: 50px;
+            font-size: 30px;
+        }
+
+        .countdown .days {
+            font-size: 35px;
+            color: gold;
+        }
+
+        .countdown p {
+            margin: 0;
+        }
+
+        .countdown .text {
+            font-size: 16px;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        iframe, img {
+            max-width: 100%;
+        }
+        .innner-page-main-about-us-content-right-part ul > li, .content-area ul > li {
+  list-style: none !important;
+}
+        /* === DBIM 3.0 Option 4 Separator Line & Reading Meta Styling === */
+        .pr-share--footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-top: 1px solid var(--dbim-border, #d1d5db);
+            padding-top: 16px;
+            margin-top: 24px;
+        }
+
+        .pr-share__left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pr-reading-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--dbim-text-secondary, #475569);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+
+        .pr-reading-meta__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pr-reading-meta__divider {
+            color: var(--dbim-border, #cbd5e1);
+            font-weight: 300;
+        }
+
+        .pib-hc .pr-reading-meta,
+        .pib-hc .pr-reading-meta svg {
+            color: currentColor !important;
+        }
+
+        @media (max-width: 680px) {
+            .pr-share--footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pr-reading-meta {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media(max-width:1199px) {
+            .firstnumber {
+                top: 40px;
+                right: 72px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 35px;
+                top: 40px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:990px) {
+            .firstnumber {
+                top: 25px;
+                right: 54px;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 25px;
+                top: 25px;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:768px) {
+            .countdown, .days {
+                font-size: 12px !important;
+            }
+
+            .firstnumber {
+                top: 25%;
+                right: 8%;
+                font-size: 30px;
+            }
+
+            .secondnumber {
+                right: 4.5%;
+                top: 25%;
+                font-size: 30px;
+            }
+        }
+
+        @media(max-width:475px) {
+            .countdown, .days {
+                font-size: 10px !important;
+                top: 20%;
+            }
+
+            .bannerimgdiv {
+                padding: 0 !important;
+            }
+
+            .bannerimg {
+                width: 108% !important;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+$(function () {
+    $("[id*=printPDF]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+$(function () {
+    $("[id*=printPDFEvent]").click(function () {
+        $("[id*=hfGridHtml]").val($("#PdfDiv").html());
+    });
+});
+</script>
+
+    <link id="pibConsentCss" href="/css/consent.css?v=8" rel="stylesheet" type="text/css" /><link id="pibFontsCss" href="/css/fonts-noto.css?v=6" rel="stylesheet" type="text/css" /><link id="pibDbimCss" href="/css/dbim.css?v=1120" rel="stylesheet" type="text/css" /><meta property="og:title" content="Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore" /><meta property="og:url" content="https://pib.gov.in/PressReleasePage.aspx?PRID=2250050" /><meta property="og:description" content="The Cabinet Committee on Economic Affairs, chaired by the  Prime Minister Shri Narendra Modi has approved investment of Rs.26,069.50 crore for construction of Kamala Hydro Electric Project (HEP) in Ka" /><meta property="og:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" /><meta property="og:type" content="article" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9780_20260902_18024501.png" />
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="C4E7H-KSCMC-422L4-W3EM5-U36MF",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"C4E7H-KSCMC-422L4-W3EM5-U36MF";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="b2fyanqxzvmkg2xy36ia-f-46a8cfcb1-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"1825201","ak.ai":parseInt("1215205",10),"ak.ol":"0","ak.cr":23,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"20d701b9","ak.r":40698,"ak.a2":n,"ak.m":"dscb","ak.n":"ff","ak.cport":58814,"ak.gh":"23.205.88.150","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1794695056","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==vtOBgZkt15+YvrWzHclZ9TFqm2lRJ2wUkGUMQ1wdk9hFQUZA3kT2h4e4DU2ukYdA9iQ33DGz4qYFFJ33bOhxZxW9WX/4c1PrqWjVQrhw9YvkWZAeM3D16v7N2NTfihGgITAohnPwxITz2HgPdQlX6X6TMhg/XjtEV0B77yQP8N/MFDX9bdWfSEioF+6yW8qBIXqjhDN183CZGJT1gsGXr3ONnI5pXx7qvHUhwGJKQ8QbuE+2eWIOi3uNeg1/+gtrezUwi0n5uIPWHmungixAq5AbIimLya8GcMessJX0mtKUp1DXRqCxAKP6fwsmduTBsNeNSwNTrFqUadci1ElqvijHBP6uiuU7356Tjxixj1TV19TvGmJs+kiodP90AurbQjvVwhgfoQJxOWaoQ13JKs93z6pjQBD99Wz/pQ/KiYY=","ak.pv":"9","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+     style="position:absolute;width:0;height:0;overflow:hidden" id="dbim-icon-sprite">
+    <defs>
+        <symbol id="icon-angle-double-left" viewBox="0 0 24 24"><path d="M11.6 4.6 4.2 12l7.4 7.4 2.2-2.2L8.6 12l5.2-5.2z"/><path d="M19 4.6 11.6 12 19 19.4l2.2-2.2L16 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-angle-double-right" viewBox="0 0 24 24"><path d="M12.4 4.6 10.2 6.8 15.4 12l-5.2 5.2 2.2 2.2L19.8 12z"/><path d="M5 4.6 2.8 6.8 8 12l-5.2 5.2L5 19.4 12.4 12z"/></symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M20.8 10.6H9.6v2.8h11.2z"/><path d="M10.8 5.6 3.2 12l7.6 6.4z"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M3.2 10.6h11.2v2.8H3.2z"/><path d="M13.2 5.6 20.8 12l-7.6 6.4z"/></symbol>
+        <symbol id="icon-blogger" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.4 2.4h11.2a4 4 0 0 1 4 4v11.2a4 4 0 0 1-4 4H6.4a4 4 0 0 1-4-4V6.4a4 4 0 0 1 4-4zm2.8 5.2a2 2 0 0 0 0 4h2.4a2 2 0 0 0 0-4zm0 5.6a2 2 0 0 0 0 4h5.6a2 2 0 0 0 0-4z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24"><path d="M7.6 2.4H10v2.4H7.6z"/><path d="M14 2.4h2.4v2.4H14z"/><path fill-rule="evenodd" d="M4 4.8h16a1.6 1.6 0 0 1 1.6 1.6v13.2a1.6 1.6 0 0 1-1.6 1.6H4a1.6 1.6 0 0 1-1.6-1.6V6.4A1.6 1.6 0 0 1 4 4.8zm.4 5.6v8.4h15.2v-8.4z"/><path d="M6.4 12.4h3.2v3.2H6.4z"/></symbol>
+        <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="M15.4 4.6 8 12l7.4 7.4 2.2-2.2L12.4 12l5.2-5.2z"/></symbol>
+        <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="M8.6 4.6 6.4 6.8 11.6 12l-5.2 5.2 2.2 2.2L16 12z"/></symbol>
+        <symbol id="icon-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24"><path d="M10.8 3h2.4v7.6h3.4L12 16.6l-4.6-6h3.4z"/><path d="M4 17.2h2.4v2.4h11.2v-2.4H20v3.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20.4z"/></symbol>
+        <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M13.6 21.6v-8.4h2.8l.42-3.3h-3.22V7.8c0-.95.27-1.6 1.64-1.6h1.74V3.26a23 23 0 0 0-2.54-.13c-2.5 0-4.22 1.53-4.22 4.34v2.43H7.4v3.3h2.82v8.4z"/></symbol>
+        <symbol id="icon-fact-check" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4 3.6 5.6v6.2c0 4.6 3.4 8.6 8.4 9.8 5-1.2 8.4-5.2 8.4-9.8V5.6zm-1 13.2-3.6-3.6 1.7-1.7 1.9 1.9 4.5-4.5 1.7 1.7z"/></symbol>
+        <symbol id="icon-hashtag" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8.8 3h2.4l-1 6h3.2l1-6h2.4l-1 6h3.4v2.4h-3.8l-.6 3.2h3.6V17h-4l-1 5h-2.4l1-5h-3.2l-1 5H5.4l1-5H3V14.6h3.8l.6-3.2H3.8V9h4zm.6 8.4-.6 3.2h3.2l.6-3.2z"/></symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3.4 2.8 11.6h2.4v8.4a1 1 0 0 0 1 1h3.3v-5.4h5v5.4h3.3a1 1 0 0 0 1-1v-8.4h2.4z"/></symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.6 2.4h8.8a5.2 5.2 0 0 1 5.2 5.2v8.8a5.2 5.2 0 0 1-5.2 5.2H7.6a5.2 5.2 0 0 1-5.2-5.2V7.6a5.2 5.2 0 0 1 5.2-5.2zm0 2.4a2.8 2.8 0 0 0-2.8 2.8v8.8a2.8 2.8 0 0 0 2.8 2.8h8.8a2.8 2.8 0 0 0 2.8-2.8V7.6a2.8 2.8 0 0 0-2.8-2.8z"/><path fill-rule="evenodd" d="M12 6.8a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/><circle cx="17.3" cy="6.7" r="1.3"/></symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M4.8 8.8h3.6v12H4.8z"/><circle cx="6.6" cy="5.4" r="2.1"/><path d="M10.8 8.8h3.45v1.65h.05c.48-.9 1.65-1.85 3.4-1.85 3.63 0 4.3 2.35 4.3 5.4v6.6h-3.6v-5.85c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.1v5.95h-3.6z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M2.4 7.6v9.2a1.6 1.6 0 0 0 1.6 1.6h16a1.6 1.6 0 0 0 1.6-1.6V7.6L12 14z"/><path d="M21.2 5.4H2.8L12 11.8z"/></symbol>
+        <symbol id="icon-mail-open" viewBox="0 0 24 24"><path d="M2.4 9.8h19.2v9.6A1.6 1.6 0 0 1 20 21H4a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M12 2.6 21.6 9.2h-3.8L12 5.3 6.2 9.2H2.4z"/><path d="m3.9 11.2 8.1 5.4 8.1-5.4 1.5 1.3-9.6 6.4-9.6-6.4z"/></symbol>
+        <symbol id="icon-map-marker" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a7 7 0 0 0-7 7c0 5.2 7 12.2 7 12.2s7-7 7-12.2a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></symbol>
+        <symbol id="icon-newspaper" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.8 4.4h14.8v15.2H2.8zm2 2v11.2h10.8V6.4z"/><path d="M6 7.6h8.4v1.6H6z"/><path d="M6 10.8h8.4v1.6H6z"/><path d="M6 14h5.2v1.6H6z"/><path d="M18.4 8.4h2.8v9.6a1.4 1.4 0 0 1-2.8 0z"/></symbol>
+        <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="7.4" y="4" width="3.6" height="16" rx="0.9"/><rect x="13" y="4" width="3.6" height="16" rx="0.9"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 4.5v15l12-7.5z"/></symbol>
+        <symbol id="icon-picture" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2.4 5.2h19.2v13.6H2.4zm2 2v9.6h15.2V7.2z"/><path d="M5.6 16.4 10 11l2.6 3 2-2.2 4 4.6z"/><circle cx="8" cy="10.4" r="1.5"/></symbol>
+        <symbol id="icon-press-conference" viewBox="0 0 24 24"><circle cx="12" cy="5.2" r="2.6"/><path d="M7.6 12.2a4.4 4.4 0 0 1 8.8 0z"/><circle cx="4.9" cy="9.6" r="2.2"/><path d="M1.8 15.2a3.1 3.1 0 0 1 6.2 0z"/><circle cx="19.1" cy="9.6" r="2.2"/><path d="M16 15.2a3.1 3.1 0 0 1 6.2 0z"/><path d="M6.6 13.6h10.8l2.2 7.8H4.4z"/></symbol>
+        <symbol id="icon-print" viewBox="0 0 24 24"><path d="M6.4 2.8h11.2v4.4H6.4z"/><path d="M4 8.4h16a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6h-1.6v-2.8H6v2.8H4a1.6 1.6 0 0 1-1.6-1.6V10A1.6 1.6 0 0 1 4 8.4z"/><path d="M7.2 15.6h9.6v5.6H7.2z"/></symbol>
+        <symbol id="icon-rss" viewBox="0 0 24 24"><circle cx="4.8" cy="19.2" r="2.4"/><path d="M2.4 11.2v3.2a6.4 6.4 0 0 1 6.4 6.4H12A9.6 9.6 0 0 0 2.4 11.2z"/><path d="M2.4 4.8V8A13.6 13.6 0 0 1 16 21.6h3.2A16.8 16.8 0 0 0 2.4 4.8z"/></symbol>
+        <symbol id="icon-search-plus" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M10 2.8a7.2 7.2 0 1 0 0 14.4 7.2 7.2 0 0 0 0-14.4zm0 2.4a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6z"/><path d="M15.3 14.6 21.2 20.5l-1.5 1.5-5.9-5.9z"/><path d="M9.2 6.8h1.6v2.4h2.4v1.6h-2.4v2.4H9.2v-2.4H6.8V9.2h2.4z"/></symbol>
+        <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5.6" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.4" r="3"/><path d="M8.3 10.9 15.7 7.2l.9 1.8-7.4 3.7z"/><path d="M9.2 13.1 16.6 16.8l-.9 1.8-7.4-3.7z"/></symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24"><path d="M4.2 3h4.3l11.3 18h-4.3z"/><path d="M19.3 3h-2.6L4.2 21h2.6z"/></symbol>
+        <symbol id="icon-university" viewBox="0 0 24 24"><path d="M12 2.4 21.6 7.2v1.6H2.4V7.2z"/><path d="M4.8 10.4h2.4v8H4.8z"/><path d="M9.2 10.4h2.4v8H9.2z"/><path d="M13.4 10.4h2.4v8h-2.4z"/><path d="M17.6 10.4H20v8h-2.4z"/><path d="M3.2 19.8h17.6v1.8H3.2z"/></symbol>
+        <symbol id="icon-volume-up" viewBox="0 0 24 24"><path d="M3.2 9.2h3.3l5-4.2v14l-5-4.2H3.2z"/><path d="M14.6 8.4a5 5 0 0 1 0 7.2l1.6 1.6a7.2 7.2 0 0 0 0-10.4z"/><path d="M17.4 5.6a8.8 8.8 0 0 1 0 12.8l1.5 1.5a10.9 10.9 0 0 0 0-15.8z"/></symbol>
+        <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.4a9.5 9.5 0 0 0-8.1 14.5L2.4 21.6l4.8-1.4A9.5 9.5 0 1 0 12 2.4zm0 2.2a7.3 7.3 0 1 1-3.8 13.5l-.4-.2-2.6.7.7-2.5-.3-.4A7.3 7.3 0 0 1 12 4.6z"/><path d="M9.4 7.8c-.2-.5-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5 0 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3-1.6-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6 6 0 0 1-1.8-1.1 6.6 6.6 0 0 1-1.2-1.6c-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.5z"/></symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10.2 15.1V8.9l5.1 3.1z"/></symbol>
+    </defs>
+</svg>
+
+    <form method="post" action="./PressReleasePage.aspx?PRID=2250050&amp;reg=48&amp;lang=2" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="sc_HiddenField" id="sc_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZPQet1wIx1Q48y3xJY2k25Y7qxH5RrQ9qQcN-OiTC9guZtri9w2&amp;t=639191042600000000" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=x6wALODbMJK5e0eRC_p1LdIxBJXt0U_WW5GWfJqHAqo6frgCmGRfEywglicTersO2OKrFhK1gAIp0Wk2al2YrpdR3uWqH6f4nfjBsCyRUfTUUVmb0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=P5lTttoqSeZXoYRLQMIScH645UK3RD852IErF2548Wz9Ssv0rLjB4fhVKnHcMpqkaMHpNAGOeWY02Lf4aBYN9-dVBme_SNK5KJwmFQNpMixYDZ7M0&amp;t=ffffffffecf8d3f2" type="text/javascript"></script>
+<script src="/PressReleasePage.aspx?_TSM_HiddenField_=sc_HiddenField&amp;_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%2c+Version%3d3.5.7.123%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a5a4df314-b4a2-4da2-a207-9284f1b1e96c%3ade1feab2%3af2c8e708%3a8613aea7%3af9cec9bc%3a3202a5a2%3aab09e3fe%3a87104b7c%3a720a52bf%3a589eaa30%3aa67c2700%3abe6fb298" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="59B53027" />
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="W0B8U5Fct1etadhr8GNfdssf8AF/wCBgeqbr9oLu7ZSjwXnvWSaw4IUWBTRF/C0uomODrzfr9gMVjwMpoWdhNY7EIzq5WcVLDHEub89Q0CQPk3HBTD5HEZcokBXF2Xj7+4PwOozyrGP6LFD2EQZSZz9+2+02Pcaz+ZYWYHnIquvVN49fENsTrjuiG1WulY+2Lz/e0mMjFjhzdYWzLucRaX+nnRl+roOMegVR1uMYoy2y4UA16NNzqNNahazkAwGC3JR7tWNUFPhdEhsnm0pAqhDTyU8=" />
+</div>
+        
+        <div id="templateCss"></div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('sc', 'form1', ['tupdate12','update12'], [], [], 90, '');
+//]]>
+</script>
+
+        <input type="hidden" name="hfGridHtml" id="hfGridHtml" />
+        <div class="container" style='margin-bottom: 50px;'>
+            <div id="accessories">
+                
+                <div class="pull-right" style="display: flex">
+                    <div id="voll"></div>
+                    <div id="vollDT"></div>
+                    
+
+<span class="print-icons">
+<input type="image" name="Print1$print" id="Print1_print" aria-label="Print" src="images/printer_icon.png" alt="print page button" style="padding: 5px 10px 5px 10px;" />
+</span>
+                </div>
+            </div>
+            <input type="hidden" name="hydpermid" id="hydpermid" value="2250050" />
+            
+
+            <div class="innner-page-main-about-us-content-right-part">
+                <div id="MinistryName" class="MinistryNameSubhead text-center">
+                    Ministry of Power
+                </div>
+                <div id="lg_g"><div class='log_oo'>  <img src='https://static.pib.gov.in/WriteReadData/specificdocs/photo/2026/sep/ph_9768_20260902_10000501.png' alt='azadi ka amrit mahotsav' /> </div></div>
+
+                <div class="text-center event-heading-background">
+                    
+                    <h1 id="Titleh2">
+                        Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore
+                    </h1>
+                    <h3 id="Subtitleh3">
+                        <span id="ltrSubtitle"></span>
+                    </h3>
+                    
+                    
+                </div>
+
+                
+                
+
+                <div id="PrDateTime" class="ReleaseDateSubHeaddateTime text-center pt20">
+                    Posted On:
+                              08 APR 2026 4:33PM by PIB Delhi
+                </div>
+                
+                <div class='pt20'>
+                </div>
+                <input type="hidden" name="hydphotoUrl" id="hydphotoUrl" />
+                
+
+                <!-- Release content wrapper for client-side zero-reflow word count -->
+                <div id="pibReleaseBody">
+                    <p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Cabinet Committee on Economic Affairs, chaired by the&nbsp; Prime Minister Shri Narendra Modi has approved investment of Rs.26,069.50 crore for construction of Kamala Hydro Electric Project (HEP) in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh. The estimated completion period for the project is 96 months.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The project with an installed capacity of 1720 MW (8 x 210 MW &amp; 1 x 40 MW) is expected to generate 6870 MU of energy. The power generated from the Project will strengthen power supply position in the state of Arunachal Pradesh, support in peak demand management, contribute to national grid balancing and will provide flood moderation benefit in the Brahmaputra valley. In addition to Kamala HEP, other hydropower projects&mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW) is under construction, and Etalin (3097 MW) is planned for development by NHPC Limited in Arunachal Pradesh.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Kamala HEP will be implemented through a Joint Venture Company between NHPC Limited and the Govt. of Arunachal Pradesh. Government of India shall extend Rs.4743.98 crore as budgetary support towards flood moderation component and Rs.1340 crore as budgetary support for enabling infrastructure viz. construction of roads, bridges and associated transmission system besides Central Financial Assistance of Rs.750 crore towards the equity share of the State.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The State will receive 12% free power and an additional 1% earmarked for the Local Area Development Fund (LADF), along with significant infrastructure development and socio-economic benefits for the region.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">There will be significant improvement in the infrastructure in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh, including the development of around 196 kms of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit from the construction of essential infrastructure such as hospitals, schools, marketplaces etc. to be financed from dedicated project funds of Rs.8 crore. Local populace shall also be benefitted from compensations, employment and CSR activities.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Beside Kamala HEP, three major hydropower projects&mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW), and Etalin (3097 MW)&mdash;are being developed by NHPC Limited in Arunachal Pradesh and Assam. Subansiri Lower HEP (2000 MW) is at an advanced stage with 750 MW already commissioned and remaining capacity is expected to be commissioned by December 2026, while all projects will provide 12% free power to the host states and support local development through a Local Area Development Fund equivalent to 1% of project revenue.</span></span></p>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<p style="text-align:center"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">***</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>MJPS</strong></span></span></p>
+
+                </div>
+
+                <div id="reel_pic">
+                </div>
+
+                <br />
+                <span id="ReleaseId">(Release ID: 2250050)</span>
+                <span id="lblViews">Visitor Counter : 1776</span>
+                <div>
+                    
+                </div>
+                
+
+                <span id="lblRefPhoto"></span>
+
+                <div class="BackgroundRelease">
+                    
+                </div>
+                <div>
+                    
+                </div>
+                <div class="ReleaseLang">Read this release in: 
+                
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250152' target="_blank">
+                            Malayalam </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250166' target="_blank">
+                            Urdu </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250187' target="_blank">
+                            Marathi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250132' target="_blank">
+                            हिन्दी </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250382' target="_blank">
+                            Punjabi </a>
+                    
+                        ,
+                    
+                        <a href='https://pib.gov.in/PressReleasePage.aspx?PRID=2250107' target="_blank">
+                            Gujarati </a>
+                    
+                </div>
+
+                
+                
+
+                <div class="RelTag">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="clear">
+                </div>
+
+                <!-- DBIM 3.0 Option 4: Separator Line with Left Share Rail & Right Reading Metrics -->
+                <div class="pr-share pr-share--footer" role="region" aria-label="Share and reading details">
+                    <div class="pr-share__left">
+                        <span class="pr-share__label" aria-hidden="true">Share</span>
+                        <ul class="pr-share__list">
+                            <li><a class="pr-share__btn pr-share__btn--facebook"
+                                href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2250050"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on Facebook">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-facebook" xlink:href="#icon-facebook"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--twitter"
+                                href="https://twitter.com/intent/tweet?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2250050"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on X">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-twitter" xlink:href="#icon-twitter"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--whatsapp"
+                                href="https://api.whatsapp.com/send?text=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2250050"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on WhatsApp">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-whatsapp" xlink:href="#icon-whatsapp"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--linkedin"
+                                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2250050"
+                                target="_blank" rel="noopener noreferrer"
+                                aria-label="Share on LinkedIn">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-linkedin" xlink:href="#icon-linkedin"></use>
+                                </svg>
+                            </a></li>
+                            <li><a class="pr-share__btn pr-share__btn--mail"
+                                href="mailto:?subject=Press+release+from+PIB&amp;body=https%3a%2f%2fpib.gov.in%2fPressReleasePage.aspx%3fPRID%3d2250050"
+                                aria-label="Share by email">
+                                <svg class="dbim-icon dbim-icon-24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <use href="#icon-mail" xlink:href="#icon-mail"></use>
+                                </svg>
+                            </a></li>
+                        </ul>
+                    </div>
+                    <div class="pr-reading-meta" id="prReadingMeta" aria-label="Reading statistics">
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Document / Word Count Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                                <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
+                            </svg>
+                            <span id="prWordCount">-- words</span>
+                        </span>
+
+                        <span class="pr-reading-meta__divider" aria-hidden="true">|</span>
+
+                        <span class="pr-reading-meta__item">
+                            <!-- Modern Precision Clock / Read Time Icon -->
+                            <svg class="pr-reading-meta__icon" width="18" height="18" viewbox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                            </svg>
+                            <span id="prReadTime">-- min read</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="RelLink" class="RelLink">
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <center>
+                    
+                </center>
+            </div>
+
+            <div id="update12">
+	
+                    
+                    <input type="hidden" name="Hidden" id="Hidden" />
+                    <div id="P_CategoryManagement" class="ModalWindow" style="border-width:0px;height:60%;width:60%;overflow:auto;display: none">
+		
+                        <div>
+                            <input type="image" name="btnClose" id="btnClose" src="images/close_flat_icon.png" />
+                        </div>
+                        <div id="description">
+                        </div>
+                        <div class="text-center">
+                            <h2>
+                                
+                                <br>
+                                
+                            </h2>
+                        </div>
+                        <br />
+                        <div class="clear">
+                        </div>
+                        
+                    
+	</div>
+                
+</div>
+        </div>
+
+        <div id="PdfDiv" style="display: none;">
+            <table width="100%">
+                <tr>
+                    <td style="font-weight: 200; text-align: center">
+                        Ministry of Power
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: center; font-size: 30px;">
+                            
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="text-align: center; font-size: 14px;">
+                            Posted On:
+                                          08 APR 2026 4:33PM by PIB Delhi
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 200; text-align: left; font-size: 16px;">
+                            <p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Cabinet Committee on Economic Affairs, chaired by the&nbsp; Prime Minister Shri Narendra Modi has approved investment of Rs.26,069.50 crore for construction of Kamala Hydro Electric Project (HEP) in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh. The estimated completion period for the project is 96 months.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The project with an installed capacity of 1720 MW (8 x 210 MW &amp; 1 x 40 MW) is expected to generate 6870 MU of energy. The power generated from the Project will strengthen power supply position in the state of Arunachal Pradesh, support in peak demand management, contribute to national grid balancing and will provide flood moderation benefit in the Brahmaputra valley. In addition to Kamala HEP, other hydropower projects&mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW) is under construction, and Etalin (3097 MW) is planned for development by NHPC Limited in Arunachal Pradesh.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The Kamala HEP will be implemented through a Joint Venture Company between NHPC Limited and the Govt. of Arunachal Pradesh. Government of India shall extend Rs.4743.98 crore as budgetary support towards flood moderation component and Rs.1340 crore as budgetary support for enabling infrastructure viz. construction of roads, bridges and associated transmission system besides Central Financial Assistance of Rs.750 crore towards the equity share of the State.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">The State will receive 12% free power and an additional 1% earmarked for the Local Area Development Fund (LADF), along with significant infrastructure development and socio-economic benefits for the region.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">There will be significant improvement in the infrastructure in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh, including the development of around 196 kms of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit from the construction of essential infrastructure such as hospitals, schools, marketplaces etc. to be financed from dedicated project funds of Rs.8 crore. Local populace shall also be benefitted from compensations, employment and CSR activities.</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">Beside Kamala HEP, three major hydropower projects&mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW), and Etalin (3097 MW)&mdash;are being developed by NHPC Limited in Arunachal Pradesh and Assam. Subansiri Lower HEP (2000 MW) is at an advanced stage with 750 MW already commissioned and remaining capacity is expected to be commissioned by December 2026, while all projects will provide 12% free power to the host states and support local development through a Local Area Development Fund equivalent to 1% of project revenue.</span></span></p>
+
+<p style="text-align:justify">&nbsp;</p>
+
+<p style="text-align:center"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif">***</span></span></p>
+
+<p style="text-align:justify"><span style="font-size:16px"><span style="font-family:Times New Roman,Times,serif"><strong>MJPS</strong></span></span></p>
+
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                        <div style="font-weight: 100; text-align: left; font-size: 16px;">
+                            (Release ID: 2250050)
+                        </div>
+                        <div style="height: 30px; width: 100%;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 200; text-align: center; font-size: 24px;"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+
+        <div class="section1">
+            <div id="frst_t">
+                <div id="arr_rm"><div class='sticky-social_mb'><ul class='social_mb'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&text=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&title=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+            <div id="second_t">
+                <div id="sndr_rm"><div class='sticky-social'><ul class='social'><a href='http://www.facebook.com/share.php?u=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050' target='_blank'><li class='fb_b'   ></li></a><a href='https://twitter.com/intent/tweet?url=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&text=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore' target='_blank'><li class='twitter_r'  > </li></a><a href='https://api.whatsapp.com/send?text=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050' target='_blank'><li class='whatsapp_r'  ></li></a><a href='https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=&su=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore&body=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&ui=2&tf=1&pli=1' title='Share by Email' target='_blank'><li class='fa-envelope_r' ></li></a><a href='https://www.linkedin.com/shareArticle?mini=true&url=https://pib.gov.in/PressReleasePage.aspx?PRID=2250050&title=Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi & Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore&summary=My%20favorite%20developer%20program&source=LinkedIn' target='_blank'><li class='fa-linkedin_r'  ></li></a></ul></div></div>
+            </div>
+        </div>
+        <input type="hidden" name="ltrTitlee" id="ltrTitlee" value="Cabinet approves Investment Proposal for construction of 1720 MW Kamala Hydro Electric Project in Kamle, Kra Daadi &amp; Kurung Kumey Districts of Arunachal Pradesh with an outlay of Rs.26,069.50 crore" />
+        <input type="hidden" name="ltrSubtitlee" id="ltrSubtitlee" />
+        <input type="hidden" name="ltrDescriptionn" id="ltrDescriptionn" value="&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>The Cabinet Committee on Economic Affairs, chaired by the&amp;nbsp; Prime Minister Shri Narendra Modi has approved investment of Rs.26,069.50 crore for construction of Kamala Hydro Electric Project (HEP) in Kamle, Kra Daadi &amp;amp; Kurung Kumey Districts of Arunachal Pradesh. The estimated completion period for the project is 96 months.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>The project with an installed capacity of 1720 MW (8 x 210 MW &amp;amp; 1 x 40 MW) is expected to generate 6870 MU of energy. The power generated from the Project will strengthen power supply position in the state of Arunachal Pradesh, support in peak demand management, contribute to national grid balancing and will provide flood moderation benefit in the Brahmaputra valley. In addition to Kamala HEP, other hydropower projects&amp;mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW) is under construction, and Etalin (3097 MW) is planned for development by NHPC Limited in Arunachal Pradesh.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>The Kamala HEP will be implemented through a Joint Venture Company between NHPC Limited and the Govt. of Arunachal Pradesh. Government of India shall extend Rs.4743.98 crore as budgetary support towards flood moderation component and Rs.1340 crore as budgetary support for enabling infrastructure viz. construction of roads, bridges and associated transmission system besides Central Financial Assistance of Rs.750 crore towards the equity share of the State.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>The State will receive 12% free power and an additional 1% earmarked for the Local Area Development Fund (LADF), along with significant infrastructure development and socio-economic benefits for the region.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>There will be significant improvement in the infrastructure in Kamle, Kra Daadi &amp;amp; Kurung Kumey Districts of Arunachal Pradesh, including the development of around 196 kms of roads and bridges, for the project which shall be mostly available for local use. The district will also benefit from the construction of essential infrastructure such as hospitals, schools, marketplaces etc. to be financed from dedicated project funds of Rs.8 crore. Local populace shall also be benefitted from compensations, employment and CSR activities.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>Beside Kamala HEP, three major hydropower projects&amp;mdash;Subansiri Lower (2000 MW), Dibang Multipurpose (2880 MW), and Etalin (3097 MW)&amp;mdash;are being developed by NHPC Limited in Arunachal Pradesh and Assam. Subansiri Lower HEP (2000 MW) is at an advanced stage with 750 MW already commissioned and remaining capacity is expected to be commissioned by December 2026, while all projects will provide 12% free power to the host states and support local development through a Local Area Development Fund equivalent to 1% of project revenue.&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&amp;nbsp;&lt;/p>
+
+&lt;p style=&quot;text-align:center&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>***&lt;/span>&lt;/span>&lt;/p>
+
+&lt;p style=&quot;text-align:justify&quot;>&lt;span style=&quot;font-size:16px&quot;>&lt;span style=&quot;font-family:Times New Roman,Times,serif&quot;>&lt;strong>MJPS&lt;/strong>&lt;/span>&lt;/span>&lt;/p>
+" />
+        <script type="text/javascript">
+                  var mPlayer = document.getElementById("background_music");
+                  var mPlayAction = document.getElementById("playbutton");
+                  var isPlaying = false;
+
+                  function playAudio() {
+                        mPlayer.play();
+                        isPlaying = true;
+                        document.getElementById('stopA').style.display = "block";
+                        document.getElementById('playA').style.display = "none";
+                  }
+
+                  function pauseAudio() {
+                        mPlayer.pause();
+                        isPlaying = false;
+                        document.getElementById('playA').style.display = "block";
+                        document.getElementById('stopA').style.display = "none";
+                  }
+        </script>
+        <script type="text/javascript">
+                  var synth = window.speechSynthesis;
+
+                  function CleanHtml(html) {
+                        html = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+                        return html;
+                  }
+                  function stripHtml(html) {
+                        let tmp = document.createElement("DIV");
+                        tmp.innerHTML = CleanHtml(html);
+                        return tmp.textContent || tmp.innerText || "";
+                  }
+        </script>
+        <script type="text/javascript">
+                  $(document).ready(function () {
+                        $("table").each(function () {
+                              if (!$(this).closest(".table-responsive").length) {
+                                    $(this).wrap("<div class='table-responsive'></div>");
+                              }
+                        });
+
+                        var width = $(window).width();
+                        if (width < 768) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 991) {
+                              document.getElementById('frst_t').style.display = "block";
+                              document.getElementById('second_t').style.display = "none";
+                        } else if (width < 1199) {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        } else {
+                              document.getElementById('frst_t').style.display = "none";
+                              document.getElementById('second_t').style.display = "block";
+                        }
+                  });
+        </script>
+        <style type="text/css">
+            @media print {
+                .sticky-social, .sticky-social_mb, .pull-right, #printPDF {
+                    display: none !important;
+                }
+            }
+
+            .f_vl {
+                padding-right: 30px;
+                font-size: 17px;
+                cursor: pointer;
+            }
+
+            .log_oo {
+                display: flex;
+                justify-content: space-between;
+            }
+
+                .log_oo img {
+                    width: 150px;
+                }
+
+            .sticky-social_mb {
+                position: fixed;
+                bottom: 0px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .social_mb {
+                list-style: none;
+                display: flex;
+                width: 100%;
+                margin-bottom: -8px;
+            }
+
+                .social_mb a {
+                    padding: 8px 0px;
+                    font-size: 30px;
+                    transition: all 0.8s ease-in-out;
+                    width: 20% !important;
+                    text-align: center;
+                }
+        </style>
+        <style type="text/css">
+            .section1 {
+                position: relative;
+                padding: 10px 0px;
+                width: 100%;
+            }
+
+            .sticky-social {
+                position: fixed;
+                top: 20px;
+                left: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+            .social {
+                list-style: none;
+            }
+
+                .social a li {
+                    padding: 8px 12px;
+                    font-size: 25px;
+                    transition: all 0.8s ease-in-out;
+                }
+
+                    .social a li:hover {
+                        margin-right: -30px;
+                        box-shadow: 2px 5px 10px grey;
+                    }
+
+                        .social a li:hover .fa {
+                            margin-left: 20px;
+                        }
+
+            .fb_b {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .twitter_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .whatsapp_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-envelope_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+
+            .fa-linkedin_r {
+                background-color: var(--dbim-key, #0F5757);
+            }
+        </style>
+        <style type="text/css">
+            @media only screen and (max-device-width: 767px) {
+                p span img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                p img {
+                    max-width: 90% !important;
+                    height: auto !important;
+                }
+
+                h2 {
+                    font-size: var(--dbim-h2, 20px);
+                    font-weight: 600 !important;
+                }
+
+                h3 {
+                    font-size: var(--dbim-h3, 16px);
+                    font-weight: 600 !important;
+                }
+            }
+        </style>
+        <style type="text/css">
+            .film-roll-badge {
+                position: absolute;
+                top: 82%;
+                right: 20px;
+                width: 230px;
+                height: 70px;
+                background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 18px, var(--dbim-text, #150202) 18px, var(--dbim-text, #150202) 36px );
+                border-top: 8px solid var(--dbim-green-key, #0F5757);
+                border-bottom: 8px solid var(--dbim-green-key, #0F5757);
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+                animation: moveFilm 8s linear infinite;
+                z-index: 10;
+            }
+
+                .film-roll-badge::before,
+                .film-roll-badge::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 10px;
+                    background: repeating-linear-gradient( to right, var(--dbim-green-key, #0F5757) 0px, var(--dbim-green-key, #0F5757) 10px, #fff 10px, #fff 20px );
+                    left: 0;
+                    z-index: 2;
+                }
+
+                .film-roll-badge::before {
+                    top: -4px;
+                }
+
+                .film-roll-badge::after {
+                    bottom: -4px;
+                }
+
+            .film-roll-inner {
+                position: relative;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: flicker 2s infinite ease-in-out;
+            }
+
+            .countdown-text {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                text-shadow: 0 0 6px rgba(255, 255, 255, 0.4), 0 0 10px #000;
+                white-space: nowrap;
+            }
+
+            @keyframes moveFilm {
+                0% {
+                    background-position: 0 0;
+                }
+
+                100% {
+                    background-position: 120px 0;
+                }
+            }
+
+            @keyframes flicker {
+                0%, 100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.9;
+                }
+
+                25% {
+                    opacity: 0.95;
+                }
+
+                75% {
+                    opacity: 0.85;
+                }
+            }
+
+            @media (max-width: 1500px) {
+                .film-roll-badge {
+                    top: 68%;
+                    right: 18px;
+                    height: 65px;
+                    font-size: 0.85rem;
+                }
+
+                .press-section {
+                    margin-top: 35px;
+                }
+            }
+
+            @media (max-width: 992px) {
+                .film-roll-badge {
+                    top: 52%;
+                    right: 10px;
+                    width: 200px;
+                    height: 60px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .film-roll-badge {
+                    top: 56%;
+                    right: 10px;
+                    width: 124px;
+                    height: 55px;
+                }
+
+                .countdown-text {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .film-roll-badge {
+                    top: 59%;
+                    right: 5px;
+                    height: 50px;
+                }
+
+                .countdown-text {
+                    font-size: 0.85rem;
+                }
+            }
+        </style>
+        <script type="text/javascript">
+                  const festivalStart = new Date("2025-11-20T00:00:00").getTime();
+                  const festivalEnd = new Date("2025-11-28T23:59:59").getTime();
+                  const countdownElement = document.getElementById("countdown");
+
+                  if (countdownElement) {
+                        const interval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < festivalStart) {
+                                    const diff = festivalStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+                                    countdownElement.innerHTML = `${days} Day${days !== 1 ? 's' : ''} ${hours} Hour${hours !== 1 ? 's' : ''} to go`;
+                              } else if (now >= festivalStart && now <= festivalEnd) {
+                                    const dayNumber = Math.floor((now - festivalStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    countdownElement.innerHTML = `56th IFFI - Day ${dayNumber}`;
+                              } else {
+                                    countdownElement.innerHTML = `✨ IFFI closes but never ends…`;
+                                    const elements = document.querySelectorAll('.film-roll-badge');
+                                    elements.forEach(el => el.style.width = "350px");
+                                    clearInterval(interval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+        <script type="text/javascript">
+                  const miffStart = new Date("2026-06-15T00:00:00").getTime();
+                  const miffEnd = new Date("2026-06-15T23:59:59").getTime();
+                  const miffElement = document.getElementById("miff");
+
+                  if (miffElement) {
+                        const miffInterval = setInterval(() => {
+                              const now = new Date().getTime();
+
+                              if (now < miffStart) {
+                                    const diff = miffStart - now;
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    miffElement.innerHTML = `${days} Day${days === 1 ? '' : 's'} to MIFF ...`;
+                              } else if (now >= miffStart && now <= miffEnd) {
+                                    const dayNumber = Math.floor((now - miffStart) / (1000 * 60 * 60 * 24)) + 1;
+                                    miffElement.innerHTML = `19th MIFF - Day ${dayNumber}`;
+                              } else {
+                                    miffElement.innerHTML = `✨ MIFF concludes, cinema lives on...`;
+                                    document.querySelectorAll('.film-roll-badge').forEach(el => el.style.width = "350px");
+                                    clearInterval(miffInterval);
+                              }
+                        }, 1000);
+                  }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("sc_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","PopupControlID":"P_CategoryManagement","dynamicServicePath":"/PressReleasePage.aspx","id":"mpe"}, null, null, $get("Hidden"));
+});
+//]]>
+</script>
+<input type="hidden" name="__ncforminfo" value="GK9llrZsPx9YWjauZwmeC902l4-S4Rjg47KqtlHC8OjS-6XTZjuoy78S65KYKDlvjYQWHpMY2ieY--yy2h-050cfqdxxWVfMJ5LE1k6sc_r0PgBVFWdF4A=="/></form>
+    
+
+<script type="application/json" id="pibConsentConfig">{"ga4Id":"G-Q414Y0X6EE,G-QJJ6LZ8LHV","policyUrl":"/CookiePolicy.aspx","text":{"bannerLabel":"Cookie consent","title":"Cookies on this website","body":"We use essential cookies to make this website work. We also set analytics cookies when you arrive, so we can see how the site is used and improve it - you can switch these off below or at any time from the Cookie Policy page. Cookies from embedded social media content are set only if you allow them.","policyLink":"Read our Cookie Policy","accept":"Accept all","reject":"Reject optional","customize":"Customise","prefsTitle":"Cookie preferences","prefsIntro":"Choose which cookies this website may set. Essential cookies cannot be switched off because the site does not work without them. Analytics cookies are on unless you turn them off. Social media cookies stay off until you allow them. You can change these choices at any time from the Cookie Policy page.","essentialName":"Essential cookies","essentialDesc":"Needed for the site to function. These remember your session, your language and region, your text size and colour theme, and verify the security check on forms. They are always on.","analyticsName":"Analytics cookies","analyticsDesc":"Help us understand how visitors use the site - which pages are read and how long people stay - so it can be improved. The information is collected in a form that does not directly identify you. These are on when you arrive; switching them off here stops them and deletes the ones already set.","socialName":"Social media cookies","socialDesc":"Set by content embedded from X, Facebook and YouTube, such as timelines and videos. These platforms may use them to track you across websites. They stay off until you allow them.","save":"Save preferences","cancel":"Cancel"}}</script>
+<script type="text/javascript" src='/js/consent.js?v=10'></script>
+
+<script type="text/javascript" src='/js/consent-embeds.js?v=10'></script>
+
+
+    <!-- Minimal O(N) Time and O(1) Auxiliary Space Word Count & Read Time Calculation -->
+    <script type="text/javascript">
+            (function () {
+                  function calculateReadingStats() {
+                        var bodyEl = document.getElementById("pibReleaseBody");
+                        if (!bodyEl) return;
+
+                        // textContent extracts text without triggering expensive layout/reflow computations
+                        var text = bodyEl.textContent || "";
+                        var words = 0;
+                        var inWord = false;
+
+                        // O(N) single pass character code scan: achieves O(1) space with zero array allocations
+                        for (var i = 0, len = text.length; i < len; i++) {
+                              var code = text.charCodeAt(i);
+                              // Delimits on ASCII whitespace, control characters, tabs, newlines, and non-breaking spaces (160)
+                              if (code <= 32 || code === 160) {
+                                    inWord = false;
+                              } else if (!inWord) {
+                                    inWord = true;
+                                    words++;
+                              }
+                        }
+
+                        // Standard 250 WPM reading speed (e.g., 612 words yields 2 min read)
+                        var minutes = Math.max(1, Math.round(words / 250));
+
+                        var elWords = document.getElementById("prWordCount");
+                        var elTime = document.getElementById("prReadTime");
+
+                        if (elWords) elWords.textContent = words + (words === 1 ? " word" : " words");
+                        if (elTime) elTime.textContent = minutes + " min read";
+                  }
+
+                  if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", calculateReadingStats);
+                  } else {
+                        calculateReadingStats();
+                  }
+            })();
+    </script>
+
+    <script type="text/javascript">
+(function () {
+    try {
+        if (window.self === window.top) { return; }
+    } catch (e) { return; }
+    var s = document.createElement("style");
+    s.textContent = ".sticky-social, .sticky-social_mb { display: none !important; }";
+    (document.head || document.documentElement).appendChild(s);
+}());
+    </script>
+</body>
+</html>
