@@ -1,0 +1,657 @@
+fiscal_year,fy_start_year,region,state,source,generation_gwh,is_subtotal,partial,period,origin,source_id
+2018-19,2018,Northern,Delhi,coal_lignite,1400.33,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Delhi,gas,5735.71,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Haryana,coal_lignite,24838.34,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Haryana,gas,597.09,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Himachal Pradesh,hydro,35908.55,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Jammu and Kashmir,hydro,16387.07,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Ladakh,hydro,154.51,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Punjab,coal_lignite,26364.26,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Punjab,hydro,4335.4,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Rajasthan,coal_lignite,46675.92,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Rajasthan,gas,1569.66,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Rajasthan,nuclear,8034.28,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Rajasthan,hydro,698.4,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttar Pradesh,coal_lignite,116227.68,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttar Pradesh,gas,2206.47,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttar Pradesh,nuclear,3161.89,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttar Pradesh,hydro,1176.36,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttarakhand,gas,1254.24,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,Uttarakhand,hydro,13741.12,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Chhattisgarh,coal_lignite,115471.25,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Chhattisgarh,hydro,243.08,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Gujarat,coal_lignite,81751.88,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Gujarat,gas,12796.73,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Gujarat,nuclear,999.93,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Gujarat,hydro,1042.81,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Madhya Pradesh,coal_lignite,118281.1,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Madhya Pradesh,hydro,3396.67,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Maharashtra,coal_lignite,112729.36,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Maharashtra,gas,8451.14,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Maharashtra,nuclear,10766.42,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,Maharashtra,hydro,5076.86,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Andhra Pradesh,coal_lignite,56120.17,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Andhra Pradesh,gas,4750.71,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Andhra Pradesh,hydro,2272.94,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Karnataka,coal_lignite,30352.74,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Karnataka,nuclear,7216.53,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Karnataka,hydro,12187.69,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Kerala,gas,0.81,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Kerala,diesel,4.07,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Kerala,hydro,7320.21,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Puducherry,gas,229.88,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Tamil Nadu,coal_lignite,67959.33,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Tamil Nadu,gas,2904.05,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Tamil Nadu,nuclear,7633.54,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Tamil Nadu,hydro,5281.59,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Telangana,coal_lignite,48218.42,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,Telangana,hydro,1744.61,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Andaman and Nicobar Islands,diesel,120.73,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Bihar,coal_lignite,32170.52,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Jharkhand,coal_lignite,26800.65,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Jharkhand,hydro,180.98,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Odisha,coal_lignite,40046.92,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Odisha,hydro,6777.45,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,Sikkim,hydro,9022.07,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,West Bengal,coal_lignite,74032.25,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,West Bengal,hydro,2919.81,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Arunachal Pradesh,hydro,1399.02,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Assam,coal_lignite,2824.21,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Assam,gas,2706.41,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Assam,hydro,1694.36,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Manipur,hydro,602.61,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Meghalaya,hydro,929.53,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Mizoram,hydro,168.44,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Nagaland,hydro,231.47,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,Tripura,gas,6630.85,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr16_2020-MAR_col10_actual_same_period_last_year
+2019-20,2019,Northern,Delhi,coal_lignite,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Delhi,gas,6015.11,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Haryana,coal_lignite,16761.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Haryana,gas,555.16,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Himachal Pradesh,hydro,40834.88,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Jammu and Kashmir,hydro,18094.12,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Ladakh,hydro,270.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Punjab,coal_lignite,20901.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Punjab,hydro,5123.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Rajasthan,coal_lignite,45851.11,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Rajasthan,gas,1033.51,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Rajasthan,nuclear,8451.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Rajasthan,hydro,606.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttar Pradesh,coal_lignite,117018.91,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttar Pradesh,gas,2296.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttar Pradesh,nuclear,3791.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttar Pradesh,hydro,1073.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttarakhand,gas,1986.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,Uttarakhand,hydro,14554.53,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Chhattisgarh,coal_lignite,117992.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Chhattisgarh,hydro,236.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Gujarat,coal_lignite,84590.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Gujarat,gas,13515.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Gujarat,nuclear,3428.6,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Gujarat,hydro,5414.68,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Madhya Pradesh,coal_lignite,114818.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Madhya Pradesh,hydro,6281.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Maharashtra,coal_lignite,107002.16,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Maharashtra,gas,7999.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Maharashtra,nuclear,10536.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,Maharashtra,hydro,5880.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Andhra Pradesh,coal_lignite,56916.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Andhra Pradesh,gas,3013.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Andhra Pradesh,hydro,3013.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Karnataka,coal_lignite,23836.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Karnataka,nuclear,7278.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Karnataka,hydro,14014.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Kerala,diesel,12.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Kerala,hydro,5454.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Puducherry,gas,255.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Tamil Nadu,coal_lignite,62876.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Tamil Nadu,gas,2869.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Tamil Nadu,nuclear,12986.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Tamil Nadu,hydro,4765.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Telangana,coal_lignite,47347.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,Telangana,hydro,4507.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Andaman and Nicobar Islands,diesel,96.19,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Bihar,coal_lignite,35360.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Jharkhand,coal_lignite,26072.08,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Jharkhand,hydro,150.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Odisha,coal_lignite,41525.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Odisha,hydro,6728.77,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,Sikkim,hydro,11027.36,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,West Bengal,coal_lignite,71395.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,West Bengal,hydro,2916.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Arunachal Pradesh,hydro,1786.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Assam,coal_lignite,3929.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Assam,gas,2808.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Assam,hydro,1291.68,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Manipur,hydro,366.59,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Meghalaya,hydro,1018.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Mizoram,hydro,177.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Nagaland,hydro,180.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,Tripura,gas,6092.94,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2020-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Delhi,coal_lignite,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Delhi,gas,5304.01,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Haryana,coal_lignite,13994.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Haryana,gas,901.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Himachal Pradesh,hydro,37473.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Jammu and Kashmir,hydro,17002.68,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Ladakh,hydro,376.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Punjab,coal_lignite,17994.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Punjab,hydro,4747.03,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Rajasthan,coal_lignite,45216.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Rajasthan,gas,1018.69,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Rajasthan,nuclear,7386.05,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Rajasthan,hydro,469.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttar Pradesh,coal_lignite,119592.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttar Pradesh,gas,2470.75,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttar Pradesh,nuclear,3284.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttar Pradesh,hydro,1572.35,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttarakhand,gas,721.97,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,Uttarakhand,hydro,13592.49,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Chhattisgarh,coal_lignite,134614.5,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Chhattisgarh,hydro,419.19,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Gujarat,coal_lignite,77058.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Gujarat,gas,18877.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Gujarat,nuclear,3712.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Gujarat,hydro,4233.36,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Madhya Pradesh,coal_lignite,123089.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Madhya Pradesh,hydro,6477.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Maharashtra,coal_lignite,98173.83,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Maharashtra,gas,5963.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Maharashtra,nuclear,7886.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,Maharashtra,hydro,5548.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Andhra Pradesh,coal_lignite,46145.71,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Andhra Pradesh,gas,3323.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Andhra Pradesh,hydro,3280.12,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Karnataka,coal_lignite,19861.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Karnataka,nuclear,7093.92,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Karnataka,hydro,12587.35,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Kerala,gas,101.41,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Kerala,diesel,7.83,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Kerala,hydro,6628.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Puducherry,gas,232.15,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Tamil Nadu,coal_lignite,48935.32,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Tamil Nadu,gas,2264.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Tamil Nadu,nuclear,13664.72,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Tamil Nadu,hydro,5212.71,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Telangana,coal_lignite,44760.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,Telangana,hydro,3645.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Andaman and Nicobar Islands,diesel,118.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Bihar,coal_lignite,33866.14,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Jharkhand,coal_lignite,27219.97,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Jharkhand,hydro,223.09,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Odisha,coal_lignite,55206.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Odisha,hydro,6859.97,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,Sikkim,hydro,10879.5,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,West Bengal,coal_lignite,72735.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,West Bengal,hydro,3212.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Arunachal Pradesh,hydro,3451.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Assam,coal_lignite,2976.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Assam,gas,2721.4,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Assam,hydro,270.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Manipur,hydro,621.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Meghalaya,hydro,1151.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Mizoram,hydro,158.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Nagaland,hydro,203.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,Tripura,gas,7043.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2021-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Delhi,gas,4948.57,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Haryana,coal_lignite,22847.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Haryana,gas,120.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Himachal Pradesh,hydro,36459.64,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Jammu and Kashmir,hydro,17074.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Ladakh,hydro,405.98,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Punjab,coal_lignite,24175.82,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Punjab,hydro,3709.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Rajasthan,coal_lignite,49608.4,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Rajasthan,gas,1499.01,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Rajasthan,nuclear,8308.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Rajasthan,hydro,481.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttar Pradesh,coal_lignite,130698.93,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttar Pradesh,gas,1148.49,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttar Pradesh,nuclear,3580.25,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttar Pradesh,hydro,1402.68,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttarakhand,gas,1012.32,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,Uttarakhand,hydro,14332.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Chhattisgarh,coal_lignite,140870.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Chhattisgarh,hydro,404.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Gujarat,coal_lignite,49568.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Gujarat,gas,7353.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Gujarat,nuclear,3503.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Gujarat,hydro,2621.51,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Madhya Pradesh,coal_lignite,129634.45,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Madhya Pradesh,hydro,4686.72,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Maharashtra,coal_lignite,116485.92,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Maharashtra,gas,6124.19,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Maharashtra,nuclear,8602.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,Maharashtra,hydro,6007.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Andhra Pradesh,coal_lignite,53326.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Andhra Pradesh,gas,2094.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Andhra Pradesh,hydro,3113.83,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Karnataka,coal_lignite,30505.26,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Karnataka,nuclear,7492.05,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Karnataka,hydro,13936.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Kerala,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Kerala,hydro,9317.44,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Puducherry,gas,251.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Tamil Nadu,coal_lignite,59450.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Tamil Nadu,gas,1732.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Tamil Nadu,nuclear,15625.26,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Tamil Nadu,hydro,5212.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Telangana,coal_lignite,51550.06,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,Telangana,hydro,5626.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Andaman and Nicobar Islands,diesel,117.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Bihar,coal_lignite,43940.4,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Jharkhand,coal_lignite,28338.72,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Jharkhand,hydro,547.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Odisha,coal_lignite,60161.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Odisha,hydro,5230.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,Sikkim,hydro,11493.9,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,West Bengal,coal_lignite,83216.77,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,West Bengal,hydro,3189.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Arunachal Pradesh,hydro,4161.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Assam,coal_lignite,4201.45,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Assam,gas,3399.1,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Assam,hydro,676.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Manipur,hydro,455.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Meghalaya,hydro,841.82,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Mizoram,hydro,137.44,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Nagaland,hydro,100.55,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,Tripura,gas,6332.25,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2022-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Delhi,gas,3784.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Haryana,coal_lignite,32136.68,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Haryana,gas,2.59,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Himachal Pradesh,hydro,38666.98,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Jammu and Kashmir,hydro,16777.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Ladakh,hydro,402.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Punjab,coal_lignite,31506.16,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Punjab,hydro,4399.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Rajasthan,coal_lignite,55968.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Rajasthan,gas,1450.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Rajasthan,nuclear,6587.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Rajasthan,hydro,967.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttar Pradesh,coal_lignite,151154.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttar Pradesh,gas,908.23,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttar Pradesh,nuclear,3192.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttar Pradesh,hydro,974.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttarakhand,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,Uttarakhand,hydro,15435.77,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Chhattisgarh,coal_lignite,142599.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Chhattisgarh,hydro,237.37,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Gujarat,coal_lignite,53322.93,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Gujarat,gas,2158.69,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Gujarat,nuclear,3639.91,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Gujarat,hydro,6133.14,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Madhya Pradesh,coal_lignite,135838.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Madhya Pradesh,hydro,7309.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Maharashtra,coal_lignite,124477.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Maharashtra,gas,2429.56,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Maharashtra,nuclear,8985.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,Maharashtra,hydro,5894.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Andhra Pradesh,coal_lignite,60931.93,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Andhra Pradesh,gas,610.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Andhra Pradesh,hydro,3747.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Karnataka,coal_lignite,35014.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Karnataka,nuclear,7443.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Karnataka,hydro,13157.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Kerala,diesel,0.12,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Kerala,hydro,7989.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Lakshadweep,diesel,15.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Puducherry,gas,233.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Tamil Nadu,coal_lignite,65221.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Tamil Nadu,gas,1861.95,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Tamil Nadu,nuclear,16012.57,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Tamil Nadu,hydro,5965.77,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Telangana,coal_lignite,50738.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,Telangana,hydro,6010.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Andaman and Nicobar Islands,diesel,214.57,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Bihar,coal_lignite,55200.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Jharkhand,coal_lignite,30472.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Jharkhand,hydro,305.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Odisha,coal_lignite,64874.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Odisha,hydro,5462.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,Sikkim,hydro,11696.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,West Bengal,coal_lignite,87612.45,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,West Bengal,hydro,3423.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Arunachal Pradesh,hydro,4820.94,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Assam,coal_lignite,5026.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Assam,gas,3366.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Assam,hydro,481.6,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Manipur,hydro,477.98,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Meghalaya,hydro,980.25,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Mizoram,hydro,204.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Nagaland,hydro,177.37,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,Tripura,gas,7079.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2023-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Delhi,gas,3755.14,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Haryana,coal_lignite,28060.15,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Haryana,gas,137.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Himachal Pradesh,hydro,36365.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Jammu and Kashmir,hydro,15874.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Ladakh,hydro,388.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Punjab,coal_lignite,32462.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Punjab,hydro,4676.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Rajasthan,coal_lignite,60478.08,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Rajasthan,gas,1144.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Rajasthan,nuclear,7059.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Rajasthan,hydro,1013.97,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttar Pradesh,coal_lignite,152505.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttar Pradesh,gas,1619.52,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttar Pradesh,nuclear,2874.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttar Pradesh,hydro,850.64,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttarakhand,gas,609.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,Uttarakhand,hydro,13919.23,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Chhattisgarh,coal_lignite,162388.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Chhattisgarh,hydro,321.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Gujarat,coal_lignite,76597.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Gujarat,gas,8185.06,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Gujarat,nuclear,7576.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Gujarat,hydro,4556.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Madhya Pradesh,coal_lignite,148680.03,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Madhya Pradesh,hydro,6444.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Maharashtra,coal_lignite,132924.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Maharashtra,gas,3970.83,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Maharashtra,nuclear,8112.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,Maharashtra,hydro,5264.49,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Andhra Pradesh,coal_lignite,71241.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Andhra Pradesh,gas,2.41,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Andhra Pradesh,hydro,1373.19,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Karnataka,coal_lignite,44466.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Karnataka,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Karnataka,nuclear,7502.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Karnataka,hydro,8973.17,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Kerala,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Kerala,hydro,5155.72,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Lakshadweep,diesel,64.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Puducherry,gas,224.1,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Tamil Nadu,coal_lignite,73415.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Tamil Nadu,gas,1918.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Tamil Nadu,nuclear,14811.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Tamil Nadu,hydro,3563.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Telangana,coal_lignite,56913.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,Telangana,hydro,1243.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Andaman and Nicobar Islands,diesel,335.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Bihar,coal_lignite,58361.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Jharkhand,coal_lignite,35764.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Jharkhand,hydro,196.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Odisha,coal_lignite,66019.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Odisha,hydro,6162.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,Sikkim,hydro,8609.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,West Bengal,coal_lignite,89513.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,West Bengal,hydro,2816.49,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Arunachal Pradesh,hydro,4278.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Assam,coal_lignite,5058.11,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Assam,gas,3375.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Assam,hydro,614.7,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Manipur,hydro,298.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Meghalaya,hydro,808.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Mizoram,hydro,118.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Nagaland,hydro,165.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,Tripura,gas,6353.31,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2024-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Delhi,gas,3878.01,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Haryana,coal_lignite,30228.56,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Haryana,gas,215.37,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Himachal Pradesh,hydro,39386.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Jammu and Kashmir,hydro,15200.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Ladakh,hydro,413.06,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Punjab,coal_lignite,33575.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Punjab,hydro,4126.11,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Rajasthan,coal_lignite,65065.26,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Rajasthan,gas,921.9,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Rajasthan,nuclear,7430.95,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Rajasthan,hydro,905.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttar Pradesh,coal_lignite,161337.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttar Pradesh,gas,1247.56,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttar Pradesh,nuclear,3629.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttar Pradesh,hydro,1273.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttarakhand,gas,837.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,Uttarakhand,hydro,15183.82,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Chhattisgarh,coal_lignite,166431.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Chhattisgarh,hydro,419.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Gujarat,coal_lignite,85015.59,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Gujarat,gas,8411.7,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Gujarat,nuclear,12301.55,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Gujarat,hydro,6028.52,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Madhya Pradesh,coal_lignite,146116.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Madhya Pradesh,hydro,7606.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Maharashtra,coal_lignite,131157.23,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Maharashtra,gas,5390.97,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Maharashtra,nuclear,8467.44,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,Maharashtra,hydro,5635.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Andhra Pradesh,coal_lignite,72832.94,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Andhra Pradesh,gas,34.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Andhra Pradesh,hydro,3303.08,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Karnataka,coal_lignite,44367.93,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Karnataka,gas,314.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Karnataka,nuclear,7358.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Karnataka,hydro,14056.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Kerala,diesel,1.53,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Kerala,hydro,6733.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Lakshadweep,diesel,66.94,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Puducherry,gas,204.95,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Tamil Nadu,coal_lignite,72605.59,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Tamil Nadu,gas,1615.77,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Tamil Nadu,nuclear,17493.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Tamil Nadu,hydro,4602.72,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Telangana,coal_lignite,56969.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,Telangana,hydro,5270.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Andaman and Nicobar Islands,diesel,374.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Bihar,coal_lignite,60757.75,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Jharkhand,coal_lignite,38812.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Jharkhand,hydro,269.12,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Odisha,coal_lignite,68638.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Odisha,hydro,6285.36,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,Sikkim,hydro,2012.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,West Bengal,coal_lignite,93168.17,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,West Bengal,hydro,2649.7,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Arunachal Pradesh,hydro,4205.16,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Assam,coal_lignite,4787.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Assam,gas,3407.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Assam,hydro,998.75,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Manipur,hydro,706.37,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Meghalaya,hydro,905.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Mizoram,hydro,240.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Nagaland,hydro,215.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,Tripura,gas,5099.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2025-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Delhi,gas,2885.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Haryana,coal_lignite,25466.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Haryana,gas,185.5,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Himachal Pradesh,hydro,42827.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Jammu and Kashmir,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Jammu and Kashmir,hydro,15663.32,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Ladakh,hydro,465.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Punjab,coal_lignite,32527.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Punjab,hydro,4291.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Rajasthan,coal_lignite,56610.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Rajasthan,gas,907.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Rajasthan,nuclear,10902.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Rajasthan,hydro,1070.61,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttar Pradesh,coal_lignite,164083.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttar Pradesh,gas,784.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttar Pradesh,nuclear,2685.32,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttar Pradesh,hydro,1775.64,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttarakhand,gas,477.12,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,Uttarakhand,hydro,16533.16,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Chhattisgarh,coal_lignite,168087.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Chhattisgarh,hydro,351.61,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Goa,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Gujarat,coal_lignite,60115.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Gujarat,gas,5745.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Gujarat,nuclear,12774.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Gujarat,hydro,6372.91,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Madhya Pradesh,coal_lignite,140609.4,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Madhya Pradesh,hydro,8088.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Maharashtra,coal_lignite,131446.57,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Maharashtra,gas,4667.53,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Maharashtra,nuclear,7397.55,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,Maharashtra,hydro,5483.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Andhra Pradesh,coal_lignite,73518.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Andhra Pradesh,gas,311.49,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Andhra Pradesh,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Andhra Pradesh,hydro,6190.06,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Karnataka,coal_lignite,42860.64,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Karnataka,gas,732.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Karnataka,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Karnataka,nuclear,5746.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Karnataka,hydro,15601.21,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Kerala,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Kerala,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Kerala,hydro,9187.59,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Lakshadweep,diesel,66.38,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Puducherry,gas,184.66,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Tamil Nadu,coal_lignite,65299.01,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Tamil Nadu,gas,1244.73,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Tamil Nadu,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Tamil Nadu,nuclear,15683.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Tamil Nadu,hydro,5589.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Telangana,coal_lignite,58723.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,Telangana,hydro,6874.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Andaman and Nicobar Islands,diesel,369.03,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Bihar,coal_lignite,59345.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Jharkhand,coal_lignite,40599.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Jharkhand,hydro,145.61,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Odisha,coal_lignite,69371.55,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Odisha,hydro,7253.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,Sikkim,hydro,2602.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,West Bengal,coal_lignite,87707.96,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,West Bengal,gas,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,West Bengal,hydro,2609.26,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Arunachal Pradesh,hydro,4854.46,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Assam,coal_lignite,4294.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Assam,gas,2860.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Assam,hydro,1424.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Manipur,diesel,0.0,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Manipur,hydro,576.01,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Meghalaya,hydro,879.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Mizoram,hydro,263.98,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Nagaland,hydro,228.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,Tripura,gas,5040.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr16_2026-MAR_col9_cumulative_actual
+2026-27,2026,Northern,Delhi,gas,2476.37,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Haryana,coal_lignite,15765.72,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Haryana,gas,189.26,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Himachal Pradesh,hydro,29617.41,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Jammu and Kashmir,gas,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Jammu and Kashmir,hydro,11300.62,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Ladakh,hydro,294.23,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Punjab,coal_lignite,17463.85,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Punjab,hydro,2608.78,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Rajasthan,coal_lignite,31137.68,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Rajasthan,gas,509.14,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Rajasthan,nuclear,7007.84,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Rajasthan,hydro,83.14,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttar Pradesh,coal_lignite,91369.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttar Pradesh,gas,590.17,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttar Pradesh,nuclear,1677.13,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttar Pradesh,hydro,901.28,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttarakhand,gas,51.61,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,Uttarakhand,hydro,10214.41,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Chhattisgarh,coal_lignite,84510.05,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Chhattisgarh,hydro,211.99,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Goa,gas,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Gujarat,coal_lignite,43719.76,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Gujarat,gas,3299.94,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Gujarat,nuclear,7379.42,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Gujarat,hydro,1906.99,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Madhya Pradesh,coal_lignite,68816.73,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Madhya Pradesh,hydro,3336.23,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Maharashtra,coal_lignite,70552.48,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Maharashtra,gas,2762.93,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Maharashtra,nuclear,4147.21,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,Maharashtra,hydro,3229.76,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Andhra Pradesh,coal_lignite,42162.51,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Andhra Pradesh,gas,217.61,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Andhra Pradesh,diesel,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Andhra Pradesh,hydro,2798.98,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Karnataka,coal_lignite,26496.2,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Karnataka,gas,158.95,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Karnataka,diesel,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Karnataka,nuclear,2968.7,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Karnataka,hydro,5623.29,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Kerala,gas,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Kerala,diesel,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Kerala,hydro,3105.16,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Lakshadweep,diesel,35.5,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Puducherry,gas,67.64,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Tamil Nadu,coal_lignite,39526.12,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Tamil Nadu,gas,673.05,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Tamil Nadu,diesel,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Tamil Nadu,nuclear,9219.66,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Tamil Nadu,hydro,1551.61,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Telangana,coal_lignite,33481.8,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,Telangana,hydro,1137.71,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Andaman and Nicobar Islands,diesel,207.68,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Bihar,coal_lignite,33469.79,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Jharkhand,coal_lignite,25046.01,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Jharkhand,hydro,283.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Odisha,coal_lignite,34879.44,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Odisha,hydro,3307.08,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,Sikkim,hydro,2899.84,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,West Bengal,coal_lignite,46086.4,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,West Bengal,gas,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,West Bengal,hydro,1620.62,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Arunachal Pradesh,hydro,5775.96,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Assam,coal_lignite,2427.55,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Assam,gas,1378.29,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Assam,hydro,1066.85,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Manipur,diesel,0.0,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Manipur,hydro,257.24,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Meghalaya,hydro,586.95,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Mizoram,hydro,122.05,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Nagaland,hydro,165.55,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,Tripura,gas,2280.15,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr16_2026-SEP_col9_cumulative_actual

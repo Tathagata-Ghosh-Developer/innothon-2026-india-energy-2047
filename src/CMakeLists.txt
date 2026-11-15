@@ -3,6 +3,7 @@ add_library(e47_core STATIC
   forecast/panel.cpp
   forecast/models.cpp
   forecast/backtest.cpp
+  forecast/india.cpp
   forecast/mc_cpu.cpp
   regional/convergence.cpp
   allocation/inputs.cpp

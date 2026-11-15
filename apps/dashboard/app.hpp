@@ -32,6 +32,7 @@ class App {
 
  private:
   struct Job {
+    int core = 0;
     ForecastResult forecast;
     StrategyResult strategy;
     double total_ms = 0;
@@ -39,6 +40,7 @@ class App {
 
   void poll();
   void launch();
+  void request_core(int core);
   void sidebar();
   void header();
   void tab_forecast();
@@ -50,8 +52,11 @@ class App {
   void stat_card(const char* label, const std::string& value, const char* note, float width);
 
   std::filesystem::path root_;
-  std::future<std::unique_ptr<Pipeline>> loading_;
-  std::unique_ptr<Pipeline> pl_;
+  // One pipeline per forecast core: 0 = India-only (primary), 1 = cross-country (check).
+  std::future<std::unique_ptr<Pipeline>> loading_[2];
+  std::unique_ptr<Pipeline> pls_[2];
+  Pipeline* pl_ = nullptr;  // pipeline of the active core (null while it loads)
+  int core_ = 0;
   std::string error_;
 
   ScenarioControls sc_;

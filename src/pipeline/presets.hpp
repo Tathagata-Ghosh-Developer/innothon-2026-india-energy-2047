@@ -19,21 +19,23 @@ struct PolicyPreset {
 
 inline const std::vector<ScenarioPreset>& scenario_presets() {
   static const std::vector<ScenarioPreset> v = {
-      {"Base", "India's 2005-2025 GDP per capita growth to 2030, slowing by 1.5 points by 2047; no new loads.",
+      {"Base", "India's historical income growth per person to 2030, slowing by 1.5 points by 2047; no new loads.",
        [](ScenarioControls&) {}},
       {"High growth",
-       "6.5% GDP per capita growth to 2030, slowing by 1 point; urban share 3 points above the UN path by 2047; "
-       "100-300 TWh of new loads (green hydrogen, data centres).",
+       "Income growth per person 1.5 points above history to 2030, slowing by 1 point; urban share 3 points above the "
+       "UN path by 2047; 100-300 TWh of new loads (green hydrogen, data centres).",
        [](ScenarioControls& c) {
-         c.g_start = 0.065;
+         c.g_start_shift = 0.015;
          c.g_slowdown = 0.010;
          c.urban_shift_2047 = 0.03;
          c.addon_lo = 100;
          c.addon_hi = 300;
        }},
-      {"Low growth", "3.5% GDP per capita growth to 2030, slowing by 2 points; urban share 2 points below the UN path by 2047.",
+      {"Low growth",
+       "Income growth per person 1.5 points below history to 2030, slowing by 2 points; urban share 2 points below the "
+       "UN path by 2047.",
        [](ScenarioControls& c) {
-         c.g_start = 0.035;
+         c.g_start_shift = -0.015;
          c.g_slowdown = 0.020;
          c.urban_shift_2047 = -0.02;
        }},

@@ -1,0 +1,217 @@
+fiscal_year,fy_start_year,region,source,generation_gwh,is_subtotal,partial,period,origin,source_id
+2018-19,2018,Northern,thermal,226869.7,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,nuclear,11196.17,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,hydro,72401.41,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Northern,total,310467.28,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,thermal,449481.46,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,nuclear,11766.35,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,hydro,9759.42,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Western,total,471007.23,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,thermal,210540.18,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,nuclear,14850.07,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,hydro,28807.04,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Southern,total,254197.29,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,thermal,173171.07,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,hydro,18900.31,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Eastern,total,192071.38,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,thermal,12161.47,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,hydro,5025.43,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,North-Eastern,total,17186.9,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,Bhutan import,bhutan_import,4406.62,False,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,All India,thermal,1072223.88,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,All India,nuclear,37812.59,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,All India,hydro,134893.61,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,All India,bhutan_import,4406.62,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2018-19,2018,All India,total,1249336.7,True,False,Apr-Mar,cumulative_same_period_last_year,npp_cea_18col_sr2_2020-MAR_col10_actual_same_period_last_year
+2019-20,2019,Northern,thermal,212420.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,nuclear,12242.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,hydro,80556.95,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Northern,total,305220.47,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,thermal,445917.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,nuclear,13965.03,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,hydro,17813.79,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Western,total,477696.61,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,thermal,197128.17,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,nuclear,20264.55,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,hydro,31754.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Southern,total,249146.74,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,thermal,174449.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,hydro,20823.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Eastern,total,195273.09,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,thermal,12831.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,hydro,4820.89,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,North-Eastern,total,17652.52,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,Bhutan import,bhutan_import,5794.48,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,All India,thermal,1042747.86,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,All India,nuclear,46472.45,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,All India,hydro,155769.12,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,All India,bhutan_import,5794.48,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2019-20,2019,All India,total,1250783.91,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2020-MAR_col9_cumulative_actual
+2020-21,2020,Northern,thermal,207216.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,nuclear,10670.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,hydro,75233.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Northern,total,293120.85,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,thermal,457777.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,nuclear,11599.58,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,hydro,16678.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Western,total,486055.46,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,thermal,165632.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,nuclear,20758.64,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,hydro,31353.95,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Southern,total,217744.98,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,thermal,189146.13,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,hydro,21174.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Eastern,total,210320.97,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,thermal,12741.35,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,hydro,5858.53,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,North-Eastern,total,18599.88,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,Bhutan import,bhutan_import,8765.5,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,All India,thermal,1032513.54,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,All India,nuclear,43029.08,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,All India,hydro,150299.52,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,All India,bhutan_import,8765.5,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2020-21,2020,All India,total,1234607.64,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2021-MAR_col9_cumulative_actual
+2021-22,2021,Northern,thermal,236059.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,nuclear,11889.1,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,hydro,73866.02,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Northern,total,321814.39,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,thermal,450037.7,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,nuclear,12105.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,hydro,13719.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Western,total,475863.09,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,thermal,198910.29,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,nuclear,23117.31,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,hydro,37206.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Southern,total,259234.03,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,thermal,215774.42,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,hydro,20462.33,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Eastern,total,236236.75,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,thermal,13932.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,hydro,6372.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,North-Eastern,total,20305.61,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,Bhutan import,bhutan_import,7493.2,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,All India,thermal,1114714.48,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,All India,nuclear,47112.06,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,All India,hydro,151627.33,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,All India,bhutan_import,7493.2,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2021-22,2021,All India,total,1320947.07,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2022-MAR_col9_cumulative_actual
+2022-23,2022,Northern,thermal,276911.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,nuclear,9779.89,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,hydro,77624.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Northern,total,364315.63,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,thermal,460826.32,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,nuclear,12625.39,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,hydro,19573.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Western,total,493025.58,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,thermal,214625.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,nuclear,23455.81,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,hydro,36869.76,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Southern,total,274951.44,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,thermal,238374.25,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,hydro,20888.8,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Eastern,total,259263.05,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,thermal,15472.56,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,hydro,7142.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,North-Eastern,total,22614.83,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,Bhutan import,bhutan_import,6742.4,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,All India,thermal,1206210.67,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,All India,nuclear,45861.09,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,All India,hydro,162098.77,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,All India,bhutan_import,6742.4,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2022-23,2022,All India,total,1420912.93,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2023-MAR_col9_cumulative_actual
+2023-24,2023,Northern,thermal,280772.62,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,nuclear,9934.3,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,hydro,73088.83,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Northern,total,363795.75,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,thermal,532746.78,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,nuclear,15689.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,hydro,16587.36,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Western,total,565023.38,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,thermal,248246.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,nuclear,22313.87,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,hydro,20308.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Southern,total,290869.19,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,thermal,249996.17,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,hydro,17785.34,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Eastern,total,267781.51,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,thermal,14786.69,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,hydro,6283.74,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,North-Eastern,total,21070.43,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,Bhutan import,bhutan_import,4716.1,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,All India,thermal,1326548.93,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,All India,nuclear,47937.41,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,All India,hydro,134053.92,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,All India,bhutan_import,4716.1,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2023-24,2023,All India,total,1513256.36,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2024-MAR_col9_cumulative_actual
+2024-25,2024,Northern,thermal,297306.93,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,nuclear,11060.43,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,hydro,76489.47,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Northern,total,384856.83,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,thermal,542523.63,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,nuclear,20768.99,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,hydro,19689.91,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Western,total,582982.53,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,thermal,249013.27,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,nuclear,24851.41,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,hydro,33966.57,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Southern,total,307831.25,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,thermal,261751.09,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,hydro,11216.85,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Eastern,total,272967.94,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,thermal,13294.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,hydro,7271.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,North-Eastern,total,20566.02,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,Bhutan import,bhutan_import,5484.18,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,All India,thermal,1363889.76,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,All India,nuclear,56680.83,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,All India,hydro,148633.98,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,All India,bhutan_import,5484.18,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2024-25,2024,All India,total,1574688.75,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2025-MAR_col9_cumulative_actual
+2025-26,2025,Northern,thermal,283927.65,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,nuclear,13587.86,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,hydro,82627.22,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Northern,total,380142.73,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,thermal,510672.36,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,nuclear,20171.84,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,hydro,20296.28,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Western,total,551140.48,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,thermal,242941.04,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,nuclear,21430.82,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,hydro,43443.07,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Southern,total,307814.93,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,thermal,257394.03,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,hydro,12610.67,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Eastern,total,270004.7,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,thermal,12195.53,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,hydro,8226.54,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,North-Eastern,total,20422.07,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,Bhutan import,bhutan_import,7831.24,False,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,All India,thermal,1307130.61,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,All India,nuclear,55190.52,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,All India,hydro,167203.78,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,All India,bhutan_import,7831.24,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2025-26,2025,All India,total,1537356.15,True,False,Apr-Mar,cumulative_actual,npp_cea_18col_sr2_2026-MAR_col9_cumulative_actual
+2026-27,2026,Northern,thermal,159552.8,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,nuclear,8684.97,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,hydro,55019.87,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Northern,total,223257.64,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,thermal,273661.89,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,nuclear,11526.63,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,hydro,8684.97,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Western,total,293873.49,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,thermal,142819.38,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,nuclear,12188.36,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,hydro,14216.75,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Southern,total,169224.49,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,thermal,139689.32,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,hydro,8110.54,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Eastern,total,147799.86,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,thermal,6085.99,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,hydro,7974.6,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,North-Eastern,total,14060.59,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,Bhutan import,bhutan_import,5656.65,False,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,All India,thermal,721809.38,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,All India,nuclear,32399.96,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,All India,hydro,94006.73,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,All India,bhutan_import,5656.65,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual
+2026-27,2026,All India,total,853872.72,True,True,Apr-Sep,cumulative_actual,npp_cea_18col_sr2_2026-SEP_col9_cumulative_actual

@@ -3,8 +3,10 @@
 // Usage: energy2047 [repo_root] [draws]
 #include <omp.h>
 
+#include <cmath>
 #include <cstdio>
 #include <filesystem>
+#include <map>
 #include <string>
 
 #include "core/csv.hpp"
@@ -17,10 +19,11 @@ using namespace e47;
 
 namespace {
 
-void write_forecast(const fs::path& out, const Pipeline& pl, const ForecastResult& f) {
-  CsvWriter w((out / "forecast_national_regional.csv").string());
+void write_forecast(const fs::path& out, const Pipeline& pl, const ForecastResult& f,
+                    const std::string& file = "forecast_national_regional.csv") {
+  CsvWriter w((out / file).string());
   w.field("series").field("year").field("p05").field("p10").field("p25").field("p50").field("p75").field("p90");
-  w.field("p95").field("mean").field("central_fe_quad").field("central_fe_gompertz").field("central_damped");
+  w.field("p95").field("mean").field("central_model0").field("central_model1").field("central_model2");
   w.endrow();
   for (const auto& h : pl.fitted().history) {
     w.field("National (observed)").field(h.year);
@@ -96,15 +99,83 @@ int main(int argc, char** argv) {
     fs::create_directories(out);
 
     Timer t_init;
-    const Pipeline pl(root.string());
+    const Pipeline pl(root.string(), CoreModel::kIndia);
     const Fitted& fit = pl.fitted();
     const DriverData& drv = pl.drivers();
+    std::printf("primary core: %s\n", core_name(pl.core()));
     std::printf("setup %.0f ms (bootstrap %.0f ms on %d threads)\n", t_init.ms(), fit.bootstrap_ms,
                 omp_get_max_threads());
-    std::printf("panel %zu countries, %zu obs | FE-Quad R2w %.3f | FE-Gompertz R2w %.3f\n",
-                fit.panel.countries.size(), fit.panel.n_obs(), fit.quad_stats.r2_within, fit.gomp_stats.r2_within);
-    std::printf("weights (inverse 2010-origin MAPE): quad %.2f gomp %.2f damped %.2f\n", fit.backtest_weights[0],
-                fit.backtest_weights[1], fit.backtest_weights[2]);
+    const IndiaFit& fi = fit.india_fit;
+    const IndiaFit& ff = fit.india_fit_full;
+    std::printf("India elasticity FY%d-%d: beta %.3f (se %.3f, block-bootstrap 90%% %.3f-%.3f) | FY2020 %.3f | resid sd "
+                "%.4f | DW %.2f | kappa %.3f\n",
+                fi.first, fi.last, fi.beta, fi.beta_se, quantile(fit.india_beta_boot, 0.05),
+                quantile(fit.india_beta_boot, 0.95), fi.covid, fi.resid_sd, fi.dw, fi.kappa);
+    std::printf("  first differences: beta %.3f | base-year residual %+.4f\n", fi.fd_beta, fi.resid.back());
+    std::printf("  full window FY%d-%d (2011 splice imputed %.4f): beta %.3f (se %.3f, first diff %.3f)\n", ff.first,
+                ff.last, fit.india.splice_growth, ff.beta, ff.beta_se, ff.fd_beta);
+    std::printf("  urban excess gamma prior: mean %.2f sd %.2f (%s) | captive/utility FY%d %.3f\n", fit.gamma_mean,
+                fit.gamma_sd, fit.gamma_source.c_str(), fit.history.back().year, fit.captive_share);
+    {
+      // Rolling-origin backtest: mean absolute percentage error by horizon (1..5 years).
+      CsvWriter w((out / "backtest_horizon.csv").string());
+      w.field("horizon").field("n").field("mape_model0").field("mape_model1").field("mape_model2");
+      w.endrow();
+      std::printf("  rolling backtest MAPE by horizon (%s | %s | %s):\n", fit.model_names[0].c_str(),
+                  fit.model_names[1].c_str(), fit.model_names[2].c_str());
+      for (int h = 1; h <= 5; ++h) {
+        double e[3] = {0, 0, 0};
+        int n = 0;
+        for (const auto& b : fit.backtests)
+          for (const auto& p : b.points)
+            if (p.year - b.origin == h) {
+              e[0] += std::abs(p.fe_quad_twh / p.actual_twh - 1);
+              e[1] += std::abs(p.fe_gompertz_twh / p.actual_twh - 1);
+              e[2] += std::abs(p.damped_twh / p.actual_twh - 1);
+              ++n;
+            }
+        if (n == 0) continue;
+        w.field(h).field(n).field(e[0] / n, 5).field(e[1] / n, 5).field(e[2] / n, 5);
+        w.endrow();
+        std::printf("    h=%d (n=%d): %5.1f%% | %5.1f%% | %5.1f%%\n", h, n, 100 * e[0] / n, 100 * e[1] / n,
+                    100 * e[2] / n);
+      }
+    }
+    {
+      CsvWriter w((out / "india_fit.csv").string());
+      w.field("parameter").field("value").field("note");
+      w.endrow();
+      auto row = [&](const char* k, double v, const std::string& note) {
+        w.field(k).field(v, 6).field(note);
+        w.endrow();
+      };
+      row("window_first", fi.first, "fiscal-year start (2011 = FY2011-12)");
+      row("window_last", fi.last, "");
+      row("beta", fi.beta, "income elasticity of NPP generation per person");
+      row("beta_se", fi.beta_se, "OLS standard error");
+      row("beta_boot_p05", quantile(fit.india_beta_boot, 0.05), "moving-block bootstrap, block 3");
+      row("beta_boot_p50", quantile(fit.india_beta_boot, 0.50), "");
+      row("beta_boot_p95", quantile(fit.india_beta_boot, 0.95), "");
+      row("covid_fy2020", fi.covid, "FY2020-21 dummy, log points");
+      row("resid_sd", fi.resid_sd, "");
+      row("durbin_watson", fi.dw, "");
+      row("kappa", fi.kappa, "slope of urban share on ln income over the window");
+      row("beta_first_difference", fi.fd_beta, "first differences, FY2020-21 and FY2021-22 changes left out");
+      row("beta_full_window", ff.beta, "FY2006-07..FY2023-24 with the 2011 price-base splice");
+      row("beta_full_window_se", ff.beta_se, "");
+      row("beta_full_window_first_difference", ff.fd_beta, "");
+      row("kappa_full_window", ff.kappa, "");
+      row("resid_base_year", fi.resid.back(), "residual of the base year (FY2023-24), log points");
+      row("anchor_shift", fit.anchor_shift,
+          "base-year anchor moved to fitted + mean residual of FY2021-22..FY2023-24 when |resid| > resid_sd");
+      row("splice_growth", fit.india.splice_growth, "imputed ln growth of GSDP per person for 2011");
+      row("gamma_mean", fit.gamma_mean, fit.gamma_source);
+      row("gamma_sd", fit.gamma_sd, "");
+      row("captive_share", fit.captive_share, "captive / NPP utility generation in the base year (CEA)");
+      row("g_hist_mean", drv.g_hist_mean, "mean ln growth of GSDP per person (organiser data)");
+      row("g_hist_sd", drv.g_hist_sd, "");
+      row("g_hist_rho", drv.g_hist_rho, "");
+    }
     std::printf("damped trend: alpha %.3f beta %.3f phi %.3f sigma %.4f level %.3f trend %.4f\n", fit.damped.alpha,
                 fit.damped.beta, fit.damped.phi, fit.damped.sigma, fit.damped.level, fit.damped.trend);
     std::printf("GDP pc growth %d-%d: mean %.4f sd %.4f rho %.2f | convergence lambda %.4f (se %.4f)\n",
@@ -159,9 +230,114 @@ int main(int argc, char** argv) {
       std::printf("  %-14s %d: P5 %6.0f  P25 %6.0f  P50 %6.0f  P75 %6.0f  P95 %6.0f TWh\n",
                   s == 0 ? "National" : region_name(s - 1), f.years[last], q[0], q[2], q[3], q[4], q[6]);
     }
-    std::printf("  central paths 2047: FE-Quad %.0f, FE-Gompertz %.0f, damped %.0f TWh\n", f.central[0][last],
-                f.central[1][last], f.central[2][last]);
+    std::printf("  central paths %d: %s %.0f, %s %.0f, %s %.0f TWh\n", f.years[last], fit.model_names[0].c_str(),
+                f.central[0][last], fit.model_names[1].c_str(), f.central[1][last], fit.model_names[2].c_str(),
+                f.central[2][last]);
+    std::printf("  captive layer (literature, same share as FY%d): +%.0f TWh at P50\n", fit.history.back().year,
+                fit.captive_share * f.quant.q[0][last][3]);
     write_forecast(out, pl, f);
+
+    // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes
+    // conventional generation (thermal, nuclear, hydro) for them but no RES, so the
+    // check compares conventional + RES extended at its FY2018-23 NPP growth rate.
+    {
+      std::map<int, double> conv;
+      const CsvTable t = CsvTable::read((root / "data/raw/npp/npp_region_generation_fy.csv").string());
+      for (size_t i = 0; i < t.rows(); ++i) {
+        if (t.str(i, t.col("region")) != "All India" || t.str(i, t.col("partial")) == "True") continue;
+        const std::string src = t.str(i, t.col("source"));
+        if (src == "thermal" || src == "nuclear" || src == "hydro")
+          conv[static_cast<int>(t.num(i, t.col("fy_start_year")))] += t.num(i, t.col("generation_gwh")) / 1000.0;
+      }
+      const auto& obs = fit.india.obs;
+      const IndiaObs& o23 = obs.back();
+      const IndiaObs& o18 = obs[obs.size() - 6];
+      const double res_growth = std::pow(o23.res_twh / o18.res_twh, 1.0 / (o23.year - o18.year));
+      CsvWriter w((out / "holdout.csv").string());
+      w.field("fiscal_year_start").field("npp_conventional_twh").field("res_extended_twh").field("total_estimate_twh");
+      w.field("model_p05").field("model_p50").field("model_p95").field("model_central").field("error_p50");
+      w.endrow();
+      std::printf("holdout (NPP conventional + RES at %.1f%%/yr vs model):\n", 100 * (res_growth - 1));
+      for (int k = 0; k < 2 && k < static_cast<int>(f.years.size()); ++k) {
+        const int y = f.years[k];
+        if (!conv.count(y)) continue;
+        const double res = o23.res_twh * std::pow(res_growth, y - o23.year);
+        const double tot = conv[y] + res;
+        const auto& q = f.quant.q[0][k];
+        w.field(y).field(conv[y], 6).field(res, 6).field(tot, 6).field(q[0], 6).field(q[3], 6).field(q[6], 6);
+        w.field(f.central[0][k], 6).field(q[3] / tot - 1, 4);
+        w.endrow();
+        std::printf("  FY%d: conventional %.0f + RES %.0f = %.0f | model P50 %.0f (P5 %.0f, P95 %.0f) | error %+.1f%%\n", y,
+                    conv[y], res, tot, q[3], q[0], q[6], 100 * (q[3] / tot - 1));
+      }
+    }
+
+    // Sensitivity checks on the 2047 national requirement (same seed, same draws).
+    {
+      CsvWriter w((out / "sensitivity_2047.csv").string());
+      w.field("case").field("description").field("p05").field("p50").field("p95");
+      w.endrow();
+      struct Case {
+        const char* name;
+        const char* desc;
+        void (*apply)(ScenarioControls&);
+      };
+      const Case cases[] = {
+          {"base", "India elasticity with the excess-urbanisation prior", [](ScenarioControls&) {}},
+          {"no_urban_term", "gamma = 0: two organiser datasets only, urbanisation inside beta",
+           [](ScenarioControls& s) { s.w_model = {0, 1, 0}; }},
+          {"damped_trend", "benchmark without drivers", [](ScenarioControls& s) { s.w_model = {0, 0, 1}; }},
+          {"elasticity_decline_0.2", "elasticity falls 0.2 per unit of ln income",
+           [](ScenarioControls& s) { s.elasticity_decline = 0.2; }},
+          {"growth_plus_1.5", "income growth 1.5 points above history", [](ScenarioControls& s) { s.g_start_shift = 0.015; }},
+          {"growth_minus_1.5", "income growth 1.5 points below history",
+           [](ScenarioControls& s) { s.g_start_shift = -0.015; }},
+          {"urban_plus_5", "urban share 5 points above the UN path by 2047",
+           [](ScenarioControls& s) { s.urban_shift_2047 = 0.05; }},
+          {"pop_band_x2", "population uncertainty doubled", [](ScenarioControls& s) { s.pop_band_scale = 2.0; }},
+      };
+      std::printf("sensitivity (2047 national, TWh P5 / P50 / P95):\n");
+      for (const Case& k : cases) {
+        ScenarioControls s = c;
+        k.apply(s);
+        const ForecastResult r = pl.forecast(s);
+        const auto& q = r.quant.q[0][r.years.size() - 1];
+        w.field(k.name).field(k.desc).field(q[0], 6).field(q[3], 6).field(q[6], 6);
+        w.endrow();
+        std::printf("  %-24s %6.0f %6.0f %6.0f\n", k.name, q[0], q[3], q[6]);
+      }
+    }
+
+    // Secondary check: the cross-country panel core, same scenario settings.
+    {
+      Timer t2;
+      const Pipeline sec(root.string(), CoreModel::kCrossCountry);
+      ScenarioControls s = c;
+      const ForecastResult r = sec.forecast(s);
+      write_forecast(out, sec, r, "forecast_secondary_cross_country.csv");
+      const size_t l2 = r.years.size() - 1;
+      const auto& q2 = r.quant.q[0][l2];
+      const auto& q1 = f.quant.q[0][last];
+      CsvWriter w((out / "core_comparison.csv").string());
+      w.field("core").field("scope").field("base_year").field("base_twh").field("target_year").field("p05").field(
+          "p50").field("p95");
+      w.endrow();
+      w.field(core_name(pl.core())).field("NPP utility generation, fiscal year (start-year label)");
+      w.field(fit.history.back().year).field(fit.history.back().gen_twh, 6).field(f.years[last]);
+      w.field(q1[0], 6).field(q1[3], 6).field(q1[6], 6);
+      w.endrow();
+      w.field("India-only + captive layer").field("utility + captive (CEA share held at base year)");
+      w.field(fit.history.back().year).field(fit.history.back().gen_twh * (1 + fit.captive_share), 6).field(f.years[last]);
+      w.field(q1[0] * (1 + fit.captive_share), 6).field(q1[3] * (1 + fit.captive_share), 6);
+      w.field(q1[6] * (1 + fit.captive_share), 6);
+      w.endrow();
+      w.field(core_name(sec.core())).field("Ember total generation incl. captive, calendar year");
+      w.field(sec.fitted().history.back().year).field(sec.fitted().history.back().gen_twh, 6).field(r.years[l2]);
+      w.field(q2[0], 6).field(q2[3], 6).field(q2[6], 6);
+      w.endrow();
+      std::printf("secondary (%s, %.0f ms): %d P5 %.0f P50 %.0f P95 %.0f TWh\n", core_name(sec.core()), t2.ms(),
+                  r.years[l2], q2[0], q2[3], q2[6]);
+    }
 
     const PolicySettings p;
     const StrategyResult st = pl.strategy(f, c, p);
@@ -205,13 +381,13 @@ int main(int argc, char** argv) {
     }
     {
       CsvWriter w((out / "backtest.csv").string());
-      w.field("origin").field("year").field("actual_twh").field("fe_quad_twh").field("fe_gompertz_twh").field(
+      w.field("origin").field("year").field("actual_twh").field("elasticity_twh").field("elasticity_no_urban_twh").field(
           "damped_twh");
       w.endrow();
       for (const auto& b : fit.backtests)
-        for (const auto& p : b.points) {
-          w.field(b.origin).field(p.year).field(p.actual_twh).field(p.fe_quad_twh).field(p.fe_gompertz_twh).field(
-              p.damped_twh);
+        for (const auto& pt : b.points) {
+          w.field(b.origin).field(pt.year).field(pt.actual_twh).field(pt.fe_quad_twh).field(pt.fe_gompertz_twh).field(
+              pt.damped_twh);
           w.endrow();
         }
     }

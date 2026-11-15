@@ -59,6 +59,9 @@ struct McInputs {
 
   float w_model[3];  // model weights (sum to 1)
   int n_boot;        // bootstrap replicates available
+  // 1 = slot 1 is also a quadratic-form model whose parameters sit in p[4..7]
+  // (India-only core). 0 = slot 1 is the Gompertz model (cross-country core).
+  int quad_only;
 
   // Damped trend on ln(total generation)
   float dt_level, dt_trend, dt_phi, dt_alpha, dt_beta, dt_sigma;
@@ -88,15 +91,22 @@ E47_HD Real clamp01(Real v) {
   return v < Real(0) ? Real(0) : (v > Real(1) ? Real(1) : v);
 }
 
+// Parameters of the quadratic-form model used by `model`: slot 0 reads p[0..3];
+// slot 1 reads p[4..7] when quad_only is set.
+E47_HD const float* quad_params(int model, const float* p, int quad_only) {
+  return (model == kFeGompertz && quad_only) ? p + 4 : p;
+}
+
 // Per-state log index of generation per person, up to terms common to all states.
 // u is the change in the state's urban share since the base year.
 template <class Real>
-E47_HD Real state_log_index(int model, const float* p, Real y_k, Real u) {
+E47_HD Real state_log_index(int model, const float* p, Real y_k, Real u, int quad_only) {
   using std::exp;
   using std::log;
-  if (model == kFeGompertz) return -Real(p[4]) * exp(-Real(p[5]) * y_k) + Real(p[6]) * u;
-  const Real x = log(y_k * Real(0.1));  // ln(y / 10,000) with y in thousand $
-  return Real(p[0]) * x + Real(p[1]) * x * x + Real(p[2]) * u;
+  if (model == kFeGompertz && !quad_only) return -Real(p[4]) * exp(-Real(p[5]) * y_k) + Real(p[6]) * u;
+  const float* q = quad_params(model, p, quad_only);
+  const Real x = log(y_k * Real(0.1));  // ln(y / 10) with y in thousands (any currency; only changes matter)
+  return Real(q[0]) * x + Real(q[1]) * x * x + Real(q[2]) * u;
 }
 
 // Model choice is shared by each group of 32 consecutive draws (one GPU warp),
@@ -133,9 +143,11 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
   const Real addon = Real(in.addon_lo) + (Real(in.addon_hi) - Real(in.addon_lo)) * uu[2];
   const Real g_level = Real(in.g_level_sd) * z[2];
 
+  const bool quad = model == kFeQuad || (model == kFeGompertz && in.quad_only);
+  const float* q = quad_params(model, p, in.quad_only);
   const Real y0 = Real(in.y0);
   const Real x0 = log(y0 * Real(0.1));
-  const Real base_quad = Real(p[0]) * x0 + Real(p[1]) * x0 * x0 + Real(p[2]) * Real(in.u0);
+  const Real base_quad = Real(q[0]) * x0 + Real(q[1]) * x0 * x0 + Real(q[2]) * Real(in.u0);
   const Real base_gomp = -Real(p[4]) * exp(-Real(p[5]) * y0) + Real(p[6]) * Real(in.u0);
 
   Real ln_y = log(y0);
@@ -161,9 +173,9 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
       gen = exp(f + eps);
     } else {
       Real d;
-      if (model == kFeQuad) {
+      if (quad) {
         const Real x = log(y * Real(0.1));
-        d = Real(p[0]) * x + Real(p[1]) * x * x + Real(p[2]) * u - base_quad + Real(p[3]) * dtau;
+        d = Real(q[0]) * x + Real(q[1]) * x * x + Real(q[2]) * u - base_quad + Real(q[3]) * dtau;
       } else {
         d = -Real(p[4]) * exp(-Real(p[5]) * y) + Real(p[6]) * u - base_gomp + Real(p[7]) * dtau;
       }
@@ -181,7 +193,7 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
       for (int s = 0; s < in.n_states; ++s) {
         const Real ys = y * exp(Real(in.state_ln_rel_income[s]) * decay);
         const Real dus = Real(in.state_urb_delta[s][t]);
-        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, dus));
+        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, dus, in.quad_only));
         reg[in.state_region[s]] += w;
         total += w;
       }

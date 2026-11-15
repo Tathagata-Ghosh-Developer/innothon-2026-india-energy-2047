@@ -8,6 +8,7 @@
 
 #include "../allocation/allocate.hpp"
 #include "../forecast/backtest.hpp"
+#include "../forecast/india.hpp"
 #include "../forecast/mc.hpp"
 #include "../forecast/models.hpp"
 #include "../forecast/panel.hpp"
@@ -15,11 +16,21 @@
 
 namespace e47 {
 
+// Forecast core.
+//   kIndia (primary): NPP generation and the organiser state data only; urban
+//     share and population paths are external drivers.
+//   kCrossCountry (secondary check): 153-country Ember/World Bank panel.
+enum class CoreModel : int { kIndia = 0, kCrossCountry = 1 };
+inline const char* core_name(CoreModel c) {
+  return c == CoreModel::kIndia ? "India-only (NPP + organiser data)" : "Cross-country panel (secondary check)";
+}
+
 // Scenario settings exposed in the dashboard.
 struct ScenarioControls {
-  double g_start = -1;          // ln GDP per capita growth in 2026-2030; < 0 = historical mean
+  double g_start = -1;          // ln GDP per capita growth to 2030; < 0 = historical mean
+  double g_start_shift = 0;     // added to g_start (used by the growth presets)
   double g_slowdown = 0.015;    // fall in annual growth between 2030 and 2047
-  double g_level_sd = 0.0075;   // persistent uncertainty in annual growth
+  double g_level_sd = 0.009;    // persistent uncertainty in annual growth (+-1.5 points at 90%)
   double urban_shift_2047 = 0;  // added to the projected 2047 urban share (fraction)
   double urban_sd_2047 = 0.02;  // 1-sigma uncertainty of the 2047 urban share
   double pop_band_scale = 1.0;  // multiplier on the UN low-high band
@@ -29,6 +40,9 @@ struct ScenarioControls {
   uint64_t seed = 20470815;
   bool use_gpu = true;
   double requirement_quantile = 0.5;  // which quantile of the 2047 requirement to plan for
+  // India-only core: fall in the income elasticity per unit increase of ln(income)
+  // (0 = constant elasticity, the estimated model).
+  double elasticity_decline = 0;
 };
 
 struct HistoryPoint {
@@ -56,6 +70,20 @@ struct DriverData {
 };
 
 struct Fitted {
+  CoreModel core = CoreModel::kIndia;
+  std::array<std::string, 3> model_names;
+  // India-only core
+  IndiaSeries india;
+  IndiaFit india_fit;            // primary estimation window
+  IndiaFit india_fit_full;       // sensitivity: full window including the 2011 splice
+  std::vector<double> india_beta_boot;   // specification mixture: S1 half, then S3 half
+  std::vector<double> india_kappa_boot;  // kappa of the replicate's window
+  std::vector<double> india_gamma;  // prior draws, one per replicate
+  double gamma_mean = 0, gamma_sd = 0;
+  std::string gamma_source;
+  double captive_share = 0;  // captive / utility generation in the base year (CEA, literature layer)
+  double anchor_shift = 0;   // log-point shift of the base-year anchor (0 = observed FY2023-24)
+  // Cross-country core
   Panel panel;
   Design design;
   FeQuad quad;
@@ -97,9 +125,12 @@ struct StrategyResult {
 
 class Pipeline {
  public:
-  explicit Pipeline(std::string repo_root, int bootstrap_replicates = 2000);
+  explicit Pipeline(std::string repo_root, CoreModel core = CoreModel::kIndia, int bootstrap_replicates = 2000);
 
+  CoreModel core() const { return fit_.core; }
   const Fitted& fitted() const { return fit_; }
+  // Bootstrap parameter array for the Monte Carlo (stride kBootStride) under scenario c.
+  std::vector<float> boot_for(const ScenarioControls& c) const;
   const DriverData& drivers() const { return drv_; }
   const AllocationInputs& allocation_inputs() const { return alloc_in_; }
 

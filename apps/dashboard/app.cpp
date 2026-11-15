@@ -63,27 +63,42 @@ const char* App::tab_slug(int t) {
   return s[t];
 }
 
-App::App(std::filesystem::path root) : root_(std::move(root)) {
-  const std::string r = root_.string();
-  loading_ = std::async(std::launch::async, [r] { return std::make_unique<Pipeline>(r); });
-}
+App::App(std::filesystem::path root) : root_(std::move(root)) { request_core(0); }
 
 App::~App() {
   if (job_.valid()) job_.wait();
-  if (loading_.valid()) loading_.wait();
+  for (auto& l : loading_)
+    if (l.valid()) l.wait();
+}
+
+void App::request_core(int core) {
+  core_ = core;
+  if (pls_[core] || loading_[core].valid()) return;
+  const std::string r = root_.string();
+  loading_[core] = std::async(std::launch::async,
+                              [r, core] { return std::make_unique<Pipeline>(r, static_cast<CoreModel>(core)); });
 }
 
 void App::poll() {
-  if (!pl_ && loading_.valid() && loading_.wait_for(0s) == std::future_status::ready) {
-    try {
-      pl_ = loading_.get();
-    } catch (const std::exception& e) {
-      error_ = e.what();
+  for (int k = 0; k < 2; ++k) {
+    if (!pls_[k] && loading_[k].valid() && loading_[k].wait_for(0s) == std::future_status::ready) {
+      try {
+        pls_[k] = loading_[k].get();
+      } catch (const std::exception& e) {
+        error_ = e.what();
+      }
     }
+  }
+  if (pls_[core_].get() != pl_) {
+    // Core switched (or finished loading): results of the other core no longer apply.
+    pl_ = pls_[core_].get();
+    cur_.reset();
+    dirty_ = true;
   }
   if (busy_ && job_.wait_for(0s) == std::future_status::ready) {
     try {
-      cur_ = std::make_shared<Job>(job_.get());
+      Job j = job_.get();
+      if (j.core == core_) cur_ = std::make_shared<Job>(std::move(j));
     } catch (const std::exception& e) {
       error_ = e.what();
     }
@@ -96,12 +111,14 @@ void App::launch() {
   dirty_ = false;
   busy_ = true;
   sc_.draws = 1ull << draws_log2_;
-  const Pipeline* pl = pl_.get();
+  const Pipeline* pl = pl_;
   const ScenarioControls c = sc_;
   const PolicySettings p = pol_;
-  job_ = std::async(std::launch::async, [pl, c, p] {
+  const int core = core_;
+  job_ = std::async(std::launch::async, [pl, c, p, core] {
     Timer t;
     Job j;
+    j.core = core;
     j.forecast = pl->forecast(c);
     j.strategy = pl->strategy(j.forecast, c, p);
     j.total_ms = t.ms();
@@ -137,8 +154,9 @@ void App::frame() {
     if (font_head_) ImGui::PushFont(font_head_);
     ImGui::TextUnformatted("India Electricity Generation 2047");
     if (font_head_) ImGui::PopFont();
-    ImGui::TextUnformatted(!pl_ ? "Loading data and fitting models (bootstrap on all CPU threads)..."
-                                : "Running the first scenario ensemble...");
+    ImGui::Text("%s: %s", core_name(static_cast<CoreModel>(core_)),
+                !pl_ ? "loading data and fitting models (bootstrap on all CPU threads)..."
+                     : "running the scenario ensemble...");
     ImGui::End();
     return;
   }
@@ -179,7 +197,9 @@ void App::header() {
   if (font_head_) ImGui::PopFont();
   const Job& j = *cur_;
   ImGui::PushStyleColor(ImGuiCol_Text, kMuted);
-  ImGui::Text("Energy generated only (TWh). %s scenarios on %s: ensemble %.1f ms, full update %.0f ms.%s",
+  ImGui::Text("%s. Energy generated only (TWh)%s. %s scenarios on %s: ensemble %.1f ms, full update %.0f ms.%s",
+              core_name(pl_->core()),
+              pl_->core() == CoreModel::kIndia ? "; years are fiscal years by start year (2047 = FY2047-48)" : "",
               with_commas(static_cast<double>(j.forecast.mc.draws)).c_str(), j.forecast.mc.device.c_str(),
               j.forecast.mc.ms, j.total_ms, busy_ ? "  Recomputing..." : "");
   ImGui::PopStyleColor();
@@ -187,6 +207,21 @@ void App::header() {
 }
 
 void App::sidebar() {
+  if (font_head_) ImGui::PushFont(font_head_);
+  ImGui::TextUnformatted("Forecast core");
+  if (font_head_) ImGui::PopFont();
+  {
+    int c = core_;
+    ImGui::RadioButton("India-only (primary)", &c, 0);
+    ImGui::SetItemTooltip("NPP generation and the organiser state data (the two challenge datasets). Urban share and "
+                          "population paths are external drivers.");
+    ImGui::SameLine();
+    ImGui::RadioButton("Cross-country (check)", &c, 1);
+    ImGui::SetItemTooltip("Independent check on non-core data: 153-country Ember / World Bank panel. Calendar years, "
+                          "total generation including captive.");
+    if (c != core_) request_core(c);
+  }
+  const bool india = pl_->core() == CoreModel::kIndia;
   if (font_head_) ImGui::PushFont(font_head_);
   ImGui::TextUnformatted("Scenario");
   if (font_head_) ImGui::PopFont();
@@ -209,11 +244,13 @@ void App::sidebar() {
     }
   }
   const DriverData& d = pl_->drivers();
-  double g0 = sc_.g_start >= 0 ? sc_.g_start : d.g_hist_mean;
-  ImGui::TextUnformatted("GDP per capita growth, 2026-30");
-  if (slider("##g0", &g0, 0.02, 0.08, "%.2f%% a year", 100,
-             "Mean annual growth of real GDP per capita (PPP). Default: India's 2005-2025 average."))
-    sc_.g_start = g0, dirty_ = true;
+  double g0 = (sc_.g_start >= 0 ? sc_.g_start : d.g_hist_mean) + sc_.g_start_shift;
+  ImGui::TextUnformatted(india ? "Income growth per person, to 2030" : "GDP per capita growth, to 2030");
+  if (slider("##g0", &g0, 0.0, 0.08, "%.2f%% a year", 100,
+             india ? "Mean annual growth of real GSDP per person (organiser data). Default: FY2012-13 to FY2023-24 "
+                     "average, pandemic years left out."
+                   : "Mean annual growth of real GDP per capita (PPP). Default: India's 2005-2025 average."))
+    sc_.g_start = g0, sc_.g_start_shift = 0, dirty_ = true;
   ImGui::TextUnformatted("Growth slowdown by 2047");
   dirty_ |= slider("##slow", &sc_.g_slowdown, 0.0, 0.04, "-%.2f pp", 100,
                    "Fall in annual growth between 2030 and 2047, as income rises.");
@@ -227,8 +264,16 @@ void App::sidebar() {
   ImGui::TextUnformatted("New loads in 2047 (TWh, low-high)");
   dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 600.0, "low %.0f", 1, "Green hydrogen, data centres and other new loads not in the historical relationship.");
   dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 800.0, "high %.0f", 1, nullptr);
-  ImGui::TextUnformatted("Model weights (quad / Gompertz / trend)");
+  if (india) {
+    ImGui::TextUnformatted("Elasticity decline with income");
+    dirty_ |= slider("##edec", &sc_.elasticity_decline, 0.0, 0.5, "%.2f per ln income", 1,
+                     "0 = the estimated constant elasticity. A positive value lets the income elasticity fall as "
+                     "income rises (saturation), keeping its base-year value.");
+  }
   {
+    const auto& names = pl_->fitted().model_names;
+    ImGui::Text("Model weights (%s / %s / %s)", india ? "urban prior" : names[0].c_str(),
+                india ? "no urban term" : names[1].c_str(), india ? "trend" : names[2].c_str());
     const auto& bw = pl_->fitted().backtest_weights;
     float w[3];
     for (int m = 0; m < 3; ++m) w[m] = static_cast<float>(sc_.w_model[m] >= 0 ? sc_.w_model[m] : bw[m]);
@@ -236,8 +281,10 @@ void App::sidebar() {
       for (int m = 0; m < 3; ++m) sc_.w_model[m] = w[m];
       dirty_ = true;
     }
-    ImGui::SetItemTooltip("Defaults are proportional to 1 / backtest error (2010 origin).");
-    if (ImGui::SmallButton("Reset to backtest weights")) {
+    ImGui::SetItemTooltip(india ? "Default 1 / 0 / 0: the driver model with the literature urbanisation prior. "
+                                  "0 / 1 / 0 is the two-dataset-only ablation; 0 / 0 / 1 the benchmark without drivers."
+                                : "Defaults are proportional to 1 / backtest error (2010 origin).");
+    if (ImGui::SmallButton("Reset weights")) {
       sc_.w_model = {-1, -1, -1};
       dirty_ = true;
     }
@@ -313,13 +360,25 @@ void App::tab_forecast() {
   ImGui::SameLine();
   stat_card("90% range", with_commas(q[last][0]) + " - " + with_commas(q[last][6]), "P5 - P95, TWh", w);
   ImGui::SameLine();
-  char buf[64];
+  const bool india = pl_->core() == CoreModel::kIndia;
+  char buf[320];
   std::snprintf(buf, sizeof buf, "%.2fx  (%.1f%%/yr)", p50 / h0.gen_twh,
                 100 * (std::pow(p50 / h0.gen_twh, 1.0 / (f.years.back() - h0.year)) - 1));
-  stat_card("Growth vs 2025", buf, "Multiple of 2025 generation, compound rate", w);
+  const std::string base_label = india ? "FY" + std::to_string(h0.year) + "-" + std::to_string((h0.year + 1) % 100)
+                                       : std::to_string(h0.year);
+  stat_card(("Growth vs " + base_label).c_str(), buf, ("Multiple of " + base_label + " generation, compound rate").c_str(),
+            w);
   ImGui::SameLine();
   std::snprintf(buf, sizeof buf, "%s kWh", with_commas(p50 * 1e9 / pop47).c_str());
-  stat_card("Per person, 2047", buf, ("2025: " + with_commas(h0.gen_twh * 1e9 / h0.pop) + " kWh").c_str(), w);
+  stat_card("Per person, 2047", buf, (base_label + ": " + with_commas(h0.gen_twh * 1e9 / h0.pop) + " kWh").c_str(), w);
+  if (india) {
+    std::snprintf(buf, sizeof buf,
+                  "Scope: NPP utility generation. Captive plants (outside NPP; CEA, %.1f%% of utility generation in "
+                  "%s, share held): +%s TWh at P50, total %s TWh.",
+                  100 * fit.captive_share, base_label.c_str(), with_commas(fit.captive_share * p50).c_str(),
+                  with_commas((1 + fit.captive_share) * p50).c_str());
+    help(buf);
+  }
 
   ImGui::Checkbox("Show model central paths", &show_models_);
   ImGui::SameLine();
@@ -342,7 +401,7 @@ void App::tab_forecast() {
   }
   if (ImPlot::BeginPlot("##national", ImVec2(-1, ImGui::GetContentRegionAvail().y * 0.80f))) {
     ImPlot::SetupAxes("Year", "Electricity generation (TWh)");
-    ImPlot::SetupAxisLimits(ImAxis_X1, 1990, 2048, ImPlotCond_Once);
+    ImPlot::SetupAxisLimits(ImAxis_X1, india ? 2004 : 1990, 2048, ImPlotCond_Always);
     ImPlot::SetupAxisLimits(ImAxis_Y1, 0, q[last][6] * 1.08, ImPlotCond_Always);
     ImPlot::SetupLegend(ImPlotLocation_NorthWest);
     ImPlot::SetNextFillStyle(kAccent, 0.18f);
@@ -352,16 +411,15 @@ void App::tab_forecast() {
     ImPlot::SetNextLineStyle(kAccent, 3.0f);
     ImPlot::PlotLine("Median", x.data(), p[3].data(), static_cast<int>(x.size()));
     ImPlot::SetNextLineStyle(ImVec4(0.95f, 0.95f, 0.95f, 1), 2.5f);
-    ImPlot::PlotLine("Observed (Ember)", hx.data(), hy.data(), static_cast<int>(hx.size()));
+    ImPlot::PlotLine(india ? "Observed (NPP)" : "Observed (Ember)", hx.data(), hy.data(), static_cast<int>(hx.size()));
     if (show_models_) {
-      const char* names[3] = {"FE-Quad central", "FE-Gompertz central", "Damped trend central"};
       const ImVec4 cols[3] = {{0.95f, 0.65f, 0.30f, 1}, {0.45f, 0.85f, 0.55f, 1}, {0.85f, 0.45f, 0.65f, 1}};
       for (int m = 0; m < 3; ++m) {
         std::vector<double> cy(n + 1);
         cy[0] = h0.gen_twh;
         for (size_t t = 0; t < n; ++t) cy[t + 1] = f.central[m][t];
         ImPlot::SetNextLineStyle(cols[m], 1.5f);
-        ImPlot::PlotLine(names[m], x.data(), cy.data(), static_cast<int>(cy.size()));
+        ImPlot::PlotLine((fit.model_names[m] + " (central)").c_str(), x.data(), cy.data(), static_cast<int>(cy.size()));
       }
     }
     if (show_nep_ && !pl_->drivers().nep_generation.empty()) {
@@ -375,9 +433,15 @@ void App::tab_forecast() {
     }
     ImPlot::EndPlot();
   }
-  help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), a GDP-per-capita path "
-       "with persistent and annual shocks, one of three models with bootstrap parameters, and optional new loads. "
-       "Projections are anchored on India's observed 2025 generation.");
+  if (india)
+    help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), an income path "
+         "(real GSDP per person) with persistent and annual shocks, an income elasticity from a block bootstrap of "
+         "India's own NPP and organiser data (two estimation windows), a literature urbanisation coefficient, and "
+         "optional new loads. Anchored on FY2023-24 (smoothed over the last three years; see Models).");
+  else
+    help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), a GDP-per-capita "
+         "path with persistent and annual shocks, one of three models with bootstrap parameters, and optional new loads. "
+         "Projections are anchored on India's observed 2025 generation.");
 }
 
 void App::tab_regions() {
@@ -608,6 +672,8 @@ void App::tab_models() {
     std::snprintf(b, sizeof b, "%d", fit.backtests[i].origin);
     ImGui::RadioButton(b, &origin, i);
   }
+  origin = std::min(origin, static_cast<int>(fit.backtests.size()) - 1);
+  const bool india = pl_->core() == CoreModel::kIndia;
   const BacktestResult& bt = fit.backtests[origin];
   const float ph = ImGui::GetContentRegionAvail().y * 0.5f;
   if (ImPlot::BeginPlot("Out-of-sample backtest: India generation (TWh)", ImVec2(ImGui::GetContentRegionAvail().x * 0.6f, ph))) {
@@ -627,11 +693,10 @@ void App::tab_models() {
       m[1].push_back(p.fe_gompertz_twh);
       m[2].push_back(p.damped_twh);
     }
-    const char* names[3] = {"FE-Quad", "FE-Gompertz", "Damped trend"};
     const ImVec4 cols[3] = {{0.95f, 0.65f, 0.30f, 1}, {0.45f, 0.85f, 0.55f, 1}, {0.85f, 0.45f, 0.65f, 1}};
     for (int k = 0; k < 3; ++k) {
       ImPlot::SetNextLineStyle(cols[k], 2.0f);
-      ImPlot::PlotLine(names[k], x.data(), m[k].data(), static_cast<int>(x.size()));
+      ImPlot::PlotLine(fit.model_names[k].c_str(), x.data(), m[k].data(), static_cast<int>(x.size()));
     }
     const double ox = bt.origin;
     ImPlot::PlotInfLines("Fit ends", &ox, 1);
@@ -640,7 +705,8 @@ void App::tab_models() {
   ImGui::SameLine();
   ImGui::BeginGroup();
   if (ImGui::BeginTable("bt", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
-    for (const char* hname : {"Origin", "FE-Quad", "FE-Gompertz", "Damped"}) ImGui::TableSetupColumn(hname);
+    ImGui::TableSetupColumn("Origin");
+    for (int k = 0; k < 3; ++k) ImGui::TableSetupColumn(fit.model_names[k].c_str());
     ImGui::TableHeadersRow();
     for (const auto& b : fit.backtests) {
       ImGui::TableNextRow();
@@ -652,7 +718,7 @@ void App::tab_models() {
       }
       ImGui::TableNextRow();
       ImGui::TableNextColumn();
-      ImGui::Text("  2025 error");
+      ImGui::Text("  %d error", fit.history.back().year);
       for (int k = 0; k < 3; ++k) {
         ImGui::TableNextColumn();
         const double e = 100 * b.ape_last[k];
@@ -663,8 +729,55 @@ void App::tab_models() {
   }
   ImGui::Text("Ensemble weights: %.2f / %.2f / %.2f", fit.backtest_weights[0], fit.backtest_weights[1],
               fit.backtest_weights[2]);
-  help("Weights are proportional to 1 / MAPE from the 2010 origin (15-year horizon). Pass bar: 2025 error below 10%.");
+  help(india ? "Rolling origins FY2012-13 to FY2018-19; each fit uses FY2006-07 up to the origin and the observed "
+               "drivers after it. Weights are not taken from the backtest (too few points); the damped trend is a "
+               "benchmark."
+             : "Weights are proportional to 1 / MAPE from the 2010 origin (15-year horizon). Pass bar: 2025 error below "
+               "10%.");
   ImGui::EndGroup();
+  if (india) {
+    // India-only core: estimation table.
+    const IndiaFit& a = fit.india_fit;
+    const IndiaFit& b = fit.india_fit_full;
+    const auto& bb = fit.india_beta_boot;
+    if (ImGui::BeginTable("iparams", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchProp)) {
+      for (const char* hname : {"Quantity", "Value", "Meaning"}) ImGui::TableSetupColumn(hname);
+      ImGui::TableHeadersRow();
+      auto row = [](const char* k, const std::string& v, const char* m) {
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(k);
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(v.c_str());
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(m);
+      };
+      char v[128];
+      std::snprintf(v, sizeof v, "%.3f (s.e. %.3f)", a.beta, a.beta_se);
+      row("Elasticity, FY2011-12 to FY2023-24", v, "ln(NPP generation per person) on ln(real GSDP per person), FY2020-21 dummy");
+      std::snprintf(v, sizeof v, "%.3f (s.e. %.3f)", b.beta, b.beta_se);
+      row("Elasticity, FY2006-07 to FY2023-24", v, "Same, across the 2011 GSDP price-base splice");
+      std::snprintf(v, sizeof v, "%.3f / %.3f", a.fd_beta, b.fd_beta);
+      row("First-difference elasticity", v, "Growth on growth, pandemic years left out (checks a spurious trend fit)");
+      std::snprintf(v, sizeof v, "%.3f [%.3f, %.3f]", quantile(bb, 0.5), quantile(bb, 0.05), quantile(bb, 0.95));
+      row("Elasticity used (median, 90%)", v, "Moving-block bootstrap (block 3), half from each window");
+      std::snprintf(v, sizeof v, "%+.3f", a.covid);
+      row("FY2020-21 effect", v, "Pandemic year, log points");
+      std::snprintf(v, sizeof v, "%.3f / %.2f", a.resid_sd, a.dw);
+      row("Residual s.d. / Durbin-Watson", v, "Serial correlation is why the bootstrap resamples blocks");
+      std::snprintf(v, sizeof v, "%.3f", a.kappa);
+      row("Urban share per unit ln income", v, "Historical co-movement absorbed by the elasticity");
+      std::snprintf(v, sizeof v, "%.2f (s.d. %.2f)", fit.gamma_mean, fit.gamma_sd);
+      row("Urbanisation coefficient (prior)", v, "Applies only to urbanisation beyond the income-implied path; literature");
+      std::snprintf(v, sizeof v, "%+.3f", fit.anchor_shift);
+      row("Base-year anchor shift", v, "FY2023-24 residual replaced by the mean of the last three years");
+      ImGui::EndTable();
+    }
+    help(("Urbanisation prior: " + fit.gamma_source + ". " + std::to_string(bb.size()) + " bootstrap replicates in " +
+          with_commas(fit.bootstrap_ms, 1) + " ms.")
+             .c_str());
+    return;
+  }
 
   // Parameter table with bootstrap intervals.
   auto ci = [](auto&& getter, size_t n) {
@@ -849,13 +962,22 @@ void App::tab_data() {
     for (const char* hname : {"Dataset", "Source", "Used for"}) ImGui::TableSetupColumn(hname);
     ImGui::TableHeadersRow();
     const char* rows[][3] = {
-        {"Electricity generation, 153 countries, 1990-2025", "Ember yearly electricity data", "Cross-country models, India history"},
-        {"GDP per capita PPP, population, urban share", "World Bank WDI", "Model drivers"},
+        {"All-India generation by source, FY1946-47 to FY2023-24", "National Power Portal (challenge dataset)",
+         "Primary forecast: history and elasticity"},
+        {"State population and real GSDP, 2006-2024", "Renewable India dataset (challenge dataset; capacity columns not used)",
+         "Primary forecast: income and population; state income convergence"},
+        {"Region / state conventional generation, monthly, Jul-2018 to Sep-2026", "National Power Portal (CEA 18-column reports)",
+         "Holdout check FY2024-26; regional supply today"},
+        {"Hourly generation by source, Sep-2025 to Nov-2026", "National Power Portal (Merit India real-time)",
+         "Solar and wind profiles, storage sizing"},
+        {"Urbanisation coefficient", "Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004", "Literature prior"},
+        {"Captive generation", "CEA General Review 2025", "Reported beside the forecast, never inside it"},
+        {"Electricity generation, 153 countries, 1990-2025", "Ember yearly electricity data", "Secondary check only"},
+        {"GDP per capita PPP, population, urban share", "World Bank WDI", "Secondary check only"},
         {"India regional and state generation by source", "Ember India; CEA General Review", "2024 base mix, existing fleets"},
         {"Population projections 2026-2047", "UN WPP 2024 (medium, low, high)", "National population paths"},
         {"State population projections 2011-2036", "Technical Group on Population Projections (2020)", "Regional requirement split"},
         {"Urban share projections", "UN WUP 2018; Technical Group", "Urbanisation paths, state urban gaps"},
-        {"State GSDP and population 2006-2024", "Organiser dataset (capacity columns not used)", "Income convergence, relative incomes"},
         {"Solar, wind, hydro, bioenergy potential", "NISE, NIWE, CEA reassessment, MNRE", "Upper bounds on generation"},
         {"Capacity factors", "CEA NEP 2022-32; Ember observed", "Potential to generation conversion"},
         {"Costs 2047", "IEA WEO 2025; SECI auctions; CERC", "Least-cost optimisation"},
