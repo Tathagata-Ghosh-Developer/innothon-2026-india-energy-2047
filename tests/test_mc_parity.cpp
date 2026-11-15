@@ -112,5 +112,35 @@ int run() {
   } else {
     std::printf("no CUDA device: GPU parity skipped\n");
   }
+
+  // India-only core layout: both parameter slots in quadratic form (slot 1 reads p[4..7]).
+  {
+    std::vector<float> qboot = boot;
+    for (int k = 0; k < in.n_boot; ++k) {
+      float* p = qboot.data() + static_cast<size_t>(k) * kBootStride;
+      const float beta = 0.80f + 0.03f * k, gamma = 0.5f + 0.25f * k;
+      p[0] = beta - gamma * 0.09f;
+      p[1] = 0.0f;
+      p[2] = gamma;
+      p[3] = 0.0f;
+      p[4] = beta;
+      p[5] = 0.0f;
+      p[6] = 0.0f;
+      p[7] = 0.0f;
+    }
+    McInputs iq = in;
+    iq.quad_only = 1;
+    iq.w_model[0] = 0.5f;
+    iq.w_model[1] = 0.5f;
+    iq.w_model[2] = 0.0f;
+    calibrate_hist_ranges(iq, qboot, seed, 4096);
+    const McResult qd = run_mc_cpu(iq, qboot, seed, draws, 0, false);
+    const McResult qf = run_mc_cpu(iq, qboot, seed, draws, 0, true);
+    fails += compare("india layout: cpu double vs cpu float", iq, qd, qf, 2e-3);
+    if (cuda_available()) {
+      const McResult qg = run_mc_gpu(iq, qboot, seed, draws, 0);
+      fails += compare("india layout: cpu float vs gpu float", iq, qf, qg, 2e-3);
+    }
+  }
   return fails == 0 ? 0 : 1;
 }
