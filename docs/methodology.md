@@ -10,23 +10,24 @@ This document explains how the forecast and the regional strategy are built.
 | Numbers | [results.md](results.md) |
 
 ```text
-data (generation, drivers, resources, costs)
+challenge datasets: NPP generation (FY1946-47..FY2023-24) + organiser state population and GSDP
    |
    v
-cross-country models  --bootstrap-->  parameter uncertainty
-   |                                      |
-   v                                      v
-Monte Carlo ensemble (CPU OpenMP or GPU CUDA): national + 5 regions, 2026-2047
+India elasticity of generation per person on real GSDP per person
+(two estimation windows, moving-block bootstrap; urbanisation through a literature prior)
+   |                                     cross-country panel (secondary check only)
+   v                                         |
+Monte Carlo ensemble (CPU OpenMP or GPU CUDA): national + 5 regions, FY2024-25..FY2047-48
    |
    v
-2047 regional requirement (planning quantile)
+2047 regional requirement (planning quantile), split by state population and income convergence
    |
    v
 least-cost LP (HiGHS)  +  resource-score allocation  +  policy sensitivity sweep
    |
    v
-dashboard (Dear ImGui + ImPlot) and output tables
-```text
+dashboard (Dear ImGui + ImPlot, native and WebAssembly) and output tables
+```
 
 ## 1. What is forecast
 
@@ -34,9 +35,126 @@ The target is India's annual electricity generation (TWh) up to 2047, nationally
 Only energy generated is used, as the competition requires.
 Installed capacity and consumption never enter the forecast.
 
-## 2. National forecast
+**Scope of the primary forecast.**
+The National Power Portal (NPP) series is gross generation of utilities (thermal, hydro, nuclear and renewable sources).
+Captive plants inside industries are outside it; they are reported next to the forecast as a separate layer (section 2.7).
 
-### 2.1 Cross-country panel
+**Years.**
+NPP reports fiscal years (April to March).
+The primary forecast labels each fiscal year by its start year: 2023 is FY2023-24, the last year of the NPP all-India series, and 2047 is FY2047-48.
+
+**Rule.**
+At the kickoff (13 Nov 2026) the organisers said that the core analysis of the 2047 energy prediction must use only the two challenge datasets: the National Power Portal and the Renewable India dataset.
+Public literature may inform growth rates and constraints.
+The primary forecast follows that rule; section 3 describes a cross-country model that is kept only as an independent check.
+
+## 2. Primary forecast: India only
+
+### 2.1 Data
+
+| Item | Source | Coverage | Use |
+| --- | --- | --- | --- |
+| All-India generation by source (GWh) | NPP dashboard (`dashBoard/get_generation_chart_list`) | FY1946-47 to FY2023-24; annual from FY2006-07 | Generation history |
+| State population and GSDP | Renewable India dataset (organiser) | 2006 to 2024, 32 to 34 states | Population and real income per person |
+| Region and state conventional generation, monthly | NPP, CEA 18-column reports (Sub-reports 2 and 16) | Jul-2018 to Sep-2026 | Holdout check, regional supply today |
+| Hourly generation by source | NPP, Merit India real-time data | Sep-2025 to Nov-2026 | Solar and wind profiles |
+| Urban share | UN World Urbanization Prospects 2018 (driver) | 1950 to 2050 | Urbanisation path |
+| Population projection | UN WPP 2024; Technical Group on Population Projections (drivers) | to 2047 | Population paths |
+
+The installed-capacity columns of the organiser dataset are never read.
+
+**National income per person.**
+State GSDP and population are summed over the states reported in both of two consecutive years, and the national series is built from those year-on-year growth rates.
+A state that enters or leaves the dataset therefore does not move the series.
+The organiser GSDP changes price base in 2011 (from 2004-05 to 2011-12 prices), so the jump in that year is not growth.
+Its growth per person is imputed as the mean of 2010 and 2012 (4.27 percent).
+The 2024 GSDP values are incomplete and are not used.
+
+### 2.2 Model
+
+e = NPP generation per person (kWh), y = real GSDP per person (thousand INR at 2011-12 prices), x = ln(y / 10):
+
+ln e(t) = a + beta x(t) + c D2020(t) + error
+
+D2020 marks FY2020-21, the pandemic year.
+beta is the income elasticity of generation per person.
+It is the only parameter estimated from the two datasets.
+
+| Estimate | FY2011-12 to FY2023-24 (one price base) | FY2006-07 to FY2023-24 (spliced) |
+| --- | --- | --- |
+| beta | 0.828 (s.e. 0.063) | 0.896 (s.e. 0.034) |
+| beta, first differences (FY2020-21 and FY2021-22 changes left out) | 0.782 | 0.869 |
+| FY2020-21 effect | -0.055 | |
+| Residual s.d. | 0.037 | |
+| Durbin-Watson | 0.99 | |
+
+The first-difference estimates answer the concern that two trending series can produce a spurious fit: growth in generation per person still follows growth in income per person with an elasticity near 0.8.
+
+### 2.3 Urbanisation
+
+Urban share rose with income in India (29.6 percent in FY2006-07, 36.4 percent in FY2023-24), so India's own national data cannot separate the two effects.
+Adding urban share to the regression makes both coefficients unstable (beta between 0.18 and 0.60 across windows).
+The urban share for the years since the 2011 census is itself an interpolation, so it carries no independent information.
+
+beta therefore already contains the urbanisation that came with income.
+What it cannot contain is urbanisation that runs faster than income in the future.
+The projection adds only that excess:
+
+ln e(t) - ln e(base) = beta dx + gamma (du - kappa dx)
+
+- kappa = 0.092 is the slope of urban share on x over the same years and regressors, so in the sample the excess urban share is uncorrelated with x and beta does not depend on gamma.
+- gamma comes from the literature as a prior: normal with mean 1.0 and s.d. 0.5, truncated at zero.
+  Liddle (2013) reports an elasticity of residential electricity to urbanisation of 1.02 (s.e. 0.13) in a low-income panel that includes India; Shahbaz et al. (2016) report 0.56 to 0.80 for India's total energy use; Holtedahl and Joutz (2004) report a semi-elasticity of 3.3 to 3.9 for residential electricity in Taiwan.
+  Residential use is about a quarter of India's electricity, which puts the total-electricity value near 1.0.
+- gamma = 0 is the pure two-dataset run.
+  It is a separate model slot in the Monte Carlo and a sensitivity case in every output.
+
+### 2.4 Parameter uncertainty
+
+Residuals are serially correlated (Durbin-Watson 0.99), so the bootstrap resamples circular blocks of three years.
+2,000 replicates are drawn: half from the FY2011-12 window and half from the spliced FY2006-07 window, so the choice of window is part of the uncertainty.
+The resulting elasticity has a median of 0.870 and a 90 percent interval of 0.747 to 0.950.
+Each replicate also draws gamma from its prior.
+
+### 2.5 Base year
+
+The projection is anchored on FY2023-24 generation per person.
+FY2023-24 lies 0.070 log points above the fitted line, almost two residual standard deviations (a hot, fast-growth year).
+Carrying that residual into every future year would raise the whole path, so the anchor is the fitted value plus the mean residual of the last three years (FY2021-22 to FY2023-24), a shift of -0.043 log points.
+The rule is applied only when the base residual exceeds one residual standard deviation, and it is reported in `outputs/india_fit.csv`.
+
+### 2.6 Validation
+
+**Rolling-origin backtest.**
+The model is fitted on FY2006-07 up to each origin from FY2012-13 to FY2018-19 and predicts the following years with the observed drivers.
+
+| Horizon (years) | 1 | 2 | 3 | 4 | 5 |
+| --- | --- | --- | --- | --- | --- |
+| Elasticity model, MAPE | 2.3% | 3.8% | 5.1% | 7.0% | 8.1% |
+| Damped trend (no drivers), MAPE | 2.2% | 4.8% | 6.5% | 7.1% | 6.9% |
+
+Backtest errors are not used as ensemble weights: with seven short origins they are too noisy.
+The damped trend is shown as a benchmark only, because it has no population or urbanisation term.
+
+**Holdout: FY2024-25 and FY2025-26.**
+These years were not used in fitting.
+NPP publishes their conventional generation (thermal, nuclear, hydro) but no renewable generation, so the check adds NPP renewable generation extended at its FY2018-19 to FY2023-24 growth rate (14.1 percent a year).
+
+| Year | NPP conventional | Renewable (extended) | Total | Model P50 | Error |
+| --- | --- | --- | --- | --- | --- |
+| FY2024-25 | 1,569 | 216 | 1,785 | 1,713 | -4.0% |
+| FY2025-26 | 1,530 | 247 | 1,776 | 1,805 | +1.6% |
+
+### 2.7 Captive generation
+
+Captive plants generated 224 TWh in FY2023-24 (CEA General Review 2025, Table 1.6), 13.2 percent of NPP utility generation.
+They are outside the NPP series, so they are not in the forecast.
+The outputs report a captive layer that keeps this share, next to the forecast and never inside it.
+
+## 3. Secondary check: cross-country panel
+
+This model uses data outside the two challenge datasets, so it is not the core forecast.
+It answers one question: does an independent method, based on how 153 countries' generation grew with income and urbanisation, land in the same range?
 
 | Item | Source | Coverage |
 | --- | --- | --- |
@@ -45,71 +163,25 @@ Installed capacity and consumption never enter the forecast.
 | GDP per capita, PPP, constant 2021 international $ | World Bank WDI, NY.GDP.PCAP.PP.KD | 1990 to 2025 |
 | Urban population share | World Bank WDI, SP.URB.TOTL.IN.ZS | 1990 to 2025 |
 
-The panel keeps countries with at least 1 million people and at least 10 complete years.
-That leaves 153 countries and 4,370 country-years.
-The variable modelled is generation per person, e = TWh x 10^9 / population (kWh per person).
+The panel keeps countries with at least 1 million people and at least 10 complete years: 153 countries and 4,370 country-years.
+Ember's India series includes captive plants and uses calendar years.
 
-### 2.2 Models
+**FE-Quad.** ln e(i,t) = alpha(i) + b1 x + b2 x^2 + g u + d tau, with x = ln(GDP per capita / 10,000), u = urban share, tau = (year - 2000) / 10.
 
-All three models predict the change in India's generation from its last observed year.
-In 2025 that is 2,080 TWh, or 1,421 kWh per person.
-Anchoring on the latest observation means India's own level comes from data, not from the cross-country average.
+**FE-Gompertz.** ln e(i,t) = alpha(i) - a exp(-b y) + c u + d tau, with y = GDP per capita in thousand $; b by a one-dimensional search (log grid plus golden section), (a, c, d) by least squares at each b.
 
-**FE-Quad.** Within-country fixed-effects regression:
-
-ln e(i,t) = alpha(i) + b1 x + b2 x^2 + g u + d tau
-
-Here x = ln(GDP per capita / 10,000), u = urban share and tau = (year - 2000) / 10.
-The income elasticity, b1 + 2 b2 x, falls as income rises.
-
-**FE-Gompertz.** Within-country fixed effects with a saturating income response:
-
-ln e(i,t) = alpha(i) - a exp(-b y) + c u + d tau
-
-Here y = GDP per capita in thousand $.
-The model is linear in (a, c, d) for a fixed b.
-So b is found by a one-dimensional search (log grid plus golden section), and (a, c, d) by least squares at each b.
-This variable-projection fit has no starting-value problem.
-
-**Damped trend.** An additive damped-trend exponential smoothing model on ln(India total generation).
-It is fitted by a parallel grid search over its smoothing and damping parameters.
-It is a statistical benchmark that ignores the drivers.
-
-Full-sample estimates (bootstrap 90 percent intervals in the dashboard):
+**Damped trend.** Additive damped-trend exponential smoothing on ln(India total generation), fitted by a parallel grid search.
 
 | Model | Income | Urban share | Trend per decade | Within R^2 | Elasticity at India 2025 |
 | --- | --- | --- | --- | --- | --- |
 | FE-Quad | b1 = 0.444, b2 = -0.137 | g = 2.63 | d = 0.023 | 0.465 | 0.44 |
 | FE-Gompertz | a = 2.37, b = 0.223 | c = 2.46 | d = 0.032 | 0.481 | 0.57 |
-| Damped trend | alpha = 1.00, beta = 0.15, phi = 0.965 | | | | |
 
-### 2.3 Parameter uncertainty
+A country-cluster bootstrap gives 2,000 replicates per model; ensemble weights are 1 / MAPE of a 2010-origin backtest.
+The cross-country elasticity at India's income (0.44 to 0.57) is well below India's own (0.83): richer countries' elasticities fall, and the panel carries that saturation into India's future.
+The primary model can reproduce it through the "elasticity decline" setting.
 
-A cluster bootstrap resamples whole countries, with 2,000 replicates per model.
-
-- **FE-Quad:** each country's within-country sufficient statistics are computed once, so a replicate is a sum of 4x4 matrices.
-- **FE-Gompertz:** each replicate repeats the variable-projection fit.
-
-Replicates run in parallel with OpenMP.
-Both models together take 2.2 s on 16 threads, against an estimated 20 s on one thread.
-
-### 2.4 Backtest
-
-Each model is fitted on data up to an origin year.
-It then predicts India's generation for every later year, using the observed drivers.
-This measures model error only, not error in projecting the drivers.
-
-| Origin | Horizon | FE-Quad MAPE | FE-Gompertz MAPE | Damped MAPE | FE-Quad 2025 error | FE-Gompertz 2025 error | Damped 2025 error |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 2005 | 20 years | 6.7% | 12.0% | 30.7% | 13.8% | 31.1% | 53.0% |
-| 2010 | 15 years | 9.3% | 4.0% | 17.4% | 11.4% | 0.6% | 29.0% |
-| 2015 | 10 years | 2.3% | 3.0% | 4.4% | 3.3% | 6.5% | 4.8% |
-
-The pass bar is a 2025 error below 10 percent from the 2010 origin.
-FE-Gompertz passes and FE-Quad narrowly misses.
-Ensemble weights are proportional to 1 / MAPE from the 2010 origin: 0.26, 0.60 and 0.14.
-
-## 3. Regional requirement
+## 4. Regional requirement
 
 A region's generation is not its requirement, because power flows between regions.
 Each of the 36 states and union territories gets a weight:
@@ -118,10 +190,10 @@ w(s,t) = population share(s,t) x exp( f(y(s,t)) + coefficient x [u(s,t) - u(s,ba
 
 | Term | Meaning |
 | --- | --- |
-| f | The same income response as the national model in that scenario (FE-Quad or FE-Gompertz) |
-| y(s,t) | State GDP per capita, PPP |
+| f | The same income response as the national model in that scenario |
+| y(s,t) | State income per person: national income x the state's relative income, which converges over time |
 | u(s,t) - u(s,base) | The state's projected change in urban share |
-| coefficient | The model's urban-share coefficient |
+| coefficient | The model's urban coefficient (gamma in the primary core) |
 
 Regional requirement = national generation x (sum of w over the region) / (sum of all w).
 The regions add up exactly to the national total.
@@ -136,33 +208,35 @@ Relative income gaps then close at a speed estimated from the same data (2006 to
 | Bootstrap s.e. | 0.011 |
 | Half-life | about 33 years |
 
-Nominal GSDP is acceptable because a common price level cancels in the ratio.
+A common price level cancels in the ratio, so the 2011 price-base change does not affect it.
 
-**Urbanisation.** Base-year urban levels do not enter the split.
-The urban coefficient is estimated from changes within countries over time, not from cross-sectional differences.
-Applying it to cross-state levels exaggerated regional differences.
+**Urbanisation.** Base-year urban levels do not enter the split; only each state's projected change does.
 State urban paths come from the Technical Group projections (to 2036) and are then extended by their 2031-2036 trend.
 
 **Population.** State population shares come from the Technical Group on Population Projections (1 July series, 2011-2036).
 After 2036 each state's 2031-2036 log-share trend continues, and the shares are renormalised every year.
 
-## 4. Monte Carlo ensemble
+**Where power is needed vs where it is generated.**
+NPP regional generation shows where plants are, not where power is used, because the Eastern and Western regions export.
+The model never fits regional generation; it compares the 2047 regional requirement with today's regional shares of NPP conventional generation and reports the transfer gap (results, section 2).
 
-Each draw is one consistent future:
+## 5. Monte Carlo ensemble
+
+Each draw is one consistent future (primary core):
 
 | Input | Distribution |
 | --- | --- |
-| Population path | UN WPP 2024 medium anchored on 2025; normal shift scaled so low/high is a 90 percent band |
-| Urban share path | UN WUP 2018 change anchored on 2025; normal shift with s.d. growing to 2 points by 2047 |
-| GDP per capita growth | Mean path (4.90 percent to 2030, then slowing by 1.5 points by 2047), persistent shift (s.d. 0.75 points) and AR(1) annual shocks (s.d. 3.18 percent) |
-| Model | FE-Quad, FE-Gompertz or damped trend, by backtest weight |
-| Model parameters | One of 2,000 bootstrap replicates |
+| Population path | UN WPP 2024 medium, anchored on FY2023-24; normal shift scaled so low/high is a 90 percent band |
+| Urban share path | UN WUP 2018 change, anchored on FY2023-24; normal shift with s.d. growing to 2 points by 2047 |
+| Income growth per person | Mean path (4.95 percent a year to 2030, the FY2012-13 to FY2023-24 organiser average without the two pandemic years, then slowing by 1.5 points by 2047), persistent shift (s.d. 0.9 points, so the 90 percent band of the average spans about +-1.5 points) and AR(1) annual shocks (s.d. 1.50 percent, persistence 0.70) |
+| Model | India elasticity with the urban prior (default weight 1); no-urban-term and damped-trend slots for ablation |
+| Elasticity and gamma | One of 2,000 block-bootstrap replicates, gamma from its prior |
 | Income convergence speed | Normal(0.021, 0.011) |
 | New loads | Uniform between dashboard limits (0 by default), ramped to 2047 |
 
 Random numbers come from the Philox 4x32-10 counter-based generator, keyed by draw index.
 A draw therefore has identical inputs on the CPU and the GPU.
-Outputs (national and five regions, 22 years) go into 1,024-bin histograms.
+Outputs (national and five regions, 24 years) go into 1,024-bin histograms.
 Quantiles are read from those histograms.
 
 **Optimisation:**
@@ -173,6 +247,7 @@ Quantiles are read from those histograms.
   - Histograms are updated by atomic add.
   - The model choice is shared by each group of 32 draws, so a warp never diverges on the model branch.
   - The kernel is compiled to machine code for the RTX 30 series (sm_86).
+- **Web path:** the same kernel compiled to WebAssembly (no GPU, fewer draws), see [deployment.md](deployment.md).
 
 A parity test checks that CPU double, CPU float and GPU float agree within 0.2 percent at the 5th, 50th and 95th percentiles of every series.
 
@@ -182,12 +257,12 @@ A parity test checks that CPU double, CPU float and GPU float agree within 0.2 p
 | CPU, 16 threads | 2.07 s |
 | GPU, RTX 3070 Ti Laptop | 7.5 ms |
 
-## 5. Regional generation strategy for 2047
+## 6. Regional generation strategy for 2047
 
 The 2047 requirement is taken at a planning quantile (the median by default) and split by the regional medians.
 Two allocation methods then meet it.
 
-### 5.1 Least-cost linear program (HiGHS)
+### 6.1 Least-cost linear program (HiGHS)
 
 **Variables:** generation of each source in each region, and the flow in each direction on each of the 7 inter-regional corridors.
 
@@ -217,7 +292,7 @@ Two allocation methods then meet it.
 Every solution is checked against the constraint rows independently of the solver.
 The dual value of each regional balance gives a marginal cost of supply per region.
 
-### 5.2 Resource-score allocation
+### 6.2 Resource-score allocation
 
 The national total of each source is shared across regions in proportion to a score, within the same bounds, by water-filling:
 
@@ -230,7 +305,7 @@ The national total of each source is shared across regions in proportion to a sc
 Every score can be checked by hand.
 Comparing it with the least-cost plan shows where transmission limits and costs move generation.
 
-### 5.3 Policy sensitivity
+### 6.3 Policy sensitivity
 
-Thirteen settings (policy shares, land use, corridors, build rates, carbon price, costs and the requirement quantile) are each moved to a low and a high value.
-The 26 resulting least-cost problems are solved in parallel with OpenMP in about 7 ms.
+Fourteen settings (policy shares, land use, corridors, build rates, carbon price, costs and the requirement quantile) are each moved to a low and a high value.
+The 28 resulting least-cost problems are solved in parallel with OpenMP.

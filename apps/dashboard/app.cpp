@@ -63,7 +63,12 @@ const char* App::tab_slug(int t) {
   return s[t];
 }
 
-App::App(std::filesystem::path root) : root_(std::move(root)) { request_core(0); }
+App::App(std::filesystem::path root) : root_(std::move(root)) {
+  // Open on the recommended plan (Robust policy); the Base policy is one click away.
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(pol_);
+  request_core(0);
+}
 
 App::~App() {
   if (job_.valid()) job_.wait();

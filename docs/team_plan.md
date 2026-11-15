@@ -1,9 +1,9 @@
 # Team work plan
 
-Status on 2026-11-15:
+Status on 2026-11-16:
 
-- The end-to-end forecast, the regional strategy and the dashboard work.
-- Documentation is in place.
+- The primary forecast now uses only the two challenge datasets (National Power Portal and the Renewable India dataset); the cross-country model is an independent check ([decisions.md](decisions.md), D10).
+- The forecast, regional strategy, dashboard (native and WebAssembly) and documentation work end to end.
 
 The plan below runs to the final evaluation.
 
@@ -11,59 +11,63 @@ The plan below runs to the final evaluation.
 
 | Date | Milestone | What must be ready |
 | --- | --- | --- |
-| 16-17 Nov, 18:00-20:00 | Office hours | Ask the two rule questions below; get feedback on the method |
-| 18 Nov | Midpoint review (regional model review, sensitivity checks) | Short deck: problem framing, data audit, backtest, national and regional forecast, first 2047 mix, sensitivity |
-| 21-22 Nov | Final evaluation | Defensibility deck, live dashboard demo, recorded backup video |
+| 16-17 Nov, 18:00-20:00 | Office hours | Send the written query below; get feedback on the method |
+| 18 Nov | Midpoint review (regional model review, sensitivity checks) | One slide: approach, findings, roadblocks ([beamer/midpoint.pdf](beamer/midpoint.pdf)) |
+| 21-22 Nov | Final evaluation | Defensibility deck, live dashboard demo (deployed URL), recorded backup video |
 | 30 Nov | Prize ceremony | |
 
-## Questions for the organisers (office hours)
+## Written query to the organisers (send before 18 Nov)
 
-1. May we split the national generation forecast across regions using population, GSDP and urbanisation, without regional consumption data?
-2. May we convert published resource potentials (GW) to generation potential (TWh per year) with capacity factors, used only as upper bounds?
+1. May external population and urban-share projections (UN WPP 2024, UN WUP 2018, Technical Group) be used as stated driver assumptions in the core forecast?
+2. May a published urbanisation coefficient (Liddle 2013; Shahbaz et al. 2016) enter the core model, if the run without it (two datasets only) is always shown beside it?
+3. NPP utility generation excludes captive plants. May captive generation (CEA General Review) be shown as a separately labelled layer next to the forecast?
+4. May a cross-country model on non-challenge data (Ember, World Bank) appear as a labelled independent check?
+5. May we split the national generation forecast across regions using population, GSDP and urbanisation, without regional consumption data?
+6. May published resource potentials (GW) be converted to generation potential (TWh per year) with capacity factors, used only as upper bounds in the supply plan?
 
 ## Workstreams
 
 | Workstream | Owner | Tasks before 18 Nov | Tasks before 21 Nov |
 | --- | --- | --- | --- |
-| Forecast and validation | (assign) | Check backtest numbers; prepare "why saturation" and "why India follows other countries" answers | Add a sector view for industry-heavy regions (East, West) if time permits |
-| Regional strategy | (assign) | Review default policy settings and their sources; check regional mixes against known projects | Scenario presets (policy, high growth, low carbon); corridor expansion narrative |
+| Forecast and validation | (assign) | Rehearse the elasticity, holdout and sensitivity answers below | Hourly solar and wind profiles from NPP Merit data for storage sizing |
+| Regional strategy | (assign) | Review the Robust policy levers and their sources | P90 hedge: land (rooftop, agri-PV) and build-rate narrative |
 | Data audit and compliance | (assign) | Walk through [data_audit.md](data_audit.md); confirm no consumption or capacity data in forecasting | Final provenance appendix for the deck |
-| Dashboard and demo | (assign) | Run the dashboard on two machines (one without GPU, `-DENABLE_CUDA=OFF`) | Rehearse the live demo over Zoom screen share; record a backup video |
-| Deck and story | (assign) | Midpoint deck from [results.md](results.md) and the dashboard images in [img/](img/) | Defensibility deck with likely questions and answers |
+| Dashboard and demo | (assign) | Open the deployed WebAssembly dashboard on two machines | Rehearse the live demo over a screen share; record a backup video |
+| Deck and story | (assign) | Midpoint slide | Defensibility deck with likely questions and answers |
 
 ## Likely jury questions (prepare answers)
 
-1. **Why should India follow other countries' path?**
-   It need not follow their path exactly.
-   The model uses within-country changes only, so each country keeps its own level.
-   India's starting point is its own 2025 data.
-   The backtest shows the approach would have predicted 2025 within 1 percent from 2010.
-2. **Why is the 2047 range so wide?**
-   The range includes uncertainty in population, urbanisation, income growth, model choice and parameters.
-   The dashboard attributes the spread to each source.
-3. **Is any capacity or consumption data used?**
+1. **Is the forecast compliant with the two-dataset rule?**
+   Yes for the core: generation comes from the National Power Portal, population and real GSDP from the Renewable India dataset.
+   Population and urban projections are driver assumptions, and the urbanisation coefficient is a literature prior; the run without it (two datasets only) gives 4,647 TWh, 5 percent below the forecast.
+   The cross-country model is shown only as an independent check.
+2. **Why an elasticity of 0.83?**
+   It is India's own: generation per person grew 0.83 percent for every 1 percent of real income per person from FY2011-12 to FY2023-24.
+   It holds in growth rates too (0.78), so it is not a spurious trend fit, and it is between 0.78 and 0.90 in every window.
+   Part of the early growth was catch-up as power shortages closed, which is why the later window carries half the weight and an elasticity-decline setting is in the dashboard.
+3. **How good is the model on data it has not seen?**
+   FY2024-25 and FY2025-26 were not used: errors -4.0 and +1.6 percent.
+   Rolling backtests from seven origins: 2 percent one year ahead, 8 percent five years ahead.
+4. **Why is the 2047 range so wide?**
+   Mostly income growth: 1.5 points more or less growth a year moves the 2047 median by +32 or -24 percent.
+   Elasticity, urbanisation and population each move it by 0 to 11 percent.
+5. **Is any capacity or consumption data used?**
    No capacity or consumption data enters the forecast.
    Resource potentials in GW only cap generation after an explicit capacity-factor conversion.
    See [data_audit.md](data_audit.md).
-4. **Why does the Eastern region import in 2047?**
-   Its requirement grows fastest because of population and income catch-up.
-   Its solar and wind resource is small, and coal is limited to its fleet.
-   Importing western and southern renewables is cheaper, so the plan argues for corridor expansion.
-5. **How much nuclear, and why?**
-   In the base least-cost plan, nuclear supplies 7.5 percent of generation, sited at the pipeline locations.
-   At IEA cost projections, nuclear costs about the same as new coal.
-   The Robust plan uses little nuclear (1.2 percent), because opening more solar land and storage-firmed renewables is cheaper.
-   A 30 percent lower nuclear cost cuts 2047 CO2 by about 107 Mt in the base plan.
-6. **Why use a GPU?**
-   The uncertainty analysis is millions of independent scenarios.
-   The GPU runs 4 million in about 30 ms, which lets the dashboard recompute live as the jury changes assumptions.
-   The CPU path gives identical results, checked by the parity test.
-7. **Why does faster growth add only about 14 percent?**
-   Within countries, income and urbanisation rise together.
-   Both fitted models show income effects flattening at the income India reaches in the 2040s, so much of the historical rise is attributed to urbanisation.
-   The high-growth preset therefore also raises urbanisation and adds new loads (green hydrogen, data centres).
-8. **What is the binding constraint?**
-   It is land for solar and wind, plus firm clean power, not money.
-   The base plan leaves 447 TWh unmet if the requirement reaches P90.
-   The Robust policy closes that gap while costing less and emitting less.
-   Its levers are more land (rooftop and agri-PV), triple the corridors and storage-firmed renewables.
+6. **What about captive power?**
+   NPP covers utilities.
+   Captive plants generated 224 TWh in FY2023-24 (13 percent more); held at that share, the total is about 5,540 TWh in FY2047-48.
+7. **Why does the cross-country model give less (4,528 TWh including captive)?**
+   Across 153 countries the elasticity falls with income (0.44 to 0.57 at India's income); India's own data show no decline yet.
+   An elasticity decline of 0.2 per unit of ln income brings the India model to 4,367 TWh.
+8. **Where is power needed versus generated?**
+   The Western region generates 36 percent of India's conventional power but accounts for 27 percent of the 2047 requirement; the Northern and Southern regions need more than they produce, so corridors must grow.
+9. **What is the binding constraint?**
+   Land for solar and wind, not money.
+   The Robust policy meets the median with no unmet energy, at lower cost and CO2 than the base policy.
+   The P90 needs about 45 percent of the solar potential usable (rooftop, agri-PV) and 3.5 times India's record build rate.
+10. **Why use a GPU?**
+    The uncertainty analysis is millions of independent scenarios.
+    The GPU runs 4 million in about 30 ms, so the dashboard recomputes live as the jury changes assumptions.
+    The CPU and WebAssembly paths give the same results, checked by the parity test.

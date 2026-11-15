@@ -1,216 +1,213 @@
 # Results
 
 All numbers are energy generated (TWh).
-They come from the default scenario: 4,194,304 Monte Carlo scenarios, seed 20470815.
+They come from the default scenario of the primary (India-only) core: 4,194,304 Monte Carlo scenarios, seed 20470815.
 Regenerate them with `energy2047 <repo_root>`; the tables are written to `outputs/`.
 
-> **Correction, 15 November 2026.** An independent code review found that hydro capacity factors were not being read: the CSV label is `hydro_all`, not `hydro`.
-> Every region's hydro potential was therefore computed at a 100 percent capacity factor.
-> The fix lowers usable hydro from 948 to about 350 TWh a year.
-> It changes the 2047 mix (hydro 17.7 percent became 7.7 percent) but not the requirement forecast.
-> All tables below use the corrected model.
-> The review's other findings (circulating corridor flows, a one-year convergence offset, score-allocation resource sharing, numeric edge cases) are fixed as well; see [decisions.md](decisions.md), D9.
+Years are fiscal years labelled by their start year: 2023 is FY2023-24, 2047 is FY2047-48.
+The scope is NPP utility generation; captive plants are reported as a separate layer (section 1.3).
+
+> **Change, 16 November 2026.** The organisers ruled at the kickoff that the core 2047 prediction must use only the two challenge datasets (National Power Portal and the Renewable India dataset).
+> The primary forecast is now the India-only model ([methodology.md](methodology.md), section 2).
+> The earlier cross-country model (4,536 TWh in 2047) is kept as an independent check (section 1.4).
 
 ![National forecast](img/1_national_forecast.png)
 
 ## 1. National generation requirement
 
-India generated 2,080 TWh in 2025 (Ember, including captive plants), or 1,421 kWh per person.
+India's utilities generated 1,698 TWh in FY2023-24 (NPP), or 1,225 kWh per person.
 
-| Year | P5 | P25 | Median | P75 | P95 |
-| --- | --- | --- | --- | --- | --- |
-| 2030 | 2,388 | 2,536 | 2,616 | 2,699 | 2,838 |
-| 2035 | 2,719 | 3,035 | 3,182 | 3,336 | 3,592 |
-| 2040 | 3,010 | 3,527 | 3,751 | 3,986 | 4,390 |
-| **2047** | **3,351** | **4,185** | **4,536** | **4,915** | **5,606** |
+| Year | P5 | P10 | P25 | Median | P75 | P90 | P95 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| FY2030-31 | 2,018 | 2,084 | 2,199 | 2,337 | 2,488 | 2,636 | 2,730 |
+| FY2035-36 | 2,364 | 2,488 | 2,711 | 2,986 | 3,296 | 3,612 | 3,819 |
+| FY2040-41 | 2,735 | 2,927 | 3,280 | 3,730 | 4,254 | 4,802 | 5,170 |
+| **FY2047-48** | **3,248** | **3,553** | **4,131** | **4,894** | **5,822** | **6,829** | **7,526** |
 
-- The median requirement for 2047 is **4,536 TWh**, 2.18 times the 2025 level (3.6 percent a year).
-- Generation per person rises to about 2,720 kWh.
-- The 90 percent range is 3,351 to 5,606 TWh.
+- The median requirement for FY2047-48 is **4,894 TWh**, 2.88 times FY2023-24 (4.5 percent a year).
+- Generation per person rises to about 3,050 kWh.
+- The 80 percent range (P10 to P90) is 3,553 to 6,829 TWh.
 
-Central paths of the individual models in 2047, using medium drivers and mean growth:
+Central paths in FY2047-48 (medium drivers, mean growth, point estimates):
 
-| Model | 2047 (TWh) | Ensemble weight |
+| Model | FY2047-48 (TWh) | Role |
 | --- | --- | --- |
-| FE-Quad | 4,777 | 0.26 |
-| FE-Gompertz | 4,533 | 0.60 |
-| Damped trend | 3,782 | 0.14 |
+| India elasticity with the urbanisation prior | 4,729 | Forecast (weight 1) |
+| India elasticity, no urban term (two datasets only) | 4,508 | Ablation |
+| Damped trend on NPP generation (no drivers) | 3,604 | Benchmark |
 
-**Cross-check.** The CEA National Electricity Plan projects gross generation of 2,666 TWh for 2031-32.
-Our median for 2031 to 2032 is within about 3 percent of it.
-That plan was built independently, from bottom-up demand and supply planning.
+### 1.1 Estimation
+
+| Quantity | Value |
+| --- | --- |
+| Income elasticity, FY2011-12 to FY2023-24 | 0.828 (s.e. 0.063) |
+| Income elasticity, FY2006-07 to FY2023-24 (spliced price bases) | 0.896 (s.e. 0.034) |
+| First-difference elasticity (pandemic years left out) | 0.782 / 0.869 |
+| Elasticity used: block-bootstrap mixture of both windows | median 0.870, 90% interval 0.747 to 0.950 |
+| FY2020-21 (pandemic) effect | -0.055 log points |
+| Urbanisation prior gamma | normal(1.0, 0.5), truncated at 0 |
+| Base-year anchor shift | -0.043 log points |
+
+### 1.2 Validation
+
+| Check | Result |
+| --- | --- |
+| Rolling backtest, origins FY2012-13 to FY2018-19, MAPE at 1 / 3 / 5 years | 2.3% / 5.1% / 8.1% |
+| Holdout FY2024-25 (NPP conventional 1,569 + renewable extended 216 = 1,785) | model 1,713, error -4.0% |
+| Holdout FY2025-26 (1,530 + 247 = 1,776) | model 1,805, error +1.6% |
+
+NPP has no renewable generation for the holdout years, so renewable output is extended at its FY2018-19 to FY2023-24 growth rate (14.1 percent a year).
+Conventional generation alone fell 2.4 percent in FY2025-26 while renewable output kept rising, so a check on conventional output alone would be biased.
+
+### 1.3 Captive layer
+
+Captive plants generated 224 TWh in FY2023-24 (CEA General Review 2025), 13.2 percent of NPP utility generation.
+Holding that share gives **about 5,540 TWh including captive plants** in FY2047-48 (P5 3,676, P95 8,519).
+This layer is reported next to the forecast and never enters it.
+
+### 1.4 Independent check: cross-country model
+
+| Core | Scope | Base | 2047 P5 | 2047 median | 2047 P95 |
+| --- | --- | --- | --- | --- | --- |
+| India-only (primary) | NPP utilities, FY2047-48 | 1,698 (FY2023-24) | 3,248 | 4,894 | 7,526 |
+| India-only + captive layer | utilities + captive | 1,922 | 3,676 | 5,540 | 8,519 |
+| Cross-country panel (check) | Ember total incl. captive, calendar 2047 | 2,080 (2025) | 3,348 | 4,528 | 5,610 |
+
+The cross-country median lies inside the India-only range but about 18 percent below the India-only total with captive plants.
+The difference is the elasticity: across 153 countries the elasticity at India's income is 0.44 to 0.57, falling with income; India's own data show 0.78 to 0.90 with no decline yet.
+Setting an elasticity decline of 0.2 per unit of ln income in the India model gives 4,367 TWh (section 4), which brings the two methods together.
+
+**CEA plan.** The CEA National Electricity Plan projects gross generation of 2,666 TWh for FY2031-32.
+Our median for FY2031-32 is 2,459 TWh (P90 2,815).
+
+The registration-form figure of 6,000 TWh was a pre-data estimate; including captive plants it lies between our median (5,540) and P75 (6,590).
 
 ## 2. Regional requirement
 
 ![Regional requirement](img/2_regional_requirement.png)
 
-| Region | 2030 median | 2040 median | 2047 P5 | 2047 median | 2047 P95 | Share 2047 | Generation 2024 |
+| Region | FY2030-31 median | FY2040-41 median | FY2047-48 P5 | FY2047-48 median | FY2047-48 P95 | Share of requirement 2047 | Share of NPP conventional generation FY2025-26 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Northern | 735 | 1,085 | 969 | 1,327 | 1,616 | 29% | 454 |
-| Western | 671 | 932 | 830 | 1,120 | 1,395 | 25% | 658 |
-| Southern | 645 | 849 | 730 | 983 | 1,284 | 22% | 395 |
-| Eastern | 473 | 744 | 670 | 932 | 1,136 | 21% | 276 |
-| North-Eastern | 95 | 141 | 126 | 173 | 214 | 4% | 21 |
+| Northern | 645 | 1,049 | 929 | 1,395 | 2,140 | 28.5% | 24.9% |
+| Western | 616 | 985 | 862 | 1,301 | 2,010 | 26.6% | 36.0% |
+| Southern | 637 | 954 | 776 | 1,194 | 1,873 | 24.4% | 20.1% |
+| Eastern | 364 | 616 | 545 | 834 | 1,285 | 17.1% | 17.7% |
+| North-Eastern | 75 | 125 | 111 | 167 | 256 | 3.4% | 1.3% |
 
-The planned 2047 requirement scales these medians to the national median (4,536 TWh).
-Base-year generation is from utilities only, so it excludes captive plants.
+The requirement is where power is needed (state population and income); NPP generation is where plants are today.
 
-Reading the table:
-
+- **Transfer gap.** The Western region produces 36 percent of India's conventional generation but accounts for 27 percent of the 2047 requirement; the Northern and Southern regions need more than they produce today.
 - The **Northern** region has the largest requirement because of its population (Uttar Pradesh, Rajasthan).
-- The **Eastern** and **North-Eastern** requirements grow fastest. Two drivers explain this:
-  - Bihar and Jharkhand have the fastest-growing populations.
-  - Poorer states close their income gap at the rate measured from the organiser GSDP data (2.1 percent of the gap a year).
+- The **North-Eastern** share more than doubles relative to today's production share, driven by income convergence and urbanisation.
 
 ## 3. 2047 generation strategy
 
 ![2047 generation mix](img/3_generation_mix_2047.png)
 
-### 3.1 Least-cost plan (base policy)
+### 3.1 Least-cost plan, base policy
 
-| Region | Coal | Nuclear | Hydro | Solar | Onshore wind | Offshore wind | Total | Requirement | Net export | Marginal cost (USD/MWh) |
+| Region | Coal | Gas | Nuclear | Hydro | Solar | Onshore wind | Offshore wind | Bioenergy | Requirement | Net export |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Northern | 431 | 117 | 147 | 504 | 153 | 0 | 1,352 | 1,328 | +24 | 72.5 |
-| Western | 317 | 114 | 20 | 608 | 246 | 58 | 1,362 | 1,120 | +241 | 69.7 |
-| Southern | 220 | 64 | 34 | 458 | 233 | 88 | 1,097 | 984 | +113 | 69.7 |
-| Eastern | 390 | 47 | 28 | 117 | 10 | 0 | 592 | 932 | -340 | 73.0 |
-| North-Eastern | 7 | 0 | 120 | 20 | 0 | 0 | 148 | 173 | -25 | 75.6 |
+| Northern | 428 | 0 | 127 | 147 | 504 | 153 | 0 | 38 | 1,396 | 0 |
+| Western | 317 | 0 | 144 | 20 | 608 | 246 | 58 | 33 | 1,302 | +123 |
+| Southern | 219 | 0 | 135 | 34 | 458 | 233 | 88 | 28 | 1,195 | 0 |
+| Eastern | 390 | 83 | 51 | 28 | 117 | 10 | 0 | 9 | 834 | -119 |
+| North-Eastern | 7 | 18 | 0 | 120 | 20 | 0 | 0 | 1 | 167 | 0 |
 
-National mix:
+National mix: solar 35.0%, coal 27.9%, onshore wind 13.2%, nuclear 9.4%, hydro 7.2%, offshore wind 3.0%, bioenergy 2.3%, gas 2.1%.
+Non-fossil share 70.0 percent (the minimum binds); CO2 1,364 Mt; about 233 billion USD a year.
 
-| Source | Share |
+**The base policy falls 28 TWh (0.6 percent) short at the median**, in the Eastern region.
+Build rates at twice the record year and 25 percent usable solar and wind land are not quite enough.
+Any one of these closes the gap (policy sweep, section 4.2): 35 percent usable solar land, 35 percent usable wind land, or build rates three times the record year.
+
+### 3.2 Recommended plan: Robust policy
+
+| Source | Share of 2047 generation |
 | --- | --- |
-| Solar | 37.5% |
-| Coal | 30.0% |
-| Onshore wind | 14.1% |
-| Hydro | 7.7% |
-| Nuclear | 7.5% |
-| Offshore wind | 3.2% |
-| Gas | 0% |
+| Solar | 48.8% |
+| Coal | 23.5% |
+| Firmed RE (solar and wind with storage, round-the-clock) | 12.4% |
+| Hydro | 7.1% |
+| Onshore wind | 3.3% |
+| Offshore wind | 3.0% |
+| Nuclear | 2.0% |
 
-- Non-fossil share: **70.0 percent**, exactly the policy minimum. The minimum binds.
-- CO2 from generation: **1,323 Mt** a year. At the 2024-25 grid average of 0.71 t/MWh, 2,080 TWh today means roughly 1,480 Mt.
-- Generation cost: about 202 billion USD a year.
-- The base plan has **no headroom**. Planned for the P90 requirement, 447 TWh would be unmet, because land for solar and wind runs out under the 70 percent floor.
+| Region | Coal | Nuclear | Hydro | Solar | Onshore wind | Offshore wind | Firmed RE | Total | Requirement | Net export | Marginal cost (USD/MWh) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Northern | 361 | 11 | 147 | 706 | 7 | 0 | 176 | 1,408 | 1,396 | +12 | 62.0 |
+| Western | 264 | 20 | 20 | 851 | 120 | 58 | 175 | 1,507 | 1,302 | +205 | 60.2 |
+| Southern | 128 | 24 | 34 | 641 | 37 | 88 | 243 | 1,195 | 1,195 | 0 | 62.0 |
+| Eastern | 390 | 43 | 28 | 164 | 0 | 0 | 12 | 637 | 834 | -197 | 63.0 |
+| North-Eastern | 7 | 0 | 120 | 29 | 0 | 0 | 0 | 156 | 167 | -11 | 64.8 |
 
-### 3.2 How each region's strengths show up
+Each region uses its strengths: Rajasthan solar and Himalayan hydro in the North; Gujarat and Maharashtra solar, wind and Gulf of Khambhat offshore wind in the West (the largest exporter); Tamil Nadu and Karnataka wind, offshore wind and firmed solar in the South; the coal fleet in the East, which imports about 200 TWh; Arunachal hydro in the North-East.
 
-| Region | Mix and reason |
-| --- | --- |
-| Northern | Rajasthan solar (504 TWh), Himalayan hydro (147 TWh), the existing coal fleet, and Rajasthan and Haryana nuclear sites. Roughly self-sufficient (+24 TWh). |
-| Western | Solar and wind (Gujarat, Maharashtra), Gulf of Khambhat offshore wind, central-India coal, and the Jaitapur, Mithi Virdi and Madhya Pradesh nuclear sites. Largest exporter (+241 TWh). |
-| Southern | The best wind (Tamil Nadu, Karnataka), Tamil Nadu offshore wind, and Kudankulam, Kaiga and Kovvada nuclear. Exporter (+113 TWh). |
-| Eastern | Coal at its fleet limit (1.5 times 2024) and the planned Haripur nuclear site. Solar and wind resources are small, so it imports about 340 TWh. Its marginal cost is the highest of the large regions, which signals where transmission is worth most. |
-| North-Eastern | Hydro (Arunachal Pradesh, about 50 GW identified) supplies 81 percent of the region. A small importer at the planning median. |
+Non-fossil 76.5 percent; CO2 1,114 Mt; about 188 billion USD a year; **no unmet energy at the median**.
+It is cheaper and cleaner than the base policy.
+It needs 35 percent of the solar potential usable (including rooftop and agri-PV), 30 percent of the wind potential, corridors three times the 2032 plan and build rates 2.5 times India's record year.
 
-### 3.3 Resource-score allocation (transparent alternative)
+### 3.3 What the P90 requirement takes
 
-This method keeps the same national totals by source.
-It shares them across regions in proportion to usable resource, existing fleets and nuclear sites.
+Planned for the 90th-percentile requirement (6,829 TWh), the Robust policy leaves 1,067 TWh unmet.
+Land for solar is the binding constraint (`outputs/p90_levers.csv`, unmet TWh):
 
-| Region | Net export |
-| --- | --- |
-| Western | +477 TWh |
-| Southern | +188 TWh |
-| North-Eastern | -27 TWh |
-| Northern | -143 TWh |
-| Eastern | -480 TWh |
+| Build rate (x record year) | 35% usable solar | 45% | 55% |
+| --- | --- | --- | --- |
+| 2.5 | 1,067 | 156 | 0 |
+| 3.0 | 933 | 26 | 0 |
+| 3.5 | 799 | 0 | 0 |
+| 4.0 | 664 | 0 | 0 |
 
-The direction is the same as the least-cost plan: the West and South export, the East imports.
-The transfers are larger because the score ignores corridor limits and losses.
+Faster building alone does not close the gap; usable solar land (rooftop, agri-PV, canal-top and floating solar) does.
 
 ### 3.4 Scenario and policy presets
 
-Each scenario preset is crossed with each policy preset.
-The definitions are in [assumptions_and_uncertainty.md](assumptions_and_uncertainty.md), section 6.
-The full table is in `outputs/presets.csv`.
-"Unmet at P90" re-plans each policy for the 90th-percentile requirement.
+Each scenario preset is crossed with each policy preset ([assumptions_and_uncertainty.md](assumptions_and_uncertainty.md), section 6; full table in `outputs/presets.csv`).
 
 | Scenario | Policy | 2047 median (TWh) | Non-fossil | Coal | CO2 (Mt) | Cost (bn USD) | Unmet at median (TWh) | Unmet at P90 (TWh) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Base | Base | 4,536 | 70.0% | 30.0% | 1,323 | 202 | 0 | 447 |
-| Base | Low carbon | 4,536 | 82.8% | 16.7% | 747 | 182 | 0 | 469 |
-| Base | **Robust** | 4,536 | **79.2%** | **20.8%** | **920** | **166** | **0** | **0** |
-| Base | Energy security | 4,536 | 70.0% | 29.4% | 1,309 | 204 | 0 | 449 |
-| High growth | Base | 5,176 | 70.0% | 26.6% | 1,329 | 234 | 312 | 1,323 |
-| High growth | Low carbon | 5,176 | 80.0% | 17.0% | 865 | 212 | 334 | 1,345 |
-| High growth | Robust | 5,176 | 75.0% | 25.0% | 1,258 | 207 | 0 | 436 |
-| High growth | Energy security | 5,176 | 70.0% | 28.2% | 1,370 | 234 | 314 | 1,323 |
-| Low growth | Base | 4,108 | 70.4% | 29.6% | 1,183 | 172 | 0 | 0 |
-| Low growth | Low carbon | 4,108 | 88.7% | 11.3% | 450 | 154 | 0 | 0 |
-| Low growth | Robust | 4,108 | 83.9% | 16.1% | 643 | 144 | 0 | 0 |
-| Low growth | Energy security | 4,108 | 70.0% | 30.0% | 1,198 | 175 | 0 | 0 |
-
-**Robust policy mix** (base scenario, share of 2047 generation):
-
-| Source | Share |
-| --- | --- |
-| Solar | 52.5% |
-| Firmed RE (solar and wind with storage, round-the-clock) | 15.1% |
-| Coal | 20.8% |
-| Hydro | 7.7% |
-| Onshore and offshore wind | 2.7% |
-| Nuclear | 1.2% |
-
-**What the table shows:**
-
-1. **The binding constraint for 2047 is land and firm clean power, not money.**
-   The base plan meets the median but fails one future in ten (447 TWh unmet at P90).
-2. **The Robust policy dominates the base policy.**
-   It is cheaper (166 vs 202 billion USD a year) and cleaner (920 vs 1,323 Mt CO2).
-   It still meets the P90 requirement with zero unmet energy.
-   It needs four things:
-   - 35 percent of the solar potential usable, including rooftop and agri-PV
-   - corridors three times the 2032 plan
-   - storage-firmed renewables
-   - build rates 2.5 times India's record year
-3. **High growth needs the Robust levers.**
-   Only the Robust policy serves the high-growth median, and even it leaves 436 TWh unmet at the high-growth P90.
-4. **Faster growth raises the requirement only moderately.**
-   The fitted models show generation per person saturating with income at the levels India reaches in the 2040s.
-   Within countries, urbanisation and income rise together.
-   The growth presets therefore also move the urban share: +3 points for high growth, -2 points for low growth.
+| Base | Base | 4,894 | 70.0% | 27.9% | 1,364 | 233 | 28 | 1,958 |
+| Base | Low carbon | 4,894 | 80.0% | 17.0% | 865 | 211 | 47 | 1,979 |
+| Base | **Robust** | 4,894 | **76.5%** | **23.5%** | **1,114** | **188** | **0** | **1,067** |
+| Base | Energy security | 4,894 | 70.0% | 28.0% | 1,366 | 233 | 30 | 1,958 |
+| High growth | Base | 7,088 | 70.0% | 30.0% | 1,416 | 240 | 2,217 | 5,060 |
+| High growth | Robust | 7,088 | 75.0% | 25.0% | 1,396 | 256 | 1,326 | 4,169 |
+| Low growth | Base | 3,516 | 77.4% | 22.6% | 772 | 134 | 0 | 0 |
+| Low growth | Robust | 3,516 | 81.2% | 18.8% | 643 | 125 | 0 | 0 |
 
 ## 4. Sensitivity
 
 ![Uncertainty and sensitivity](img/5_uncertainty_sensitivity.png)
 
-### 4.1 Requirement uncertainty
+### 4.1 Requirement (FY2047-48, `outputs/sensitivity_2047.csv`)
 
-Each driver's share of the 2047 spread is a rank R-squared, measured one input at a time.
+| Case | P5 | Median | P95 | Median vs base |
+| --- | --- | --- | --- | --- |
+| Base | 3,248 | 4,894 | 7,526 | |
+| Income growth 1.5 points above history | 4,259 | 6,453 | 10,064 | +32% |
+| Income growth 1.5 points below history | 2,461 | 3,714 | 5,650 | -24% |
+| Elasticity falls 0.2 per unit of ln income | 3,139 | 4,367 | 5,980 | -11% |
+| Urban share 5 points above the UN path | 3,387 | 5,151 | 7,943 | +5% |
+| No urban term (two datasets only) | 2,973 | 4,647 | 7,438 | -5% |
+| Population uncertainty doubled | 3,181 | 4,885 | 7,627 | 0% |
+| Damped trend (no drivers) | 2,807 | 3,604 | 4,627 | -26% |
 
-| Driver | Share of the spread |
-| --- | --- |
-| Urban share path | about 13% |
-| Population path | about 9% |
-| Model choice | about 9% |
-| Persistent GDP growth | about 2% |
+**Income growth dominates.** The elasticity and the urbanisation term move the median by 5 to 11 percent; the income path moves it by a quarter to a third.
 
-The rest comes from bootstrap parameter uncertainty, annual growth shocks and the trend model's own noise.
-
-### 4.2 Policy settings (base plan: 1,323 Mt CO2, 202 billion USD)
-
-Each setting is moved to a low and a high value with everything else fixed.
-That is 28 least-cost solves, run in parallel.
+### 4.2 Policy settings (base plan: 1,364 Mt CO2, 233 billion USD, 28 TWh unmet)
 
 | Setting (low / high) | CO2 (Mt) | Unmet (TWh) | Cost (bn USD) |
 | --- | --- | --- | --- |
-| Requirement (P10 / P90) | 932 / 1,338 | 0 / **447** | 153 / 234 |
-| Usable solar land (15% / 35%) | 1,131 / 1,044 | **646** / 0 | 199 / 168 |
-| Usable wind land (15% / 35%) | 1,278 / 1,267 | 45 / 0 | 212 / 196 |
-| Carbon price (0 / 60 USD/t) | 1,323 / 1,048 | 0 / 0 | 202 / 210 |
-| Nuclear cost (0.7x / 1.3x) | 1,216 / 1,323 | 0 / 0 | 192 / 209 |
-| Coal cost (0.7x / 1.3x) | 1,323 / 1,216 | 0 / 0 | 174 / 228 |
-| Non-fossil minimum (60% / 85%) | 1,415 / infeasible | 0 / - | 202 / - |
-| Corridor capacity (1x / 3x the 2032 plan) | 1,309 / 1,323 | 0 / 0 | 203 / 202 |
-| Firmed RE cost (0.7x / 1.5x) | 1,323 / 1,323 | 0 / 0 | 196 / 202 |
+| Requirement (P10 / P90) | 772 / 1,416 | 0 / **1,958** | 136 / 236 |
+| Usable solar land (15% / 35%) | 1,132 / 1,240 | **999** / 0 | 199 / 191 |
+| Usable wind land (15% / 35%) | 1,309 / 1,415 | 391 / 0 | 211 / 220 |
+| Build-rate acceleration (1.5x / 3.0x) | 1,344 / 1,420 | 168 / 0 | 221 / 232 |
+| Carbon price (0 / 60 USD/t) | 1,364 / 1,290 | 28 / 27 | 233 / 236 |
+| Coal cost (0.7x / 1.3x) | 1,416 / 1,302 | 32 / 27 | 200 / 261 |
+| Non-fossil minimum (60% / 85%) | 1,479 / infeasible | 0 / - | 230 / - |
 
-Two rows have no effect at the defaults: firm-generation floors and build-rate acceleration.
-
-**Reading the table:**
-
-- Lower CO2 at 15 percent solar land is not an improvement. It comes from unmet requirement.
-- An 85 percent non-fossil target cannot be met unless coal retires faster than the 60 percent fleet floor.
+Lower CO2 with 15 percent solar land is not an improvement: it comes from unmet requirement.
 
 ## 5. Performance
 
@@ -220,12 +217,5 @@ Two rows have no effect at the defaults: firm-generation floors and build-rate a
 | CPU, 16 threads (OpenMP) | 2.07 s | 507,000 |
 | GPU, RTX 3070 Ti Laptop (CUDA) | 7.5 ms | 140 million |
 
-These were measured on an otherwise idle machine on 15 November 2026.
-CPU timings vary with background load.
-
-The full dashboard update takes about 1.8 s:
-
-- 4.2 million scenarios on the GPU, about 30 ms.
-- Least-cost and score allocations.
-- The policy sweep.
-- Bootstrap of 2,000 replicates for each of two models: 2.2 s on 16 threads, once at start-up.
+These were measured on an otherwise idle machine on 15 November 2026; CPU timings vary with background load.
+The India-only core fits in under 0.2 s at start-up (2,000 block-bootstrap replicates in a few milliseconds); 4.2 million scenarios take about 30 ms on the GPU.

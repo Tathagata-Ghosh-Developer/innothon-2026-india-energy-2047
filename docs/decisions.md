@@ -141,3 +141,36 @@ An independent read-only review of the numerical core found these problems, all 
 - The non-fossil minimum now binds, and the base plan has no headroom at the P90 requirement.
 
 This led to the **Robust** policy preset, which is the recommended strategy.
+
+## D10. India-only primary core; cross-country model becomes a check (2026-11-16)
+
+**Trigger.** At the kickoff (13 Nov 2026) the organisers said the core analysis of the 2047 energy prediction must use only the two challenge datasets (National Power Portal and the Renewable India dataset); literature may supply growth rates and constraints.
+D1 used Ember and World Bank data in the core, so it no longer qualifies as the primary forecast.
+
+**Choice.** The primary forecast is an India-only driver model:
+
+- ln(NPP generation per person) on ln(real GSDP per person), with a FY2020-21 dummy. The income elasticity is the only parameter estimated, from FY2011-12 to FY2023-24 (one price base) and FY2006-07 to FY2023-24 (spliced); the bootstrap mixes both windows equally.
+- Urbanisation enters only as its excess over the income-implied path, gamma (du - kappa dx), with gamma from the literature (normal 1.0, s.d. 0.5). gamma = 0 is the pure two-dataset ablation, shown in every output.
+- Moving-block (3-year) residual bootstrap, because the residuals are serially correlated.
+- Base FY2023-24, the last year of the NPP all-India series; FY2024-25 and FY2025-26 serve as a holdout.
+- Scope is NPP utility generation; captive plants are a separately labelled layer.
+- The damped trend is a benchmark, not an ensemble member, and backtest errors are not used as weights.
+- The regional split stays driver-based (population, income convergence, urbanisation); NPP regional generation is compared with it as a transfer gap and is never fitted.
+- The cross-country model stays in the code and the dashboard as an independent check on non-core data.
+
+**Reason.** The decision went through a structured review with five independent critiques, anonymous peer review and a synthesis.
+All reviewers agreed on the points above.
+Key arguments:
+
+- With 18 annual points only one parameter is identified. The elasticity is stable across windows (0.78 to 0.90 including first differences), while the income path moves the 2047 figure by a quarter to a third, so effort belongs in driver scenarios, not in more model forms.
+- Urban share and income moved together in India; a free urban coefficient is unidentified, and the post-2011 urban series is an interpolation. Taking gamma from the team's own cross-country regression would bring non-core data back into the core, so it comes from published studies instead.
+- NPP regional generation records where plants are (the West and East export), so a regional model fitted to it would be confounded.
+
+**Rejected.**
+
+- A hierarchical regional panel on NPP regional generation: conventional sources only, from FY2018-19, and confounded by inter-regional trade.
+- Nowcasting the base to FY2025-26: NPP has no renewable generation for those years; they are more useful as a holdout.
+- Correcting for past energy shortages with CEA power-supply-position data: those are requirement (consumption-side) quantities, which the rules exclude from forecasting and comparison. The direction of the bias is stated instead, and the FY2011-12 window and the elasticity-decline setting bound it.
+- Inverse-MAPE weights from the India backtest: seven short origins give noisy weights.
+
+**Open.** A written query to the organisers asks whether external population and urban projections, a literature urbanisation coefficient, the captive layer and the cross-country check are acceptable as stated.

@@ -439,6 +439,35 @@ int main(int argc, char** argv) {
         }
       }
     }
+    {
+      // What it takes to meet the P90 requirement: Robust policy with faster builds
+      // and more usable solar land (rooftop, agri-PV, canal tops).
+      CsvWriter w((out / "p90_levers.csv").string());
+      w.field("build_accel").field("solar_land").field("unserved_p90_twh").field("cost_busd").field("co2_mt").field(
+          "nonfossil_share");
+      w.endrow();
+      ScenarioControls s90 = c;
+      s90.requirement_quantile = 0.9;
+      std::printf("P90 levers (Robust policy; unmet TWh at P90):\n");
+      for (double accel : {2.5, 3.0, 3.5, 4.0}) {
+        std::printf("  build %.1fx:", accel);
+        for (double land : {0.35, 0.45, 0.55}) {
+          PolicySettings ps;
+          for (const auto& pp : policy_presets())
+            if (pp.name == "Robust") pp.apply(ps);
+          ps.build_accel = accel;
+          ps.solar_land = land;
+          const StrategyResult r = pl.strategy(f, s90, ps);
+          double u = 0;
+          for (double x : r.least_cost.unserved) u += x;
+          w.field(accel, 3).field(land, 3).field(u, 5).field(r.least_cost.cost_busd, 5).field(r.least_cost.co2_mt, 5);
+          w.field(r.least_cost.nonfossil_share(), 4);
+          w.endrow();
+          std::printf("  land %.0f%% -> %6.0f", 100 * land, u);
+        }
+        std::printf("\n");
+      }
+    }
     std::printf("outputs written to %s\n", out.string().c_str());
     return 0;
   } catch (const std::exception& e) {
