@@ -122,6 +122,7 @@ struct SiteSummary {
   StorageLandResult levers_storage;  // Robust policy with the P90 levers, P90 requirement
   double levers_unserved = -1, levers_solar_land = 0, levers_build_accel = 0;
   double cea_power_gw = 0, cea_energy_gwh = 0;
+  std::vector<ParetoPoint> pareto;  // cost-CO2 trade-off, Robust policy, median requirement
 };
 
 // Storage and land back-calculated from the least-cost plan: Base and Robust policy
@@ -642,6 +643,12 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.obj("p90").num("requirement_twh", q[5]).num("robust_unmet_twh", s.robust_p90_unserved);
     j.num("levers_solar_land_pct", 100 * s.levers_solar_land).num("levers_build_accel", s.levers_build_accel);
     j.num("levers_unmet_twh", s.levers_unserved).end();
+    // Cost-CO2 trade-off of the recommended plan (epsilon-constraint sweep on CO2).
+    j.arr("tradeoff");
+    for (const ParetoPoint& t : s.pareto)
+      j.obj().num("co2_mt", t.co2_mt).num("cost_busd", t.cost_busd).num("mac_usd_per_t", t.marginal_usd_per_t)
+          .num("nonfossil_pct", 100 * t.plan.nonfossil_share()).num("coal_pct", 100 * t.plan.share(kCoal)).end();
+    j.end();
     j.end();
 
     const StorageSizing& z = s.robust_storage.total;
@@ -1063,6 +1070,31 @@ int main(int argc, char** argv) {
           std::printf("  land %.0f%% -> %6.0f", 100 * land, u);
         }
         std::printf("\n");
+      }
+    }
+    {
+      // Cost-CO2 trade-off of the recommended plan: Robust policy at the median requirement,
+      // CO2 capped in 12 steps from the least-cost plan down to the lowest cap that still
+      // meets the requirement; the cap's dual is the marginal abatement cost.
+      PolicySettings ps;
+      for (const auto& pp : policy_presets())
+        if (pp.name == "Robust") pp.apply(ps);
+      const StrategyResult r = pl.strategy(f, c, ps);
+      site.pareto = pareto_cost_co2(pl.allocation_inputs(), ps, r.requirement, 12);
+      CsvWriter w((out / "pareto_2047.csv").string());
+      for (const char* h : {"co2_cap_mt", "co2_mt", "cost_busd", "marginal_abatement_usd_per_t", "nonfossil_share",
+                            "coal_share", "solar_share", "firmed_re_share", "nuclear_share", "gas_share"})
+        w.field(h);
+      w.endrow();
+      std::printf("cost-CO2 trade-off (Robust policy, median requirement):\n");
+      for (const ParetoPoint& t : site.pareto) {
+        const AllocationResult& a = t.plan;
+        w.field(t.co2_cap_mt, 6).field(t.co2_mt, 6).field(t.cost_busd, 6).field(t.marginal_usd_per_t, 5);
+        w.field(a.nonfossil_share(), 4).field(a.share(kCoal), 4).field(a.share(kSolar), 4).field(a.share(kFirmRE), 4);
+        w.field(a.share(kNuclear), 4).field(a.share(kGas), 4);
+        w.endrow();
+        std::printf("  CO2 %7.1f Mt  cost %7.2f bn USD  MAC %6.1f USD/t  non-fossil %5.1f%%  coal %5.1f%%\n", t.co2_mt,
+                    t.cost_busd, t.marginal_usd_per_t, 100 * a.nonfossil_share(), 100 * a.share(kCoal));
       }
     }
     write_storage_land(out, pl, f, c, site);
