@@ -19,28 +19,38 @@ set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(FAST_BUILD ON CACHE BOOL "" FORCE)
 set(ZLIB OFF CACHE BOOL "" FORCE)
-set(HIGHS_NO_DEFAULT_THREADS OFF CACHE BOOL "" FORCE)
+if(EMSCRIPTEN)
+  # Single-threaded solver in the browser (each extra thread would be a web worker),
+  # and no stand-alone highs executable.
+  set(HIGHS_NO_DEFAULT_THREADS ON CACHE BOOL "" FORCE)
+  set(BUILD_CXX_EXE OFF CACHE BOOL "" FORCE)
+else()
+  set(HIGHS_NO_DEFAULT_THREADS OFF CACHE BOOL "" FORCE)
+endif()
 FetchContent_Declare(highs
   URL https://github.com/ERGO-Code/HiGHS/archive/refs/tags/v1.11.0.tar.gz
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(highs)
 
 if(BUILD_DASHBOARD)
-  set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-  set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-  set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-  set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-  FetchContent_Declare(glfw
-    URL https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
   FetchContent_Declare(imgui
     URL https://github.com/ocornut/imgui/archive/refs/tags/v1.91.9.tar.gz
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
   FetchContent_Declare(implot
     URL https://github.com/epezent/implot/archive/refs/tags/v0.16.tar.gz
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
-  FetchContent_MakeAvailable(glfw imgui implot)
-  find_package(OpenGL REQUIRED)
+  FetchContent_MakeAvailable(imgui implot)
+  if(NOT EMSCRIPTEN)
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(glfw
+      URL https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz
+      DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(glfw)
+    find_package(OpenGL REQUIRED)
+  endif()
 
   add_library(e47_imgui STATIC
     ${imgui_SOURCE_DIR}/imgui.cpp
@@ -54,5 +64,12 @@ if(BUILD_DASHBOARD)
     ${implot_SOURCE_DIR}/implot_items.cpp)
   target_include_directories(e47_imgui SYSTEM PUBLIC
     ${imgui_SOURCE_DIR} ${imgui_SOURCE_DIR}/backends ${implot_SOURCE_DIR})
-  target_link_libraries(e47_imgui PUBLIC glfw OpenGL::GL)
+  if(EMSCRIPTEN)
+    # Emscripten's built-in GLFW 3 on a WebGL 2 context; the ImGui OpenGL3
+    # backend then uses the GLES 3 API ("#version 300 es" shaders).
+    target_compile_definitions(e47_imgui PUBLIC IMGUI_IMPL_OPENGL_ES3 GLFW_INCLUDE_ES3)
+    target_link_options(e47_imgui PUBLIC -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2)
+  else()
+    target_link_libraries(e47_imgui PUBLIC glfw OpenGL::GL)
+  endif()
 endif()

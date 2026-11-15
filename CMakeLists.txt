@@ -5,6 +5,15 @@ option(ENABLE_CUDA "Build the CUDA Monte Carlo and sensitivity kernels" ON)
 option(BUILD_DASHBOARD "Build the Dear ImGui dashboard" ON)
 option(BUILD_TESTS "Build unit and parity tests" ON)
 
+# WebAssembly build (emcmake, see build_web.cmd and docs/deployment.md):
+# CPU only, no OpenMP, dashboard only.
+if(EMSCRIPTEN)
+  enable_language(C)  # HiGHS has C sources; enabled here so cmake/CompilerFlags.cmake can extend the C flags
+  set(ENABLE_CUDA OFF CACHE BOOL "" FORCE)
+  set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(BUILD_DASHBOARD ON CACHE BOOL "" FORCE)
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -38,6 +47,9 @@ include(cmake/Dependencies.cmake)
 
 add_subdirectory(src)
 add_subdirectory(apps)
+if(EMSCRIPTEN)
+  include(cmake/Web.cmake)
+endif()
 if(BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)

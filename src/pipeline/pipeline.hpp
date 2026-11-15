@@ -16,6 +16,16 @@
 
 namespace e47 {
 
+// Default ensemble size and bootstrap replicates. The WebAssembly build runs the
+// Monte Carlo without a GPU, so it starts smaller (the slider still goes higher).
+#ifdef E47_WEB
+constexpr int kDefaultDrawsLog2 = 16;
+constexpr int kDefaultBootstrapReplicates = 300;
+#else
+constexpr int kDefaultDrawsLog2 = 22;
+constexpr int kDefaultBootstrapReplicates = 2000;
+#endif
+
 // Forecast core.
 //   kIndia (primary): NPP generation and the organiser state data only; urban
 //     share and population paths are external drivers.
@@ -36,7 +46,7 @@ struct ScenarioControls {
   double pop_band_scale = 1.0;  // multiplier on the UN low-high band
   double addon_lo = 0, addon_hi = 0;  // new loads in 2047, TWh
   std::array<double, 3> w_model{-1, -1, -1};  // < 0 = backtest-based weights
-  uint64_t draws = 1u << 22;
+  uint64_t draws = 1ull << kDefaultDrawsLog2;
   uint64_t seed = 20470815;
   bool use_gpu = true;
   double requirement_quantile = 0.5;  // which quantile of the 2047 requirement to plan for
@@ -125,7 +135,8 @@ struct StrategyResult {
 
 class Pipeline {
  public:
-  explicit Pipeline(std::string repo_root, CoreModel core = CoreModel::kIndia, int bootstrap_replicates = 2000);
+  explicit Pipeline(std::string repo_root, CoreModel core = CoreModel::kIndia,
+                    int bootstrap_replicates = kDefaultBootstrapReplicates);
 
   CoreModel core() const { return fit_.core; }
   const Fitted& fitted() const { return fit_; }

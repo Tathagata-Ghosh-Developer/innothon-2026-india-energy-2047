@@ -1,7 +1,9 @@
 // India Energy 2047 dashboard: Dear ImGui + ImPlot on GLFW / OpenGL 3.
+// The same file builds the WebAssembly version (Emscripten, WebGL 2); see
+// docs/deployment.md.
 //
-// Usage: e47_dashboard [repo_root]
-#include <GLFW/glfw3.h>
+// Usage: e47_dashboard [repo_root] [--shot output_dir]
+#include <GLFW/glfw3.h>  // web build: GLFW_INCLUDE_ES3 (cmake/Dependencies.cmake) selects the GLES 3 header
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -13,12 +15,17 @@
 #include <string>
 #include <vector>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
 #include "app.hpp"
 
 namespace {
 
 void glfw_error(int code, const char* desc) { std::fprintf(stderr, "glfw error %d: %s\n", code, desc); }
 
+#ifndef __EMSCRIPTEN__
 // Writes the current back buffer as a 24-bit BMP (rows bottom-up, as OpenGL returns them).
 void save_bmp(const std::filesystem::path& path, int w, int h) {
   std::vector<unsigned char> rgba(static_cast<size_t>(w) * h * 4);
@@ -53,6 +60,7 @@ void save_bmp(const std::filesystem::path& path, int w, int h) {
   }
   std::fclose(f);
 }
+#endif
 
 void apply_theme(float scale) {
   ImGuiStyle& s = ImGui::GetStyle();
@@ -78,6 +86,35 @@ void apply_theme(float scale) {
   ImPlot::GetStyle().LineWeight = 2.0f;
 }
 
+// One frame: input, UI, draw. Returns the framebuffer size in w, h.
+void draw_frame(GLFWwindow* window, e47::App& app, int& w, int& h) {
+  glfwPollEvents();
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+
+  app.frame();
+
+  ImGui::Render();
+  glfwGetFramebufferSize(window, &w, &h);
+  glViewport(0, 0, w, h);
+  glClearColor(0.06f, 0.07f, 0.09f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+#ifdef __EMSCRIPTEN__
+// The browser drives the loop (one call per animation frame) and main() returns
+// to the page, so the window and dashboard state live in globals.
+GLFWwindow* g_window = nullptr;
+e47::App* g_app = nullptr;
+
+void web_frame() {
+  int w = 0, h = 0;
+  draw_frame(g_window, *g_app, w, h);
+}
+#endif
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -96,17 +133,29 @@ int main(int argc, char** argv) {
 
   glfwSetErrorCallback(glfw_error);
   if (!glfwInit()) return 1;
+#ifdef __EMSCRIPTEN__
+  // WebGL 2 (OpenGL ES 3.0). SCALE_TO_MONITOR: the framebuffer follows devicePixelRatio.
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+  const char* glsl_version = "#version 300 es";
+#else
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+  const char* glsl_version = "#version 330";
+#endif
   GLFWwindow* window = glfwCreateWindow(1600, 960, "India Energy 2047", nullptr, nullptr);
   if (!window) {
     glfwTerminate();
     return 1;
   }
   glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
+#ifndef __EMSCRIPTEN__
+  glfwSwapInterval(1);  // the browser paces frames with requestAnimationFrame
+#endif
 
   float xs = 1.0f, ys = 1.0f;
   glfwGetWindowContentScale(window, &xs, &ys);
@@ -117,43 +166,57 @@ int main(int argc, char** argv) {
   ImGuiIO& io = ImGui::GetIO();
   io.IniFilename = nullptr;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-  // Segoe UI when available (Windows), otherwise the built-in font.
   ImFont* body = nullptr;
   ImFont* head = nullptr;
   ImFont* big = nullptr;
+#ifdef __EMSCRIPTEN__
+  // Layout is in CSS pixels and the framebuffer is xs (devicePixelRatio) times larger:
+  // fonts are rasterised at device resolution and drawn at 1 / xs so text stays sharp.
+  // Roboto (from the Dear ImGui sources) is packaged by cmake/Web.cmake.
+  const float font_scale = xs, ui_scale = 1.0f;
+  io.FontGlobalScale = 1.0f / xs;
+  const char* regular = "/fonts/Roboto-Medium.ttf";
+  const char* bold = regular;
+#else
+  // Segoe UI when available (Windows), otherwise the built-in font.
+  const float font_scale = xs, ui_scale = xs;
   const char* regular = "C:/Windows/Fonts/segoeui.ttf";
   const char* bold = "C:/Windows/Fonts/segoeuib.ttf";
+#endif
   if (std::filesystem::exists(regular) && std::filesystem::exists(bold)) {
-    body = io.Fonts->AddFontFromFileTTF(regular, 17.0f * xs);
-    head = io.Fonts->AddFontFromFileTTF(bold, 21.0f * xs);
-    big = io.Fonts->AddFontFromFileTTF(bold, 28.0f * xs);
+    body = io.Fonts->AddFontFromFileTTF(regular, 17.0f * font_scale);
+    head = io.Fonts->AddFontFromFileTTF(bold, 21.0f * font_scale);
+    big = io.Fonts->AddFontFromFileTTF(bold, 28.0f * font_scale);
   } else {
     ImFontConfig fc;
-    fc.SizePixels = 15.0f * xs;
+    fc.SizePixels = 15.0f * font_scale;
     body = io.Fonts->AddFontDefault(&fc);
   }
-  apply_theme(xs);
+  apply_theme(ui_scale);
   ImGui_ImplGlfw_InitForOpenGL(window, true);
-  ImGui_ImplOpenGL3_Init("#version 330");
+#ifdef __EMSCRIPTEN__
+  // Resize the GLFW window with the page container (#wrap in web/shell.html) and
+  // take mouse-wheel deltas from the browser.
+  ImGui_ImplGlfw_InstallEmscriptenCallbacks(window, "#wrap");
+#endif
+  ImGui_ImplOpenGL3_Init(glsl_version);
 
+#ifdef __EMSCRIPTEN__
+  // No --shot capture in the browser. The page keeps running after main() returns.
+  (void)shot_tab;
+  (void)settle;
+  g_window = window;
+  g_app = new e47::App(root);  // root is "/" (the preloaded data package is mounted there)
+  g_app->set_fonts(body, head, big);
+  emscripten_set_main_loop(web_frame, 0, true);
+  return 0;
+#else
   e47::App app(root);
   app.set_fonts(body, head, big);
 
   while (!glfwWindowShouldClose(window)) {
-    glfwPollEvents();
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    app.frame();
-
-    ImGui::Render();
     int w = 0, h = 0;
-    glfwGetFramebufferSize(window, &w, &h);
-    glViewport(0, 0, w, h);
-    glClearColor(0.06f, 0.07f, 0.09f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    draw_frame(window, app, w, h);
     if (!shot_dir.empty() && app.ready()) {
       if (shot_tab < 0) {
         shot_tab = 0;
@@ -175,4 +238,5 @@ int main(int argc, char** argv) {
   glfwDestroyWindow(window);
   glfwTerminate();
   return 0;
+#endif
 }

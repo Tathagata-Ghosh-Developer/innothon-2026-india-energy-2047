@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Electricity 2047</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230f1217'/%3E%3Cpath d='M9 1 3 9h4l-1 6 6-8H8z' fill='%234f9cf5'/%3E%3C/svg%3E">
+<meta name="description" content="Forecast of India's electricity generation to 2047 and a regional generation mix (Dear ImGui dashboard in WebAssembly).">
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0f1217; color: #c9d1db;
+               font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  /* The GLFW window follows the size of #wrap (see apps/dashboard/main.cpp). */
+  #wrap { position: fixed; inset: 0; overflow: hidden; }
+  #canvas { display: block; outline: none; }
+  #overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+             justify-content: center; gap: 14px; background: #0f1217; text-align: center; padding: 0 16px; }
+  #overlay.hidden { display: none; }
+  h1 { margin: 0; font-size: 20px; font-weight: 600; color: #e6edf5; }
+  #msg { min-height: 1.45em; color: #9aa6b2; }
+  #bar { width: min(320px, 80vw); height: 6px; border-radius: 3px; background: #1d232c; overflow: hidden; }
+  #fill { width: 0; height: 100%; background: #4f9cf5; transition: width .2s; }
+  .spin #fill { width: 30%; animation: slide 1.1s ease-in-out infinite; }
+  @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+  #err { display: none; max-width: 640px; color: #ff8080; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas></div>
+<div id="overlay" class="spin">
+  <h1>India Electricity Generation 2047</h1>
+  <div id="bar"><div id="fill"></div></div>
+  <div id="msg">Loading...</div>
+  <div id="err"></div>
+</div>
+<script>
+  // Only Module is global: the Emscripten runtime declares its own globals (out, err, ...).
+  var Module = (function () {
+    var overlay = document.getElementById('overlay');
+    var msg = document.getElementById('msg');
+    var fill = document.getElementById('fill');
+    var detail = document.getElementById('err');
+    function fail(text) {
+      overlay.classList.remove('hidden', 'spin');
+      msg.textContent = 'The dashboard could not start.';
+      detail.style.display = 'block';
+      detail.textContent = text;
+    }
+    // The compute thread uses SharedArrayBuffer, which browsers only allow on
+    // cross-origin isolated pages (COOP/COEP headers, see web/vercel.json).
+    var isolated = window.crossOriginIsolated;
+    if (!isolated) {
+      fail('This page must be served with the headers\n' +
+           'Cross-Origin-Opener-Policy: same-origin\nCross-Origin-Embedder-Policy: require-corp');
+    }
+    window.addEventListener('error', function (e) { if (isolated && e.message) fail(e.message); });
+    var m = {
+      canvas: document.getElementById('canvas'),
+      setStatus: function (text) {
+        if (!isolated) return;
+        if (!text) { overlay.classList.add('hidden'); return; }
+        var p = text.match(/\((\d+(\.\d+)?)\/(\d+)\)/);
+        if (p) {
+          overlay.classList.remove('spin');
+          msg.textContent = 'Downloading data (' + (p[3] / 1048576).toFixed(1) + ' MB)';
+          fill.style.width = (100 * p[1] / p[3]).toFixed(1) + '%';
+        } else {
+          overlay.classList.add('spin');
+          msg.textContent = text === 'Running...' ? 'Starting...' : text;
+        }
+      },
+      monitorRunDependencies: function (left) {
+        if (left) m.setStatus('Preparing...');
+      },
+      onAbort: function (what) { if (isolated) fail(String(what)); }
+    };
+    m.setStatus('Downloading...');
+    return m;
+  })();
+</script>
+{{{ SCRIPT }}}
+</body>
+</html>

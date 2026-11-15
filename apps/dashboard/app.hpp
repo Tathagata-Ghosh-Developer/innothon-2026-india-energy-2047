@@ -66,7 +66,7 @@ class App {
   std::shared_ptr<Job> cur_;
   bool busy_ = false;
 
-  int draws_log2_ = 22;
+  int draws_log2_ = kDefaultDrawsLog2;
   int mix_method_ = 0;     // 0 = least cost, 1 = resource score
   bool show_models_ = true;
   bool show_nep_ = true;

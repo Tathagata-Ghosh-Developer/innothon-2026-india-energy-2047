@@ -1,4 +1,8 @@
+#ifdef _OPENMP
 #include <omp.h>
+#else
+#include <thread>
+#endif
 
 #include <algorithm>
 #include <cstring>
@@ -9,6 +13,41 @@
 #include "mc.hpp"
 
 namespace e47 {
+
+namespace {
+
+// Fork-join over worker threads: OpenMP when available, std::thread otherwise
+// (the WebAssembly build has pthreads but no OpenMP runtime).
+int worker_count() {
+#ifdef _OPENMP
+  return omp_get_max_threads();
+#else
+  const unsigned hc = std::thread::hardware_concurrency();
+  return static_cast<int>(std::clamp(hc, 1u, 8u));
+#endif
+}
+
+template <class F>
+void for_each_worker(int nt, F&& f) {
+#ifdef _OPENMP
+  // Every worker index runs exactly once, even if OpenMP grants fewer threads.
+#pragma omp parallel num_threads(nt)
+  for (int k = omp_get_thread_num(); k < nt; k += omp_get_num_threads()) f(k);
+#else
+  std::vector<std::thread> pool;
+  for (int k = 1; k < nt; ++k) pool.emplace_back([&f, k] { f(k); });
+  f(0);
+  for (auto& t : pool) t.join();
+#endif
+}
+
+// Static block partition of [0, n) for worker k of nt.
+inline void block(int64_t n, int nt, int k, int64_t& b, int64_t& e) {
+  b = n * k / nt;
+  e = n * (k + 1) / nt;
+}
+
+}  // namespace
 
 double McResult::quantile(const McInputs& in, int series, int t, double q) const {
   return hist_quantile(bins(series, t), kBins, in.hist_lo[series][t], in.hist_hi[series][t], q);
@@ -27,16 +66,15 @@ double McResult::mean(const McInputs& in, int series, int t) const {
 
 void calibrate_hist_ranges(McInputs& in, const std::vector<float>& boot, uint64_t seed, int pilot) {
   constexpr int N = kSeries * kMaxYears;
-  const int nt = omp_get_max_threads();
+  const int nt = worker_count();
   std::vector<double> mn(static_cast<size_t>(nt) * N, std::numeric_limits<double>::infinity());
   std::vector<double> mx(static_cast<size_t>(nt) * N, 0.0);
-#pragma omp parallel
-  {
-    const int tid = omp_get_thread_num();
+  for_each_worker(nt, [&](int tid) {
     double* lmn = mn.data() + static_cast<size_t>(tid) * N;
     double* lmx = mx.data() + static_cast<size_t>(tid) * N;
-#pragma omp for schedule(static)
-    for (int i = 0; i < pilot; ++i) {
+    int64_t b = 0, e = 0;
+    block(pilot, nt, tid, b, e);
+    for (int64_t i = b; i < e; ++i) {
       // Distinct seed so the pilot does not reuse the production draws.
       simulate_draw<double>(
           in, boot.data(), seed ^ 0x5DEECE66Dull, static_cast<uint64_t>(i),
@@ -47,7 +85,7 @@ void calibrate_hist_ranges(McInputs& in, const std::vector<float>& boot, uint64_
           },
           nullptr);
     }
-  }
+  });
   for (int s = 0; s < kSeries; ++s)
     for (int t = 0; t < kMaxYears; ++t) {
       double a = std::numeric_limits<double>::infinity(), b = 0;
@@ -73,19 +111,20 @@ McResult run_mc_cpu(const McInputs& in, const std::vector<float>& boot, uint64_t
   r.hist.assign(H, 0);
   n_keep = static_cast<int>(std::min<uint64_t>(static_cast<uint64_t>(std::max(n_keep, 0)), draws));
   r.keep.assign(static_cast<size_t>(n_keep) * kKeepFeatures, 0.0f);
-  const int nt = omp_get_max_threads();
+  const int nt = worker_count();
   if (draws / static_cast<uint64_t>(nt) >= 0xFFFFFFFFull)
     throw std::runtime_error("run_mc_cpu: too many draws per thread for 32-bit histogram counts");
-  r.device = "CPU " + std::to_string(nt) + " threads (" + (single_precision ? "float" : "double") + ")";
+  r.device = "CPU " + std::to_string(nt) + (nt == 1 ? " thread (" : " threads (") +
+             (single_precision ? "float" : "double") + ")";
 
   Timer timer;
   std::vector<uint32_t> local(H * static_cast<size_t>(nt), 0);
   const int64_t n = static_cast<int64_t>(draws);
-#pragma omp parallel
-  {
-    uint32_t* h = local.data() + H * static_cast<size_t>(omp_get_thread_num());
-#pragma omp for schedule(static)
-    for (int64_t i = 0; i < n; ++i) {
+  for_each_worker(nt, [&](int tid) {
+    uint32_t* h = local.data() + H * static_cast<size_t>(tid);
+    int64_t b = 0, e = 0;
+    block(n, nt, tid, b, e);
+    for (int64_t i = b; i < e; ++i) {
       float* kp = i < n_keep ? r.keep.data() + static_cast<size_t>(i) * kKeepFeatures : nullptr;
       if (single_precision) {
         simulate_draw<float>(
@@ -99,15 +138,17 @@ McResult run_mc_cpu(const McInputs& in, const std::vector<float>& boot, uint64_t
             kp);
       }
     }
-    // Parallel merge: each thread sums one slice of the histogram across threads.
-#pragma omp barrier
-#pragma omp for schedule(static)
-    for (int64_t j = 0; j < static_cast<int64_t>(H); ++j) {
+  });
+  // Parallel merge: each worker sums one slice of the histogram across workers.
+  for_each_worker(nt, [&](int tid) {
+    int64_t b = 0, e = 0;
+    block(static_cast<int64_t>(H), nt, tid, b, e);
+    for (int64_t j = b; j < e; ++j) {
       uint64_t s = 0;
       for (int k = 0; k < nt; ++k) s += local[H * static_cast<size_t>(k) + static_cast<size_t>(j)];
       r.hist[static_cast<size_t>(j)] = s;
     }
-  }
+  });
   r.ms = timer.ms();
   return r;
 }

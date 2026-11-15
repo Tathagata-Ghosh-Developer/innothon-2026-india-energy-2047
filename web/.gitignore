@@ -1,0 +1,2 @@
+# Built site (build_web.cmd); deploy it with the Vercel CLI, do not commit it.
+dist/

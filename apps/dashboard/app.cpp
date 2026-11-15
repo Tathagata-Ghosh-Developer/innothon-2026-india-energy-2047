@@ -160,7 +160,7 @@ void App::frame() {
     ImGui::TextUnformatted("India Electricity Generation 2047");
     if (font_head_) ImGui::PopFont();
     ImGui::Text("%s: %s", core_name(static_cast<CoreModel>(core_)),
-                !pl_ ? "loading data and fitting models (bootstrap on all CPU threads)..."
+                !pl_ ? "loading data and fitting models..."
                      : "running the scenario ensemble...");
     ImGui::End();
     return;
@@ -346,7 +346,7 @@ void App::sidebar() {
   ImGui::SameLine();
   if (ImGui::Button("Reset scenario")) {
     sc_ = ScenarioControls{};
-    draws_log2_ = 22;
+    draws_log2_ = kDefaultDrawsLog2;
     dirty_ = true;
   }
   ImGui::PopItemWidth();
