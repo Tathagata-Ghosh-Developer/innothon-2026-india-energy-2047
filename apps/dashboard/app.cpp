@@ -665,6 +665,87 @@ void App::tab_mix() {
              "generation floors, the non-fossil minimum, build-rate limits and corridor limits."
            : "Resource score: the same national totals by source, shared across regions in proportion to usable "
              "resource (solar, wind, hydro, bioenergy potential), existing fleets (coal, gas) and nuclear sites.");
+
+  // Storage and land back-calculated from the least-cost plan (recomputed with every strategy update).
+  if (mix_method_ != 0) return;
+  ImGui::SeparatorText("Storage and land this plan needs (hourly back-calculation)");
+  const StorageLandResult& sl = s.storage;
+  if (!sl.ok) {
+    help(("Not computed: " + sl.status).c_str());
+    return;
+  }
+  const StorageSizing& z = sl.total;
+  const StorageInputs& si = pl_->storage_inputs();
+  if (ImGui::BeginTable("storage", 7, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchSame)) {
+    for (const char* hname : {"Storage power", "Storage energy (daily cycle)", "Duration", "Curtailed solar and wind",
+                              "Shortfall hours before storage", "Solar and wind land", "Share of India's area"})
+      ImGui::TableSetupColumn(hname);
+    ImGui::TableHeadersRow();
+    ImGui::TableNextRow();
+    char v[64], tip[512];
+    auto cell = [&] {
+      ImGui::TableNextColumn();
+      ImGui::TextUnformatted(v);
+      ImGui::SetItemTooltip("%s", tip);
+    };
+    std::snprintf(v, sizeof v, "%s GW", with_commas(z.power_gw).c_str());
+    std::snprintf(tip, sizeof tip,
+                  "Charge and discharge rating. The largest hourly shortfall after hydro, coal and gas follow the load "
+                  "is %s GW; the rating is raised above it for midday charging while each extra GW still serves an "
+                  "hour a day of shortfall. Firmed RE is counted as solar and wind with its storage; with firmed RE as "
+                  "round-the-clock supply the rest of the system needs %s GW.",
+                  with_commas(z.discharge_gw).c_str(), with_commas(sl.system.power_gw).c_str());
+    cell();
+    std::snprintf(v, sizeof v, "%s GWh", with_commas(z.energy_day_gwh).c_str());
+    std::snprintf(tip, sizeof tip,
+                  "Smallest store that covers every shortfall the same day's surplus can cover, on the design day (%s); "
+                  "the median day needs %s GWh. Carry-over between days adds energy only while each extra GWh cycles "
+                  "at least weekly: %s GWh. CEA's 2029-30 optimal mix: %.1f GW, %.0f GWh.",
+                  z.design_day.c_str(), with_commas(z.energy_day_median_gwh).c_str(),
+                  with_commas(z.energy_multi_gwh).c_str(), si.bench_power_gw, si.bench_energy_gwh);
+    cell();
+    std::snprintf(v, sizeof v, "%.1f h", z.duration_h);
+    std::snprintf(tip, sizeof tip, "Storage energy / storage power. About %.0f full cycles a year.", z.cycles);
+    cell();
+    std::snprintf(v, sizeof v, "%.1f%%", z.curtailed_day_pct());
+    std::snprintf(tip, sizeof tip,
+                  "Surplus solar and wind the daily store cannot take: %s of %s TWh. Still short hour by hour after "
+                  "storage: %s TWh, of which storage losses %s TWh; the plan needs that much more generation.",
+                  with_commas(z.curtailed_day_twh).c_str(), with_commas(z.vre_twh).c_str(),
+                  with_commas(z.unmet_day_twh).c_str(), with_commas(z.losses_twh).c_str());
+    cell();
+    std::snprintf(v, sizeof v, "%s h/yr", with_commas(z.deficit_hours).c_str());
+    std::snprintf(tip, sizeof tip, "Hours a year with load above supply after firm dispatch, before storage (%s TWh).",
+                  with_commas(z.deficit_twh).c_str());
+    cell();
+    const LandUse& L = sl.land;
+    std::snprintf(v, sizeof v, "%s km2", with_commas(L.total_km2()).c_str());
+    std::snprintf(tip, sizeof tip,
+                  "Solar %s km2 (4 acres/MW, MNRE, at the regional capacity factor; %s km2 at NREL's 3.4 acres per "
+                  "GWh/yr) plus the wind turbine footprint %s km2. Wind farms also spread over %s km2 that mostly stays "
+                  "in farming. Offshore wind uses no land. %.1f%% of India's wasteland.",
+                  with_commas(L.solar_total()).c_str(), with_commas(L.solar_km2_high).c_str(),
+                  with_commas(L.total_km2() - L.solar_total()).c_str(), with_commas(L.wind_total_area()).c_str(),
+                  sl.pct_wasteland);
+    cell();
+    std::snprintf(v, sizeof v, "%.2f%%", sl.pct_india);
+    std::snprintf(tip, sizeof tip,
+                  "Of India's geographical area (ISFR 2023). By region: North %.2f%%, West %.2f%%, South %.2f%%, East "
+                  "%.2f%%, North-East %.2f%%. Solar uses %.0f%% of the NISE ground-mounted generation potential.",
+                  sl.pct_region[0], sl.pct_region[1], sl.pct_region[2], sl.pct_region[3], sl.pct_region[4],
+                  100 * sl.solar_share_of_potential);
+    cell();
+    ImGui::EndTable();
+  }
+  char note[400];
+  std::snprintf(note, sizeof note,
+                "The plan is dispatched hour by hour over a year built from NPP Merit hourly generation (%zu complete "
+                "days, %s to %s). Load follows the shape of total generation; nuclear and bioenergy run flat, hydro "
+                "within each day's observed range, coal between %.0f%% and 100%% of its peak (%.2fx its mean), gas "
+                "peaking. Round trip %.0f%%. Hover a value for details.",
+                si.days.size(), si.days.front().date.c_str(), si.days.back().date.c_str(), 100 * si.coal_min_level,
+                si.coal_peak_ratio, 100 * si.round_trip);
+  help(note);
 }
 
 void App::tab_models() {
@@ -990,6 +1071,11 @@ void App::tab_data() {
         {"Inter-regional corridors", "CEA / NEP Vol II (2032 plan)", "Transfer limits and losses"},
         {"Nuclear pipeline", "DAE / NPCIL", "Nuclear siting key"},
         {"Generation projections 2026-27, 2031-32", "CEA NEP 2022-32", "Benchmark only"},
+        {"Land-use intensity of solar and wind", "MNRE (PIB 2023); NREL (Ong et al. 2013; Denholm et al. 2009)",
+         "Land back-calculation"},
+        {"Storage round trip; coal minimum level", "NREL ATB 2025; CEA flexible operation regulations 2023",
+         "Storage sizing (CEA 2029-30 optimal mix for comparison)"},
+        {"Geographical area, wasteland", "ISFR 2023; Wastelands Atlas 2019", "Land as a share of India and its regions"},
     };
     for (const auto& r : rows) {
       ImGui::TableNextRow();

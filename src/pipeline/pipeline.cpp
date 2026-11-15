@@ -368,6 +368,7 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
   }
 
   alloc_in_ = load_allocation_inputs(root_);
+  storage_in_ = load_storage_inputs(root_);  // never throws; storage is skipped if its inputs are missing
 }
 
 std::vector<float> Pipeline::boot_for(const ScenarioControls& c) const {
@@ -532,6 +533,7 @@ StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControl
     s.score.ok = false;
     s.score.status = "not run: the least-cost plan is infeasible, so there are no national totals to share";
   }
+  s.storage = storage_and_land(storage_in_, alloc_in_, p, s.least_cost);
   Timer tt;
   const double p10 = f.mc.quantile(f.inputs, 0, t, 0.10), p90 = f.mc.quantile(f.inputs, 0, t, 0.90);
   s.tornado = policy_tornado(alloc_in_, p, s.requirement, p10 / national, p90 / national);

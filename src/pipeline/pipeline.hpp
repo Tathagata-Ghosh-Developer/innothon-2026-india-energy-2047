@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../allocation/allocate.hpp"
+#include "../allocation/storage.hpp"
 #include "../forecast/backtest.hpp"
 #include "../forecast/india.hpp"
 #include "../forecast/mc.hpp"
@@ -131,6 +132,8 @@ struct StrategyResult {
   PolicySettings policy;
   std::vector<TornadoRow> tornado;
   double tornado_ms = 0;
+  // Storage and land back-calculated from the least-cost plan (hourly Merit shapes).
+  StorageLandResult storage;
 };
 
 class Pipeline {
@@ -144,6 +147,7 @@ class Pipeline {
   std::vector<float> boot_for(const ScenarioControls& c) const;
   const DriverData& drivers() const { return drv_; }
   const AllocationInputs& allocation_inputs() const { return alloc_in_; }
+  const StorageInputs& storage_inputs() const { return storage_in_; }
 
   McInputs build_inputs(const ScenarioControls& c) const;
   ForecastResult forecast(const ScenarioControls& c) const;
@@ -154,6 +158,7 @@ class Pipeline {
   Fitted fit_;
   DriverData drv_;
   AllocationInputs alloc_in_;
+  StorageInputs storage_in_;
 };
 
 }  // namespace e47

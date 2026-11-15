@@ -40,6 +40,8 @@ Capacity factors themselves are ratios of energy to capacity and are provided on
 | `nuclear_pipeline.csv` | 25 | Nuclear plants under construction, sanctioned and planned, with state, region and expected commissioning; 100 GW target |
 | `offshore_wind.csv` | 36 | Offshore potential, zones, targets, auction trajectory, VGF scheme |
 | `policy_targets.csv` | 93 | National targets and official projections, each marked capacity-, generation- or emissions-based |
+| `land_use.csv` | 6 | Land-use intensity of solar PV and onshore wind (MNRE norm, NREL studies) for the land back-calculation |
+| `storage_parameters.csv` | 7 | Storage round-trip efficiency, coal fleet minimum level, and the CEA 2029-30 storage benchmark |
 
 ---
 
@@ -377,6 +379,27 @@ Section 10 (PDF page 266) gives projected power-sector CO2 of 1,057 Mt (2026-27)
 
 **CEA NEP Vol II Transmission (row added to policy_targets.csv).**
 The executive summary (PDF page 41) states MNRE's initial estimate of 70.5 GW of additional electricity demand for green hydrogen and green ammonia by 2031-32, in coastal Gujarat, Odisha, West Bengal, Andhra Pradesh, Tamil Nadu and Karnataka.
+
+---
+
+## land_use.csv, storage_parameters.csv
+
+Columns: `technology, metric, value, unit, basis, verified, source_name, source_url, source_location, accessed, notes`.
+Read by `src/allocation/storage.cpp` for the storage and land back-calculation (`docs/methodology.md`, section 6.4).
+The code reads only rows with `verified = yes`; every row was checked against the document named on 2026-11-16, and the quoted sentence or table cell is given in `source_location` or `notes`.
+
+**Land (`land_use.csv`).**
+
+* Solar, central: MNRE's statement in the PIB release of 20 July 2023 that "an average of four acres of land is required to set up 1 MW capacity". Converted to energy with the regional solar CUF of `capacity_factors.csv` (`planning_cuf_new`): acres per GWh/yr = 4 / (CUF x 8.76).
+* Solar, high case: Ong et al. (2013), NREL/TP-6A20-56290, Table ES-1, large PV (above 20 MW), total area, generation-weighted 3.4 acres per GWh/yr (direct area 3.1 is recorded but not used). Read from the UNT Digital Library copy, because the NREL host did not resolve on the access date.
+* Onshore wind: Denholm et al. (2009), NREL/TP-6A2-45834, Table 1 (page 10): permanent direct impact 0.3 +- 0.3 ha/MW (used as the footprint), temporary 0.7 +- 0.6 ha/MW (not used), total project area 34.5 +- 22.4 ha/MW (reported separately; mostly still farmed). Converted with the regional wind CUF (`planning_cuf`). Read from the PNNL Tethys copy.
+* The per-MW values are used only to obtain area per unit of energy; no capacity is reported.
+
+**Storage (`storage_parameters.csv`).**
+
+* Round trip 85 percent: NREL Annual Technology Baseline 2025, utility-scale battery storage page ("the 2025 ATB assumes a roundtrip efficiency of 85%").
+* Coal minimum 40 percent: CEA (Flexible Operation of Coal based Thermal Power Generating Units) Regulations, 2023, as summarised by India Environment Portal ("minimum power level of 40 per cent"). The CEA-hosted PDF returned a short HTML page instead of the document on the access date.
+* Benchmark, comparison only: CEA, Report on Optimal Generation Capacity Mix for 2029-30, Version 2.0 (April 2023), section 8.1.2 (vi), page 26: 60.63 GW (18.98 GW pumped storage and 41.65 GW batteries) with 336.4 GWh; Exhibit 8.4 (page 25): 2,440.7 BU, solar 22.7 percent, wind 8.5 percent. Read from the copy hosted by JMK Research.
 
 ---
 

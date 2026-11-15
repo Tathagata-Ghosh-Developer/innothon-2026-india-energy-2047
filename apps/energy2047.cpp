@@ -90,6 +90,184 @@ void write_strategy(const fs::path& out, const AllocationInputs& in, const Strat
   }
 }
 
+// Storage and land back-calculated from the least-cost plan: Base and Robust policy
+// at the median and P90 requirement, plus the Robust plan with the P90 levers
+// (45% usable solar land, build rates 3.5x the record year), which meets the P90.
+void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const ScenarioControls& c) {
+  const StorageInputs& si = pl.storage_inputs();
+  if (!si.ok) {
+    std::printf("storage and land: skipped (%s)\n", si.status.c_str());
+    return;
+  }
+  struct Case {
+    const char* plan;
+    const char* policy;
+    double quantile;
+    double solar_land, build_accel;  // < 0 = preset value
+  };
+  const Case cases[] = {{"robust_p50", "Robust", 0.5, -1, -1},
+                        {"base_p50", "Base", 0.5, -1, -1},
+                        {"robust_p90", "Robust", 0.9, -1, -1},
+                        {"base_p90", "Base", 0.9, -1, -1},
+                        {"robust_p90_levers", "Robust", 0.9, 0.45, 3.5}};
+  CsvWriter w((out / "storage_land_2047.csv").string());
+  w.field("plan").field("quantity").field("value").field("unit").field("note");
+  w.endrow();
+  auto row = [&](const std::string& plan, const char* q, double v, const char* unit, const std::string& note) {
+    w.field(plan).field(q).field(v, 7).field(unit).field(note);
+    w.endrow();
+  };
+  // Inputs shared by every plan.
+  {
+    const std::string all = "all";
+    row(all, "complete_days", static_cast<double>(si.days.size()), "days",
+        "NPP Merit hourly generation, " + si.days.front().date + " to " + si.days.back().date +
+            "; months weighted to a 365-day year");
+    static const char* names[kProfileSeries] = {"load", "solar", "wind", "hydro", "coal", "gas"};
+    for (int s = 0; s < kProfileSeries; ++s)
+      row(all, (std::string("trend_") + names[s]).c_str(), si.trend[s], "ln per year",
+          si.detrended[s] ? "same month a year apart; removed from the shape (fleet growth)"
+                          : "same month a year apart; kept (weather, not a trend)");
+    row(all, "coal_peak_to_mean", si.coal_peak_ratio, "ratio", "highest hourly coal (Merit thermal) / mean hourly");
+    row(all, "coal_minimum_level", si.coal_min_level, "fraction", "of the coal fleet's highest hourly output (CEA 2023)");
+    row(all, "round_trip_efficiency", si.round_trip, "fraction", "NREL ATB 2025");
+    row(all, "cea_2029_30_storage_power", si.bench_power_gw, "GW", "CEA optimal mix 2029-30 v2.0 (PSP + BESS)");
+    row(all, "cea_2029_30_storage_energy", si.bench_energy_gwh, "GWh", "CEA optimal mix 2029-30 v2.0 (PSP + BESS)");
+    row(all, "cea_2029_30_storage_gwh_per_twh_vre", si.bench_energy_gwh / (si.bench_generation_twh * si.bench_vre_share),
+        "GWh per TWh", "storage energy / solar and wind generation, CEA 2029-30");
+  }
+  std::printf("storage and land (least-cost plan; total = firmed RE counted with its storage):\n");
+  std::printf("  %-18s %7s %7s %7s %6s %7s %8s %7s %7s %8s %6s\n", "plan", "req TWh", "GW", "GWh", "h", "multi",
+              "short h", "curt %", "loss", "km2", "% area");
+  for (const Case& k : cases) {
+    PolicySettings ps;
+    for (const auto& pp : policy_presets())
+      if (pp.name == k.policy) pp.apply(ps);
+    if (k.solar_land > 0) ps.solar_land = k.solar_land;
+    if (k.build_accel > 0) ps.build_accel = k.build_accel;
+    ScenarioControls sc = c;
+    sc.requirement_quantile = k.quantile;
+    const StrategyResult r = pl.strategy(f, sc, ps);
+    const StorageLandResult& s = r.storage;
+    const std::string plan = k.plan;
+    if (plan == "robust_p50" && s.ok) {
+      // What-if settings on the recommended plan: a stiffer coal fleet and a lower round trip.
+      struct WhatIf {
+        const char* name;
+        const char* note;
+        void (*apply)(StorageInputs&);
+      };
+      const WhatIf whatifs[] = {
+          {"robust_p50_coal_min_55", "what-if: coal fleet minimum 55% instead of 40% of its peak hour",
+           [](StorageInputs& x) { x.coal_min_level = 0.55; }},
+          {"robust_p50_round_trip_75", "what-if: round trip 75% instead of 85%",
+           [](StorageInputs& x) { x.round_trip = 0.75; }},
+      };
+      for (const WhatIf& wi : whatifs) {
+        StorageInputs x = si;
+        wi.apply(x);
+        const StorageLandResult t = storage_and_land(x, pl.allocation_inputs(), ps, r.least_cost);
+        const StorageSizing& z = t.total;
+        row(wi.name, "storage_power", z.power_gw, "GW", wi.note);
+        row(wi.name, "storage_energy_daily", z.energy_day_gwh, "GWh", wi.note);
+        row(wi.name, "storage_duration", z.duration_h, "h", wi.note);
+        row(wi.name, "curtailed_vre_daily_storage_pct", z.curtailed_day_pct(), "% of VRE", wi.note);
+        row(wi.name, "unmet_after_daily_storage", z.unmet_day_twh, "TWh", wi.note);
+        std::printf("  %-26s %.0f GW, %.0f GWh, %.1f h, curtailed %.1f%%, unmet after storage %.0f TWh\n", wi.name,
+                    z.power_gw, z.energy_day_gwh, z.duration_h, z.curtailed_day_pct(), z.unmet_day_twh);
+      }
+    }
+    if (!s.ok) {
+      row(plan, "status", 0, "", s.status);
+      std::printf("  %-18s %s\n", k.plan, s.status.c_str());
+      continue;
+    }
+    double req = 0, unserved = 0;
+    for (int i = 0; i < kRegions; ++i) {
+      req += r.requirement[i];
+      unserved += r.least_cost.unserved[i];
+    }
+    const AllocationResult& a = r.least_cost;
+    char desc[160];
+    std::snprintf(desc, sizeof desc, "%s policy, P%.0f requirement%s", k.policy, 100 * k.quantile,
+                  k.solar_land > 0 ? ", 45% usable solar land, build rates 3.5x" : "");
+    row(plan, "requirement", req, "TWh", desc);
+    row(plan, "unserved_in_plan", unserved, "TWh", "annual shortfall of the plan itself (LP); storage cannot supply it");
+    row(plan, "solar_generation", a.national[kSolar], "TWh", "");
+    row(plan, "onshore_wind_generation", a.national[kWind], "TWh", "");
+    row(plan, "offshore_wind_generation", a.national[kOffshore], "TWh", "shaped like onshore wind");
+    row(plan, "firmed_re_generation", a.national[kFirmRE], "TWh",
+        "split back into solar and onshore wind in proportion to the usable potential the plan leaves in each region");
+    row(plan, "firmed_re_solar_part", s.firm_re_solar_twh, "TWh", "");
+    row(plan, "firmed_re_wind_part", s.firm_re_wind_twh, "TWh", "");
+    for (int pass = 0; pass < 2; ++pass) {
+      const StorageSizing& z = pass == 0 ? s.total : s.system;
+      const std::string sfx = pass == 0 ? "" : "_firmed_re_as_rtc";
+      const std::string scope = pass == 0 ? "all storage, firmed RE as solar and wind"
+                                          : "system storage only, firmed RE as round-the-clock supply";
+      auto put = [&](const char* q, double v, const char* unit, const std::string& note) {
+        row(plan, (q + sfx).c_str(), v, unit, note.empty() ? scope : note + "; " + scope);
+      };
+      put("storage_power", z.power_gw, "GW",
+          "charge and discharge rating: largest shortfall, raised while each extra GW serves 365 GWh a year");
+      put("storage_discharge_power", z.discharge_gw, "GW", "largest hourly shortfall after firm dispatch");
+      put("storage_energy_daily", z.energy_day_gwh, "GWh", "daily cycle, design day " + z.design_day);
+      put("storage_energy_median_day", z.energy_day_median_gwh, "GWh", "daily need on the median day");
+      put("storage_duration", z.duration_h, "h", "daily energy / storage power");
+      put("storage_energy_multiday", z.energy_multi_gwh, "GWh",
+          "carry-over between days; grown while each extra GWh serves at least 52 GWh of shortfall a year");
+      put("shortfall_hours_before_storage", z.deficit_hours, "h/yr", "hours with load above supply after firm dispatch");
+      put("shortfall_before_storage", z.deficit_twh, "TWh", "");
+      put("surplus_before_storage", z.surplus_twh, "TWh", "");
+      put("vre_generation", z.vre_twh, "TWh", "solar + wind + offshore in this run");
+      put("curtailed_vre_daily_storage", z.curtailed_day_twh, "TWh", "surplus the daily store cannot take");
+      put("curtailed_vre_daily_storage_pct", z.curtailed_day_pct(), "% of VRE", "");
+      put("unmet_after_daily_storage", z.unmet_day_twh, "TWh", "extra generation still needed hour by hour");
+      put("unmet_after_daily_storage_free_charging", z.unmet_day_free_charge_twh, "TWh",
+          "same store if charging were not limited by its power (value of a larger charging rating)");
+      put("storage_throughput", z.throughput_twh, "TWh/yr", "energy discharged");
+      put("storage_losses", z.losses_twh, "TWh/yr", "charged - discharged");
+      put("storage_full_cycles", z.cycles, "cycles/yr", "");
+      put("unmet_after_multiday_storage", z.unmet_multi_twh, "TWh", "");
+      put("curtailed_vre_multiday_storage", z.curtailed_multi_twh, "TWh", "");
+      for (size_t i = 0; i < z.curve_unmet_twh.size(); ++i) {
+        char q[64], note[96];
+        std::snprintf(q, sizeof q, "unmet_with_carryover_store_x%.1f", StorageSizing::kCurveMult[i]);
+        std::snprintf(note, sizeof note, "store of %.1f x the daily energy (%.0f GWh), carry-over between days",
+                      StorageSizing::kCurveMult[i], StorageSizing::kCurveMult[i] * z.energy_day_gwh);
+        put(q, z.curve_unmet_twh[i], "TWh", note);
+      }
+    }
+    const LandUse& L = s.land;
+    row(plan, "land_solar", L.solar_total(), "km2", "4 acres/MW (MNRE) at the regional CUF; solar incl. firmed RE");
+    row(plan, "land_solar_high", L.solar_km2_high, "km2", "3.4 acres per GWh/yr (NREL large PV, total area)");
+    row(plan, "land_wind_footprint", L.total_km2() - L.solar_total(), "km2", "0.3 ha/MW permanent footprint (NREL)");
+    row(plan, "land_wind_project_area", L.wind_total_area(), "km2", "34.5 ha/MW project area (NREL); mostly still farmed");
+    row(plan, "land_solar_wind", L.total_km2(), "km2", "solar + wind footprint; offshore wind uses no land");
+    row(plan, "land_share_india", s.pct_india, "% of area", "India 3,287,469 km2 (ISFR 2023)");
+    row(plan, "land_share_wasteland", s.pct_wasteland, "% of wasteland", "Wastelands Atlas 2019, 2015-16");
+    for (int i = 0; i < kRegions; ++i)
+      row(plan, (std::string("land_share_") + region_name(i)).c_str(), s.pct_region[i], "% of area",
+          "solar + wind footprint in the region / its area");
+    row(plan, "solar_share_of_potential", s.solar_share_of_potential, "fraction",
+        "solar incl. firmed / NISE 2025 ground-mounted generation potential");
+    row(plan, "solar_share_of_usable_potential", s.solar_share_of_usable, "fraction",
+        "same / usable fraction of the policy (" + std::to_string(static_cast<int>(std::lround(100 * ps.solar_land))) +
+            "%)");
+    const StorageSizing& z = s.total;
+    std::printf("  %-18s %7.0f %7.0f %7.0f %6.1f %7.0f %8.0f %7.1f %7.1f %8.0f %6.2f\n", k.plan, req, z.power_gw,
+                z.energy_day_gwh, z.duration_h, z.energy_multi_gwh, z.deficit_hours, z.curtailed_day_pct(),
+                z.losses_twh, L.total_km2(), s.pct_india);
+    std::printf("  %-18s unserved in plan %.0f TWh; shortfall left after storage %.0f TWh | system only (firmed RE round "
+                "the clock): %.0f GW, %.0f GWh, %.1f h, shortfall left %.0f TWh\n",
+                "", unserved, z.unmet_day_twh, s.system.power_gw, s.system.energy_day_gwh, s.system.duration_h,
+                s.system.unmet_day_twh);
+  }
+  std::printf("  CEA 2029-30 optimal mix: %.1f GW, %.1f GWh for %.0f TWh of solar and wind (%.2f GWh per TWh)\n",
+              si.bench_power_gw, si.bench_energy_gwh, si.bench_generation_twh * si.bench_vre_share,
+              si.bench_energy_gwh / (si.bench_generation_twh * si.bench_vre_share));
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -468,6 +646,7 @@ int main(int argc, char** argv) {
         std::printf("\n");
       }
     }
+    write_storage_land(out, pl, f, c);
     std::printf("outputs written to %s\n", out.string().c_str());
     return 0;
   } catch (const std::exception& e) {

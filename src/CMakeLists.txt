@@ -8,6 +8,7 @@ add_library(e47_core STATIC
   regional/convergence.cpp
   allocation/inputs.cpp
   allocation/allocate.cpp
+  allocation/storage.cpp
   pipeline/pipeline.cpp)
 target_include_directories(e47_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(e47_core PUBLIC e47_flags e47_eigen highs)

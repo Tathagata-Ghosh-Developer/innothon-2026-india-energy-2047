@@ -19,7 +19,9 @@ namespace {
 // Fork-join over worker threads: OpenMP when available, std::thread otherwise
 // (the WebAssembly build has pthreads but no OpenMP runtime).
 int worker_count() {
-#ifdef _OPENMP
+#if defined(E47_FORCE_THREADS)
+  return E47_FORCE_THREADS;
+#elif defined(_OPENMP)
   return omp_get_max_threads();
 #else
   const unsigned hc = std::thread::hardware_concurrency();

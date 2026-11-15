@@ -176,6 +176,53 @@ Each scenario preset is crossed with each policy preset ([assumptions_and_uncert
 | Low growth | Base | 3,516 | 77.4% | 22.6% | 772 | 134 | 0 | 0 |
 | Low growth | Robust | 3,516 | 81.2% | 18.8% | 643 | 125 | 0 | 0 |
 
+### 3.5 Storage and land the plans need
+
+Each least-cost plan is dispatched hour by hour over a representative year built from NPP Merit hourly generation ([methodology.md](methodology.md), section 6.4; full table in `outputs/storage_land_2047.csv`).
+Storage power and energy are physical sizes of the plan, not forecasts.
+
+| Plan (2047 requirement) | Storage power | Storage energy (daily cycle) | Duration | Curtailed solar and wind | Shortfall left after storage | Solar and wind land | Share of India's area |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **Robust policy, median (4,894 TWh)** | **437 GW** | **2,966 GWh** | **6.8 h** | **3.7%** | **244 TWh (5.0%)** | **19,990 km²** | **0.61%** |
+| Base policy, median (4,894 TWh) | 246 GW | 1,638 GWh | 6.6 h | 3.6% | 151 TWh (3.1%) | 14,403 km² | 0.44% |
+| Robust policy at P90 with the P90 levers (6,829 TWh) | 539 GW | 3,625 GWh | 6.7 h | 1.6% | 223 TWh (3.3%) | 25,402 km² | 0.77% |
+
+**Storage.**
+Before storage, load exceeds supply in about 5,390 hours a year in the Robust plan, mostly evenings and nights after the solar peak.
+The design day is 12 April 2026, before the monsoon, with high load, strong sun and little wind; the median day needs 2,312 GWh.
+The store cycles about 250 times a year, discharges 734 TWh (15 percent of the requirement) and loses 129 TWh in the round trip.
+In the Robust plan, plain solar is already at its usable limit, so the firmed RE that the LP builds uses wind potential and counts here as 606 TWh of onshore wind.
+If firmed RE is instead treated as a round-the-clock block with its storage inside the plants, the rest of the system needs 450 GW and 3,234 GWh.
+The two views put the Robust plan's storage at about 440 to 450 GW and 3.0 to 3.2 TWh.
+
+**Multi-day storage does not pay.**
+Carrying energy between days helps little.
+In the Robust plan, doubling the store's energy cuts the remaining shortfall only from 240 to 225 TWh, so each extra GWh serves about 5 GWh a year.
+The multi-day size therefore equals the daily size; the remaining shortfall is weather over weeks and seasons, which firm generation has to cover.
+Unlimited charging power would save only 12 TWh, so the power rating is not the limit either.
+
+**The plans need about 3 to 5 percent more generation.**
+The shortfall left after storage is the storage losses (129 TWh in the Robust plan) plus days when the sun and wind fall short (about 115 TWh).
+Annual energy balances in the LP do not see either, so the plan needs that much more generation, for example more solar with storage or longer coal running.
+With a stiffer coal fleet (minimum 55 percent instead of 40 percent) the Robust plan needs 459 GW and 3,143 GWh.
+With a 75 percent round trip, typical of pumped storage, the shortfall left rises to 313 TWh.
+
+**Comparison with CEA.**
+CEA's optimal mix for 2029-30 needs 60.6 GW and 336 GWh of storage (18.98 GW pumped storage and 41.65 GW batteries) for 2,441 TWh of generation with 31 percent solar and wind ([CEA, April 2023](https://jmkresearch.com/wp-content/uploads/2023/05/Report_on_Optimal_Generation_Mix_in_year_2030_1683189805.pdf), section 8.1.2).
+That is 0.44 GWh of storage per TWh of solar and wind and 5.5 hours.
+The 2047 plans need 0.66 (Base) to 0.90 (Robust) GWh per TWh at 6.6 to 6.8 hours.
+Storage energy grows 5 to 9 times from 2029-30 while solar and wind generation grows 3 to 4 times, as expected when solar's share rises.
+The Ministry of Power's Annual Report 2025-26 already projects 62 GW of pumped storage (6 to 7 hours) and 99 GW / 396 GWh of batteries for 2034-35 (`data/external/techno_economic/policy_targets.csv`).
+
+**Land.**
+The Robust plan's solar needs 18,942 km² at India's norm of 4 acres per MW, or 32,887 km² at NREL's US average, and the wind turbines take 1,047 km².
+Together that is 0.61 percent of India's area and 3.6 percent of its wasteland.
+Wind farms also spread over about 120,000 km², most of which stays in farming.
+The densest regions are the Southern (0.85 percent of its area), Western (0.74 percent) and Northern (0.58 percent).
+The solar uses 35 percent of the NISE ground-mounted solar potential, all of the usable share in the Robust policy.
+Meeting the P90 requirement with 45 percent of that potential raises the land to 25,402 km² (0.77 percent).
+All solar is counted as ground-mounted; rooftop and agri-PV would reduce the land.
+
 ## 4. Sensitivity
 
 ![Uncertainty and sensitivity](img/5_uncertainty_sensitivity.png)

@@ -309,3 +309,72 @@ Comparing it with the least-cost plan shows where transmission limits and costs 
 
 Fourteen settings (policy shares, land use, corridors, build rates, carbon price, costs and the requirement quantile) are each moved to a low and a high value.
 The 28 resulting least-cost problems are solved in parallel with OpenMP.
+
+### 6.4 Storage and land back-calculation
+
+At the kickoff the organisers asked how much storage and how much land the proposed mix needs.
+Both are worked back from the least-cost plan's annual generation by source; nothing feeds back into the forecast or the plan.
+The code is in `src/allocation/storage.cpp`, the factors in `data/external/techno_economic/land_use.csv` and `storage_parameters.csv`, and the results in `outputs/storage_land_2047.csv`.
+
+**Representative year.**
+The hourly shapes come from the NPP Merit real-time series (all-India generation by source, `data/raw/npp/npp_merit_generation_hourly.csv`).
+Only complete days are used: 332 days between 19 September 2025 and 13 November 2026 with all six sources present in all 24 hours.
+Each calendar month is weighted to its number of days in a 365-day year, so September to November, which appear in both years, are not counted twice.
+The load shape is the shape of total generation (the sum of the six sources); the demand-met series is not used.
+Solar generation grew by about 40 percent a year over the record as new plants came on line, which would make later months look sunnier.
+Fleet growth is therefore removed from the load, solar, coal and gas shapes, using the change between the same calendar month a year apart.
+Wind and hydro differences between the two years are weather, not growth, and are kept.
+Offshore wind takes the onshore wind shape, since India has no offshore wind yet.
+
+**Hourly dispatch of the plan.**
+The hourly load is the requirement the plan meets (requirement minus any unserved energy of the LP) times the load shape.
+Each source keeps its annual energy from the plan and is dispatched with simple, stated rules.
+
+| Source | Hourly rule |
+| --- | --- |
+| Solar, onshore and offshore wind | Annual generation times the Merit hourly shape |
+| Nuclear, bioenergy | Flat |
+| Hydro | Each day keeps its observed share of annual hydro (water availability) and moves within that day's observed hourly range towards the hours of highest remaining load |
+| Coal | Annual energy of the plan; each hour between 40 percent of the fleet's peak hour (CEA flexible operation regulations, 2023) and that peak, which is 1.26 times its mean hour as in the Merit thermal series; follows the remaining load as closely as these bounds allow |
+| Gas | Annual energy of the plan, used for the highest remaining hours (peaking), up to 3.7 times its mean hour as in the Merit gas series |
+| Firmed RE | Two views. Headline: split back into the solar and onshore wind it is built from, in proportion to the usable potential the plan leaves in each region (the LP draws firmed RE from the shared solar plus wind resource), so all storage sits in the system. Check: a round-the-clock block whose storage is inside the plants |
+
+What remains in each hour is a surplus (solar and wind that the load cannot take) or a shortfall.
+
+**Storage sizing.**
+One store charges from surplus and discharges into shortfall with an 85 percent round trip (NREL Annual Technology Baseline 2025).
+Each run is solved in its cyclic steady state, so the store ends each cycle where it started.
+For one store and a shortfall objective, using it greedily is optimal, because stored energy covers the same shortfall whenever it is released.
+
+| Quantity | Rule |
+| --- | --- |
+| Power (charge and discharge) | At least the largest hourly shortfall after dispatch; raised for midday charging while each extra GW still serves at least 365 GWh of shortfall a year (one hour a day at full power) |
+| Energy, daily cycle | Each complete day is a cyclic 24-hour sequence; the smallest store that leaves no more shortfall than an unlimited one; the design value is the largest over the 332 days |
+| Energy, multi-day | The days in calendar order with carry-over between them; the store grows beyond the daily size while each extra GWh still serves at least 52 GWh of shortfall a year (about one cycle a week); larger stores would be seasonal storage |
+
+The run also reports the hours and energy of shortfall before storage, curtailed solar and wind, storage losses and cycles.
+It also reports the shortfall left after storage, which is extra generation the plan needs hour by hour.
+The days are sized in parallel with OpenMP; per-day results are summed in a fixed order, so results do not depend on the thread count.
+Both views of a plan are sized in about 90 ms, so the dashboard recomputes storage with every strategy update.
+
+**Land.**
+Land is generation times an energy-based land-use intensity (area per GWh a year).
+Per-MW norms are converted to energy with the same regional capacity factors the allocation uses (CEA NEP 2022-32 planning values).
+Installed capacity is never reported.
+
+| Item | Intensity | Source |
+| --- | --- | --- |
+| Solar, central | 4 acres per MW, which is 1.9 to 2.3 acres per GWh a year at the regional capacity factor | MNRE (PIB, 20 July 2023) |
+| Solar, high case | 3.4 acres per GWh a year (total site area, large PV) | Ong et al. 2013, NREL/TP-6A20-56290, Table ES-1 |
+| Onshore wind, footprint | 0.3 ha per MW (pads, roads, substations) | Denholm et al. 2009, NREL/TP-6A2-45834, Table 1 |
+| Onshore wind, project area | 34.5 ha per MW (mostly still farmed) | Denholm et al. 2009, Table 1 |
+| Offshore wind | No land | |
+
+The land of solar plus the wind footprint is compared with India's geographical area (3,287,469 km², ISFR 2023), with each grid region's area (sum of its states) and with India's wasteland (557,666 km² in 2015-16, Wastelands Atlas 2019).
+
+**Limitations.**
+The calculation is national and hourly, so it ignores transmission limits within the hour and reserves below an hour.
+One year of weather is used, and a weak monsoon or a cloudier year would change the design day.
+The load keeps today's daily shape, so 2047 cooling, electric vehicles and hydrogen loads could move it.
+All solar is counted as ground-mounted, which overstates land if rooftop and agri-PV supply part of it.
+Pumped storage and batteries are not told apart, and one round trip applies to both.
