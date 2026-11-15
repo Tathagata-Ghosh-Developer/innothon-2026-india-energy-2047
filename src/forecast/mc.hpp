@@ -43,7 +43,7 @@ struct McInputs {
 
   // India at the base year
   float ln_e0;     // ln(kWh generated per person)
-  float y0;        // GDP per capita, thousand $ (PPP, constant 2021)
+  float y0;        // income per person in thousands: INR at 2011-12 prices (India core) or PPP $ (cross-country core)
   float u0;        // urban share
   float gen0_twh;  // total generation, TWh
 
@@ -62,6 +62,12 @@ struct McInputs {
   // 1 = slot 1 is also a quadratic-form model whose parameters sit in p[4..7]
   // (India-only core). 0 = slot 1 is the Gompertz model (cross-country core).
   int quad_only;
+  // Model error of the quadratic-form models (India core): an AR(1) residual that
+  // starts at the base year's residual and reverts to the fitted relation.
+  // All zero = no model-error term (cross-country core).
+  float resid0;          // residual of ln(kWh per person) in the base year
+  float resid_rho;       // AR(1) persistence of the residual
+  float resid_innov_sd;  // innovation s.d. = residual s.d. x sqrt(1 - rho^2)
 
   // Damped trend on ln(total generation)
   float dt_level, dt_trend, dt_phi, dt_alpha, dt_beta, dt_sigma;
@@ -152,6 +158,7 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
 
   Real ln_y = log(y0);
   Real shock = 0;
+  Real resid = Real(in.resid0);
   Real dl = Real(in.dt_level), db = Real(in.dt_trend);
   Real gen = Real(in.gen0_twh);
 
@@ -176,6 +183,8 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
       if (quad) {
         const Real x = log(y * Real(0.1));
         d = Real(q[0]) * x + Real(q[1]) * x * x + Real(q[2]) * u - base_quad + Real(q[3]) * dtau;
+        resid = Real(in.resid_rho) * resid + Real(in.resid_innov_sd) * nz[2];
+        d += resid - Real(in.resid0);
       } else {
         d = -Real(p[4]) * exp(-Real(p[5]) * y) + Real(p[6]) * u - base_gomp + Real(p[7]) * dtau;
       }

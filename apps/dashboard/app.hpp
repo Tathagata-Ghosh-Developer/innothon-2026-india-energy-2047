@@ -57,6 +57,7 @@ class App {
   std::unique_ptr<Pipeline> pls_[2];
   Pipeline* pl_ = nullptr;  // pipeline of the active core (null while it loads)
   int core_ = 0;
+  int pending_core_ = -1;   // core being loaded after a switch (-1 = none)
   std::string error_;
 
   ScenarioControls sc_;

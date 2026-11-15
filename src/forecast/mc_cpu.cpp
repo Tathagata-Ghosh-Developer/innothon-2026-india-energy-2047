@@ -37,7 +37,13 @@ void for_each_worker(int nt, F&& f) {
   for (int k = omp_get_thread_num(); k < nt; k += omp_get_num_threads()) f(k);
 #else
   std::vector<std::thread> pool;
-  for (int k = 1; k < nt; ++k) pool.emplace_back([&f, k] { f(k); });
+  int started = 1;
+  try {
+    for (int k = 1; k < nt; ++k, ++started) pool.emplace_back([&f, k] { f(k); });
+  } catch (...) {
+    // Could not start every thread: run the remaining workers here.
+  }
+  for (int k = started; k < nt; ++k) f(k);
   f(0);
   for (auto& t : pool) t.join();
 #endif

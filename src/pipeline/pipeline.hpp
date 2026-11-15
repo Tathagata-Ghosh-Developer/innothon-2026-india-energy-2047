@@ -93,7 +93,7 @@ struct Fitted {
   double gamma_mean = 0, gamma_sd = 0;
   std::string gamma_source;
   double captive_share = 0;  // captive / utility generation in the base year (CEA, literature layer)
-  double anchor_shift = 0;   // log-point shift of the base-year anchor (0 = observed FY2023-24)
+  double anchor_shift = 0;   // retired (always 0): the base-year residual now decays through the AR(1) model error
   // Cross-country core
   Panel panel;
   Design design;

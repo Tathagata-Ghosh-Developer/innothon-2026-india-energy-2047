@@ -29,6 +29,7 @@ struct IndiaSeries {
   double splice_growth = 0;            // ln growth of GSDP per person imputed for the 2011 base-year change
   std::vector<double> gpc_growth;      // ln growth of GSDP per person, year t over t-1 (obs[1..])
   int organiser_first = 0, organiser_last = 0;
+  int stale_pairs_skipped = 0;         // state-year pairs whose GSDP was copied unchanged (not used for income growth)
 };
 
 // npp_csv: data/raw/npp/npp_national_generation_fy.csv
@@ -51,6 +52,7 @@ struct IndiaFit {
   double kappa = 0;     // d u / d x over the window (same regressors, including the dummy)
   double resid_sd = 0;  // regression residual standard deviation
   double dw = 0;        // Durbin-Watson statistic of the residuals
+  double resid_rho = 0; // AR(1) persistence of the residuals, 1 - DW / 2
   double fd_beta = 0;   // first-difference estimate, FY2020-21 and FY2021-22 changes excluded
   std::vector<double> resid;
 };

@@ -1,6 +1,7 @@
 #include "india.hpp"
 
 #include <Eigen/Dense>
+#include <algorithm>
 #include <cmath>
 #include <map>
 #include <stdexcept>
@@ -86,29 +87,40 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
 
   // Year-on-year growth over the states reported in both years, so that a state
   // entering or leaving the dataset does not move the national series.
-  std::map<int, double> dp, dg;
+  // Population growth uses every matched state. Income per person uses only the
+  // states whose GSDP actually changed: a value copied unchanged from the year
+  // before is a placeholder (several states repeat one figure for 2006-2010),
+  // and counting it as zero growth would understate national growth.
+  std::map<int, double> dp, dpc;
   for (int t = first + 1; t <= last; ++t) {
     auto a = org.find(t - 1), b = org.find(t);
     if (a == org.end() || b == org.end()) throw std::runtime_error("organiser data missing year " + std::to_string(t));
-    double p0 = 0, p1 = 0, g0 = 0, g1 = 0;
+    double p0 = 0, p1 = 0, q0 = 0, q1 = 0, g0 = 0, g1 = 0;
     for (const auto& [st, v1] : b->second) {
       auto it = a->second.find(st);
       if (it == a->second.end()) continue;
       p0 += it->second.pop;
       p1 += v1.pop;
+      if (v1.gsdp == it->second.gsdp) {
+        ++s.stale_pairs_skipped;
+        continue;
+      }
+      q0 += it->second.pop;
+      q1 += v1.pop;
       g0 += it->second.gsdp;
       g1 += v1.gsdp;
     }
+    if (g0 <= 0 || q0 <= 0) throw std::runtime_error("no state with GSDP growth in year " + std::to_string(t));
     dp[t] = std::log(p1 / p0);
-    dg[t] = std::log(g1 / g0);
+    dpc[t] = std::log(g1 / g0) - std::log(q1 / q0);
   }
   // Base-year change: the jump from 2004-05 to 2011-12 prices is not growth.
   // Impute that year's per-person growth as the mean of its neighbours.
-  if (dg.count(kSpliceYear) && dg.count(kSpliceYear - 1) && dg.count(kSpliceYear + 1)) {
-    const double before = dg[kSpliceYear - 1] - dp[kSpliceYear - 1];
-    const double after = dg[kSpliceYear + 1] - dp[kSpliceYear + 1];
-    s.splice_growth = 0.5 * (before + after);
-    dg[kSpliceYear] = s.splice_growth + dp[kSpliceYear];
+  if (first < kSpliceYear && kSpliceYear <= last) {
+    if (!dpc.count(kSpliceYear - 1) || !dpc.count(kSpliceYear + 1))
+      throw std::runtime_error("cannot splice the 2011 GSDP price base: a neighbouring year is missing");
+    s.splice_growth = 0.5 * (dpc[kSpliceYear - 1] + dpc[kSpliceYear + 1]);
+    dpc[kSpliceYear] = s.splice_growth;
   }
 
   // Levels: population anchored on the last year's organiser total; income per
@@ -118,7 +130,7 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
   ln_y[first] = 0;
   for (int t = first + 1; t <= last; ++t) {
     ln_p[t] = ln_p[t - 1] + dp[t];
-    ln_y[t] = ln_y[t - 1] + dg[t] - dp[t];
+    ln_y[t] = ln_y[t - 1] + dpc[t];
   }
   double pop_last = 0;
   for (const auto& [st, v] : org.at(last)) pop_last += v.pop;
@@ -141,7 +153,7 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
     o.y = y_anchor * std::exp(ln_y[t] - ln_y[anchor]);
     o.urban = interp(wup, t);
     s.obs.push_back(o);
-    if (t > first) s.gpc_growth.push_back(dg[t] - dp[t]);
+    if (t > first) s.gpc_growth.push_back(dpc[t]);
   }
   return s;
 }
@@ -198,6 +210,10 @@ IndiaFit fit_india(const IndiaSeries& s, int first, int last) {
   double num = 0;
   for (int i = 1; i < f.n; ++i) num += (r(i) - r(i - 1)) * (r(i) - r(i - 1));
   f.dw = num / r.squaredNorm();
+  // AR(1) persistence from the Durbin-Watson statistic (rho = 1 - DW / 2). With
+  // 13 to 18 points a direct lag regression is dominated by the slow drift of the
+  // early, supply-constrained years; the DW relation uses every residual.
+  f.resid_rho = std::clamp(1.0 - 0.5 * f.dw, 0.0, 0.9);
   // Slope of the urban share on x, same regressors (so the excess urban share is
   // orthogonal to every column of X in the sample).
   {
@@ -209,7 +225,8 @@ IndiaFit fit_india(const IndiaSeries& s, int first, int last) {
   {
     double sxy = 0, sxx = 0;
     for (int t = first + 1; t <= last; ++t) {
-      if (t == kCovidYear || t == kCovidYear + 1) continue;
+      // Pandemic fall and rebound, and the imputed (not observed) 2011 price-base change.
+      if (t == kCovidYear || t == kCovidYear + 1 || t == kSpliceYear) continue;
       const double dx = x_of(obs_at(s, t)) - x_of(obs_at(s, t - 1));
       const double dy = obs_at(s, t).ln_e() - obs_at(s, t - 1).ln_e();
       sxy += dx * dy;
@@ -229,6 +246,15 @@ std::vector<double> bootstrap_india_beta(const IndiaSeries& s, const IndiaFit& f
   const Eigen::MatrixXd xtx = X.transpose() * X;
   const Eigen::LDLT<Eigen::MatrixXd> solver(xtx);
   const Eigen::VectorXd fitted = y - Eigen::Map<const Eigen::VectorXd>(f.resid.data(), n);
+  // Resampling pool: residuals of the years without a dummy (a dummy year's
+  // residual is zero by construction), rescaled for the degrees of freedom used
+  // by the fit so the bootstrap does not understate the spread.
+  std::vector<double> pool;
+  for (int i = 0; i < n; ++i)
+    if (!(X.cols() > 2 && X(i, 2) != 0.0)) pool.push_back(f.resid[static_cast<size_t>(i)]);
+  const int m = static_cast<int>(pool.size());
+  const double scale = std::sqrt(static_cast<double>(m) / std::max(1, n - static_cast<int>(X.cols())));
+  for (double& e : pool) e *= scale;
   std::vector<double> out(replicates);
 #pragma omp parallel for schedule(static)
   for (int r = 0; r < replicates; ++r) {
@@ -237,8 +263,8 @@ std::vector<double> bootstrap_india_beta(const IndiaSeries& s, const IndiaFit& f
     int i = 0, k = 0;
     while (i < n) {
       const uint32_t v = rng.bits(static_cast<uint32_t>(k++), 3).x;
-      const int start = static_cast<int>((static_cast<uint64_t>(v) * n) >> 32);
-      for (int j = 0; j < block && i < n; ++j, ++i) ys(i) = fitted(i) + f.resid[(start + j) % n];
+      const int start = static_cast<int>((static_cast<uint64_t>(v) * m) >> 32);
+      for (int j = 0; j < block && i < n; ++j, ++i) ys(i) = fitted(i) + pool[static_cast<size_t>((start + j) % m)];
     }
     out[r] = solver.solve(X.transpose() * ys)(1);
   }

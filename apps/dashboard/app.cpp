@@ -77,8 +77,16 @@ App::~App() {
 }
 
 void App::request_core(int core) {
-  core_ = core;
-  if (pls_[core] || loading_[core].valid()) return;
+  // Switch at once if that core is loaded; otherwise keep showing the current core
+  // until the new one is ready, so a failed load never leaves the page without controls.
+  if (pls_[core]) {
+    core_ = core;
+    pending_core_ = -1;
+    return;
+  }
+  if (!pl_) core_ = core;  // first load: nothing to keep showing
+  pending_core_ = core;
+  if (loading_[core].valid()) return;
   const std::string r = root_.string();
   loading_[core] = std::async(std::launch::async,
                               [r, core] { return std::make_unique<Pipeline>(r, static_cast<CoreModel>(core)); });
@@ -89,9 +97,14 @@ void App::poll() {
     if (!pls_[k] && loading_[k].valid() && loading_[k].wait_for(0s) == std::future_status::ready) {
       try {
         pls_[k] = loading_[k].get();
+        if (pending_core_ == k) {
+          core_ = k;
+          error_.clear();
+        }
       } catch (const std::exception& e) {
-        error_ = e.what();
+        error_ = std::string(core_name(static_cast<CoreModel>(k))) + " could not be loaded: " + e.what();
       }
+      if (pending_core_ == k) pending_core_ = -1;
     }
   }
   if (pls_[core_].get() != pl_) {
@@ -216,7 +229,7 @@ void App::sidebar() {
   ImGui::TextUnformatted("Forecast core");
   if (font_head_) ImGui::PopFont();
   {
-    int c = core_;
+    int c = pending_core_ >= 0 ? pending_core_ : core_;
     ImGui::RadioButton("India-only (primary)", &c, 0);
     ImGui::SetItemTooltip("NPP generation and the organiser state data (the two challenge datasets). Urban share and "
                           "population paths are external drivers.");
@@ -224,7 +237,8 @@ void App::sidebar() {
     ImGui::RadioButton("Cross-country (check)", &c, 1);
     ImGui::SetItemTooltip("Independent check on non-core data: 153-country Ember / World Bank panel. Calendar years, "
                           "total generation including captive.");
-    if (c != core_) request_core(c);
+    if (c != (pending_core_ >= 0 ? pending_core_ : core_)) request_core(c);
+    if (pending_core_ >= 0) help("Loading the other forecast core...");
   }
   const bool india = pl_->core() == CoreModel::kIndia;
   if (font_head_) ImGui::PushFont(font_head_);
@@ -271,7 +285,7 @@ void App::sidebar() {
   dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 800.0, "high %.0f", 1, nullptr);
   if (india) {
     ImGui::TextUnformatted("Elasticity decline with income");
-    dirty_ |= slider("##edec", &sc_.elasticity_decline, 0.0, 0.5, "%.2f per ln income", 1,
+    dirty_ |= slider("##edec", &sc_.elasticity_decline, 0.0, 0.3, "%.2f per ln income", 1,
                      "0 = the estimated constant elasticity. A positive value lets the income elasticity fall as "
                      "income rises (saturation), keeping its base-year value.");
   }
@@ -375,7 +389,7 @@ void App::tab_forecast() {
             w);
   ImGui::SameLine();
   std::snprintf(buf, sizeof buf, "%s kWh", with_commas(p50 * 1e9 / pop47).c_str());
-  stat_card("Per person, 2047", buf, (base_label + ": " + with_commas(h0.gen_twh * 1e9 / h0.pop) + " kWh").c_str(), w);
+  stat_card(india ? "Per person, 2047 (organiser population)" : "Per person, 2047", buf, (base_label + ": " + with_commas(h0.gen_twh * 1e9 / h0.pop) + " kWh").c_str(), w);
   if (india) {
     std::snprintf(buf, sizeof buf,
                   "Scope: NPP utility generation. Captive plants (outside NPP; CEA, %.1f%% of utility generation in "
@@ -404,9 +418,9 @@ void App::tab_forecast() {
     x[t + 1] = f.years[t];
     for (int k = 0; k < 7; ++k) p[k][t + 1] = q[t][k];
   }
-  if (ImPlot::BeginPlot("##national", ImVec2(-1, ImGui::GetContentRegionAvail().y * 0.80f))) {
+  if (ImPlot::BeginPlot(india ? "##national_india" : "##national_cc", ImVec2(-1, ImGui::GetContentRegionAvail().y * 0.80f))) {
     ImPlot::SetupAxes("Year", "Electricity generation (TWh)");
-    ImPlot::SetupAxisLimits(ImAxis_X1, india ? 2004 : 1990, 2048, ImPlotCond_Always);
+    ImPlot::SetupAxisLimits(ImAxis_X1, india ? 2004 : 1990, 2048, ImPlotCond_Once);
     ImPlot::SetupAxisLimits(ImAxis_Y1, 0, q[last][6] * 1.08, ImPlotCond_Always);
     ImPlot::SetupLegend(ImPlotLocation_NorthWest);
     ImPlot::SetNextFillStyle(kAccent, 0.18f);
@@ -855,8 +869,8 @@ void App::tab_models() {
       row("Urban share per unit ln income", v, "Historical co-movement absorbed by the elasticity");
       std::snprintf(v, sizeof v, "%.2f (s.d. %.2f)", fit.gamma_mean, fit.gamma_sd);
       row("Urbanisation coefficient (prior)", v, "Applies only to urbanisation beyond the income-implied path; literature");
-      std::snprintf(v, sizeof v, "%+.3f", fit.anchor_shift);
-      row("Base-year anchor shift", v, "FY2023-24 residual replaced by the mean of the last three years");
+      std::snprintf(v, sizeof v, "%+.3f / %.2f", a.resid.back(), a.resid_rho);
+      row("Base-year residual / persistence", v, "Model error: AR(1) residual that starts at FY2023-24 and reverts to the fitted line");
       ImGui::EndTable();
     }
     help(("Urbanisation prior: " + fit.gamma_source + ". " + std::to_string(bb.size()) + " bootstrap replicates in " +

@@ -270,7 +270,10 @@ std::vector<ParetoPoint> pareto_cost_co2(const AllocationInputs& in, const Polic
   auto adequate = [&](const AllocationResult& a) { return a.ok && unserved(a) < 1e-6; };
 
   std::vector<ParetoPoint> out;
+  // The trade-off is between resource cost and CO2, so no carbon price is charged
+  // inside the sweep (otherwise the cap's dual would be net of that price).
   PolicySettings p = base;
+  p.carbon_price = 0.0;
   p.co2_cap_mt = -1.0;
   AllocationResult free = solve_least_cost(in, p, req);
   if (!adequate(free) || points < 1) return out;
@@ -288,7 +291,7 @@ std::vector<ParetoPoint> pareto_cost_co2(const AllocationInputs& in, const Polic
   std::vector<ParetoPoint> swept(static_cast<size_t>(points));
 #pragma omp parallel for schedule(dynamic)
   for (int k = 0; k < points; ++k) {
-    PolicySettings q = base;
+    PolicySettings q = p;
     q.co2_cap_mt = free.co2_mt - (free.co2_mt - cap_min) * (k + 1) / points;
     AllocationResult a = solve_least_cost(in, q, req);
     const double u = unserved(a);

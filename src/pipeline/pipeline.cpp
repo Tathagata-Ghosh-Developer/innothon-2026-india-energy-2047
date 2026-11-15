@@ -134,6 +134,9 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     last = s.obs.back().year;
     fit_.india_fit = fit_india(s, kIndiaEstFirst, last);
     fit_.india_fit_full = fit_india(s, s.obs.front().year, last);
+    // The India bootstrap is tiny OLS solves: keep the full replicate count even in
+    // the web build, so the browser and the command line give the same parameters.
+    replicates = std::max(replicates, 2000);
     // Specification mixture, equal halves: S1 = FY2011-12 onward (one price base),
     // S3 = FY2006-07 onward (spliced price bases). Each half is a moving-block bootstrap.
     Timer tb;
@@ -175,9 +178,15 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
           rng.uniform4<double>(0, 1, v);
           fit_.india_gamma[k] = lo + (hi - lo) * v[0];
         } else {
-          double z[4];
-          rng.normal4<double>(0, 1, z);
-          fit_.india_gamma[k] = std::max(0.0, fit_.gamma_mean + fit_.gamma_sd * z[0]);  // truncated at zero
+          // Truncated normal: redraw until non-negative (not censored at zero).
+          double g = -1.0;
+          for (uint32_t step = 0; g < 0.0 && step < 64; ++step) {
+            double z[4];
+            rng.normal4<double>(step, 1, z);
+            for (double zi : z)
+              if (g < 0.0) g = fit_.gamma_mean + fit_.gamma_sd * zi;
+          }
+          fit_.india_gamma[k] = std::max(0.0, g);
         }
       }
     }
@@ -210,22 +219,26 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     drv_.g_hist_from = kIndiaEstFirst;
     drv_.g_hist_to = last;
     std::vector<double> g_trend;
+    double num = 0, den = 0, mean_tmp = 0;
+    std::vector<std::pair<double, double>> pairs;  // consecutive retained years only
     for (size_t i = 0; i < s.gpc_growth.size(); ++i) {
       const int y = s.obs[i + 1].year;
-      if (y > kIndiaEstFirst && y != 2020 && y != 2021) g_trend.push_back(s.gpc_growth[i]);
+      const bool keep = y > kIndiaEstFirst && y != 2020 && y != 2021;
+      if (keep) g_trend.push_back(s.gpc_growth[i]);
+      const bool keep_prev = y - 1 > kIndiaEstFirst && y - 1 != 2020 && y - 1 != 2021;
+      if (keep && keep_prev && i > 0) pairs.push_back({s.gpc_growth[i - 1], s.gpc_growth[i]});
     }
-    growth_stats(g_trend, drv_.g_hist_mean, drv_.g_hist_sd, drv_.g_hist_rho);
+    growth_stats(g_trend, drv_.g_hist_mean, drv_.g_hist_sd, mean_tmp);
+    for (const auto& [a, b] : pairs) {
+      num += (b - drv_.g_hist_mean) * (a - drv_.g_hist_mean);
+      den += (a - drv_.g_hist_mean) * (a - drv_.g_hist_mean);
+    }
+    drv_.g_hist_rho = den > 0 ? num / den : 0.0;
 
-    // Base-year anchor. FY2023-24 sits well above the fitted line (a hot, fast-growth
-    // year); carrying that residual to 2047 would add it to every year. When the
-    // base residual exceeds one residual s.d., anchor on the fitted value plus the
-    // mean residual of the last three years instead (disclosed in india_fit.csv).
-    {
-      const std::vector<double>& rr = fit_.india_fit.resid;
-      const size_t n = rr.size();
-      const double m3 = (rr[n - 1] + rr[n - 2] + rr[n - 3]) / 3.0;
-      fit_.anchor_shift = std::abs(rr.back()) > fit_.india_fit.resid_sd ? m3 - rr.back() : 0.0;
-    }
+    // Model error: the regression residual is persistent (Durbin-Watson about 1), so
+    // the Monte Carlo carries an AR(1) residual that starts at the base year's
+    // residual and reverts to the fitted relation at the estimated speed.
+    fit_.anchor_shift = 0.0;
 
     // Captive generation (outside the NPP utility series): CEA General Review, a
     // literature layer reported next to the forecast, never inside it.
@@ -403,7 +416,13 @@ McInputs Pipeline::build_inputs(const ScenarioControls& c) const {
   if (n > kMaxYears) throw std::runtime_error("horizon too long");
   in.base_year = drv_.base_year;
   in.n_years = n;
-  in.ln_e0 = static_cast<float>(std::log(h.gen_twh * 1e9 / h.pop) + (india ? fit_.anchor_shift : 0.0));
+  in.ln_e0 = static_cast<float>(std::log(h.gen_twh * 1e9 / h.pop));
+  if (india) {
+    const IndiaFit& fi = fit_.india_fit;
+    in.resid0 = static_cast<float>(fi.resid.back());
+    in.resid_rho = static_cast<float>(fi.resid_rho);
+    in.resid_innov_sd = static_cast<float>(fi.resid_sd * std::sqrt(1.0 - fi.resid_rho * fi.resid_rho));
+  }
   // Income per person in thousands: INR (India core) or PPP $ (cross-country core).
   in.y0 = static_cast<float>(india ? h.gdp_pc : h.gdp_pc / 1000.0);
   in.u0 = static_cast<float>(h.urban);
@@ -493,9 +512,11 @@ ForecastResult Pipeline::forecast(const ScenarioControls& c) const {
       const double pop = f.inputs.pop_med[t] * 1e6;
       const double dx = x - x0, du = f.inputs.urb_med[t] - h.urban;
       const double decline = -0.5 * delta * dx * dx;  // elasticity falling by delta per unit of x
+      // Expected path of the AR(1) residual relative to the base year.
+      const double resid = fi.resid.back() * (std::pow(fi.resid_rho, static_cast<double>(t + 1)) - 1.0);
       const double scale = pop / 1e9 * std::exp(f.inputs.ln_e0);
-      f.central[0][t] = scale * std::exp(india_delta_ln_e(fi.beta, fit_.gamma_mean, fi.kappa, dx, du) + decline);
-      f.central[1][t] = scale * std::exp(india_delta_ln_e(fi.beta, 0.0, fi.kappa, dx, du) + decline);
+      f.central[0][t] = scale * std::exp(india_delta_ln_e(fi.beta, fit_.gamma_mean, fi.kappa, dx, du) + decline + resid);
+      f.central[1][t] = scale * std::exp(india_delta_ln_e(fi.beta, 0.0, fi.kappa, dx, du) + decline + resid);
       f.central[2][t] = std::exp(damped_forecast(fit_.damped, static_cast<int>(t) + 1));
     }
     return f;
