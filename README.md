@@ -3,6 +3,8 @@
 Forecasting India's electricity generation requirement for 2047 and a region-specific plan to meet it.
 Team submission for ExxonMobil INNOTHON 2026 (Indian Institute of Science, Bengaluru).
 
+**Live dashboard:** <https://india-energy-2047.vercel.app> (WebAssembly build of the C++ dashboard; first load downloads about 11 MB).
+
 ![Dashboard](docs/img/1_national_forecast.png)
 
 ## Headline results (default scenario, primary India-only core)

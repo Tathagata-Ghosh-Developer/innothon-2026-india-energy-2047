@@ -1,6 +1,6 @@
 # Research notes for the INNOTHON 2026 deck
 
-Retrieved on 2026-11-15. Every quote below was read in the fetched source named with it. Quotes are verbatim and at most 40 words. An ellipsis (...) marks a fragment of a longer sentence. Lines marked **Derived** are our own arithmetic on a fetched data file and are not statements by the publisher. Anything we could not confirm is listed in the UNVERIFIED section at the end and is kept out of both .bib files.
+Retrieved on 2026-11-15; section F (urbanisation prior, captive share, NPP) added on 2026-11-16. Every quote below was read in the fetched source named with it. Quotes are verbatim and at most 40 words. An ellipsis (...) marks a fragment of a longer sentence. Lines marked **Derived** are our own arithmetic on a fetched data file and are not statements by the publisher. Anything we could not confirm is listed in the UNVERIFIED section at the end and is kept out of both .bib files.
 
 Bib keys point to `refs_web.bib` (web sources) and `refs_academic.bib` (papers). Bibliographic metadata for the papers was checked against the Crossref and OpenAlex records for each DOI.
 
@@ -196,6 +196,62 @@ CEA uses one deterministic demand path from end-use and trend methods, plus a +5
 | `wolfram2012energy` | Wolfram, Shelef, Gertler (2012). How will energy demand develop in the developing world? J. Econ. Perspectives 26(1):119-138 | 10.1257/jep.26.1.119 | Crossref. Abstract: "Within a country, the adoption of energy-using assets typically follows an S-shaped pattern" and "above a second threshold, increases in ownership level off." |
 
 The last two are the requested peer-reviewed papers on electricity or energy demand saturation with income. Yoo and Lee use a cross-country panel of per-capita electricity. Wolfram, Shelef and Gertler describe S-shaped appliance and vehicle adoption with income.
+
+Added on 2026-11-16 (details in section F):
+
+| Key | Reference | DOI | How verified |
+|---|---|---|---|
+| `liddle2013population` | Liddle (2013). Population, affluence, and environmental impact across development: evidence from panel cointegration modeling. Environmental Modelling & Software 40:255-266 | 10.1016/j.envsoft.2012.10.002 | Crossref record; full text read in the author version (MPRA 52088) |
+| `shahbaz2016role` | Shahbaz, Mallick, Mahalik, Sadorsky (2016). The role of globalization on the recent evolution of energy demand in India: implications for sustainable development. Energy Economics 55:52-68 | 10.1016/j.eneco.2016.01.013 | Crossref record; abstract on IDEAS; full text read in the author version (MPRA 69127) |
+| `holtedahl2004residential` | Holtedahl, Joutz (2004). Residential electricity demand in Taiwan. Energy Economics 26(2):201-224 | 10.1016/j.eneco.2003.11.001 | Crossref record; publisher's typeset PDF (journal page numbers) read on a third-party mirror |
+| `kunsch1989jackknife` | Kunsch (1989). The jackknife and the bootstrap for general stationary observations. Annals of Statistics 17(3):1217-1241 | 10.1214/aos/1176347265 | Crossref record (title, author, volume, issue, pages). Cited for the moving-block bootstrap; no quote used |
+
+---
+
+## F. Urbanisation prior (gamma) for the India-only core
+
+Read on 2026-11-16. The model's prior is gamma ~ N(1.0, 0.5), truncated at zero (`outputs/india_fit.csv`, row `gamma_mean`). The three papers below are the basis. None of them measures exactly our quantity (the effect of urban share on total electricity generation per person in India), so each one comes with a caveat. That is why the prior is wide and why the deck always shows the gamma = 0 run beside it.
+
+### F1. Liddle (2013), key `liddle2013population`
+- Crossref: https://api.crossref.org/works/10.1016/j.envsoft.2012.10.002 (no issue number). Full text read in the author version, MPRA paper 52088, https://mpra.ub.uni-muenchen.de/52088/1/MPRA_paper_52088.pdf, which states "Published in Environmental Modelling & Software, 40 (2013), 255-266." Pages below other than the abstract are MPRA page numbers; the journal page for Table 6 was not reachable (ScienceDirect returned 403).
+- Quote (abstract; journal p. 255, MPRA p. 1): "This paper analyzes urban population's and affluence's (GDP per capita's) influence on environmental impact in developed and developing countries by taking as its starting point the STIRPAT framework."
+- Quote (MPRA p. 16): "Thus, for a population variable we consider urban population, which is constructed by multiplying a country's population by the share living in urban areas (as described in Table 1)."
+- Quote (MPRA p. 24), fragment: "...the elasticity for urban population in poor countries would be essentially one ... reflects the fact that rural populations in poor countries would have virtually no access to electricity..."
+- Number used: MPRA p. 36, Table 6, "Long-run elasticities estimates and 99% confidence intervals (C.I.) from FMOLS for residential electricity as the dependent variable", row "Poor", column "Urban population": 1.022 (s.e. 0.132), 99% interval [0.680, 1.364]. Table A.1 (MPRA p. 38) lists India (IND) in the Poor panel of 37 countries.
+- Caveats: the regressor is log urban population (urban share times population), not the urbanisation rate; the dependent variable is total residential electricity, not per person; the panel is called "Poor"; FMOLS on 1971-2007.
+
+### F2. Shahbaz, Mallick, Mahalik and Sadorsky (2016), key `shahbaz2016role`
+- Crossref: https://api.crossref.org/works/10.1016/j.eneco.2016.01.013 (no issue number; RePEc lists 55(C)). Abstract read on IDEAS, https://ideas.repec.org/a/eee/eneeco/v55y2016icp52-68.html ; full text read in the author version, MPRA paper 69127, https://mpra.ub.uni-muenchen.de/69127/1/MPRA_paper_69127.pdf . Pages other than the abstract are MPRA page numbers.
+- Quote (abstract; journal p. 52): "Furthermore, while financial development is negatively related to energy consumption, economic growth and urbanization are the key factors leading to increased energy demand in the long run."
+- Quote (MPRA p. 27): "A 1 per cent increase in urban population leads to a 0.5649-0.7999 per cent increase in energy use in India."
+- Quote (MPRA p. 14), fragment: "ln ECt is the natural log of energy consumption per capita ... lnUt is the natural log of urban population per capita"
+- Number used: MPRA p. 29, "Table-5: Long and Short Runs Results", long-run row ln Ut: 0.5806, 0.5649, 0.6935 and 0.7999 across the four globalisation models (economic, social, political, overall), all significant.
+- Caveats: total energy use, not electricity; U is urban population per person (in effect the urban share); ARDL on 1971-2012.
+
+### F3. Holtedahl and Joutz (2004), key `holtedahl2004residential`
+- Crossref: https://api.crossref.org/works/10.1016/j.eneco.2003.11.001 . Read in the publisher's typeset PDF (journal page numbers) on a third-party mirror, https://static.aminer.org/pdf/PDF/000/304/411/forecasting_the_consumption_for_electricity_in_taiwan.pdf .
+- Quote (abstract, p. 201): "We have used a proxy variable, urbanization, to capture economic development characteristics and changes in electricity-using capital stocks not explained by income. The variable provides significant explanatory power to the model both in the short- and long-run."
+- Quote (p. 216): "An increase of 1% in urbanization leads to nearly a 4% increase in residential electricity consumption."
+- Quote (p. 217): "The short-run vs. long-run elasticities are 0.23 vs. 1.04 for income and 1.61 vs. 3.91 for urbanization."
+- Quote (p. 212), fragment: "...the variables are transformed to natural logarithms with the exception of the urbanization variable, since it is already in percentage terms."
+- Numbers used: p. 216, equation (13), unrestricted cointegrating vector, urbanisation coefficient 3.31 (also Table 3, p. 215); equation (14), restricted, 3.91. Because the urbanisation variable is in levels and consumption in logs (p. 212), we read these as semi-elasticities; the paper itself calls them elasticities.
+- Caveats: residential electricity in Taiwan, about 1956-1995; p. 205 defines urbanisation as the share of people in urban areas above 100,000 people, not the census urban share.
+
+### F4. From the three papers to the prior (our reasoning, not a quote)
+Residential use is about a quarter of India's electricity (`docs/methodology.md`, section 2.3), and the papers' estimates range from about 0.6 (total energy, India) to about 1.0 (residential electricity, poor countries) as elasticities, and 3.3 to 3.9 as semi-elasticities (residential, Taiwan). A mean of 1.0 with s.d. 0.5 covers that range for total electricity. The data cannot pin gamma down (urban share is in neither challenge dataset and moved in step with income), so the deck reports the gamma = 0 run: 4,647 TWh in FY2047-48 against 4,894 TWh with the prior (`outputs/sensitivity_2047.csv`).
+
+### F5. Captive generation, CEA General Review 2025 (key `cea_general_review_2025`)
+- Table 1.6, "Growth of Electricity Generation From Captive Power Plants...", PDF page 31: 223,903 GWh in 2023-24. Recorded when the table was extracted into `data/raw/generation/national/cea_national_generation_fy.csv` (`data/raw/generation/SOURCES.md`, item 4).
+- Derived: 223,903 / 1,698,030 GWh of NPP utility generation in FY2023-24 = 13.2% (`outputs/india_fit.csv`, row `captive_share` = 0.13186).
+- The 2025 report could not be re-opened from this session on 2026-11-16 (CEA links returned 404), so the table number and value rest on the repository's extraction.
+
+### F6. National Power Portal (keys `npp_dashboard`, `npp_18col`, `npp_merit`)
+All endpoints, coverage, validation and caveats are documented in `data/raw/npp/SOURCES.md` (accessed 2026-11-15). Facts used in the deck:
+- The dashboard chart's all-India series covers FY1946-47 to FY2023-24 and "The API returns nothing after FY2023-24."
+- The 18-column reports and daily reports cover conventional stations above 25 MW; both print "It excludes generation from RES".
+- Renewable generation exists on NPP only in the dashboard chart (all-India, to FY2023-24) and in the Merit real-time series (all-India solar and wind, from 2025-09-18); "No region or state split exists on NPP for either."
+- Derived (`data/raw/npp/npp_region_generation_fy.csv`, FY2025-26 totals, Bhutan import excluded): Northern 24.9%, Western 36.0%, Southern 20.1%, Eastern 17.7%, North-Eastern 1.3% of 1,529,525 GWh.
+- Derived (`outputs/holdout.csv` and `apps/energy2047.cpp`): NPP renewable generation grew 14.1% a year from FY2018-19 (97,924 GWh) to FY2023-24 (189,490 GWh); the holdout extends it at that rate.
 
 ---
 

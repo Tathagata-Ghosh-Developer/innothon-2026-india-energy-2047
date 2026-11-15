@@ -1,0 +1,9 @@
+case,description,p05,p50,p95
+base,India elasticity with the excess-urbanisation prior,3248.16,4894.32,7526.39
+no_urban_term,"gamma = 0: two organiser datasets only, urbanisation inside beta",2973.02,4647.44,7437.61
+damped_trend,benchmark without drivers,2806.78,3603.77,4626.9
+elasticity_decline_0.2,elasticity falls 0.2 per unit of ln income,3138.74,4367.42,5980.24
+growth_plus_1.5,income growth 1.5 points above history,4259.15,6452.91,10064.4
+growth_minus_1.5,income growth 1.5 points below history,2461.29,3714.28,5650.09
+urban_plus_5,urban share 5 points above the UN path by 2047,3386.78,5150.64,7943.15
+pop_band_x2,population uncertainty doubled,3180.95,4884.72,7626.5

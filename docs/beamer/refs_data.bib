@@ -1,5 +1,34 @@
 % Data sources used by the model. Every URL below is the one recorded in the
 % repository's SOURCES.md files and data tables (accessed 2026-11-15).
+% The two challenge datasets (core of the 2047 prediction) come first:
+% National Power Portal (data/raw/npp/SOURCES.md) and the organiser's Renewable India dataset.
+
+@online{npp_dashboard,
+  organization = {{National Power Portal, Central Electricity Authority}},
+  title        = {Dashboard generation chart: all-India generation by source, fiscal years (API dashBoard/get\_generation\_chart\_list)},
+  year         = {2026},
+  url          = {https://npp.gov.in/dashBoard/gc-map-dashboard},
+  urldate      = {2026-11-15},
+  note         = {Challenge dataset. Thermal, hydro, nuclear and RES generation (GWh), FY1946-47 to FY2023-24; no data after FY2023-24}
+}
+
+@online{npp_18col,
+  organization = {{National Power Portal, Central Electricity Authority}},
+  title        = {Monthly 18-column generation reports, Sub-report 2 (region wise) and Sub-report 16 (state and station wise)},
+  year         = {2026},
+  url          = {https://npp.gov.in/public-reports/cea/monthly/generation/18_col_act/2026/MAR/18_col_act-2_2026-MAR.xls},
+  urldate      = {2026-11-15},
+  note         = {Challenge dataset. One file per month and sub-report (URL shows March 2026, Sub-report 2). Conventional stations above 25 MW only (excludes RES); Jul-2019 to Sep-2026; used for FY2024-25 and FY2025-26 and for regional shares}
+}
+
+@online{npp_merit,
+  organization = {{National Power Portal, Central Electricity Authority}},
+  title        = {Merit India real-time all-India generation by source (API dashBoard/demandmet2chartdata)},
+  year         = {2026},
+  url          = {https://npp.gov.in/dashBoard/gc-map-dashboard-meritchart},
+  urldate      = {2026-11-15},
+  note         = {Challenge dataset. Solar and wind from 18 September 2025 only; no regional or state split}
+}
 
 @online{ember_yearly,
   organization = {Ember},
@@ -60,7 +89,7 @@
   year    = {2025},
   url     = {https://github.com/chrisjaimyantony/renewable-india-dataset},
   urldate = {2026-11-15},
-  note    = {Organiser-provided dataset. Only Population and GSDP columns are used}
+  note    = {Challenge dataset (organiser). Only the Population and GSDP columns are read; the installed-capacity columns are never read}
 }
 
 @report{cea_nep2023,
@@ -98,7 +127,8 @@
   institution = {Ministry of Power, Government of India},
   year        = {2025},
   url         = {https://cea.nic.in/api/dashboardReports/download-pdf/en/aec4372e-3df2-4782-9887-b75d10407572},
-  urldate     = {2026-11-15}
+  urldate     = {2026-11-15},
+  note        = {Table 1.6 (PDF page 31): captive power plants generated 223,903 GWh in 2023-24}
 }
 
 @report{cea_hydro_status,
@@ -142,6 +172,6 @@
   title   = {India Energy 2047: model code, data audit and outputs},
   year    = {2026},
   url     = {https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047},
-  urldate = {2026-11-15},
-  note    = {Private repository. Every chart in this deck is drawn from its outputs/ tables}
+  urldate = {2026-11-16},
+  note    = {Private repository. Every chart in this deck is drawn from its outputs/ tables (run of 16 November 2026)}
 }

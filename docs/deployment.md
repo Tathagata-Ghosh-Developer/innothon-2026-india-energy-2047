@@ -104,6 +104,8 @@ A plain static server (`python -m http.server`, `npx http-server`) does not send
 
 ## Deploy to Vercel
 
+Live site: <https://india-energy-2047.vercel.app> (Vercel project `india-energy-2047`, Hobby plan).
+
 `web/dist` is deployed as a static site; no build runs on Vercel.
 `web/vercel.json` (copied into `web/dist`) sets the COOP/COEP headers, `application/wasm` for `.wasm`, and `Cache-Control: public, max-age=0, must-revalidate`.
 File names are not content-hashed, so browsers revalidate with the ETag rather than keep a stale `.wasm` after a redeploy.

@@ -1,0 +1,4 @@
+core,scope,base_year,base_twh,target_year,p05,p50,p95
+India-only (NPP + organiser data),"NPP utility generation, fiscal year (start-year label)",2023,1698.03,2047,3248.16,4894.32,7526.39
+India-only + captive layer,utility + captive (CEA share held at base year),2023,1921.93,2047,3676.46,5539.69,8518.82
+Cross-country panel (secondary check),"Ember total generation incl. captive, calendar year",2025,2080.16,2047,3348.29,4527.94,5610.36

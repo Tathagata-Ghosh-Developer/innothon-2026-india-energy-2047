@@ -1,0 +1,67 @@
+% Midpoint review, 18 Nov 2026: one 16:9 slide (approach, findings, roadblocks).
+% Build: latexmk -pdf midpoint.tex
+% Numbers: data/*.csv (copies of outputs/, run of 16 Nov 2026) and data/raw/npp (NPP regional generation).
+% Columns in golden proportion 1 : phi : phi (0.229 : 0.371 : 0.371 of the text width, 1.5% gutters).
+\documentclass[aspectratio=169,10pt,t]{beamer}
+\usetheme{India2047}
+
+% Column head with a coloured rule.
+\newcommand{\colhead}[2]{{\fontsize{9.5}{11}\selectfont\bfseries\color{#2}#1}\par\vspace{0.8mm}%
+  {\color{#2}\hrule height 0.9pt}\vspace{1.6mm}}
+% Big number with a one-line label underneath.
+\newcommand{\num}[2]{\begin{minipage}[t]{\linewidth}\raggedright
+  {\phiM\bfseries\color{navy}#1}\par\vspace{0.2mm}
+  {\fontsize{6.8}{7.9}\selectfont\color{ink2}#2\par}\end{minipage}}
+% Numbered approach step.
+\newcommand{\step}[2]{\noindent\raisebox{-0.35ex}{\tikz\node[circle,fill=navy,text=white,font=\bfseries\fontsize{6}{7}\selectfont,minimum size=3.1mm,inner sep=0]{#1};}\hspace{1.2mm}#2\par\vspace{0.6mm}}
+% Roadblock: problem, then what we do.
+\newcommand{\rblock}[2]{\noindent\begin{minipage}[t]{\linewidth}\raggedright
+  \textbf{\color{ink}#1}\ {\color{ink2}$\rightarrow$\ #2}\end{minipage}\par\vspace{1.1mm}}
+\newcommand{\gap}{\par\vspace{2mm}}
+\newcommand{\mn}{\textminus}   % text minus from the body font, narrower than the math minus
+
+\begin{document}
+\begin{frame}{Midpoint review: India's electricity in 2047}
+\framesubtitle{Core forecast from the two challenge datasets only: NPP and Renewable India}
+\vspace*{-2.5mm}
+\begin{columns}[T,onlytextwidth]
+% ---------------------------------------------------------------- approach
+\column{0.229\textwidth}
+\colhead{Approach}{navy}
+\num{0.83}{income elasticity $\beta$ of NPP generation per person on real GSDP per person (s.e.\ 0.063)}\par
+\vspace{2mm}
+{\fontsize{7}{8.2}\selectfont\color{ink}
+\step{1}{NPP + organiser data only}
+\step{2}{Elasticity, block bootstrap}
+\step{3}{Urbanisation prior $\gamma$}
+\step{4}{4.2 million GPU futures}
+\step{5}{36 states, convergence}
+\step{6}{Least-cost mix, P90 test}}
+{\fontsize{6.6}{7.7}\selectfont\color{ink2}$\gamma \sim N(1,\,0.5)$; $\gamma = 0$ is the two-dataset run\par}
+% ---------------------------------------------------------------- findings
+\column{0.371\textwidth}
+\colhead{Findings}{navy}
+\begin{minipage}[t]{0.5\linewidth}\num{4,894}{TWh, median FY2047-48}\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}\raggedright\vspace{0.6mm}{\fontsize{6.8}{8}\selectfont\color{ink2}NPP utility scope\\ P10--P90: 3,553--6,829\\ about 5,540 with captive plants\par}\end{minipage}\gap
+\begin{minipage}[t]{0.5\linewidth}\num{\mn4.0\%}{holdout, FY2024-25}\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}\num{+1.6\%}{holdout, FY2025-26}\end{minipage}\gap
+\begin{minipage}[t]{0.5\linewidth}\num{\mn24\%}{income growth \mn1.5 pts}\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}\num{+32\%}{income growth +1.5 pts}\end{minipage}\gap
+\begin{minipage}[t]{0.5\linewidth}\num{36\%}{West, generation today}\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}\num{27\%}{West, 2047 requirement}\end{minipage}
+% ---------------------------------------------------------------- roadblocks
+\column{0.371\textwidth}
+\colhead{Roadblocks and what we do}{signal}
+{\fontsize{7}{8.3}\selectfont
+\rblock{No NPP renewable generation after FY2023-24}{Merit solar and wind only from Sep 2025; holdout extends NPP RES at 14.1\%/yr}
+\rblock{No regional RES on NPP}{regional shares use conventional generation}
+\rblock{Urban share in neither dataset}{literature prior; $\gamma = 0$ ablation gives $-$5\%}
+\rblock{GSDP: 2011 price-base break, 2024 incomplete}{2011 growth imputed, 2024 dropped}
+\rblock{Captive plants outside NPP}{separate layer, 13.2\% of utility generation}
+\rblock{History includes supply shortages}{elasticity may be high; elasticity-decline case $-$11\%}
+\vspace{0.6mm}
+\textbf{\color{signal}Ruling requested:} literature priors in the core; the captive layer.\par}
+\end{columns}
+\evidence{NPP dashboard chart, CEA 18-column reports and Merit data on NPP; Renewable India dataset; CEA General Review 2025, Table 1.6; prior: Liddle (2013), Shahbaz et al.\ (2016), Holtedahl and Joutz (2004). Outputs of 16 Nov 2026: \texttt{forecast\_national\_regional}, \texttt{india\_fit}, \texttt{holdout}, \texttt{sensitivity\_2047}, \texttt{strategy\_2047\_regions}.}
+\end{frame}
+\end{document}

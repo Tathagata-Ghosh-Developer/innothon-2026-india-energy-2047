@@ -1,6 +1,6 @@
 % Beamer theme "India2047": golden-ratio layout, evidence footers, reader's notes.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{beamerthemeIndia2047}[2026/11/15]
+\ProvidesPackage{beamerthemeIndia2047}[2026/11/16]
 
 \RequirePackage[T1]{fontenc}
 \RequirePackage[sfdefault,lining]{FiraSans}
@@ -73,7 +73,7 @@
 
 % Footline: project mark left, slide number right.
 \setbeamertemplate{footline}{%
-  \hspace*{7mm}{\fontsize{6.5}{8}\selectfont\color{muted}India's electricity in 2047\ \textbar\ IISc Bengaluru\ \textbar\ ExxonMobil INNOTHON 2026}%
+  \hspace*{7mm}{\fontsize{6.5}{8}\selectfont\color{muted}India's electricity in 2047\ \textbar\ IISc Bengaluru\ \textbar\ ExxonMobil INNOTHON 2026\ \textbar\ live dashboard: india-energy-2047.vercel.app}%
   \hfill{\fontsize{7}{8}\selectfont\color{navy}\bfseries\insertframenumber}\hspace*{7mm}\par\vspace*{2.6mm}}
 
 % Evidence line: sits just above the footline on every content slide.
@@ -137,13 +137,13 @@
     legend cell align=left,
     every axis plot/.append style={line width=1.4pt},
     scaled ticks=false,
-    /pgf/number format/1000 sep={{,}},
+    /pgf/number format/1000 sep={\mathord{,}},  % ordinary comma: no math spacing after it
   },
   select/.style 2 args={
     x filter/.append code={%
       \edef\tempa{\thisrow{#1}}\edef\tempb{#2}%
       \ifx\tempa\tempb\else\def\pgfmathresult{inf}\fi}},
-  /pgf/number format/.cd,1000 sep={{,}},
+  /pgf/number format/.cd,1000 sep={\mathord{,}},
 }
 
 % ---------------------------------------------------------------- reader's note pages
@@ -152,8 +152,8 @@
   {\phiS\bfseries\color{navy}Reader's note\ \textendash\ slide \insertframenumber}\par
   \vspace{2mm}%
   \begin{minipage}[t]{0.382\textwidth}\vspace{0pt}
-    \fcolorbox{grid}{white}{\insertslideintonotes{0.33}}
+    \fcolorbox{grid}{white}{\insertslideintonotes{0.315}}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.585\textwidth}\vspace{0pt}
-    \fontsize{8.8}{11.2}\selectfont\color{ink}\insertnote
+    \fontsize{8}{10}\selectfont\color{ink}\insertnote
   \end{minipage}}
