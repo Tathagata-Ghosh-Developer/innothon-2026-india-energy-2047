@@ -33,6 +33,7 @@ struct PolicySettings {
   double build_accel = 2.0;
   int target_year = 2047;
   double unserved_cost = 1000.0;   // USD/MWh penalty that keeps every run feasible
+  double co2_cap_mt = -1.0;        // national CO2 cap, Mt per year (<= 0: no cap)
   std::array<double, kTechs> cost_mult{1, 1, 1, 1, 1, 1, 1, 1, 1};
 };
 
@@ -48,6 +49,7 @@ struct AllocationResult {
   double total_twh = 0;
   double cost_busd = 0;   // billion USD per year
   double co2_mt = 0;      // MtCO2 per year
+  double co2_cap_dual = 0;  // marginal abatement cost at the CO2 cap, USD per tonne (0 if no cap or slack)
   std::array<double, kTechs> national{};    // TWh by source
 
   double share(int s) const { return total_twh > 0 ? national[s] / total_twh : 0.0; }
@@ -72,6 +74,21 @@ AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySetti
 
 // Score used by allocate_by_score for region r and source s.
 double resource_score(const AllocationInputs& in, const Bounds& b, int r, int s);
+
+// Cost-CO2 trade-off (epsilon-constraint): the least-cost plan is re-solved under
+// a national CO2 cap stepped from the unconstrained plan's emissions down to the
+// lowest cap that still meets the requirement in full. The LP frontier is convex,
+// and each cap's dual is the marginal abatement cost at that point.
+struct ParetoPoint {
+  double co2_cap_mt = 0;          // cap applied (the first point is uncapped)
+  double co2_mt = 0;
+  double cost_busd = 0;
+  double marginal_usd_per_t = 0;  // dual of the cap, USD per tonne
+  double unserved_twh = 0;
+  AllocationResult plan;
+};
+std::vector<ParetoPoint> pareto_cost_co2(const AllocationInputs& in, const PolicySettings& p,
+                                         const std::array<double, kRegions>& requirement, int points);
 
 // One-at-a-time sensitivity of the least-cost strategy: each setting is moved to
 // a low and a high value with everything else fixed. Solves run in parallel.

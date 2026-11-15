@@ -157,6 +157,15 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
     const int row = rb.add(-kHighsInf, p.coal_cap * base_coal);
     for (int r = 0; r < kRegions; ++r) rb.set(row, gvar(r, kCoal), 1.0);
   }
+  // Optional national CO2 cap: TWh x t/MWh = Mt, so the row is in Mt and its dual
+  // is in million USD per Mt = USD per tonne.
+  int co2_row = -1;
+  if (p.co2_cap_mt > 0) {
+    co2_row = rb.add(-kHighsInf, p.co2_cap_mt);
+    for (int r = 0; r < kRegions; ++r)
+      for (int s = 0; s < kTechs; ++s)
+        if (in.emission_t_per_mwh[s] > 0) rb.set(co2_row, gvar(r, s), in.emission_t_per_mwh[s]);
+  }
 
   // Column-wise matrix for HiGHS.
   HighsLp lp;
@@ -232,6 +241,8 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
     res.total_twh += prod;
     res.marginal_cost[r] = sol.row_dual[balance[r]];
   }
+  // Minimisation with a <= row: the dual is <= 0; the abatement cost is its negative.
+  if (co2_row >= 0) res.co2_cap_dual = std::max(0.0, -sol.row_dual[co2_row]);
   res.corridor_flow.resize(nc);
   double circulating = 0;
   for (int c = 0; c < nc; ++c) {
@@ -247,6 +258,54 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
     res.status = "infeasible (needs circulating flows of " + std::to_string(circulating) + " TWh)";
   }
   return res;
+}
+
+std::vector<ParetoPoint> pareto_cost_co2(const AllocationInputs& in, const PolicySettings& base,
+                                         const std::array<double, kRegions>& req, int points) {
+  auto unserved = [](const AllocationResult& a) {
+    double u = 0;
+    for (double x : a.unserved) u += x;
+    return u;
+  };
+  auto adequate = [&](const AllocationResult& a) { return a.ok && unserved(a) < 1e-6; };
+
+  std::vector<ParetoPoint> out;
+  PolicySettings p = base;
+  p.co2_cap_mt = -1.0;
+  AllocationResult free = solve_least_cost(in, p, req);
+  if (!adequate(free) || points < 1) return out;
+
+  // Lowest cap that still meets the requirement in full (below it the LP would
+  // rather leave demand unserved): bisection on the cap.
+  double lo = 0.0, hi = free.co2_mt;
+  for (int it = 0; it < 40 && hi - lo > 1e-4 * free.co2_mt; ++it) {
+    p.co2_cap_mt = 0.5 * (lo + hi);
+    (adequate(solve_least_cost(in, p, req)) ? hi : lo) = p.co2_cap_mt;
+  }
+  const double cap_min = hi;
+
+  out.push_back({free.co2_mt, free.co2_mt, free.cost_busd, 0.0, 0.0, free});
+  std::vector<ParetoPoint> swept(static_cast<size_t>(points));
+#pragma omp parallel for schedule(dynamic)
+  for (int k = 0; k < points; ++k) {
+    PolicySettings q = base;
+    q.co2_cap_mt = free.co2_mt - (free.co2_mt - cap_min) * (k + 1) / points;
+    AllocationResult a = solve_least_cost(in, q, req);
+    const double u = unserved(a);
+    swept[static_cast<size_t>(k)] = {q.co2_cap_mt, a.co2_mt, a.cost_busd, a.co2_cap_dual, u, std::move(a)};
+  }
+  for (auto& q : swept)
+    if (adequate(q.plan)) out.push_back(std::move(q));
+
+  // Order by falling CO2 and keep only non-dominated, distinct points.
+  std::sort(out.begin() + 1, out.end(), [](const ParetoPoint& a, const ParetoPoint& b) { return a.co2_mt > b.co2_mt; });
+  std::vector<ParetoPoint> front;
+  for (auto& q : out) {
+    if (!front.empty() && q.co2_mt >= front.back().co2_mt - 1e-6) continue;  // no CO2 gain
+    while (!front.empty() && q.cost_busd <= front.back().cost_busd - 1e-9) front.pop_back();  // q dominates
+    front.push_back(std::move(q));
+  }
+  return front;
 }
 
 double resource_score(const AllocationInputs& in, const Bounds& b, int r, int s) {

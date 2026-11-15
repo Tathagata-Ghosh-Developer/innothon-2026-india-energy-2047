@@ -9,3 +9,7 @@ add_test(NAME allocation COMMAND test_allocation ${PROJECT_SOURCE_DIR})
 add_executable(test_storage test_storage.cpp)
 target_link_libraries(test_storage PRIVATE e47_core)
 add_test(NAME storage COMMAND test_storage ${PROJECT_SOURCE_DIR})
+
+add_executable(test_pareto test_pareto.cpp)
+target_link_libraries(test_pareto PRIVATE e47_core)
+add_test(NAME pareto COMMAND test_pareto ${PROJECT_SOURCE_DIR})
