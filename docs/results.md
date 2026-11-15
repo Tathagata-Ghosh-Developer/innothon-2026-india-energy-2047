@@ -113,6 +113,48 @@ It gives the same regional pattern with larger transfers:
 Where the two methods disagree, the corridor limits bind in the least-cost plan.
 That is a direct argument for expanding transmission into the Eastern region.
 
+### 3.4 Scenario and policy presets
+
+Each scenario preset is crossed with each policy preset.
+The definitions are in [assumptions_and_uncertainty.md](assumptions_and_uncertainty.md), section 6.
+The tool writes the full table to `outputs/presets.csv`.
+
+| Scenario | Policy | 2047 median (TWh) | Non-fossil | Coal | Solar | Hydro | Nuclear | CO2 (Mt) | Cost (bn USD) | Unmet (TWh) | East net export (TWh) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Base | Base | 4,536 | 74.7% | 25.3% | 37.5% | 17.7% | 2.2% | 1,114 | 197 | 0 | -296 |
+| Base | Low carbon | 4,536 | 89.8% | 10.2% | 44.9% | 18.3% | 6.4% | 450 | 177 | 0 | -544 |
+| Base | Energy security | 4,536 | 73.1% | 26.9% | 37.5% | 16.9% | 2.2% | 1,188 | 199 | 0 | -294 |
+| High growth | Base | 5,176 | 71.9% | 28.1% | 32.9% | 16.0% | 7.9% | 1,415 | 242 | 0 | -456 |
+| High growth | Low carbon | 5,176 | 82.5% | 14.7% | 39.5% | 16.6% | 8.8% | 806 | 223 | 0 | -259 |
+| High growth | Energy security | 5,176 | 70.0% | 28.0% | 32.9% | 15.3% | 6.4% | 1,455 | 245 | **4.7** | -338 |
+| Low growth | Base | 4,108 | 80.7% | 19.3% | 41.4% | 19.1% | 1.3% | 772 | 168 | 0 | -453 |
+| Low growth | Low carbon | 4,108 | 88.7% | 11.3% | 49.6% | 18.4% | 2.0% | 450 | 150 | 0 | -466 |
+| Low growth | Energy security | 4,108 | 75.3% | 24.7% | 41.4% | 17.0% | 1.3% | 987 | 172 | 0 | -338 |
+
+The 90 percent ranges for 2047 are:
+
+| Scenario | P5 to P95 (TWh) |
+| --- | --- |
+| Base | 3,351 to 5,606 |
+| High growth | 3,560 to 6,572 |
+| Low growth | 3,213 to 5,056 |
+
+**What the table shows:**
+
+1. **The low-carbon policy costs less, not more.**
+   It cuts 2047 CO2 to about 450 Mt, which is coal at its 35 percent fleet floor.
+   Generation cost falls by about 20 billion USD a year, because more land for solar and wind and larger corridors let cheaper renewables replace coal.
+   The 50 USD/t carbon price is a transfer, so it is not included in generation cost.
+2. **High growth breaks the energy-security policy.**
+   With regional self-sufficiency rules and corridors frozen at the 2032 plan, 4.7 TWh cannot be served.
+   Fast growth needs corridor expansion or more firm capacity in deficit regions.
+3. **Nuclear becomes the marginal firm source under high growth.**
+   It rises to 8 to 9 percent once the cheaper firm options are used up.
+4. **Faster growth raises the requirement only moderately.**
+   The fitted models show generation per person saturating with income at the levels India reaches in the 2040s.
+   Within countries, urbanisation and income rise together, and the models attribute much of the historical rise to urbanisation.
+   The growth presets therefore also move the urban share: +3 points for high growth, -2 points for low growth.
+
 ## 4. Sensitivity
 
 ![Uncertainty and sensitivity](img/5_uncertainty_sensitivity.png)

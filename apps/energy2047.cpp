@@ -10,6 +10,7 @@
 #include "core/csv.hpp"
 #include "core/stats.hpp"
 #include "pipeline/pipeline.hpp"
+#include "pipeline/presets.hpp"
 
 namespace fs = std::filesystem;
 using namespace e47;
@@ -192,6 +193,41 @@ int main(int argc, char** argv) {
               p.damped_twh);
           w.endrow();
         }
+    }
+    {
+      // Preset matrix: every scenario preset against every policy preset.
+      CsvWriter w((out / "presets.csv").string());
+      for (const char* h : {"scenario", "policy", "status", "national_p05_2047", "national_p50_2047", "national_p95_2047",
+                            "nonfossil_share", "coal_share", "solar_share", "wind_share", "hydro_share", "nuclear_share",
+                            "co2_mt", "cost_busd", "unserved_twh", "eastern_net_export_twh"})
+        w.field(h);
+      w.endrow();
+      std::printf("preset matrix (2047 median TWh | non-fossil | coal | CO2 Mt | unserved TWh):\n");
+      for (const auto& sp : scenario_presets()) {
+        ScenarioControls sc = c;
+        sc = ScenarioControls{};
+        sc.draws = c.draws;
+        sp.apply(sc);
+        const ForecastResult pf = pl.forecast(sc);
+        const auto& q = pf.quant.q[0][pf.years.size() - 1];
+        for (const auto& pp : policy_presets()) {
+          PolicySettings ps;
+          pp.apply(ps);
+          const StrategyResult r = pl.strategy(pf, sc, ps);
+          const AllocationResult& a = r.least_cost;
+          double unserved = 0;
+          for (double u : a.unserved) unserved += u;
+          w.field(sp.name).field(pp.name).field(a.ok ? "optimal" : a.status);
+          w.field(q[0], 6).field(q[3], 6).field(q[6], 6);
+          w.field(a.nonfossil_share(), 4).field(a.share(kCoal), 4).field(a.share(kSolar), 4).field(a.share(kWind), 4);
+          w.field(a.share(kHydro), 4).field(a.share(kNuclear), 4).field(a.co2_mt, 6).field(a.cost_busd, 5);
+          w.field(unserved, 4).field(a.net_export[3], 5);
+          w.endrow();
+          std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f %s\n", sp.name.c_str(),
+                      pp.name.c_str(), q[3], 100 * a.nonfossil_share(), 100 * a.share(kCoal), a.co2_mt, unserved,
+                      a.ok ? "" : a.status.c_str());
+        }
+      }
     }
     std::printf("outputs written to %s\n", out.string().c_str());
     return 0;

@@ -62,3 +62,20 @@ The "Control" column names the dashboard slider where one exists.
 4. **The trend model's tail.** Its own error variance produces a thin upper tail (a few scenarios above 8,000 TWh). The 90 percent interval is unaffected, and the dashboard histogram shows P0.5 to P99.5.
 5. **Costs to 2047 are uncertain.** IEA projections are a single published path. The sensitivity sweep varies solar, coal and nuclear costs by plus or minus 30 percent.
 6. **Captive generation.** The national series includes captive plants; regional base mixes do not (about 230 TWh in 2024). The regional requirement covers both, so the plan supplies captive demand from the grid mix.
+
+## 6. Scenario and policy presets
+
+The dashboard buttons and the command-line preset matrix both read these definitions from `src/pipeline/presets.hpp`.
+
+| Preset | Type | Settings (changes from the defaults) |
+| --- | --- | --- |
+| Base | Scenario | None |
+| High growth | Scenario | GDP per capita growth 6.5 percent to 2030, slowing by 1 point by 2047; urban share +3 points by 2047; new loads 100 to 300 TWh |
+| Low growth | Scenario | GDP per capita growth 3.5 percent to 2030, slowing by 2 points; urban share -2 points by 2047 |
+| Base | Policy | None |
+| Low carbon | Policy | Non-fossil at least 80 percent; coal floor 35 percent of 2024; carbon price 50 USD/t; 30 percent usable solar and wind; corridors 3x the 2032 plan; nuclear up to 15 percent |
+| Energy security | Policy | Regional firm share 40 percent; national firm share 55 percent; corridors at the 2032 plan; gas at most 2 percent; coal floor 70 percent |
+
+The growth presets also move urbanisation.
+Within countries, faster income growth comes with faster urbanisation.
+The fitted models attribute much of the historical rise in generation per person to urbanisation.

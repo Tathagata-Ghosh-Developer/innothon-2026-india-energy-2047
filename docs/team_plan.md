@@ -57,3 +57,8 @@ The plan below runs to the final evaluation.
    The uncertainty analysis is millions of independent scenarios.
    The GPU runs 4 million in about 30 ms, which lets the dashboard recompute live as the jury changes assumptions.
    The CPU path gives identical results, checked by the parity test.
+7. **Why does faster growth add only about 14 percent?**
+   Within countries, income and urbanisation rise together.
+   Both fitted models show income effects flattening at the income India reaches in the 2040s, so much of the historical rise is attributed to urbanisation.
+   The high-growth preset therefore also raises urbanisation and adds new loads (green hydrogen, data centres).
+   The low-carbon policy is cheaper than the base plan, and the energy-security policy fails under high growth (4.7 TWh unmet).

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "pipeline/pipeline.hpp"
+#include "pipeline/presets.hpp"
 
 namespace e47 {
 

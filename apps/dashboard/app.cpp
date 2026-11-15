@@ -191,6 +191,23 @@ void App::sidebar() {
   ImGui::TextUnformatted("Scenario");
   if (font_head_) ImGui::PopFont();
   ImGui::PushItemWidth(-ImGui::GetFontSize() * 0.5f);
+  {
+    // Scenario presets keep the scenario count and device choice.
+    const auto& presets = scenario_presets();
+    for (size_t i = 0; i < presets.size(); ++i) {
+      if (i) ImGui::SameLine();
+      if (ImGui::Button((presets[i].name + "##sc").c_str())) {
+        const uint64_t draws = sc_.draws;
+        const bool gpu = sc_.use_gpu;
+        sc_ = ScenarioControls{};
+        sc_.draws = draws;
+        sc_.use_gpu = gpu;
+        presets[i].apply(sc_);
+        dirty_ = true;
+      }
+      ImGui::SetItemTooltip("%s", presets[i].description.c_str());
+    }
+  }
   const DriverData& d = pl_->drivers();
   double g0 = sc_.g_start >= 0 ? sc_.g_start : d.g_hist_mean;
   ImGui::TextUnformatted("GDP per capita growth, 2026-30");
@@ -236,6 +253,18 @@ void App::sidebar() {
   if (font_head_) ImGui::PushFont(font_head_);
   ImGui::TextUnformatted("Policy and planning");
   if (font_head_) ImGui::PopFont();
+  {
+    const auto& presets = policy_presets();
+    for (size_t i = 0; i < presets.size(); ++i) {
+      if (i) ImGui::SameLine();
+      if (ImGui::Button((presets[i].name + "##pol").c_str())) {
+        pol_ = PolicySettings{};
+        presets[i].apply(pol_);
+        dirty_ = true;
+      }
+      ImGui::SetItemTooltip("%s", presets[i].description.c_str());
+    }
+  }
   ImGui::TextUnformatted("Minimum non-fossil share");
   dirty_ |= slider("##nf", &pol_.nonfossil_min, 0.4, 0.95, "%.0f%%", 100, "Share of 2047 generation from non-fossil sources.");
   ImGui::TextUnformatted("Coal floor / cap (x 2024 coal)");
