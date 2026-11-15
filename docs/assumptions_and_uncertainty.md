@@ -74,6 +74,7 @@ The dashboard buttons and the command-line preset matrix both read these definit
 | Low growth | Scenario | GDP per capita growth 3.5 percent to 2030, slowing by 2 points; urban share -2 points by 2047 |
 | Base | Policy | None |
 | Low carbon | Policy | Non-fossil at least 80 percent; coal floor 35 percent of 2024; carbon price 50 USD/t; 30 percent usable solar and wind; corridors 3x the 2032 plan; nuclear up to 15 percent |
+| Robust | Policy | Non-fossil at least 75 percent; 35 percent usable solar (including rooftop and agri-PV) and 30 percent wind; corridors 3x the 2032 plan; nuclear up to 15 percent; build rates 2.5x the record year; coal floor 50 percent |
 | Energy security | Policy | Regional firm share 40 percent; national firm share 55 percent; corridors at the 2032 plan; gas at most 2 percent; coal floor 70 percent |
 
 The growth presets also move urbanisation.

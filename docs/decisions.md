@@ -121,3 +121,23 @@ A recorded walkthrough video is kept as a fallback for the live demo.
 
 **Choice.** [data_audit.md](data_audit.md) lists every dataset and column, its unit, source URL, and whether it is a generation quantity.
 No column enters the model without a row in that table.
+
+## D9. Independent review and fixes (2026-11-15)
+
+An independent read-only review of the numerical core found these problems, all now fixed.
+
+| Severity | Finding | Fix |
+| --- | --- | --- |
+| High | Hydro capacity factors were never read: the CSV label is `hydro_all`. Every region used a 100 percent capacity factor, so usable hydro was 948 TWh instead of about 350 TWh. | Match `hydro_all`. Fail loudly if no regional capacity factor is read. |
+| Low-medium | Share rows on gross generation let the solver circulate flow round a corridor, burning energy as losses near infeasibility. | Any circulating flow is now reported as infeasible. |
+| Low | Relative state income is from 2024 but was treated as the 2025 base year. | One extra year of convergence is applied. |
+| Low | The score allocation ignored the shared solar and wind resource for firmed RE, and ran even when the least-cost plan was infeasible. | Firmed RE is capped by the remaining resource; the score allocation is skipped when the plan is infeasible. |
+| Low | Convergence speed returned 0 for overshooting bootstrap replicates; float-to-int histogram binning was undefined for out-of-range values. | Return NaN and drop the replicate; clamp before the cast. |
+
+**Effect on results.**
+
+- The requirement forecast did not change.
+- The base 2047 mix changed: hydro went from 17.7 to 7.7 percent and coal from 25.3 to 30.0 percent.
+- The non-fossil minimum now binds, and the base plan has no headroom at the P90 requirement.
+
+This led to the **Robust** policy preset, which is the recommended strategy.

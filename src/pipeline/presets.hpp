@@ -56,6 +56,18 @@ inline const std::vector<PolicyPreset>& policy_presets() {
          p.transfer_scale = 3.0;
          p.nuclear_max = 0.15;
        }},
+      {"Robust",
+       "Plan that holds at the P90 requirement: 75% non-fossil, 35% usable solar and 30% wind land (incl. rooftop "
+       "and agri-PV), corridors 3x the 2032 plan, nuclear up to 15%, build rates 2.5x the record year, coal floor 50%.",
+       [](PolicySettings& p) {
+         p.nonfossil_min = 0.75;
+         p.solar_land = 0.35;
+         p.wind_land = 0.30;
+         p.transfer_scale = 3.0;
+         p.nuclear_max = 0.15;
+         p.build_accel = 2.5;
+         p.coal_floor = 0.50;
+       }},
       {"Energy security",
        "Each region 40% self-firm, national firm 55%, corridors only at the 2032 plan, gas at most 2%, coal floor 70%.",
        [](PolicySettings& p) {

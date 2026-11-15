@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstring>
 #include <limits>
+#include <stdexcept>
 
 #include "../core/stats.hpp"
 #include "mc.hpp"
@@ -73,6 +74,8 @@ McResult run_mc_cpu(const McInputs& in, const std::vector<float>& boot, uint64_t
   n_keep = static_cast<int>(std::min<uint64_t>(static_cast<uint64_t>(std::max(n_keep, 0)), draws));
   r.keep.assign(static_cast<size_t>(n_keep) * kKeepFeatures, 0.0f);
   const int nt = omp_get_max_threads();
+  if (draws / static_cast<uint64_t>(nt) >= 0xFFFFFFFFull)
+    throw std::runtime_error("run_mc_cpu: too many draws per thread for 32-bit histogram counts");
   r.device = "CPU " + std::to_string(nt) + " threads (" + (single_precision ? "float" : "double") + ")";
 
   Timer timer;

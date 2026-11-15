@@ -16,6 +16,7 @@ namespace fs = std::filesystem;
 namespace {
 
 constexpr int kTargetYear = 2047;
+constexpr int kRelIncomeYear = 2024;  // latest year of the organiser GSDP data
 
 std::string find_wdi(const fs::path& dir) {
   for (const auto& e : fs::directory_iterator(dir)) {
@@ -296,6 +297,7 @@ McInputs Pipeline::build_inputs(const ScenarioControls& c) const {
   }
   in.conv_mean = static_cast<float>(fit_.convergence.lambda);
   in.conv_sd = static_cast<float>(fit_.convergence.lambda_se);
+  in.rel_income_lag = static_cast<float>(drv_.base_year - kRelIncomeYear);
   return in;
 }
 
@@ -346,7 +348,12 @@ StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControl
   }
   for (int r = 0; r < kRegions; ++r) s.requirement[r] *= national / sum;
   s.least_cost = solve_least_cost(alloc_in_, p, s.requirement);
-  s.score = allocate_by_score(alloc_in_, p, s.requirement, s.least_cost.national);
+  if (s.least_cost.ok) {
+    s.score = allocate_by_score(alloc_in_, p, s.requirement, s.least_cost.national);
+  } else {
+    s.score.ok = false;
+    s.score.status = "not run: the least-cost plan is infeasible, so there are no national totals to share";
+  }
   Timer tt;
   const double p10 = f.mc.quantile(f.inputs, 0, t, 0.10), p90 = f.mc.quantile(f.inputs, 0, t, 0.90);
   s.tornado = policy_tornado(alloc_in_, p, s.requirement, p10 / national, p90 / national);

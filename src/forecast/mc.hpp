@@ -76,6 +76,7 @@ struct McInputs {
   // within-country (over time) effect, not a cross-state one.
   float state_urb_delta[kMaxStates][kMaxYears];
   float conv_mean, conv_sd;                      // convergence speed of relative income, per year
+  float rel_income_lag;                          // years between the relative-income year and base_year
 
   // Histogram ranges per series and year
   float hist_lo[kSeries][kMaxYears];
@@ -176,7 +177,7 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
       const int rmodel = model == kDamped ? kFeQuad : model;
       Real reg[kRegions] = {0, 0, 0, 0, 0};
       Real total = 0;
-      const Real decay = exp(-lambda * Real(t + 1));
+      const Real decay = exp(-lambda * (Real(t + 1) + Real(in.rel_income_lag)));
       for (int s = 0; s < in.n_states; ++s) {
         const Real ys = y * exp(Real(in.state_ln_rel_income[s]) * decay);
         const Real dus = Real(in.state_urb_delta[s][t]);
@@ -203,8 +204,11 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
 template <class Real>
 E47_HD int hist_bin(const McInputs& in, int series, int t, Real v) {
   const Real lo = Real(in.hist_lo[series][t]), hi = Real(in.hist_hi[series][t]);
-  int b = static_cast<int>((v - lo) / (hi - lo) * Real(kBins));
-  return b < 0 ? 0 : (b >= kBins ? kBins - 1 : b);
+  const Real pos = (v - lo) / (hi - lo) * Real(kBins);
+  // Clamp before the integer conversion (out-of-range float-to-int is undefined).
+  if (!(pos < Real(kBins))) return kBins - 1;  // also catches NaN
+  if (pos < Real(1)) return 0;
+  return static_cast<int>(pos);
 }
 
 struct McResult {

@@ -12,27 +12,26 @@ Team submission for ExxonMobil INNOTHON 2026 (Indian Institute of Science, Benga
 | National generation | 2,080 TWh | **4,536 TWh** | 3,351 - 5,606 TWh |
 | Per person | 1,421 kWh | about 2,720 kWh | |
 
-| Region | 2047 requirement (median) | Share | Least-cost 2047 role |
+| Region | 2047 requirement (median) | Share | Least-cost 2047 role (base policy) |
 | --- | --- | --- | --- |
-| Northern | 1,326 TWh | 29% | Rajasthan solar and Himalayan hydro; small net importer |
-| Western | 1,121 TWh | 25% | Solar, wind, Gujarat offshore wind, existing coal; largest exporter |
-| Southern | 984 TWh | 22% | Best wind, Tamil Nadu offshore wind, nuclear; exporter |
-| Eastern | 930 TWh | 20% | Coal fleet and nuclear; imports renewables, so corridors must grow |
-| North-Eastern | 173 TWh | 4% | Hydro (Arunachal); exporter of firm clean power |
+| Northern | 1,327 TWh | 29% | Rajasthan solar, Himalayan hydro, coal fleet, nuclear; about self-sufficient |
+| Western | 1,120 TWh | 25% | Solar, wind, Gujarat offshore wind, coal, nuclear; largest exporter (+241 TWh) |
+| Southern | 983 TWh | 22% | Best wind, Tamil Nadu offshore wind, nuclear; exporter (+113 TWh) |
+| Eastern | 932 TWh | 21% | Coal fleet and nuclear; imports 340 TWh, so corridors into the East must grow |
+| North-Eastern | 173 TWh | 4% | Arunachal hydro supplies 81% of the region |
 
-The least-cost 2047 mix is about three-quarters non-fossil:
+Two plans for 2047:
 
-| Source | Share of 2047 generation |
-| --- | --- |
-| Solar | 37.5% |
-| Coal | 25.3% |
-| Hydro | 17.7% |
-| Onshore wind | 14.1% |
-| Offshore wind | 3.2% |
-| Nuclear | 2.2% |
+| Plan | Solar | Firmed RE | Coal | Wind (on- and offshore) | Hydro | Nuclear | Non-fossil | CO2 | Cost | Unmet if requirement reaches P90 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Least cost, base policy | 37.5% | 0% | 30.0% | 17.3% | 7.7% | 7.5% | 70.0% | 1,323 Mt | 202 bn USD/yr | 447 TWh |
+| **Robust policy (recommended)** | 52.5% | 15.1% | 20.8% | 2.7% | 7.7% | 1.2% | **79.2%** | **920 Mt** | **166 bn USD/yr** | **0 TWh** |
 
-That mix emits 1,114 Mt CO2 a year, against about 1,480 Mt today.
-Details are in [docs/results.md](docs/results.md).
+- Firmed RE means solar and wind backed by storage, sold round the clock.
+- The Robust plan opens more land for solar (rooftop and agri-PV), triples inter-regional corridors and builds storage-firmed renewables.
+- It is cheaper, cleaner and still adequate if the requirement reaches the 90th percentile.
+- Today's generation emits about 1,480 Mt CO2.
+- Details are in [docs/results.md](docs/results.md).
 
 ## Compliance rule
 
@@ -68,7 +67,7 @@ Full details are in [docs/methodology.md](docs/methodology.md).
 | [docs/data_audit.md](docs/data_audit.md) | Provenance of every input; generation-only compliance |
 | [docs/decisions.md](docs/decisions.md) | Design decisions and rejected alternatives |
 | [docs/team_plan.md](docs/team_plan.md) | Work plan to the final evaluation |
-| [docs/deck/](docs/deck/) | Midpoint review deck (PowerPoint, 12 slides, native charts) |
+| [docs/beamer/](docs/beamer/) | Presentation deck (LaTeX Beamer) and reader's edition with notes |
 
 ## Build
 

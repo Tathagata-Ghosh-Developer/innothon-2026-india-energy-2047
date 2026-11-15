@@ -146,21 +146,24 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         if (tech == "solar" && metric == "planning_cuf_new") cuf_solar[reg] = v;
         if (tech == "wind_onshore" && metric == "planning_cuf") cuf_wind[reg] = v;
         if (tech == "wind_offshore" && metric == "planning_cuf") cuf_off[reg] = v;
-        if (tech == "hydro" && metric == "observed_cuf") cuf_hydro[reg] = v;
+        if (tech == "hydro_all" && metric == "observed_cuf") cuf_hydro[reg] = v;
       }
       if (tech == "biomass" && metric == "availability_assumption") cuf_bio = v;
     }
     // Regions without a published planning CUF take the lowest published regional value.
-    auto fill = [](std::array<double, kRegions>& a) {
-      double mn = 1;
+    // No regional value at all means the selection matched nothing: fail loudly.
+    auto fill = [](std::array<double, kRegions>& a, const char* what) {
+      double mn = 2;
       for (double v : a)
         if (v > 0) mn = std::min(mn, v);
+      if (mn > 1) throw std::runtime_error(std::string("no regional capacity factor read for ") + what);
       for (double& v : a)
         if (v <= 0) v = mn;
     };
-    fill(cuf_solar);
-    fill(cuf_wind);
-    fill(cuf_hydro);
+    fill(cuf_solar, "solar");
+    fill(cuf_wind, "onshore wind");
+    fill(cuf_hydro, "hydro");
+    if (cuf_off[1] <= 0 || cuf_off[2] <= 0) throw std::runtime_error("no offshore wind capacity factor read");
     in.notes.push_back("Solar/wind CUF: CEA NEP 2022-32 regional planning values; missing regions use the lowest published regional value.");
   }
 

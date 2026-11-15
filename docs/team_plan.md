@@ -49,10 +49,11 @@ The plan below runs to the final evaluation.
    Its requirement grows fastest because of population and income catch-up.
    Its solar and wind resource is small, and coal is limited to its fleet.
    Importing western and southern renewables is cheaper, so the plan argues for corridor expansion.
-5. **Why so little nuclear?**
-   At IEA cost projections, nuclear costs about the same as coal and more than renewables plus hydro.
-   With a carbon price or 30 percent lower nuclear cost, nuclear and hydro displace coal.
-   The sensitivity tab shows this.
+5. **How much nuclear, and why?**
+   In the base least-cost plan, nuclear supplies 7.5 percent of generation, sited at the pipeline locations.
+   At IEA cost projections, nuclear costs about the same as new coal.
+   The Robust plan uses little nuclear (1.2 percent), because opening more solar land and storage-firmed renewables is cheaper.
+   A 30 percent lower nuclear cost cuts 2047 CO2 by about 107 Mt in the base plan.
 6. **Why use a GPU?**
    The uncertainty analysis is millions of independent scenarios.
    The GPU runs 4 million in about 30 ms, which lets the dashboard recompute live as the jury changes assumptions.
@@ -61,4 +62,8 @@ The plan below runs to the final evaluation.
    Within countries, income and urbanisation rise together.
    Both fitted models show income effects flattening at the income India reaches in the 2040s, so much of the historical rise is attributed to urbanisation.
    The high-growth preset therefore also raises urbanisation and adds new loads (green hydrogen, data centres).
-   The low-carbon policy is cheaper than the base plan, and the energy-security policy fails under high growth (4.7 TWh unmet).
+8. **What is the binding constraint?**
+   It is land for solar and wind, plus firm clean power, not money.
+   The base plan leaves 447 TWh unmet if the requirement reaches P90.
+   The Robust policy closes that gap while costing less and emitting less.
+   Its levers are more land (rooftop and agri-PV), triple the corridors and storage-firmed renewables.

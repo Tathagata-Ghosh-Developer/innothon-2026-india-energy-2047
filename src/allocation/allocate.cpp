@@ -233,7 +233,19 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
     res.marginal_cost[r] = sol.row_dual[balance[r]];
   }
   res.corridor_flow.resize(nc);
-  for (int c = 0; c < nc; ++c) res.corridor_flow[c] = sol.col_value[fvar(c, 0)] - sol.col_value[fvar(c, 1)];
+  double circulating = 0;
+  for (int c = 0; c < nc; ++c) {
+    const double f0 = sol.col_value[fvar(c, 0)], f1 = sol.col_value[fvar(c, 1)];
+    res.corridor_flow[c] = f0 - f1;
+    circulating = std::max(circulating, std::min(f0, f1));
+  }
+  // Flow in both directions of a corridor only burns energy as losses; the share
+  // rows are written on gross generation, so a solution that needs it is really
+  // infeasible.
+  if (circulating > 1e-3) {
+    res.ok = false;
+    res.status = "infeasible (needs circulating flows of " + std::to_string(circulating) + " TWh)";
+  }
   return res;
 }
 
@@ -245,7 +257,7 @@ double resource_score(const AllocationInputs& in, const Bounds& b, int r, int s)
     case kNuclear:
       return in.nuclear_units[r];
     case kFirmRE:
-      return b.hi[r][kSolar] + b.hi[r][kWind];
+      return b.hi[r][kFirmRE] < kHighsInf ? b.hi[r][kFirmRE] : b.hi[r][kSolar] + b.hi[r][kWind];
     default:
       return b.hi[r][s];  // usable generation potential
   }
@@ -272,6 +284,7 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
       {"Solar cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kSolar] = v; }, "%.1fx"},
       {"Nuclear cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kNuclear] = v; }, "%.1fx"},
       {"Coal cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kCoal] = v; }, "%.1fx"},
+      {"Firmed RE cost (storage)", 0.7, 1.5, [](PolicySettings& p, double v) { p.cost_mult[kFirmRE] = v; }, "%.1fx"},
   };
   constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
   const int nrow = ns + 1;  // + requirement uncertainty
@@ -313,10 +326,15 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
 AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySettings& p,
                                    const std::array<double, kRegions>& req,
                                    const std::array<double, kTechs>& national) {
-  const Bounds b = make_bounds(in, p, req);
+  Bounds b = make_bounds(in, p, req);
   AllocationResult res;
   res.requirement = req;
   for (int s = 0; s < kTechs; ++s) {
+    // Firmed RE uses whatever solar plus wind resource the region has left
+    // (solar and wind are allocated first in source order).
+    if (s == kFirmRE)
+      for (int r = 0; r < kRegions; ++r)
+        b.hi[r][kFirmRE] = std::max(0.0, b.hi[r][kSolar] + b.hi[r][kWind] - res.gen[r][kSolar] - res.gen[r][kWind]);
     // Water-filling: start at the lower bounds, then share the remainder by score
     // among regions still below their upper bound.
     std::array<double, kRegions> g{};

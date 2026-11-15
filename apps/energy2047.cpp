@@ -167,6 +167,7 @@ int main(int argc, char** argv) {
       w.field("setting").field("low").field("high").field("co2_low_mt").field("co2_high_mt").field("coal_share_low");
       w.field("coal_share_high").field("nonfossil_low").field("nonfossil_high").field("cost_low_busd").field(
           "cost_high_busd");
+      w.field("unserved_low_twh").field("unserved_high_twh");
       w.endrow();
       for (const auto& t : st.tornado) {
         w.field(t.name).field(t.low_label).field(t.high_label);
@@ -179,6 +180,13 @@ int main(int argc, char** argv) {
         put(t.high, t.high.nonfossil_share());
         put(t.low, t.low.cost_busd);
         put(t.high, t.high.cost_busd);
+        auto unserved = [](const AllocationResult& a) {
+          double u = 0;
+          for (double x : a.unserved) u += x;
+          return u;
+        };
+        put(t.low, unserved(t.low));
+        put(t.high, unserved(t.high));
         w.endrow();
       }
     }
@@ -199,7 +207,9 @@ int main(int argc, char** argv) {
       CsvWriter w((out / "presets.csv").string());
       for (const char* h : {"scenario", "policy", "status", "national_p05_2047", "national_p50_2047", "national_p95_2047",
                             "nonfossil_share", "coal_share", "solar_share", "wind_share", "hydro_share", "nuclear_share",
-                            "co2_mt", "cost_busd", "unserved_twh", "eastern_net_export_twh"})
+                            "co2_mt", "cost_busd", "unserved_twh", "eastern_net_export_twh", "gas_share",
+                            "offshore_wind_share", "bioenergy_share", "firmed_re_share", "unserved_at_p90_twh",
+                            "cost_at_p90_busd"})
         w.field(h);
       w.endrow();
       std::printf("preset matrix (2047 median TWh | non-fossil | coal | CO2 Mt | unserved TWh):\n");
@@ -222,10 +232,21 @@ int main(int argc, char** argv) {
           w.field(a.nonfossil_share(), 4).field(a.share(kCoal), 4).field(a.share(kSolar), 4).field(a.share(kWind), 4);
           w.field(a.share(kHydro), 4).field(a.share(kNuclear), 4).field(a.co2_mt, 6).field(a.cost_busd, 5);
           w.field(unserved, 4).field(a.net_export[3], 5);
+          w.field(a.share(kGas), 4).field(a.share(kOffshore), 4).field(a.share(kBio), 4).field(a.share(kFirmRE), 4);
+          // Stress test: the same policy planned for the P90 requirement.
+          ScenarioControls s90 = sc;
+          s90.requirement_quantile = 0.9;
+          const StrategyResult r90 = pl.strategy(pf, s90, ps);
+          double u90 = 0;
+          for (double u : r90.least_cost.unserved) u90 += u;
+          if (r90.least_cost.ok)
+            w.field(u90, 4).field(r90.least_cost.cost_busd, 5);
+          else
+            w.field("infeasible").field("infeasible");
           w.endrow();
-          std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f %s\n", sp.name.c_str(),
-                      pp.name.c_str(), q[3], 100 * a.nonfossil_share(), 100 * a.share(kCoal), a.co2_mt, unserved,
-                      a.ok ? "" : a.status.c_str());
+          std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f | P90 unmet %6.1f %s\n",
+                      sp.name.c_str(), pp.name.c_str(), q[3], 100 * a.nonfossil_share(), 100 * a.share(kCoal),
+                      a.co2_mt, unserved, r90.least_cost.ok ? u90 : -1.0, a.ok ? "" : a.status.c_str());
         }
       }
     }

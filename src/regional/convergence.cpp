@@ -2,6 +2,7 @@
 
 #include <cctype>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 #include "../core/csv.hpp"
@@ -51,9 +52,10 @@ double ols_slope(const std::vector<double>& x, const std::vector<double>& y) {
   return sxx > 0 ? sxy / sxx : 0.0;
 }
 
+// Implied convergence speed; NaN when 1 + slope * span <= 0 (overshooting, not "no convergence").
 double speed(double slope, int span) {
   const double v = 1.0 + slope * span;
-  return v > 0 ? -std::log(v) / span : 0.0;
+  return v > 0 ? -std::log(v) / span : std::numeric_limits<double>::quiet_NaN();
 }
 
 }  // namespace
@@ -111,7 +113,11 @@ ConvergenceResult estimate_convergence(const std::string& path, int year0, int y
     }
     lam[r] = speed(ols_slope(bx, by), year1 - year0);
   }
-  res.lambda_se = stdev(lam);
+  std::vector<double> finite;
+  for (double l : lam)
+    if (std::isfinite(l)) finite.push_back(l);
+  res.lambda_se = stdev(finite);
+  if (!std::isfinite(res.lambda)) throw std::runtime_error("convergence: slope implies no finite speed");
   return res;
 }
 
