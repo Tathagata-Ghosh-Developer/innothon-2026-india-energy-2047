@@ -133,6 +133,10 @@ int run() {
     iq.w_model[0] = 0.5f;
     iq.w_model[1] = 0.5f;
     iq.w_model[2] = 0.0f;
+    // Model-error path (AR(1) residual from the base year).
+    iq.resid0 = 0.07f;
+    iq.resid_rho = 0.5f;
+    iq.resid_innov_sd = 0.032f;
     calibrate_hist_ranges(iq, qboot, seed, 4096);
     const McResult qd = run_mc_cpu(iq, qboot, seed, draws, 0, false);
     const McResult qf = run_mc_cpu(iq, qboot, seed, draws, 0, true);
