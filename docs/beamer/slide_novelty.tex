@@ -1,0 +1,24 @@
+% Slide 5: advances over the state of practice, each with evidence.
+{\fontsize{7.4}{8.9}\selectfont
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.85cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{3.85cm}@{}}
+\toprule
+& \textbf{\color{muted}State of practice} & \textbf{\color{navy}This work} & \textbf{\color{good}Evidence}\\
+\midrule
+\textbf{Demand outlook} & One demand path per year from the 20th Electric Power Survey, plus a flat +5\% case \cite{pib_nep_2023,powerline_nep_scenarios_2023}
+ & A full probability distribution from 4.2 million consistent futures & 2047: P5 3,351, median 4,536, P95 5,606\,TWh\\
+\textbf{Long-range method} & 2036--47 values ``by extrapolating\ldots with the application of suitable growth rates'' \cite{powerline_20th_eps_2022}
+ & Saturation learned from 153 countries' generation \cite{yoo2010electricity,wolfram2012energy}, anchored on India & Fitted to 2010: 0.6\% error in 2025; trend extrapolation 29\%\\
+\textbf{Scenarios} & Conditional scenarios: ``None of the individual WEO scenarios should be regarded as a forecast'' \cite{iea_weo_scenarios}
+ & Every input carries a probability; model weights come from the back-test \cite{bates1969combination} & Uncertainty attributed: urbanisation $\approx$13\%, population $\approx$9\%\\
+\textbf{Planning} & A plan built around one demand path \cite{pib_nep_2023}
+ & Robust plan, stress-tested at the 90th-percentile requirement \cite{lempert2003shaping} & Unmet at P90: 447 $\to$ \textbf{0\,TWh}; cost $-$36\,bn USD/yr\\
+\textbf{Speed and audit} & Studies rerun in batch & 4.2 million futures in 30\,ms on a GPU; identical inputs on CPU and GPU \cite{salmon2011parallel} & 7.5\,ms vs 22.7\,s on one CPU thread; parity within 0.2\%\\
+\bottomrule
+\end{tabular}}
+\evidence{Practice: CEA National Electricity Plan 2022--32 and 20th EPS \cite{pib_nep_2023,iep_20th_eps_2022,powerline_20th_eps_2022}; IEA scenario framing \cite{iea_weo_scenarios,iea_weo2025_scenarios_commentary}. Our results: \texttt{outputs/} tables \cite{e47_repo}.}
+\note{%
+\textbf{How to present.} Read the middle column as our contribution and the right column as the proof. Each row is a claim the jury can check in the dashboard or the repository.\par\medskip
+\textbf{Fair framing of the state of practice.} The CEA plan is a carefully built bottom-up study; its long-range values (2036--37, 2041--42) come from extrapolation with growth rates, and its demand side has a single base path plus a +5\% sensitivity. The IEA explicitly says its scenarios are not forecasts. ExxonMobil's Outlook is a single ``most probable'' projection. None of these attaches probabilities to electricity demand; that is the gap we fill.\par\medskip
+\textbf{Saturation literature.} Cross-country studies find per-capita electricity demand flattening with income (Yoo and Lee 2010) and S-shaped appliance adoption as incomes rise (Wolfram, Shelef and Gertler 2012); our Gompertz model is consistent with both.}

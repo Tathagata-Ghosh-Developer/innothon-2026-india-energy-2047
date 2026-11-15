@@ -1,0 +1,159 @@
+% Beamer theme "India2047": golden-ratio layout, evidence footers, reader's notes.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeIndia2047}[2026/11/15]
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[sfdefault,lining]{FiraSans}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\usetikzlibrary{calc,positioning,arrows.meta,backgrounds,fit,decorations.pathreplacing}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{ragged2e}
+
+% ---------------------------------------------------------------- colour
+% Structure
+\definecolor{ink}{HTML}{0B0B0B}
+\definecolor{ink2}{HTML}{52514E}
+\definecolor{muted}{HTML}{85847E}
+\definecolor{navy}{HTML}{0F2440}
+\definecolor{navy2}{HTML}{1D3A63}
+\definecolor{navy3}{HTML}{2C4E7E}
+\definecolor{tint}{HTML}{EEF2F7}
+\definecolor{grid}{HTML}{E4E3DE}
+\definecolor{signal}{HTML}{E34948}   % accent for risk and highlights
+\definecolor{good}{HTML}{0E7C4A}
+% Series: validated categorical order (adjacent CVD and normal-vision checks pass)
+\definecolor{cCoal}{HTML}{EB6834}
+\definecolor{cNuclear}{HTML}{6250D6}
+\definecolor{cWind}{HTML}{1BAF7A}
+\definecolor{cHydro}{HTML}{2A78D6}
+\definecolor{cSolar}{HTML}{EDA100}
+\definecolor{cFirm}{HTML}{E87BA4}
+% Regions: validated reference slots 1-5
+\definecolor{rN}{HTML}{2A78D6}
+\definecolor{rW}{HTML}{EB6834}
+\definecolor{rS}{HTML}{1BAF7A}
+\definecolor{rE}{HTML}{EDA100}
+\definecolor{rNE}{HTML}{E87BA4}
+
+% ---------------------------------------------------------------- golden ratio
+% Type scale on phi from a 10 pt body: 10, 16.18, 26.18, 42.36 pt.
+% Column shares keep the golden ratio (0.605 / 0.365 = 1.66) and leave a 3% gutter.
+\newcommand{\gA}{0.605}   % major share
+\newcommand{\gB}{0.365}   % minor share
+\newcommand{\phiS}{\fontsize{16.18}{19.4}\selectfont}
+\newcommand{\phiM}{\fontsize{26.18}{28}\selectfont}
+\newcommand{\phiL}{\fontsize{42.36}{44}\selectfont}
+
+% ---------------------------------------------------------------- beamer
+\setbeamersize{text margin left=7mm,text margin right=7mm}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=ink}
+\setbeamercolor{structure}{fg=navy}
+\setbeamercolor{alerted text}{fg=signal}
+\setbeamercolor{frametitle}{fg=navy}
+\setbeamerfont{frametitle}{size=\phiS,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize,series=\mdseries}
+\setbeamertemplate{frametitle}{%
+  \vspace*{3.2mm}%
+  \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\par
+  \ifx\insertframesubtitle\@empty\else
+    \vspace{0.6mm}{\usebeamerfont{framesubtitle}\color{ink2}\insertframesubtitle\par}%
+  \fi
+  \vspace{1.2mm}}
+\setbeamertemplate{itemize item}{\raisebox{0.25ex}{\tikz\fill[navy](0,0) rectangle (0.9ex,0.9ex);}}
+\setbeamertemplate{itemize subitem}{\raisebox{0.3ex}{\tikz\fill[muted](0,0) rectangle (0.6ex,0.6ex);}}
+\setbeamertemplate{enumerate item}{\textcolor{navy}{\bfseries\insertenumlabel.}}
+\setlength{\leftmargini}{1.1em}
+
+% Footline: project mark left, slide number right.
+\setbeamertemplate{footline}{%
+  \hspace*{7mm}{\fontsize{6.5}{8}\selectfont\color{muted}India's electricity in 2047\ \textbar\ IISc Bengaluru\ \textbar\ ExxonMobil INNOTHON 2026}%
+  \hfill{\fontsize{7}{8}\selectfont\color{navy}\bfseries\insertframenumber}\hspace*{7mm}\par\vspace*{2.6mm}}
+
+% Evidence line: sits just above the footline on every content slide.
+\newcommand{\evidence}[1]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=south west,inner sep=0pt,text width=0.86\paperwidth,align=left,
+          font=\fontsize{6.3}{7.4}\selectfont,text=ink2]
+      at ($(current page.south west)+(7mm,6.8mm)$) {\textbf{\color{navy}Evidence.}\ #1};
+  \end{tikzpicture}}
+
+% Hero statistic: big number, label, optional source marker.
+\newcommand{\stat}[3]{%
+  \begin{minipage}[t]{\linewidth}\raggedright
+    {\phiM\bfseries\color{navy}#1}\par\vspace{0.6mm}
+    {\fontsize{8.5}{10.2}\selectfont\color{ink2}#2}%
+    \if\relax\detokenize{#3}\relax\else\,{\fontsize{7}{8}\selectfont\color{muted}#3}\fi\par
+  \end{minipage}\par\vspace{1.2mm}}
+
+% Card: tinted rounded panel.
+\newcommand{\card}[2]{%
+  \tikz\node[fill=tint,rounded corners=2.5pt,inner sep=2.6mm,text width=#1-5.2mm,align=left]{#2};}
+
+% Golden rectangle with five nested squares and the golden spiral (title motif).
+% #1,#2 = lower-left corner (cm), #3 = height H (cm); width is phi * H.
+\newcommand{\goldenmotif}[3]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \pgfmathsetmacro{\gH}{#3}
+    \pgfmathsetmacro{\gb}{\gH/1.618034}
+    \pgfmathsetmacro{\gc}{\gb/1.618034}
+    \pgfmathsetmacro{\gd}{\gc/1.618034}
+    \pgfmathsetmacro{\gee}{\gd/1.618034}
+    \pgfmathsetmacro{\gW}{\gH+\gb}
+    \begin{scope}[line width=0.4pt,draw=navy3]
+      \draw (0,0) rectangle (\gW,\gH);
+      \draw (\gH,0) -- (\gH,\gH);
+      \draw (\gH,\gH-\gb) -- (\gW,\gH-\gb);
+      \draw (\gW-\gc,0) -- (\gW-\gc,\gc);
+      \draw (\gH,\gd) -- (\gW-\gc,\gd);
+      \draw (\gH+\gee,\gd) -- (\gH+\gee,\gc);
+    \end{scope}
+    \begin{scope}[line width=0.9pt,draw=signal]
+      \draw (0,0) arc[start angle=180,end angle=90,radius=\gH];
+      \draw (\gH,\gH) arc[start angle=90,end angle=0,radius=\gb];
+      \draw (\gW,\gc) arc[start angle=0,end angle=-90,radius=\gc];
+      \draw (\gW-\gc,0) arc[start angle=-90,end angle=-180,radius=\gd];
+      \draw (\gH,\gd) arc[start angle=180,end angle=90,radius=\gee];
+    \end{scope}
+  \end{scope}}
+
+% ---------------------------------------------------------------- charts
+\pgfplotsset{
+  e47/.style={
+    axis line style={draw=none},
+    tick style={draw=none},
+    major grid style={draw=grid,line width=0.4pt},
+    ymajorgrids,
+    tick label style={font=\fontsize{7}{8}\selectfont,text=ink2},
+    label style={font=\fontsize{7.5}{9}\selectfont,text=ink2},
+    title style={font=\fontsize{8.5}{10}\selectfont\bfseries,text=navy},
+    legend style={draw=none,fill=none,font=\fontsize{7}{8}\selectfont,text=ink2},
+    legend cell align=left,
+    every axis plot/.append style={line width=1.4pt},
+    scaled ticks=false,
+    /pgf/number format/1000 sep={{,}},
+  },
+  select/.style 2 args={
+    x filter/.append code={%
+      \edef\tempa{\thisrow{#1}}\edef\tempb{#2}%
+      \ifx\tempa\tempb\else\def\pgfmathresult{inf}\fi}},
+  /pgf/number format/.cd,1000 sep={{,}},
+}
+
+% ---------------------------------------------------------------- reader's note pages
+\setbeamertemplate{note page}{%
+  \vspace*{4mm}%
+  {\phiS\bfseries\color{navy}Reader's note\ \textendash\ slide \insertframenumber}\par
+  \vspace{2mm}%
+  \begin{minipage}[t]{0.382\textwidth}\vspace{0pt}
+    \fcolorbox{grid}{white}{\insertslideintonotes{0.33}}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.585\textwidth}\vspace{0pt}
+    \fontsize{8.8}{11.2}\selectfont\color{ink}\insertnote
+  \end{minipage}}

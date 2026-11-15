@@ -57,6 +57,19 @@ void write_strategy(const fs::path& out, const AllocationInputs& in, const Strat
       }
     }
   }
+  {
+    CsvWriter c((out / "corridors_2047.csv").string());
+    c.field("corridor").field("from").field("to").field("flow_twh").field("capability_twh").field("loss");
+    c.endrow();
+    for (size_t k = 0; k < st.least_cost.corridor_flow.size(); ++k) {
+      const Corridor& cr = in.corridors[k];
+      const double f = st.least_cost.corridor_flow[k];
+      const double cap = cr.mw_2032 * st.policy.transfer_scale * st.policy.transfer_util * 8.76e-3;
+      c.field(cr.name).field(region_name(f >= 0 ? cr.a : cr.b)).field(region_name(f >= 0 ? cr.b : cr.a));
+      c.field(std::abs(f), 6).field(cap, 6).field(cr.loss, 4);
+      c.endrow();
+    }
+  }
   CsvWriter b((out / "strategy_2047_regions.csv").string());
   b.field("method").field("region").field("requirement_twh").field("production_twh").field("net_export_twh");
   b.field("unserved_twh").field("marginal_cost_usd_mwh");

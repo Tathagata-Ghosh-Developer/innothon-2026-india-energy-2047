@@ -1,0 +1,11 @@
+method,region,requirement_twh,production_twh,net_export_twh,unserved_twh,marginal_cost_usd_mwh
+least_cost,Northern,1327.73,1351.76,24.0282,0,72.472
+least_cost,Western,1120.03,1361.51,241.485,0,69.7
+least_cost,Southern,983.538,1096.92,113.385,0,69.7
+least_cost,Eastern,931.824,592.051,-339.772,0,73.011
+least_cost,North-Eastern,172.583,147.609,-24.9732,0,75.634
+resource_score,Northern,1327.73,1184.27,-143.467,0,0
+resource_score,Western,1120.03,1597.02,476.992,0,0
+resource_score,Southern,983.538,1171.32,187.785,0,0
+resource_score,Eastern,931.824,451.911,-479.912,0,0
+resource_score,North-Eastern,172.583,145.338,-27.2449,0,0
