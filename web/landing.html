@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Landing page template. cmake/Site.cmake fills every value in double braces from
+     outputs/site_summary.json (written by energy2047) during the web build; the result
+     is web/dist/index.html. Do not type numbers into this file. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Electricity 2047: forecast and plan</title>
+<meta name="description" content="India's electricity generation requirement for {{years.target_label}}: {{national.p50|0}} TWh (median; 80% range {{national.p10|0}} to {{national.p90|0}} TWh), where it is needed, the recommended generation mix, and the land and storage it takes.">
+<meta name="theme-color" content="#071019">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://india-energy-2047.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://india-energy-2047.vercel.app/">
+<meta property="og:title" content="India Electricity 2047: forecast and plan">
+<meta property="og:description" content="{{national.p50|0}} TWh needed in {{years.target_label}} (80% range {{national.p10|0}} to {{national.p90|0}} TWh), with a regional plan to meet it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23071019'/%3E%3Cpath d='M9 1 3 9h4l-1 6 6-8H8z' fill='%2346d3e6'/%3E%3C/svg%3E">
+<style>
+  :root {
+    color-scheme: dark;
+    /* Surfaces and ink (contrast checked against --color-panel and --color-bg) */
+    --color-bg: #071019;
+    --color-panel: #0b1621;
+    --color-panel-raised: #0f1d2b;
+    --color-line: #1b3445;
+    --color-line-strong: #2b5468;
+    --color-grid: rgb(70 211 230 / 0.05);
+    --color-ink: #e7eef5;
+    --color-ink-2: #b3c1ce;
+    --color-ink-3: #93a4b5;
+    --color-accent: #46d3e6;
+    --color-accent-ink: #03151c;
+    --color-today: #7f8fa0;
+    --color-good: #43d08f;
+    --color-warn: #f2b54c;
+    /* Series (validated deck palette) */
+    --series-coal: #eb6834;
+    --series-nuclear: #6250d6;
+    --series-wind: #1baf7a;
+    --series-hydro: #2a78d6;
+    --series-solar: #eda100;
+    --series-firmed: #e87ba4;
+    --series-gasbio: #8c97a3;
+    --region-0: #2a78d6;
+    --region-1: #eb6834;
+    --region-2: #1baf7a;
+    --region-3: #eda100;
+    --region-4: #e87ba4;
+    /* Golden-ratio spacing and type (deck: 10, 16.18, 26.18, 42.36 pt) */
+    --space-3xs: 0.236rem;
+    --space-2xs: 0.382rem;
+    --space-xs: 0.618rem;
+    --space-s: 1rem;
+    --space-m: 1.618rem;
+    --space-l: 2.618rem;
+    --space-xl: 4.236rem;
+    --text-xs: 0.8125rem;
+    --text-s: 0.875rem;
+    --text-m: 1rem;
+    --text-l: 1.618rem;
+    --text-xl: 2.618rem;
+    --text-hero: clamp(3.5rem, 1.6rem + 7vw, 6.854rem);
+    --radius: 0.382rem;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-block-start: var(--space-m); }
+  body {
+    margin: 0;
+    min-block-size: 100dvh;
+    background-color: var(--color-bg);
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 2.618rem 2.618rem;
+    color: var(--color-ink);
+    font: var(--text-m)/1.618 var(--font);
+    font-variant-numeric: lining-nums;
+    overflow-wrap: break-word;
+  }
+  h1, h2, h3, p, ul, ol, figure { margin: 0; }
+  h1, h2, h3 { line-height: 1.236; text-wrap: balance; font-weight: 650; }
+  a { color: var(--color-accent); text-underline-offset: 0.2em; }
+  a:hover { text-decoration-thickness: 2px; }
+  svg { display: block; max-inline-size: 100%; }
+  table { border-collapse: collapse; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; }
+
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .skip-link {
+    position: absolute; inset-inline-start: var(--space-s); inset-block-start: -10rem; z-index: 10;
+    padding: var(--space-xs) var(--space-s); background: var(--color-accent); color: var(--color-accent-ink);
+    font-weight: 650; border-radius: var(--radius);
+  }
+  .skip-link:focus { inset-block-start: var(--space-s); }
+  .container { inline-size: min(100% - 2rem, 75rem); margin-inline: auto; }
+
+  /* Header */
+  .site-header { border-block-end: 1px solid var(--color-line); background: rgb(7 16 25 / 0.92); }
+  .site-header__inner {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs) var(--space-m);
+    padding-block: var(--space-xs);
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: var(--space-xs); min-block-size: 2.75rem;
+    color: var(--color-ink); font-weight: 650; text-decoration: none; letter-spacing: 0.01em;
+  }
+  .brand__mark { flex: none; }
+  .site-nav { margin-inline-start: auto; }
+  .site-nav__list { display: flex; flex-wrap: wrap; gap: 0 var(--space-2xs); padding: 0; list-style: none; }
+  .site-nav__link {
+    display: inline-flex; align-items: center; min-block-size: 2.75rem; padding-inline: var(--space-xs);
+    color: var(--color-ink-2); font-size: var(--text-s); text-decoration: none; border-radius: var(--radius);
+  }
+  .site-nav__link:hover { color: var(--color-ink); background: var(--color-panel-raised); }
+
+  /* Buttons */
+  .button {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
+    min-block-size: 2.75rem; padding-inline: var(--space-m); border: 1px solid transparent; border-radius: var(--radius);
+    font-weight: 650; text-decoration: none; line-height: 1.236;
+  }
+  .button--primary { background: var(--color-accent); color: var(--color-accent-ink); }
+  .button--primary:hover { background: #7de2ef; }
+  .button--ghost { border-color: var(--color-line-strong); color: var(--color-ink); }
+  .button--ghost:hover { background: var(--color-panel-raised); }
+  .button--small { padding-inline: var(--space-s); font-size: var(--text-s); }
+
+  /* Panels and type helpers */
+  .panel {
+    min-inline-size: 0; padding: var(--space-m); background: var(--color-panel);
+    border: 1px solid var(--color-line); border-radius: var(--radius);
+  }
+  .panel__title {
+    margin-block-end: var(--space-xs); color: var(--color-ink-2); font-size: var(--text-xs);
+    font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .eyebrow {
+    color: var(--color-accent); font-size: var(--text-xs); font-weight: 650; letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .lead { max-inline-size: 46rem; color: var(--color-ink-2); font-size: 1.0625rem; }
+  .note { color: var(--color-ink-3); font-size: var(--text-s); }
+  .num { font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+
+  /* Sections */
+  .section { padding-block-start: var(--space-xl); }
+  .section__head { display: grid; gap: var(--space-xs); margin-block-end: var(--space-m); }
+  .section__title { font-size: clamp(1.618rem, 1.2rem + 1.4vw, 2.618rem); }
+  .grid { display: grid; gap: var(--space-m); }
+  .grid--spaced { margin-block-start: var(--space-m); }
+  .section__foot { margin-block-start: var(--space-s); }
+  .stack { display: grid; gap: var(--space-s); align-content: start; }
+  @media (min-width: 48rem) {
+    .grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid--tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .grid--golden { grid-template-columns: minmax(0, 1.618fr) minmax(0, 1fr); }
+    .grid--golden-rev { grid-template-columns: minmax(0, 1fr) minmax(0, 1.618fr); }
+    .grid--tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  /* Hero */
+  .hero { padding-block: var(--space-l) 0; }
+  .hero__grid { align-items: center; }
+  .hero__title { margin-block-start: var(--space-xs); font-size: clamp(1.25rem, 1rem + 1vw, 1.618rem); color: var(--color-ink-2); font-weight: 600; }
+  .hero__value { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--space-xs); margin-block: var(--space-2xs) var(--space-xs); }
+  .hero__number { font-size: var(--text-hero); font-weight: 700; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
+  .hero__unit { font-size: var(--text-l); color: var(--color-ink-2); font-weight: 600; }
+  .hero__range { font-size: 1.125rem; }
+  .hero__facts { display: grid; gap: var(--space-2xs); margin-block: var(--space-m); padding: 0; list-style: none; }
+  .hero__fact { padding-inline-start: var(--space-s); border-inline-start: 2px solid var(--color-line-strong); color: var(--color-ink-2); }
+  .hero__fact strong { color: var(--color-ink); }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-s); align-items: center; }
+  .hero__note { margin-block-start: var(--space-xs); }
+
+  /* National chart */
+  .fan__plot { position: relative; aspect-ratio: 1.618; margin-inline-end: 4.5rem; margin-block-start: 1.5rem; }
+  .fan__svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+  .fan__grid { stroke: var(--color-line); stroke-width: 1; fill: none; }
+  .fan__band { fill: var(--color-accent); fill-opacity: 0.18; }
+  .fan__median { stroke: var(--color-accent); stroke-width: 2.5; fill: none; }
+  .fan__observed { stroke: var(--color-ink); stroke-width: 2.5; fill: none; }
+  .fan__base { stroke: var(--color-ink-3); stroke-width: 1; stroke-dasharray: 4 4; }
+  .fan__dot { stroke: var(--color-accent); stroke-width: 9; stroke-linecap: round; }
+  .fan__tick, .fan__end, .fan__year {
+    position: absolute; color: var(--color-ink-3); font-size: var(--text-xs); line-height: 1.2;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .fan__tick { inset-inline-start: 0.25rem; padding-block-end: 2px; }
+  .fan__end { inset-inline-start: calc(100% + 0.5rem); translate: 0 50%; color: var(--color-ink-2); }
+  .fan__end--median { color: var(--color-ink); font-weight: 650; }
+  .fan__axis { position: relative; block-size: 1.5rem; margin-inline-end: 4.5rem; }
+  .fan__year { inset-block-start: 0.25rem; }
+  .fan__year--base { translate: -50% 0; }
+  .fan__year--end { inset-inline-end: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-s); margin-block-start: var(--space-xs); padding: 0; list-style: none; color: var(--color-ink-2); font-size: var(--text-xs); }
+  .legend__item { display: inline-flex; align-items: center; gap: var(--space-2xs); }
+  .legend__swatch { inline-size: 1rem; block-size: 0.625rem; border-radius: 2px; background: var(--swatch, var(--color-ink)); }
+  .legend__swatch--line { block-size: 3px; }
+  .legend__swatch--band { background: rgb(70 211 230 / 0.3); }
+  .legend__swatch--outline { background: transparent; border: 2px solid var(--color-today); }
+
+  /* KPI tiles */
+  .kpi { display: grid; gap: var(--space-2xs); align-content: start; }
+  .kpi__value { font-size: var(--text-xl); font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums lining-nums; }
+  .kpi__unit { margin-inline-start: 0.15em; color: var(--color-ink-2); font-size: var(--text-l); font-weight: 600; }
+  .kpi__detail { color: var(--color-ink-2); font-size: var(--text-s); }
+  .status { font-size: var(--text-s); font-weight: 600; }
+  .status--inside { color: var(--color-good); }
+  .status--inside::before { content: "\2713\00a0"; }
+  .status--outside { color: var(--color-warn); }
+  .status--outside::before { content: "!\00a0"; }
+
+  /* Bar charts (SVG) */
+  .chart { display: grid; gap: var(--space-xs); }
+  .chart__svg { inline-size: 100%; overflow: visible; }
+  .chart__label { fill: var(--color-ink); font-size: 14px; }
+  .chart__value { fill: var(--color-ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .chart__track { fill: #08111a; }
+  .chart__axis { stroke: var(--color-ink-3); stroke-width: 1; }
+  .chart__bar--solar { fill: var(--series-solar); }
+  .chart__bar--coal { fill: var(--series-coal); }
+  .chart__bar--firmed { fill: var(--series-firmed); }
+  .chart__bar--hydro { fill: var(--series-hydro); }
+  .chart__bar--wind { fill: var(--series-wind); }
+  .chart__bar--nuclear { fill: var(--series-nuclear); }
+  .chart__bar--gasbio { fill: var(--series-gasbio); }
+  .chart__bar--r0 { fill: var(--region-0); }
+  .chart__bar--r1 { fill: var(--region-1); }
+  .chart__bar--r2 { fill: var(--region-2); }
+  .chart__bar--r3 { fill: var(--region-3); }
+  .chart__bar--r4 { fill: var(--region-4); }
+  .chart__bar--today { fill: none; stroke: var(--color-today); stroke-width: 2; vector-effect: non-scaling-stroke; }
+  .chart__bar--change { fill: var(--color-accent); }
+
+  /* Data tables */
+  .data { color: var(--color-ink-2); font-size: var(--text-s); }
+  .data__toggle {
+    display: inline-flex; align-items: center; min-block-size: 2.75rem; cursor: pointer;
+    color: var(--color-accent); font-weight: 600;
+  }
+  .data__scroll { overflow-x: auto; }
+  .table { inline-size: 100%; font-variant-numeric: tabular-nums lining-nums; }
+  .table__caption { padding-block-end: var(--space-2xs); color: var(--color-ink-3); text-align: start; }
+  .table__head, .table__cell { padding: var(--space-2xs) var(--space-xs); border-block-end: 1px solid var(--color-line); text-align: start; }
+  .table__head { color: var(--color-ink-3); font-weight: 600; }
+  .table__cell { color: var(--color-ink); }
+  .table__cell--num, .table__head--num { text-align: end; white-space: nowrap; }
+
+  /* Map schematic */
+  .map__svg { inline-size: 100%; block-size: auto; max-inline-size: 30rem; margin-inline: auto; }
+  .map__corridor { stroke: var(--color-line-strong); stroke-width: 2; stroke-dasharray: 3 5; fill: none; }
+  .map__flow { stroke: var(--color-accent); fill: none; stroke-linecap: butt; }
+  .map__arrowhead { fill: var(--color-accent); }
+  .map__flow-label { fill: var(--color-ink); font-size: 15px; font-weight: 650; }
+  .map__circle { fill: var(--color-panel-raised); stroke-width: 3; }
+  .map__circle--r0 { stroke: var(--region-0); }
+  .map__circle--r1 { stroke: var(--region-1); }
+  .map__circle--r2 { stroke: var(--region-2); }
+  .map__circle--r3 { stroke: var(--region-3); }
+  .map__circle--r4 { stroke: var(--region-4); }
+  .map__value { fill: var(--color-ink); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .map__unit { fill: var(--color-ink-3); font-size: 11px; }
+  .map__name { fill: var(--color-ink); font-size: 16px; font-weight: 650; }
+  .map__net { fill: var(--color-ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+
+  /* Gauge */
+  .gauge { display: flex; align-items: center; gap: var(--space-s); }
+  .gauge__svg { flex: none; inline-size: 6.854rem; block-size: 6.854rem; rotate: -90deg; }
+  .gauge__track { fill: none; stroke: var(--color-line); stroke-width: 4; }
+  .gauge__value { fill: none; stroke: var(--color-accent); stroke-width: 4; }
+
+  .callout { padding: var(--space-m); border: 1px solid var(--color-line-strong); border-inline-start: 4px solid var(--color-warn); border-radius: var(--radius); background: var(--color-panel); }
+  .callout__title { margin-block-end: var(--space-2xs); font-size: 1.125rem; }
+  .steps { display: grid; gap: var(--space-s); margin: 0; padding-inline-start: 1.25rem; }
+  .steps__item::marker { color: var(--color-accent); font-weight: 700; }
+  .links { display: grid; gap: var(--space-2xs); padding: 0; list-style: none; }
+  .links__link { display: inline-flex; align-items: center; min-block-size: 2.75rem; font-weight: 600; }
+
+  .site-footer { margin-block-start: var(--space-xl); padding-block: var(--space-m); border-block-start: 1px solid var(--color-line); color: var(--color-ink-3); font-size: var(--text-s); }
+  .site-footer__inner { display: grid; gap: var(--space-2xs); }
+
+  @media (max-width: 29.99rem) {
+    .panel { padding: var(--space-s); }
+  }
+  @media (max-width: 47.99rem) {
+    .site-nav { display: none; }
+    .button--small { margin-inline-start: auto; }
+  }
+  @media (forced-colors: active) {
+    :focus-visible { outline: 3px solid LinkText; }
+    .button { border-color: ButtonText; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="./">
+      <svg class="brand__mark" width="28" height="28" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect width="16" height="16" rx="3" fill="#0f1d2b" stroke="#2b5468"/><path d="M9 1 3 9h4l-1 6 6-8H8z" fill="#46d3e6"/></svg>
+      <span>India Electricity 2047</span>
+    </a>
+    <nav class="site-nav" aria-label="Sections">
+      <ul class="site-nav__list">
+        <li><a class="site-nav__link" href="#checks">Checks</a></li>
+        <li><a class="site-nav__link" href="#drivers">Uncertainty</a></li>
+        <li><a class="site-nav__link" href="#regions">Regions</a></li>
+        <li><a class="site-nav__link" href="#plan">2047 mix</a></li>
+        <li><a class="site-nav__link" href="#land">Land and storage</a></li>
+        <li><a class="site-nav__link" href="#method">Method</a></li>
+      </ul>
+    </nav>
+    <a class="button button--primary button--small" href="app/">Launch model</a>
+  </div>
+</header>
+
+<main id="main-content" tabindex="-1">
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container grid grid--golden hero__grid">
+    <div>
+      <p class="eyebrow">ExxonMobil INNOTHON 2026 · IISc Bengaluru</p>
+      <h1 class="hero__title" id="hero-title">Electricity India must generate in {{years.target_label}}</h1>
+      <p class="hero__value"><span class="hero__number">{{national.p50|0}}</span><span class="hero__unit">TWh</span></p>
+      <p class="hero__range">Median of {{scenarios|0}} scenarios. 80% range: <strong class="num">{{national.p10|0}} to {{national.p90|0}} TWh</strong> (P10 to P90).</p>
+      <ul class="hero__facts">
+        <li class="hero__fact"><strong class="num">{{national.multiple_of_base|1}} times</strong> the {{national.base_twh|0}} TWh of {{years.base_label}}, about {{national.growth_pct_per_year|1}}% more each year.</li>
+        <li class="hero__fact">Utility generation as published by the National Power Portal. Adding factories' own (captive) plants at today's {{national.captive_share_pct|1}}% share gives <strong class="num">about {{national.p50_with_captive_twh|0}} TWh</strong>.</li>
+      </ul>
+      <div class="hero__actions">
+        <a class="button button--primary" href="app/">Launch the interactive model</a>
+        <a class="button button--ghost" href="#documents">Slides and code</a>
+      </div>
+      <p class="note hero__note">The interactive model runs the full forecast in your browser: about 6 MB on first load, best on a laptop with a current Chrome, Edge, Firefox or Safari.</p>
+    </div>
+
+    <figure class="panel" aria-labelledby="fan-caption">
+      <figcaption class="panel__title" id="fan-caption">National generation, TWh a year</figcaption>
+      <div class="fan__plot">
+        <svg class="fan__svg" viewBox="{{national.chart.x0}} -{{national.chart.ymax|r0}} {{national.chart.span}} {{national.chart.ymax|r0}}" preserveAspectRatio="none" role="img" aria-labelledby="fan-title fan-desc">
+          <title id="fan-title">National generation, observed and forecast</title>
+          <desc id="fan-desc">Observed generation rose from {{national.history.0.twh|0}} TWh in {{national.history.0.label}} to {{national.base_twh|0}} TWh in {{years.base_label}}. The forecast median reaches {{national.p50|0}} TWh in {{years.target_label}}; 80% of scenarios lie between {{national.p10|0}} and {{national.p90|0}} TWh.</desc>
+          <!--each national.chart.ticks--><path class="fan__grid" vector-effect="non-scaling-stroke" d="M{{national.chart.x0}} -{{@|r0}}h{{national.chart.span}}"/><!--/each-->
+          <path class="fan__base" vector-effect="non-scaling-stroke" d="M{{years.base}} 0V-{{national.chart.ymax|r0}}"/>
+          <path class="fan__band" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p90|r1}}<!--/each--><!--each-reverse national.forecast-->L{{@.year}} -{{@.p10|r1}}<!--/each-->Z"/>
+          <path class="fan__observed" vector-effect="non-scaling-stroke" d="M<!--each national.history--> {{@.year}} -{{@.twh|r1}}<!--/each-->"/>
+          <path class="fan__median" vector-effect="non-scaling-stroke" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p50|r1}}<!--/each-->"/>
+          <path class="fan__dot" vector-effect="non-scaling-stroke" d="M{{years.target}} -{{national.p50|r1}}h0"/>
+        </svg>
+        <!--each national.chart.ticks--><span class="fan__tick" aria-hidden="true" style="inset-block-end: calc({{@|r0}} / {{national.chart.ymax|r0}} * 100%)">{{@|0}}</span><!--/each-->
+        <span class="fan__end" aria-hidden="true" style="inset-block-end: calc({{national.p90|r0}} / {{national.chart.ymax|r0}} * 100%)">P90 {{national.p90|0}}</span>
+        <span class="fan__end fan__end--median" aria-hidden="true" style="inset-block-end: calc({{national.p50|r0}} / {{national.chart.ymax|r0}} * 100%)">{{national.p50|0}}</span>
+        <span class="fan__end" aria-hidden="true" style="inset-block-end: calc({{national.p10|r0}} / {{national.chart.ymax|r0}} * 100%)">P10 {{national.p10|0}}</span>
+      </div>
+      <div class="fan__axis" aria-hidden="true">
+        <span class="fan__year">{{national.history.0.label}}</span>
+        <span class="fan__year fan__year--base" style="inset-inline-start: calc(({{years.base}} - {{national.chart.x0}}) / {{national.chart.span}} * 100%)">{{years.base_label}}</span>
+        <span class="fan__year fan__year--end">{{years.target_label}}</span>
+      </div>
+      <ul class="legend" aria-hidden="true">
+        <li class="legend__item"><span class="legend__swatch legend__swatch--line"></span>Observed (NPP)</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--line" style="--swatch: var(--color-accent)"></span>Median</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--band"></span>80% of scenarios</li>
+      </ul>
+      <details class="data">
+        <summary class="data__toggle">Show the numbers</summary>
+        <div class="data__scroll" tabindex="0" role="region" aria-labelledby="fan-table-caption">
+          <table class="table">
+            <caption class="table__caption" id="fan-table-caption">National generation requirement, TWh</caption>
+            <thead><tr><th class="table__head" scope="col">Year</th><th class="table__head table__head--num" scope="col">P10</th><th class="table__head table__head--num" scope="col">Median</th><th class="table__head table__head--num" scope="col">P90</th></tr></thead>
+            <tbody>
+              <tr><th class="table__cell" scope="row">{{years.base_label}} (observed)</th><td class="table__cell table__cell--num" colspan="3">{{national.base_twh|0}}</td></tr>
+              <!--each national.milestones--><tr><th class="table__cell" scope="row">{{@.label}}</th><td class="table__cell table__cell--num">{{@.p10|0}}</td><td class="table__cell table__cell--num">{{@.p50|0}}</td><td class="table__cell table__cell--num">{{@.p90|0}}</td></tr><!--/each-->
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
+  </div>
+</section>
+
+<div class="container grid grid--2">
+  <section class="section" id="checks" aria-labelledby="checks-title">
+    <div class="section__head">
+      <h2 class="section__title" id="checks-title">Tested on years the model never saw</h2>
+      <p class="lead">The model was fitted on data up to {{years.base_label}}. Its forecasts for the following years are compared with what happened. {{holdout_range_note}}</p>
+    </div>
+    <div class="grid grid--2">
+      <!--each holdout--><article class="panel kpi" aria-labelledby="holdout-{{@i}}">
+        <h3 class="panel__title" id="holdout-{{@i}}">{{@.label}} error</h3>
+        <p class="kpi__value">{{@.error_pct|+1}}<span class="kpi__unit">%</span></p>
+        <p class="kpi__detail">Model median <span class="num">{{@.model_p50|0}} TWh</span> against <span class="num">{{@.estimate_twh|0}} TWh</span> estimated.</p>
+        <p class="status status--{{@.in_range}}">The estimate lies {{@.in_range}} the model's 90% range ({{@.model_p05|0}} to {{@.model_p95|0}} TWh).</p>
+      </article><!--/each-->
+    </div>
+    <p class="note section__foot">The National Power Portal (NPP) publishes conventional generation for these years but no renewable generation, so renewable output is extended at its recent growth rate to build the estimate.</p>
+  </section>
+
+  <section class="section" id="drivers" aria-labelledby="drivers-title">
+    <div class="section__head">
+      <h2 class="section__title" id="drivers-title">What drives the uncertainty</h2>
+      <p class="lead">Income growth. If income per person grows 1.5 points a year slower or faster than its history, the {{years.target_label}} median moves by <strong class="num">{{sensitivity.growth_minus_1_5.change_pct|0}}%</strong> or <strong class="num">{{sensitivity.growth_plus_1_5.change_pct|+0}}%</strong>.</p>
+    </div>
+    <figure class="panel chart" aria-labelledby="drivers-caption">
+      <figcaption class="panel__title" id="drivers-caption">Change in the {{years.target_label}} median when one assumption changes</figcaption>
+      <svg class="chart__svg" width="100%" height="{{len sensitivity.drivers|*46}}" role="img" aria-labelledby="drivers-t drivers-d">
+        <title id="drivers-t">Change in the {{years.target_label}} median by assumption</title>
+        <desc id="drivers-d"><!--each sensitivity.drivers-->{{@.label}}: {{@.change_pct|+1}}%. <!--/each--></desc>
+        <!--each sensitivity.drivers--><g transform="translate(0 {{@i|*46}})">
+          <title>{{@.label}}: {{@.change_pct|+1}}% ({{@.p50_twh|0}} TWh)</title>
+          <text class="chart__label" x="0" y="15">{{@.label}}</text>
+          <text class="chart__value" x="100%" y="15" text-anchor="end">{{@.change_pct|+0}}%</text>
+          <svg y="23" width="50%" height="12" viewBox="-{{sensitivity.scale_pct|r3}} 0 {{sensitivity.scale_pct|r3}} 12" preserveAspectRatio="none"><path class="chart__bar--change" d="M0 0H{{@.change_pct|r3}}V12H0Z"/></svg>
+          <svg x="50%" y="23" width="50%" height="12" viewBox="0 0 {{sensitivity.scale_pct|r3}} 12" preserveAspectRatio="none"><path class="chart__bar--change" d="M0 0H{{@.change_pct|r3}}V12H0Z"/></svg>
+          <line class="chart__axis" x1="50%" x2="50%" y1="20" y2="38"/>
+        </g><!--/each-->
+      </svg>
+      <p class="note">Bars to the left lower the requirement, bars to the right raise it. Each case reruns all {{scenarios|0}} scenarios with one assumption changed.</p>
+      <details class="data">
+        <summary class="data__toggle">Show the numbers</summary>
+        <div class="data__scroll" tabindex="0" role="region" aria-labelledby="drivers-table-caption">
+          <table class="table">
+            <caption class="table__caption" id="drivers-table-caption">{{years.target_label}} median by assumption (base case {{sensitivity.base_p50_twh|0}} TWh)</caption>
+            <thead><tr><th class="table__head" scope="col">Assumption changed</th><th class="table__head table__head--num" scope="col">Median, TWh</th><th class="table__head table__head--num" scope="col">Change</th></tr></thead>
+            <tbody><!--each sensitivity.drivers--><tr><th class="table__cell" scope="row">{{@.label}}</th><td class="table__cell table__cell--num">{{@.p50_twh|0}}</td><td class="table__cell table__cell--num">{{@.change_pct|+1}}%</td></tr><!--/each--></tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
+  </section>
+</div>
+
+<section class="section" id="regions" aria-labelledby="regions-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title" id="regions-title">Where the power is needed</h2>
+      <p class="lead">Demand follows people and incomes; today's power plants are elsewhere. The Western region makes <strong class="num">{{regions.list.1.share_today_pct|0}}%</strong> of today's conventional generation but needs <strong class="num">{{regions.list.1.share_2047_pct|0}}%</strong> of the 2047 requirement, so power has to move between regions.</p>
+    </div>
+    <div class="grid grid--golden-rev">
+      <figure class="panel" aria-labelledby="map-caption">
+        <figcaption class="panel__title" id="map-caption">2047 requirement and transfers in the recommended plan</figcaption>
+        <svg class="map__svg" viewBox="-56 0 432 404" width="432" height="404" role="img" aria-labelledby="map-title map-desc">
+          <title id="map-title">Schematic of India's five grid regions</title>
+          <desc id="map-desc">Each circle gives the region's {{years.target_label}} requirement (median). <!--each regions.list-->{{@.name}}: {{@.p50_twh|0}} TWh. <!--/each-->Arrows give energy sent between regions in the recommended plan: <!--each plan.flows-->{{@.from}} to {{@.to}}, {{@.twh|0}} TWh a year. <!--/each--></desc>
+          <defs>
+            <marker id="map-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="2.4" markerHeight="2.4" orient="auto"><path class="map__arrowhead" d="M0 0L10 5L0 10z"/></marker>
+            <path id="map-p01" d="M117.0 124.5L95.0 179.5"/><path id="map-t01" d="M95.0 179.5L117.0 124.5"/><path id="map-p02" d="M131.9 127.0L140.1 283.0"/><path id="map-t02" d="M131.9 127.0L140.1 283.0"/><path id="map-p03" d="M156.4 115.0L213.6 165.0"/><path id="map-t03" d="M156.4 115.0L213.6 165.0"/><path id="map-p04" d="M164.7 96.7L271.3 111.3"/><path id="map-t04" d="M164.7 96.7L271.3 111.3"/><path id="map-p10" d="M95.0 179.5L117.0 124.5"/><path id="map-p12" d="M99.2 242.5L124.8 287.5"/><path id="map-t12" d="M99.2 242.5L124.8 287.5"/><path id="map-p13" d="M116.6 206.7L205.4 193.3"/><path id="map-t13" d="M116.6 206.7L205.4 193.3"/><path id="map-p14" d="M114.2 198.2L273.8 129.8"/><path id="map-t14" d="M114.2 198.2L273.8 129.8"/><path id="map-p20" d="M140.1 283.0L131.9 127.0"/><path id="map-p21" d="M124.8 287.5L99.2 242.5"/><path id="map-p23" d="M163.1 290.1L218.9 215.9"/><path id="map-t23" d="M163.1 290.1L218.9 215.9"/><path id="map-p24" d="M164.1 290.8L283.9 143.2"/><path id="map-t24" d="M164.1 290.8L283.9 143.2"/><path id="map-p30" d="M213.6 165.0L156.4 115.0"/><path id="map-p31" d="M205.4 193.3L116.6 206.7"/><path id="map-p32" d="M218.9 215.9L163.1 290.1"/><path id="map-p34" d="M263.7 162.2L282.3 141.8"/><path id="map-t34" d="M263.7 162.2L282.3 141.8"/><path id="map-p40" d="M271.3 111.3L164.7 96.7"/><path id="map-p41" d="M273.8 129.8L114.2 198.2"/><path id="map-p42" d="M283.9 143.2L164.1 290.8"/><path id="map-p43" d="M282.3 141.8L263.7 162.2"/>
+          </defs>
+          <!--each plan.corridors--><use class="map__corridor" href="#map-p{{@.pair}}"/><!--/each-->
+          <!--each plan.flows--><use class="map__flow" href="#map-p{{@.link}}" marker-end="url(#map-arrow)" style="stroke-width: calc(2px + {{@.twh|r1}} / {{plan.flow_scale_twh|r1}} * 8px)"/><text class="map__flow-label" dy="-9"><textPath href="#map-t{{@.pair}}" startOffset="50%" text-anchor="middle">{{@.twh|0}} TWh</textPath></text><!--/each-->
+          <g><circle class="map__circle map__circle--r0" cx="130" cy="92" r="31"/><text class="map__value" x="130" y="95" text-anchor="middle">{{regions.list.0.p50_twh|0}}</text><text class="map__unit" x="130" y="110" text-anchor="middle">TWh</text><text class="map__name" x="130" y="34" text-anchor="middle">{{regions.list.0.name}}</text><text class="map__net" x="130" y="51" text-anchor="middle">net {{plan.regions.0.net_export_twh|+0}} TWh</text></g>
+          <g><circle class="map__circle map__circle--r1" cx="82" cy="212" r="31"/><text class="map__value" x="82" y="215" text-anchor="middle">{{regions.list.1.p50_twh|0}}</text><text class="map__unit" x="82" y="230" text-anchor="middle">TWh</text><text class="map__name" x="44" y="206" text-anchor="end">{{regions.list.1.name}}</text><text class="map__net" x="44" y="223" text-anchor="end">net {{plan.regions.1.net_export_twh|+0}} TWh</text></g>
+          <g><circle class="map__circle map__circle--r2" cx="142" cy="318" r="31"/><text class="map__value" x="142" y="321" text-anchor="middle">{{regions.list.2.p50_twh|0}}</text><text class="map__unit" x="142" y="336" text-anchor="middle">TWh</text><text class="map__name" x="142" y="372" text-anchor="middle">{{regions.list.2.name}}</text><text class="map__net" x="142" y="389" text-anchor="middle">net {{plan.regions.2.net_export_twh|+0}} TWh</text></g>
+          <g><circle class="map__circle map__circle--r3" cx="240" cy="188" r="31"/><text class="map__value" x="240" y="191" text-anchor="middle">{{regions.list.3.p50_twh|0}}</text><text class="map__unit" x="240" y="206" text-anchor="middle">TWh</text><text class="map__name" x="278" y="192" text-anchor="start">{{regions.list.3.name}}</text><text class="map__net" x="278" y="209" text-anchor="start">net {{plan.regions.3.net_export_twh|+0}} TWh</text></g>
+          <g><circle class="map__circle map__circle--r4" cx="306" cy="116" r="31"/><text class="map__value" x="306" y="119" text-anchor="middle">{{regions.list.4.p50_twh|0}}</text><text class="map__unit" x="306" y="134" text-anchor="middle">TWh</text><text class="map__name" x="306" y="58" text-anchor="middle">{{regions.list.4.name}}</text><text class="map__net" x="306" y="75" text-anchor="middle">net {{plan.regions.4.net_export_twh|+0}} TWh</text></g>
+        </svg>
+        <p class="note">Schematic, not to scale; positions only suggest geography. Circles: {{years.target_label}} requirement (median TWh). Arrows: energy one region sends another in the recommended plan, TWh a year. Dashed lines: other corridors. Net: plan generation minus requirement.</p>
+        <details class="data">
+          <summary class="data__toggle">Show the transfers</summary>
+          <div class="data__scroll" tabindex="0" role="region" aria-labelledby="flows-table-caption">
+            <table class="table">
+              <caption class="table__caption" id="flows-table-caption">Inter-regional corridors in the recommended plan, TWh a year</caption>
+              <thead><tr><th class="table__head" scope="col">Corridor</th><th class="table__head" scope="col">From</th><th class="table__head" scope="col">To</th><th class="table__head table__head--num" scope="col">Sent</th><th class="table__head table__head--num" scope="col">Capability</th></tr></thead>
+              <tbody><!--each plan.corridors--><tr><th class="table__cell" scope="row">{{@.name}}</th><td class="table__cell">{{@.from}}</td><td class="table__cell">{{@.to}}</td><td class="table__cell table__cell--num">{{@.twh|0}}</td><td class="table__cell table__cell--num">{{@.capability_twh|0}}</td></tr><!--/each--></tbody>
+            </table>
+          </div>
+        </details>
+      </figure>
+
+      <figure class="panel chart" aria-labelledby="share-caption">
+        <figcaption class="panel__title" id="share-caption">Share of the 2047 requirement and of today's generation</figcaption>
+        <svg class="chart__svg" width="100%" height="{{len regions.list|*64}}" role="img" aria-labelledby="share-t share-d">
+          <title id="share-t">Share of the {{years.target_label}} requirement and of {{regions.today_label}} conventional generation, by region</title>
+          <desc id="share-d"><!--each regions.list-->{{@.name}}: {{@.share_2047_pct|1}}% of the 2047 requirement, {{@.share_today_pct|1}}% of today's generation. <!--/each--></desc>
+          <!--each regions.list--><g transform="translate(0 {{@i|*64}})">
+            <title>{{@.name}}: {{@.share_2047_pct|1}}% of the 2047 requirement ({{@.p50_twh|0}} TWh); {{@.share_today_pct|1}}% of {{regions.today_label}} conventional generation ({{@.today_twh|0}} TWh)</title>
+            <text class="chart__label" x="0" y="15">{{@.name}}</text>
+            <text class="chart__value" x="100%" y="15" text-anchor="end">{{@.share_2047_pct|1}}% need · {{@.share_today_pct|1}}% today</text>
+            <svg y="22" width="100%" height="28" viewBox="0 0 {{regions.scale_pct|r3}} 28" preserveAspectRatio="none" overflow="visible">
+              <rect class="chart__bar--r{{@i}}" width="{{@.share_2047_pct|r3}}" height="12"/>
+              <rect class="chart__bar--today" x="0.05" y="17" width="{{@.share_today_pct|r3}}" height="10"/>
+            </svg>
+          </g><!--/each-->
+        </svg>
+        <ul class="legend" aria-hidden="true">
+          <li class="legend__item"><span class="legend__swatch" style="--swatch: var(--color-ink-2)"></span>Upper bar: share of the {{years.target_label}} requirement (region colour)</li>
+          <li class="legend__item"><span class="legend__swatch legend__swatch--outline"></span>Lower bar: share of {{regions.today_label}} conventional generation</li>
+        </ul>
+        <p class="note">Today: NPP thermal, nuclear and hydro generation in {{regions.today_label}} ({{regions.today_total_twh|0}} TWh); NPP publishes no regional renewable generation.</p>
+        <details class="data">
+          <summary class="data__toggle">Show the numbers</summary>
+          <div class="data__scroll" tabindex="0" role="region" aria-labelledby="regions-table-caption">
+            <table class="table">
+              <caption class="table__caption" id="regions-table-caption">Regional requirement, {{years.target_label}}, and today's conventional generation</caption>
+              <thead><tr><th class="table__head" scope="col">Region</th><th class="table__head table__head--num" scope="col">Median, TWh</th><th class="table__head table__head--num" scope="col">80% range, TWh</th><th class="table__head table__head--num" scope="col">Share of need</th><th class="table__head table__head--num" scope="col">Share today</th></tr></thead>
+              <tbody><!--each regions.list--><tr><th class="table__cell" scope="row">{{@.name}}</th><td class="table__cell table__cell--num">{{@.p50_twh|0}}</td><td class="table__cell table__cell--num">{{@.p10_twh|0}} to {{@.p90_twh|0}}</td><td class="table__cell table__cell--num">{{@.share_2047_pct|1}}%</td><td class="table__cell table__cell--num">{{@.share_today_pct|1}}%</td></tr><!--/each--></tbody>
+            </table>
+          </div>
+        </details>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="plan" aria-labelledby="plan-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title" id="plan-title">The recommended 2047 mix</h2>
+      <p class="lead">The least-cost plan under our Robust policy: {{plan.settings.solar_land_pct|0}}% of the solar potential usable (including rooftop and agri-PV), corridors between regions {{plan.settings.transfer_scale|0}} times the 2032 plan, building up to {{plan.settings.build_accel|1}} times India's record year, and renewables backed by storage. The tiles compare it with the least-cost plan under base policy settings.</p>
+    </div>
+    <div class="grid grid--tiles">
+      <article class="panel kpi" aria-labelledby="kpi-nonfossil">
+        <h3 class="panel__title" id="kpi-nonfossil">Non-fossil share</h3>
+        <div class="gauge">
+          <svg class="gauge__svg" viewBox="0 0 42 42" aria-hidden="true" focusable="false"><circle class="gauge__track" cx="21" cy="21" r="15.9155"/><circle class="gauge__value" cx="21" cy="21" r="15.9155" stroke-dasharray="{{plan.nonfossil_pct|r2}} 100"/></svg>
+          <p class="kpi__value">{{plan.nonfossil_pct|1}}<span class="kpi__unit">%</span></p>
+        </div>
+        <p class="kpi__detail">Base policy: {{plan.base_policy.nonfossil_pct|1}}%</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-co2">
+        <h3 class="panel__title" id="kpi-co2">CO₂ emissions</h3>
+        <p class="kpi__value">{{plan.co2_mt|0}}<span class="kpi__unit">Mt/yr</span></p>
+        <p class="kpi__detail">Base policy: {{plan.base_policy.co2_mt|0}} Mt a year</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-cost">
+        <h3 class="panel__title" id="kpi-cost">System cost</h3>
+        <p class="kpi__value">{{plan.cost_busd|0}}<span class="kpi__unit">bn USD/yr</span></p>
+        <p class="kpi__detail">Base policy: {{plan.base_policy.cost_busd|0}} bn USD a year</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-unmet">
+        <h3 class="panel__title" id="kpi-unmet">Unmet at the median</h3>
+        <p class="kpi__value">{{plan.unmet_twh|0}}<span class="kpi__unit">TWh</span></p>
+        <p class="kpi__detail">Base policy: {{plan.base_policy.unmet_twh|0}} TWh</p>
+      </article>
+    </div>
+
+    <div class="grid grid--golden grid--spaced">
+      <figure class="panel chart" aria-labelledby="mix-caption">
+        <figcaption class="panel__title" id="mix-caption">Share of {{years.target_label}} generation by source ({{plan.generation_twh|0}} TWh)</figcaption>
+        <svg class="chart__svg" width="100%" height="{{len plan.mix|*46}}" role="img" aria-labelledby="mix-t mix-d">
+          <title id="mix-t">Recommended {{years.target_label}} generation mix, Robust policy</title>
+          <desc id="mix-d"><!--each plan.mix-->{{@.label}}: {{@.share_pct|1}}% ({{@.twh|0}} TWh). <!--/each--></desc>
+          <!--each plan.mix--><g transform="translate(0 {{@i|*46}})">
+            <title>{{@.label}}: {{@.share_pct|1}}%, {{@.twh|0}} TWh</title>
+            <text class="chart__label" x="0" y="15">{{@.label}}</text>
+            <text class="chart__value" x="100%" y="15" text-anchor="end">{{@.share_pct|1}}% · {{@.twh|0}} TWh</text>
+            <svg y="23" width="100%" height="12" viewBox="0 0 {{plan.scale_pct|r3}} 12" preserveAspectRatio="none"><rect class="chart__track" width="{{plan.scale_pct|r3}}" height="12"/><rect class="chart__bar--{{@.key}}" width="{{@.share_pct|r3}}" height="12"/></svg>
+          </g><!--/each-->
+        </svg>
+        <p class="note">Firmed renewables: solar and wind backed by storage and sold round the clock. Bars are scaled to the largest source.</p>
+        <details class="data">
+          <summary class="data__toggle">Show the numbers</summary>
+          <div class="data__scroll" tabindex="0" role="region" aria-labelledby="mix-table-caption">
+            <table class="table">
+              <caption class="table__caption" id="mix-table-caption">Recommended {{years.target_label}} generation by source</caption>
+              <thead><tr><th class="table__head" scope="col">Source</th><th class="table__head" scope="col">Includes</th><th class="table__head table__head--num" scope="col">Share</th><th class="table__head table__head--num" scope="col">TWh</th></tr></thead>
+              <tbody><!--each plan.mix--><tr><th class="table__cell" scope="row">{{@.label}}</th><td class="table__cell">{{@.note}}</td><td class="table__cell table__cell--num">{{@.share_pct|1}}%</td><td class="table__cell table__cell--num">{{@.twh|0}}</td></tr><!--/each--></tbody>
+            </table>
+          </div>
+        </details>
+      </figure>
+      <div class="stack">
+        <aside class="callout" aria-labelledby="p90-title">
+          <h3 class="callout__title" id="p90-title">If demand comes in high</h3>
+          <p>At the P90 requirement ({{plan.p90.requirement_twh|0}} TWh) the same policy leaves <strong class="num">{{plan.p90.robust_unmet_twh|0}} TWh</strong> unmet. Making {{plan.p90.levers_solar_land_pct|0}}% of the solar potential usable and building at {{plan.p90.levers_build_accel|1}} times India's record rate leaves {{plan.p90.levers_unmet_twh|0}} TWh unmet. Land, not money, is the binding limit.</p>
+        </aside>
+        <div class="panel">
+          <h3 class="panel__title">Policy settings of the plan</h3>
+          <p class="kpi__detail">At least {{plan.settings.nonfossil_min_pct|0}}% non-fossil generation; {{plan.settings.solar_land_pct|0}}% of the solar and {{plan.settings.wind_land_pct|0}}% of the wind potential usable; nuclear up to {{plan.settings.nuclear_max_pct|0}}%; corridors {{plan.settings.transfer_scale|0}} times the 2032 plan; building up to {{plan.settings.build_accel|1}} times the record year.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="land" aria-labelledby="land-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title" id="land-title">Land and storage the plan needs</h2>
+      <p class="lead">The plan is run hour by hour through a year of National Power Portal hourly generation to size storage, and its solar and wind are converted to land area.</p>
+    </div>
+    <div class="grid grid--tiles">
+      <article class="panel kpi" aria-labelledby="kpi-storage-gw">
+        <h3 class="panel__title" id="kpi-storage-gw">Storage power</h3>
+        <p class="kpi__value">{{storage.power_gw|0}}<span class="kpi__unit">GW</span></p>
+        <p class="kpi__detail">CEA's optimal mix for 2029-30: {{storage.cea_2029_power_gw|0}} GW</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-storage-gwh">
+        <h3 class="panel__title" id="kpi-storage-gwh">Storage energy</h3>
+        <p class="kpi__value">{{storage.energy_gwh|0}}<span class="kpi__unit">GWh</span></p>
+        <p class="kpi__detail">About {{storage.duration_h|1}} hours at full power; {{storage.energy_multiple_of_cea|1}} times CEA's {{storage.cea_2029_energy_gwh|0}} GWh for 2029-30</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-land">
+        <h3 class="panel__title" id="kpi-land">Land for solar and wind</h3>
+        <p class="kpi__value">{{land.solar_wind_km2|0}}<span class="kpi__unit">km²</span></p>
+        <p class="kpi__detail">{{land.share_india_pct|2}}% of India's area, {{land.share_wasteland_pct|1}}% of its wasteland</p>
+      </article>
+      <article class="panel kpi" aria-labelledby="kpi-solar-pot">
+        <h3 class="panel__title" id="kpi-solar-pot">Solar potential used</h3>
+        <p class="kpi__value">{{land.solar_share_of_potential_pct|0}}<span class="kpi__unit">%</span></p>
+        <p class="kpi__detail">of the ground-mounted solar generation potential (NISE)</p>
+      </article>
+    </div>
+    <p class="note section__foot">Hour by hour, {{storage.shortfall_after_twh|0}} TWh ({{storage.shortfall_after_pct|1}}% of the requirement) is still short after storage, mostly storage losses and days with little sun and wind, so the plan needs that much more generation; {{storage.curtailed_pct|1}}% of solar and wind output is curtailed. Meeting the P90 requirement with the extra levers raises the land to {{land.p90_levers_km2|0}} km² ({{land.p90_levers_share_india_pct|2}}% of India).</p>
+  </div>
+</section>
+
+<div class="container grid grid--2">
+  <section class="section" id="method" aria-labelledby="method-title">
+    <div class="section__head">
+      <h2 class="section__title" id="method-title">How it works</h2>
+    </div>
+    <ol class="steps">
+      <li class="steps__item">Electricity generated per person is linked to income per person using India's own data: from {{elasticity.from}} to {{elasticity.to}}, each 1% rise in income came with about {{elasticity.beta|2}}% more generation per person.</li>
+      <li class="steps__item">{{scenarios|0}} scenarios of income growth, population, urbanisation and that link give the range for {{years.target_label}}, split by region from each state's population and income.</li>
+      <li class="steps__item">A least-cost planning model then chooses what to build in each region within land, build-rate, policy and transmission limits, and an hour-by-hour check sizes storage and land.</li>
+    </ol>
+  </section>
+
+  <section class="section" id="data" aria-labelledby="data-title">
+    <div class="section__head">
+      <h2 class="section__title" id="data-title">Data rules</h2>
+    </div>
+    <div class="stack">
+      <p>The core 2047 prediction uses only the two challenge datasets: generation from the National Power Portal (NPP) and the organisers' state population and GSDP.</p>
+      <p>Only energy generated (TWh) is forecast and compared; installed capacity and energy consumption are never inputs. Published studies supply only planning limits such as costs, resource potential, build rates and emissions.</p>
+      <p class="note">An independent cross-country model, kept outside the forecast, gives {{national.cross_country_p50_twh|0}} TWh for {{national.cross_country_year}} including captive plants. Years are fiscal years: {{years.target_label}} runs from April {{years.target}} to March of the next year.</p>
+    </div>
+  </section>
+</div>
+
+<section class="section" id="documents" aria-labelledby="documents-title">
+  <div class="container">
+    <div class="section__head">
+      <h2 class="section__title" id="documents-title">Slides and code</h2>
+      <p class="note">The repository is private and shared with the organisers; sign in to GitHub to open these links.</p>
+    </div>
+    <div class="grid grid--2">
+      <ul class="links">
+        <li><a class="links__link" href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/main.pdf">Presentation slides (PDF)</a></li>
+        <li><a class="links__link" href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/reader.pdf">Reader's edition with notes (PDF)</a></li>
+        <li><a class="links__link" href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/midpoint.pdf">Midpoint slide (PDF)</a></li>
+      </ul>
+      <ul class="links">
+        <li><a class="links__link" href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047">Source code and documentation</a></li>
+        <li><a class="links__link" href="summary.json">Every number on this page (JSON)</a></li>
+        <li><a class="links__link" href="app/">Interactive model</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p>India Electricity 2047 · ExxonMobil INNOTHON 2026 · Indian Institute of Science, Bengaluru</p>
+    <p>Every number on this page is written by the model's command-line run (energy2047) to site_summary.json and placed here when the site is built.</p>
+  </div>
+</footer>
+</body>
+</html>

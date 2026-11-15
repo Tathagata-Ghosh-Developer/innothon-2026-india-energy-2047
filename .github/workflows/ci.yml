@@ -1,0 +1,175 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cpu:
+    name: CPU build, tests and smoke run (Linux, GCC)
+    # GitHub-hosted runners have no GPU. This job builds the CPU path only
+    # (ENABLE_CUDA=OFF). test_mc_parity checks CPU double against CPU float there and
+    # prints "no CUDA device: GPU parity skipped"; the CPU/GPU parity check runs only on
+    # a machine with an NVIDIA GPU (see docs/deployment.md, build.cmd).
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Ninja
+        run: command -v ninja || { sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ninja-build; }
+
+      # Only the extracted FetchContent sources are cached. On a hit, configure runs
+      # with FETCHCONTENT_FULLY_DISCONNECTED=ON and downloads nothing.
+      - name: Cache FetchContent sources
+        id: deps
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/e47-deps/native/*-src
+          key: fetchcontent-native-${{ runner.os }}-${{ hashFiles('cmake/Dependencies.cmake') }}
+
+      - name: Configure (CPU only, Release)
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DENABLE_CUDA=OFF -DBUILD_DASHBOARD=OFF -DBUILD_TESTS=ON
+          -DFETCHCONTENT_BASE_DIR="$HOME/.cache/e47-deps/native"
+          -DFETCHCONTENT_FULLY_DISCONNECTED=${{ steps.deps.outputs.cache-hit == 'true' && 'ON' || 'OFF' }}
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Tests (ctest)
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Smoke run (energy2047, 65,536 draws)
+        run: |
+          ./build/apps/energy2047 "$GITHUB_WORKSPACE" 65536
+          for f in forecast_national_regional.csv strategy_2047.csv storage_land_2047.csv; do
+            test -s "outputs/$f" || { echo "missing or empty: outputs/$f"; exit 1; }
+          done
+          ls -l outputs/*.csv
+
+      # site_summary.json is the input of the landing page in the web job.
+      - name: Upload smoke-run outputs
+        uses: actions/upload-artifact@v7
+        with:
+          name: smoke-outputs
+          path: |
+            outputs/*.csv
+            outputs/site_summary.json
+          if-no-files-found: error
+          retention-days: 14
+
+  web:
+    name: WebAssembly build (Emscripten)
+    # The landing page is rendered from outputs/site_summary.json, which only the native
+    # energy2047 run writes, so this job takes it from the smoke run of the cpu job
+    # (65,536 draws; a release build of the site uses a full local run instead).
+    needs: cpu
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Keep in step with the version in docs/deployment.md.
+      EMSDK_VERSION: "7.0.0"
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the smoke-run outputs
+        uses: actions/download-artifact@v8
+        with:
+          name: smoke-outputs
+          path: outputs
+
+      - name: Install Ninja
+        run: command -v ninja || { sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ninja-build; }
+
+      - name: Install emsdk
+        run: |
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$HOME/emsdk"
+          "$HOME/emsdk/emsdk" install "$EMSDK_VERSION"
+          "$HOME/emsdk/emsdk" activate "$EMSDK_VERSION"
+
+      # Emscripten system libraries built for this project's flags (pthread, SIMD,
+      # wasm exceptions); building them is most of the first build's time.
+      - name: Cache Emscripten system libraries
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/emscripten
+          key: emcache-${{ env.EMSDK_VERSION }}-${{ hashFiles('cmake/CompilerFlags.cmake', 'cmake/Web.cmake', 'cmake/Dependencies.cmake') }}
+          restore-keys: emcache-${{ env.EMSDK_VERSION }}-
+
+      - name: Cache FetchContent sources
+        id: deps
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/e47-deps/web/*-src
+          key: fetchcontent-web-${{ runner.os }}-${{ hashFiles('cmake/Dependencies.cmake') }}
+
+      - name: Build and stage web/dist
+        env:
+          E47_WEB_BUILD_DIR: ${{ runner.temp }}/e47build_web
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          # emsdk_env.sh clears EM_CACHE, so set it afterwards.
+          export EM_CACHE="$HOME/.cache/emscripten"
+          bash ./build_web.sh \
+            -DFETCHCONTENT_BASE_DIR="$HOME/.cache/e47-deps/web" \
+            -DFETCHCONTENT_FULLY_DISCONNECTED=${{ steps.deps.outputs.cache-hit == 'true' && 'ON' || 'OFF' }}
+          ls -lR web/dist
+
+      - name: Upload web/dist
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-dist
+          path: web/dist
+          if-no-files-found: error
+          retention-days: 14
+
+  api-offline:
+    name: NPP API collection against recorded responses
+    # Runs api/npp.postman_collection.json against api/mock/server.js, which serves the
+    # responses recorded in api/fixtures. No request reaches npp.gov.in; the live check
+    # is the separate weekly workflow npp-api-monitor.yml.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Start the NPP mock
+        run: |
+          node api/mock/server.js > "$RUNNER_TEMP/npp-mock.log" 2>&1 &
+          for _ in $(seq 1 20); do
+            curl -fs -o /dev/null http://127.0.0.1:3647/dashBoard/get_generation_chart_list && break
+            sleep 0.5
+          done
+
+      - name: Run the collection (Newman)
+        run: >
+          npx --yes newman@6.2.3 run api/npp.postman_collection.json
+          -e api/npp-mock.postman_environment.json
+          --reporters cli,junit
+          --reporter-junit-export newman/offline-junit.xml
+
+      - name: Upload Newman report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: npp-api-offline-report
+          path: newman/
+          if-no-files-found: ignore
+          retention-days: 14

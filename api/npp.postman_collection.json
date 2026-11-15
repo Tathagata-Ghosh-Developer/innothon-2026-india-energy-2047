@@ -1,0 +1,933 @@
+{
+	"info": {
+		"_postman_id": "d616fdc3-a8c6-4822-99a1-b1d0d3eb16f2",
+		"name": "National Power Portal (NPP) public endpoints",
+		"description": "Public, unauthenticated endpoints of the National Power Portal (https://npp.gov.in, Central Electricity\nAuthority) used by the India Energy 2047 project. NPP is one of the two challenge datasets allowed for the\ncore 2047 prediction. Sources, field meanings and extraction steps: data/raw/npp/SOURCES.md.\n\nRun: npx --yes newman run api/npp.postman_collection.json\n\nEvery request waits {{delayMs}} ms first (collection pre-request script). The Merit requests use {{date}}:\n\"auto\" (default) means yesterday in Indian Standard Time; override with --env-var date=YYYY-MM-DD.\n\nOffline against the recorded responses in api/fixtures: start node api/mock/server.js, then run with\n-e api/npp-mock.postman_environment.json. See api/README.md and api/NPP_SERVICES.md.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Dashboard",
+			"description": "JSON endpoints behind the NPP dashboard pages (https://npp.gov.in/dashBoard/gc-map-dashboard).",
+			"item": [
+				{
+					"name": "Generation chart by fiscal year",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const fyItem = {",
+									"    type: \"object\",",
+									"    required: [\"financial_year\", \"hydro\", \"thermal_total\", \"renewable_energy_sources\", \"nuclear\"],",
+									"    properties: {",
+									"        financial_year: { type: \"string\", pattern: \"^[0-9]{4}-[0-9]{2}$\" },",
+									"        hydro: { type: \"number\" },",
+									"        thermal_total: { type: \"number\" },",
+									"        renewable_energy_sources: { type: \"number\" },",
+									"        nuclear: { type: \"number\" }",
+									"    }",
+									"};",
+									"pm.test(\"Body matches the chart schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"linechartforGeneration\", \"initialChartData\"],",
+									"        properties: {",
+									"            linechartforGeneration: { type: \"array\", minItems: 1, items: fyItem },",
+									"            initialChartData: { type: \"array\", items: fyItem }",
+									"        }",
+									"    });",
+									"});",
+									"",
+									"const rows = pm.response.json().linechartforGeneration || [];",
+									"const years = rows.map((r) => r.financial_year);",
+									"const start = (fy) => Number(String(fy).slice(0, 4));",
+									"pm.test(\"Fiscal years are unique and in ascending order\", () => {",
+									"    for (let i = 1; i < years.length; i++) {",
+									"        pm.expect(start(years[i]), years[i - 1] + \" -> \" + years[i]).to.be.above(start(years[i - 1]));",
+									"    }",
+									"});",
+									"pm.test(\"Series starts in FY1946-47\", () => pm.expect(years[0]).to.eql(\"1946-47\"));",
+									"pm.test(\"Annual values from FY2006-07 to the last year\", () => {",
+									"    const from = years.indexOf(\"2006-07\");",
+									"    pm.expect(from, \"FY2006-07 present\").to.be.at.least(0);",
+									"    for (let i = from + 1; i < years.length; i++) {",
+									"        pm.expect(start(years[i]) - start(years[i - 1]), years[i]).to.eql(1);",
+									"    }",
+									"});",
+									"const latest = pm.variables.get(\"chartLatestFy\");",
+									"pm.test(\"Last fiscal year is \" + latest + \" (a newer year means the archived CSV can be extended)\", () => {",
+									"    pm.expect(years[years.length - 1]).to.eql(latest);",
+									"});",
+									"pm.test(\"FY2023-24 values equal data/raw/npp/npp_national_generation_fy.csv (GWh)\", () => {",
+									"    const r = rows.find((x) => x.financial_year === \"2023-24\");",
+									"    pm.expect(r, \"FY2023-24 row\").to.be.an(\"object\");",
+									"    pm.expect(r.thermal_total, \"thermal\").to.eql(1326549);",
+									"    pm.expect(r.hydro, \"hydro\").to.eql(134054);",
+									"    pm.expect(r.nuclear, \"nuclear\").to.eql(47937);",
+									"    pm.expect(r.renewable_energy_sources, \"RES\").to.eql(189490);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/get_generation_chart_list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"get_generation_chart_list"
+							]
+						},
+						"description": "All-India generation by source and fiscal year (GWh), FY1946-47 to FY2023-24, array `linechartforGeneration` with `financial_year, thermal_total, hydro, nuclear, renewable_energy_sources`. Feeds data/raw/npp/npp_national_generation_fy.csv, which the India-only forecast core reads (src/pipeline/pipeline.cpp, src/forecast/india.cpp)."
+					},
+					"response": []
+				},
+				{
+					"name": "Header and daily figures",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const num = { type: \"number\" };",
+									"pm.test(\"Body matches the header and daily figures schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"headerMap\", \"dailyPGen\", \"plfMonthWise\", \"dailyColeStock\"],",
+									"        properties: {",
+									"            headerMap: {",
+									"                type: \"object\",",
+									"                required: [\"GN_OBJ\", \"CP_OBJ\"],",
+									"                properties: {",
+									"                    GN_OBJ: {",
+									"                        type: \"object\",",
+									"                        required: [\"generation_date\", \"program_generation\", \"actual_generation\",",
+									"                                   \"program_generation_cumulative\", \"actual_generation_cumulative\"],",
+									"                        properties: {",
+									"                            generation_date: num, program_generation: num, actual_generation: num,",
+									"                            program_generation_cumulative: num, actual_generation_cumulative: num",
+									"                        }",
+									"                    },",
+									"                    CP_OBJ: { type: \"object\" }",
+									"                }",
+									"            },",
+									"            dailyPGen: { type: \"object\", required: [\"generation_date\", \"actual_generation\"] },",
+									"            plfMonthWise: {",
+									"                type: \"array\", minItems: 1,",
+									"                items: { type: \"object\", required: [\"fin_year\", \"plf_allindia\"], properties: { plf_allindia: num } }",
+									"            },",
+									"            dailyColeStock: { type: \"array\" }",
+									"        }",
+									"    });",
+									"});",
+									"",
+									"const gn = (pm.response.json().headerMap || {}).GN_OBJ || {};",
+									"const maxStale = Number(pm.variables.get(\"maxStaleDays\"));",
+									"pm.test(\"Daily generation figures are no older than \" + maxStale + \" days\", () => {",
+									"    pm.expect((Date.now() - gn.generation_date) / 86400000).to.be.below(maxStale);",
+									"});",
+									"pm.test(\"Daily actual generation is plausible for All India (1,000 to 20,000 MU)\", () => {",
+									"    pm.expect(gn.actual_generation).to.be.within(1000, 20000);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getAllZoneGen?ID=IND",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getAllZoneGen"
+							],
+							"query": [
+								{
+									"key": "ID",
+									"value": "IND",
+									"description": "Ignored by the server"
+								}
+							]
+						},
+						"description": "Dashboard header: daily and cumulative conventional generation (programme and actual, MU), coal stock, plant load factor by fiscal year. Not used by the pipeline."
+					},
+					"response": []
+				},
+				{
+					"name": "State-wise daily generation of a region",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const row = {\"type\":\"object\",\"required\":[\"generation_date\",\"state_id\",\"state_name\",\"zone_id\",\"program_generation\",\"actual_generation\",\"actual_generation_cumulative\"],\"properties\":{\"generation_date\":{\"type\":\"number\"},\"state_id\":{\"type\":\"number\"},\"state_name\":{\"type\":\"string\"},\"zone_id\":{\"type\":\"number\"},\"program_generation\":{\"type\":\"number\"},\"actual_generation\":{\"type\":\"number\"},\"actual_generation_cumulative\":{\"type\":\"number\"}}};",
+									"pm.test(\"Body matches the state-wise daily generation schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"dailyGenStn\", \"dailyPGen\", \"stateList\"],",
+									"        properties: {",
+									"            dailyGenStn: { type: \"array\", minItems: 1, items: row },",
+									"            dailyPGen: {",
+									"                type: \"object\",",
+									"                required: [\"generation_date\", \"actual_generation\"],",
+									"                properties: { generation_date: { type: \"number\" }, actual_generation: { type: \"number\" } }",
+									"            },",
+									"            stateList: { type: \"array\" }",
+									"        }",
+									"    });",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"const zone = Number(pm.variables.get(\"zoneId\"));",
+									"pm.test(\"Every row is a state of zone \" + zone, () => {",
+									"    for (const r of body.dailyGenStn) {",
+									"        pm.expect(r.zone_id, r.state_name).to.eql(zone);",
+									"    }",
+									"});",
+									"pm.test(\"State values add up to the zone total (within 0.1 MU)\", () => {",
+									"    const sum = body.dailyGenStn.reduce((a, r) => a + r.actual_generation, 0);",
+									"    pm.expect(Math.abs(sum - body.dailyPGen.actual_generation)).to.be.below(0.1);",
+									"});",
+									"const maxStale = Number(pm.variables.get(\"maxStaleDays\"));",
+									"pm.test(\"Daily generation figures are no older than \" + maxStale + \" days\", () => {",
+									"    pm.expect((Date.now() - body.dailyPGen.generation_date) / 86400000).to.be.below(maxStale);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getAllZoneStateGen?zoneId={{zoneId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getAllZoneStateGen"
+							],
+							"query": [
+								{
+									"key": "zoneId",
+									"value": "{{zoneId}}",
+									"description": "Region: 100001 Northern, 100002 Western, 100003 Southern, 100004 Eastern, 100005 North Eastern"
+								}
+							]
+						},
+						"description": "Latest reporting day only: programme and actual generation (MU) of each state of the region, the same day last year and the total since 1 April; conventional stations above 25 MW. Not used by the pipeline (no history, see api/NPP_SERVICES.md)."
+					},
+					"response": []
+				},
+				{
+					"name": "Station-wise daily generation of a state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const row = {\"type\":\"object\",\"required\":[\"generation_date\",\"state_id\",\"state_name\",\"zone_id\",\"program_generation\",\"actual_generation\",\"actual_generation_cumulative\",\"station_id\",\"station_name\"],\"properties\":{\"generation_date\":{\"type\":\"number\"},\"state_id\":{\"type\":\"number\"},\"state_name\":{\"type\":\"string\"},\"zone_id\":{\"type\":\"number\"},\"program_generation\":{\"type\":[\"number\",\"null\"]},\"actual_generation\":{\"type\":[\"number\",\"null\"]},\"actual_generation_cumulative\":{\"type\":[\"number\",\"null\"]}}};",
+									"pm.test(\"Body matches the station-wise daily generation schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"dailyGenStn\", \"dailyPGen\", \"station_details\"],",
+									"        properties: {",
+									"            dailyGenStn: { type: \"array\", minItems: 1, items: row },",
+									"            dailyPGen: {",
+									"                type: \"object\",",
+									"                required: [\"generation_date\", \"actual_generation\"],",
+									"                properties: { generation_date: { type: \"number\" }, actual_generation: { type: \"number\" } }",
+									"            },",
+									"            station_details: { type: \"array\" }",
+									"        }",
+									"    });",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"const state = Number(pm.variables.get(\"stateId\"));",
+									"pm.test(\"Stations of state \" + state + \" add up to the state total (within 0.1 MU)\", () => {",
+									"    const rows = body.dailyGenStn.filter((r) => r.state_id === state);",
+									"    pm.expect(rows, \"stations of the state\").to.not.be.empty;",
+									"    const sum = rows.reduce((a, r) => a + r.actual_generation, 0);",
+									"    pm.expect(Math.abs(sum - body.dailyPGen.actual_generation)).to.be.below(0.1);",
+									"});",
+									"pm.test(\"All stations report the same day\", () => {",
+									"    pm.expect(Array.from(new Set(body.dailyGenStn.map((r) => r.generation_date)))).to.have.lengthOf(1);",
+									"});",
+									"const genDate = String(pm.variables.get(\"genDate\"));",
+									"pm.test(\"genDate \" + genDate + \" is still ignored (latest day returned, so no history here)\", () => {",
+									"    // At access (2026-11-16) every genDate returned the latest reporting day. If this fails,",
+									"    // NPP may now serve past days from this endpoint; see api/NPP_SERVICES.md.",
+									"    const m = /^([0-9]{2})-([A-Za-z]{3})-([0-9]{4})$/.exec(genDate);",
+									"    pm.expect(m, \"genDate format dd-Mon-yyyy\").to.not.equal(null);",
+									"    const mon = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"].indexOf(m[2]);",
+									"    const asked = Date.UTC(Number(m[3]), mon, Number(m[1])) - 330 * 60 * 1000;",
+									"    pm.expect(Math.abs(body.dailyPGen.generation_date - asked) / 86400000).to.be.above(1);",
+									"});",
+									"const maxStale = Number(pm.variables.get(\"maxStaleDays\"));",
+									"pm.test(\"Daily generation figures are no older than \" + maxStale + \" days\", () => {",
+									"    pm.expect((Date.now() - body.dailyPGen.generation_date) / 86400000).to.be.below(maxStale);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getZoneStateWiseGen?stateId={{stateId}}&zoneId={{zoneId}}&genDate={{genDate}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getZoneStateWiseGen"
+							],
+							"query": [
+								{
+									"key": "stateId",
+									"value": "{{stateId}}",
+									"description": "State id (getBMapData stateList), e.g. 27 Maharashtra"
+								},
+								{
+									"key": "zoneId",
+									"value": "{{zoneId}}",
+									"description": "Region id of the state"
+								},
+								{
+									"key": "genDate",
+									"value": "{{genDate}}",
+									"description": "dd-Mon-yyyy as the page sends it; ignored by the server at access"
+								}
+							]
+						},
+						"description": "Latest reporting day only: programme and actual generation (MU) of every station of the region, the state total (dailyPGen) and the state's station list. Not used by the pipeline (no history, see api/NPP_SERVICES.md)."
+					},
+					"response": []
+				},
+				{
+					"name": "Installed capacity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const num = { type: \"number\" };",
+									"pm.test(\"Body matches the installed capacity schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"monthlyAllIndiaGen\", \"installed_Capacity\", \"installed_Capacity_List\"],",
+									"        properties: {",
+									"            monthlyAllIndiaGen: {",
+									"                type: \"object\",",
+									"                required: [\"reporting_date\", \"installed_capacity\", \"monitored_capacity\"],",
+									"                properties: { installed_capacity: num, monitored_capacity: num }",
+									"            },",
+									"            installed_Capacity: {",
+									"                type: \"object\",",
+									"                required: [\"installed_capacity_thermal\", \"installed_capacity_hydro\", \"installed_capacity_nuclear\",",
+									"                           \"installed_capacity_res\", \"res_solar_power\", \"res_wind_power\"],",
+									"                properties: {",
+									"                    installed_capacity_thermal: num, installed_capacity_hydro: num, installed_capacity_nuclear: num,",
+									"                    installed_capacity_res: num, res_solar_power: num, res_wind_power: num",
+									"                }",
+									"            },",
+									"            installed_Capacity_List: {",
+									"                type: \"array\", minItems: 1,",
+									"                items: {",
+									"                    type: \"object\",",
+									"                    required: [\"sector_name\", \"installed_capacity\"],",
+									"                    properties: { sector_name: { type: \"string\" }, installed_capacity: num }",
+									"                }",
+									"            }",
+									"        }",
+									"    });",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"const total = body.monthlyAllIndiaGen.installed_capacity;",
+									"pm.test(\"Sectors are central, state and private\", () => {",
+									"    const names = body.installed_Capacity_List.map((s) => s.sector_name).sort();",
+									"    pm.expect(names).to.eql([\"CENTRAL SECTOR\", \"PVT SECTOR\", \"STATE SECTOR\"]);",
+									"});",
+									"pm.test(\"Sector capacities add up to the All-India installed capacity (within 1 MW)\", () => {",
+									"    const sum = body.installed_Capacity_List.reduce((a, s) => a + s.installed_capacity, 0);",
+									"    pm.expect(Math.abs(sum - total)).to.be.below(1);",
+									"});",
+									"pm.test(\"Source capacities add up to the All-India installed capacity (within 1 MW)\", () => {",
+									"    const c = body.installed_Capacity;",
+									"    const sum = c.installed_capacity_thermal + c.installed_capacity_hydro + c.installed_capacity_nuclear +",
+									"        c.installed_capacity_res;",
+									"    pm.expect(Math.abs(sum - total)).to.be.below(1);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getAllZone",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getAllZone"
+							]
+						},
+						"description": "All-India installed capacity (MW) by sector and by source, including solar and wind, and monitored, online and outage capacity. Not used by the pipeline."
+					},
+					"response": []
+				},
+				{
+					"name": "Map data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// The response is large (about 0.75 MB of station, state, district and project lists),",
+									"// so only the status, type and response time are checked.",
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMsLarge\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getBMapData?ID=IND",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getBMapData"
+							],
+							"query": [
+								{
+									"key": "ID",
+									"value": "IND",
+									"description": "Ignored by the server"
+								}
+							]
+						},
+						"description": "Station, state, zone and district lists and project details for the dashboard map (about 0.75 MB). No generation values. Not used by the pipeline."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merit real-time",
+			"description": "Real-time All-India snapshots behind https://npp.gov.in/dashBoard/gc-map-dashboard-meritchart. One Indian Standard Time calendar day per request, date format YYYY-MM-DD; days without data return an empty array.",
+			"item": [
+				{
+					"name": "Generation by source (MW)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"let rows = null;",
+									"try { rows = pm.response.json(); } catch (e) { rows = null; }",
+									"pm.test(\"Body is a JSON array\", () => pm.expect(rows).to.be.an(\"array\"));",
+									"",
+									"const auto = pm.variables.get(\"dateIsAuto\") === \"true\";",
+									"const back = Number(pm.collectionVariables.get(\"meritBackoffDays\") || 0);",
+									"const maxBack = Number(pm.variables.get(\"meritMaxBackoffDays\") || 3);",
+									"if (Array.isArray(rows) && rows.length === 0 && auto && back < maxBack) {",
+									"    // NPP has days without Merit data (25 such days up to 2026-11-15, see data/raw/npp/SOURCES.md).",
+									"    // With the automatic date, step back one day and repeat this request.",
+									"    console.log(\"No Merit data for \" + pm.variables.get(\"date\") + \"; trying the day before\");",
+									"    pm.collectionVariables.set(\"meritBackoffDays\", String(back + 1));",
+									"    pm.execution.setNextRequest(pm.info.requestName);",
+									"} else {",
+									"    pm.test(\"Snapshots returned for \" + pm.variables.get(\"date\"), () => pm.expect(rows).to.be.an(\"array\").that.is.not.empty);",
+									"    pm.test(\"Items have updated_on, name_of_data and value_of_data of the documented types\", () => {",
+									"        pm.response.to.have.jsonSchema({",
+									"            type: \"array\",",
+									"            items: {",
+									"                type: \"object\",",
+									"                required: [\"updated_on\", \"name_of_data\", \"value_of_data\"],",
+									"                properties: {",
+									"                    updated_on: { type: \"integer\" },",
+									"                    name_of_data: { type: \"string\", enum: [\"THERMAL GENERATION\",\"GAS GENERATION\",\"HYDRO GENERATION\",\"NUCLEAR GENERATION\",\"SOLAR GENERATION\",\"WIND GENERATION\"] },",
+									"                    value_of_data: { type: \"number\" }",
+									"                }",
+									"            }",
+									"        });",
+									"    });",
+									"    pm.test(\"All six sources are present\", () => {",
+									"        const names = Array.from(new Set((rows || []).map((r) => r.name_of_data))).sort();",
+									"        pm.expect(names).to.eql([\"GAS GENERATION\",\"HYDRO GENERATION\",\"NUCLEAR GENERATION\",\"SOLAR GENERATION\",\"THERMAL GENERATION\",\"WIND GENERATION\"]);",
+									"    });",
+									"    const day = pm.variables.get(\"date\");",
+									"    pm.test(\"Timestamps fall inside the requested IST day (\" + day + \")\", () => {",
+									"        const from = Date.parse(day + \"T00:00:00+05:30\");",
+									"        const slack = 5 * 60 * 1000;",
+									"        for (const r of rows) {",
+									"            pm.expect(r.updated_on, \"updated_on \" + r.updated_on).to.be.within(from - slack, from + 86400000 + slack);",
+									"        }",
+									"    });",
+									"    pm.test(\"Values are in MW (median six-source total between 50,000 and 500,000)\", () => {",
+									"        const median = (a) => { const s = a.slice().sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };",
+									"        const byTime = {};",
+									"        for (const r of rows) {",
+									"            byTime[r.updated_on] = byTime[r.updated_on] || {};",
+									"            byTime[r.updated_on][r.name_of_data] = r.value_of_data;",
+									"        }",
+									"        const totals = Object.values(byTime).filter((t) => Object.keys(t).length === 6)",
+									"            .map((t) => Object.values(t).reduce((a, v) => a + v, 0));",
+									"        pm.expect(totals, \"timestamps with all six sources\").to.not.be.empty;",
+									"        pm.expect(median(totals)).to.be.within(50000, 500000);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/demandmet2chartdata?date={{date}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"demandmet2chartdata"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{date}}",
+									"description": "IST calendar day, YYYY-MM-DD"
+								}
+							]
+						},
+						"description": "Snapshots `{updated_on, name_of_data, value_of_data}` every 2 to 5 minutes for six sources (thermal, gas, hydro, nuclear, solar, wind), MW. Feeds data/raw/npp/downloads/merit/ and npp_merit_generation_hourly.csv (read by src/allocation/storage.cpp), npp_merit_generation_daily.csv and npp_res_generation_monthly.csv."
+					},
+					"response": []
+				},
+				{
+					"name": "Demand met (MW)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"let rows = null;",
+									"try { rows = pm.response.json(); } catch (e) { rows = null; }",
+									"pm.test(\"Body is a JSON array\", () => pm.expect(rows).to.be.an(\"array\"));",
+									"pm.test(\"Snapshots returned for \" + pm.variables.get(\"date\"), () => pm.expect(rows).to.be.an(\"array\").that.is.not.empty);",
+									"pm.test(\"Items have updated_on, name_of_data (DEMAND MET) and value_of_data\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"array\",",
+									"        items: {",
+									"            type: \"object\",",
+									"            required: [\"updated_on\", \"name_of_data\", \"value_of_data\"],",
+									"            properties: {",
+									"                updated_on: { type: \"integer\" },",
+									"                name_of_data: { type: \"string\", enum: [\"DEMAND MET\"] },",
+									"                value_of_data: { type: \"number\" }",
+									"            }",
+									"        }",
+									"    });",
+									"});",
+									"const day = pm.variables.get(\"date\");",
+									"pm.test(\"Timestamps fall inside the requested IST day (\" + day + \")\", () => {",
+									"    const from = Date.parse(day + \"T00:00:00+05:30\");",
+									"    const slack = 5 * 60 * 1000;",
+									"    for (const r of rows) {",
+									"        pm.expect(r.updated_on, \"updated_on \" + r.updated_on).to.be.within(from - slack, from + 86400000 + slack);",
+									"    }",
+									"});",
+									"pm.test(\"Values are in MW (median between 50,000 and 500,000)\", () => {",
+									"    const median = (a) => { const s = a.slice().sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };",
+									"    pm.expect(median((rows || []).map((r) => r.value_of_data))).to.be.within(50000, 500000);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/demandmet1chartdata?date={{date}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"demandmet1chartdata"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "{{date}}",
+									"description": "IST calendar day, YYYY-MM-DD"
+								}
+							]
+						},
+						"description": "All-India demand met snapshots (`name_of_data = DEMAND MET`), MW. Stored raw only in data/raw/npp/downloads/merit/merit_demandmet_snapshots_*.csv.gz."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CEA monthly reports",
+			"description": "Report files published on NPP. Only the headers are requested.",
+			"item": [
+				{
+					"name": "18-column report, Sub-report 2 (region wise), XLS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/vnd.ms-excel\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/vnd\\.ms-excel/i);",
+									"});",
+									"pm.test(\"Content-Length is above 1 kB\", () => {",
+									"    pm.expect(Number(pm.response.headers.get(\"Content-Length\") || 0)).to.be.above(1024);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "HEAD",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.ms-excel, */*",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/public-reports/cea/monthly/generation/18_col_act/{{yyyy}}/{{MON}}/18_col_act-2_{{yyyy}}-{{MON}}.xls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public-reports",
+								"cea",
+								"monthly",
+								"generation",
+								"18_col_act",
+								"{{yyyy}}",
+								"{{MON}}",
+								"18_col_act-2_{{yyyy}}-{{MON}}.xls"
+							]
+						},
+						"description": "CEA monthly generation report, actuals, Sub-report 2 \"Summary - Region wise\" for {{MON}} {{yyyy}} (MON = JAN..DEC; earliest Jul-2019). Sub-report N: replace -2_ with -N_. Feeds npp_region_generation_monthly.csv and npp_region_generation_fy.csv (read by apps/energy2047.cpp); Sub-report 16 feeds npp_state_generation_fy.csv."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Runs before every request.",
+					"// 1. Polite pacing: wait delayMs (default 2000 ms) before each request.",
+					"// 2. Merit date: requests to demandmet*chartdata use {{date}}. When date is \"auto\" (the default),",
+					"//    it becomes yesterday in Indian Standard Time, stepped back by meritBackoffDays when the",
+					"//    Merit request finds an empty day (see its test script). An explicit date given with",
+					"//    --env-var date=YYYY-MM-DD (or as an iteration data or collection value) is used as is.",
+					"const isMerit = pm.request.url.getPath().indexOf(\"demandmet\") !== -1;",
+					"if (!isMerit) {",
+					"    pm.collectionVariables.set(\"meritBackoffDays\", \"0\");",
+					"} else {",
+					"    const pick = (v) => (v === undefined || v === null || String(v).trim() === \"\") ? null : String(v).trim();",
+					"    const given = pick(pm.iterationData.get(\"date\")) || pick(pm.environment.get(\"date\")) ||",
+					"        pick(pm.collectionVariables.get(\"date\")) || pick(pm.globals.get(\"date\")) || \"auto\";",
+					"    if (given.toLowerCase() === \"auto\") {",
+					"        const back = Number(pm.collectionVariables.get(\"meritBackoffDays\") || 0);",
+					"        const istNow = Date.now() + 330 * 60 * 1000;",
+					"        const day = new Date(istNow - (1 + back) * 24 * 3600 * 1000).toISOString().slice(0, 10);",
+					"        pm.variables.set(\"date\", day);",
+					"        pm.variables.set(\"dateIsAuto\", \"true\");",
+					"    } else {",
+					"        pm.variables.set(\"date\", given);",
+					"        pm.variables.set(\"dateIsAuto\", \"false\");",
+					"    }",
+					"}",
+					"const delay = Number(pm.variables.get(\"delayMs\") || 2000);",
+					"if (delay > 0) {",
+					"    setTimeout(() => {}, delay);",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://npp.gov.in",
+			"type": "string"
+		},
+		{
+			"key": "userAgent",
+			"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+			"type": "string"
+		},
+		{
+			"key": "delayMs",
+			"value": "2000",
+			"type": "string",
+			"description": "Pause before each request (ms)"
+		},
+		{
+			"key": "date",
+			"value": "auto",
+			"type": "string",
+			"description": "Merit day YYYY-MM-DD, or auto for yesterday (IST)"
+		},
+		{
+			"key": "meritBackoffDays",
+			"value": "0",
+			"type": "string",
+			"description": "Set by the scripts"
+		},
+		{
+			"key": "meritMaxBackoffDays",
+			"value": "3",
+			"type": "string",
+			"description": "Earlier days tried when the automatic date has no data"
+		},
+		{
+			"key": "zoneId",
+			"value": "100002",
+			"type": "string",
+			"description": "Region id for the state-wise requests"
+		},
+		{
+			"key": "stateId",
+			"value": "27",
+			"type": "string",
+			"description": "State id for the station-wise request"
+		},
+		{
+			"key": "genDate",
+			"value": "01-Apr-2025",
+			"type": "string",
+			"description": "Day sent as genDate (dd-Mon-yyyy)"
+		},
+		{
+			"key": "yyyy",
+			"value": "2026",
+			"type": "string",
+			"description": "Report year"
+		},
+		{
+			"key": "MON",
+			"value": "SEP",
+			"type": "string",
+			"description": "Report month, JAN..DEC"
+		},
+		{
+			"key": "chartLatestFy",
+			"value": "2023-24",
+			"type": "string",
+			"description": "Last fiscal year in the archived chart"
+		},
+		{
+			"key": "maxResponseMs",
+			"value": "30000",
+			"type": "string"
+		},
+		{
+			"key": "maxResponseMsLarge",
+			"value": "60000",
+			"type": "string"
+		},
+		{
+			"key": "maxStaleDays",
+			"value": "30",
+			"type": "string"
+		}
+	]
+}

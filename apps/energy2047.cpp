@@ -3,11 +3,15 @@
 // Usage: energy2047 [repo_root] [draws]
 #include <omp.h>
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
 #include <map>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "core/csv.hpp"
 #include "core/stats.hpp"
@@ -90,10 +94,41 @@ void write_strategy(const fs::path& out, const AllocationInputs& in, const Strat
   }
 }
 
+// Numbers shown on the landing page (web/landing.html). They are collected from the
+// same in-memory results that write the CSV files and written to
+// outputs/site_summary.json by write_site_summary(); the web build renders the page from it.
+struct SiteSummary {
+  struct Holdout {
+    int year;
+    double estimate_twh, p05, p50, p95;
+  };
+  struct Sensitivity {
+    std::string key, description;
+    double p50;
+  };
+  std::vector<Holdout> holdout;
+  std::vector<Sensitivity> sensitivity;  // first entry: base case
+  int today_year = 0;                        // latest complete fiscal year of NPP regional generation
+  std::array<double, kRegions> today_twh{};  // NPP conventional generation (thermal, nuclear, hydro)
+  double cross_country_p50 = 0;
+  int cross_country_year = 0;
+  AllocationResult base_plan;    // least cost, base policy, median requirement
+  AllocationResult robust_plan;  // least cost, Robust policy, median requirement (presets matrix)
+  bool robust_plan_ok = false;
+  PolicySettings robust_policy;
+  double robust_p90_unserved = -1;  // Robust policy planned for the P90 requirement; < 0 = infeasible
+  bool storage_ok = false;
+  StorageLandResult robust_storage;  // Robust policy, median requirement
+  StorageLandResult levers_storage;  // Robust policy with the P90 levers, P90 requirement
+  double levers_unserved = -1, levers_solar_land = 0, levers_build_accel = 0;
+  double cea_power_gw = 0, cea_energy_gwh = 0;
+};
+
 // Storage and land back-calculated from the least-cost plan: Base and Robust policy
 // at the median and P90 requirement, plus the Robust plan with the P90 levers
 // (45% usable solar land, build rates 3.5x the record year), which meets the P90.
-void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const ScenarioControls& c) {
+void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const ScenarioControls& c,
+                        SiteSummary& site) {
   const StorageInputs& si = pl.storage_inputs();
   if (!si.ok) {
     std::printf("storage and land: skipped (%s)\n", si.status.c_str());
@@ -187,6 +222,17 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
       req += r.requirement[i];
       unserved += r.least_cost.unserved[i];
     }
+    if (plan == "robust_p50") {
+      site.storage_ok = true;
+      site.robust_storage = s;
+      site.cea_power_gw = si.bench_power_gw;
+      site.cea_energy_gwh = si.bench_energy_gwh;
+    } else if (plan == "robust_p90_levers") {
+      site.levers_storage = s;
+      site.levers_unserved = unserved;
+      site.levers_solar_land = ps.solar_land;
+      site.levers_build_accel = ps.build_accel;
+    }
     const AllocationResult& a = r.least_cost;
     char desc[160];
     std::snprintf(desc, sizeof desc, "%s policy, P%.0f requirement%s", k.policy, 100 * k.quantile,
@@ -266,6 +312,354 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
   std::printf("  CEA 2029-30 optimal mix: %.1f GW, %.1f GWh for %.0f TWh of solar and wind (%.2f GWh per TWh)\n",
               si.bench_power_gw, si.bench_energy_gwh, si.bench_generation_twh * si.bench_vre_share,
               si.bench_energy_gwh / (si.bench_generation_twh * si.bench_vre_share));
+}
+
+// Minimal JSON writer. Numbers are written in fixed notation (never exponents) so the
+// web build (cmake/Site.cmake) can round and format them; non-finite numbers become null.
+class JsonOut {
+ public:
+  explicit JsonOut(const fs::path& path) : f_(std::fopen(path.string().c_str(), "wb")) {
+    if (!f_) throw std::runtime_error("cannot write " + path.string());
+  }
+  ~JsonOut() { std::fclose(f_); }
+  JsonOut(const JsonOut&) = delete;
+  JsonOut& operator=(const JsonOut&) = delete;
+
+  JsonOut& obj(const char* key = nullptr) { return open(key, '{'); }
+  JsonOut& arr(const char* key = nullptr) { return open(key, '['); }
+  JsonOut& end() {
+    const char c = stack_.back();
+    stack_.pop_back();
+    newline();
+    std::fputc(c == '{' ? '}' : ']', f_);
+    first_ = false;
+    if (stack_.empty()) std::fputc('\n', f_);
+    return *this;
+  }
+  JsonOut& num(const char* key, double v, int decimals = 3) {
+    item(key);
+    if (!std::isfinite(v)) {
+      std::fputs("null", f_);
+      return *this;
+    }
+    if (std::abs(v) < 0.5 * std::pow(10.0, -decimals)) v = 0;  // no "-0.000"
+    std::fprintf(f_, "%.*f", decimals, v);
+    return *this;
+  }
+  JsonOut& integer(const char* key, long long v) {
+    item(key);
+    std::fprintf(f_, "%lld", v);
+    return *this;
+  }
+  JsonOut& str(const char* key, const std::string& v) {
+    item(key);
+    quoted(v);
+    return *this;
+  }
+
+ private:
+  JsonOut& open(const char* key, char c) {
+    item(key);
+    std::fputc(c, f_);
+    stack_.push_back(c);
+    first_ = true;
+    return *this;
+  }
+  void newline() {
+    std::fputc('\n', f_);
+    for (size_t i = 0; i < stack_.size(); ++i) std::fputs("  ", f_);
+  }
+  void item(const char* key) {
+    if (!stack_.empty()) {
+      if (!first_) std::fputc(',', f_);
+      newline();
+    }
+    first_ = false;
+    if (key) {
+      quoted(key);
+      std::fputs(": ", f_);
+    }
+  }
+  void quoted(const std::string& s) {
+    std::fputc('"', f_);
+    for (const unsigned char ch : s) {
+      if (ch == '"' || ch == '\\')
+        std::fprintf(f_, "\\%c", ch);
+      else if (ch < 0x20)
+        std::fprintf(f_, "\\u%04x", ch);
+      else
+        std::fputc(ch, f_);
+    }
+    std::fputc('"', f_);
+  }
+  std::FILE* f_;
+  std::vector<char> stack_;
+  bool first_ = true;
+};
+
+std::string fy_label(int y) {
+  char b[16];
+  std::snprintf(b, sizeof b, "FY%d-%02d", y, (y + 1) % 100);
+  return b;
+}
+
+// Upper end and step of a chart axis: about three steps of 1, 2, 2.5 or 5 x 10^k.
+std::pair<double, double> nice_axis(double top) {
+  const double raw = top / 3;
+  const double mag = std::pow(10.0, std::floor(std::log10(raw)));
+  double step = 10 * mag;
+  for (const double m : {1.0, 2.0, 2.5, 5.0})
+    if (m * mag >= raw) {
+      step = m * mag;
+      break;
+    }
+  return {std::ceil(top / step) * step, step};
+}
+
+// outputs/site_summary.json: every number on the landing page (see SiteSummary).
+void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const SiteSummary& s) {
+  const fs::path path = out / "site_summary.json";
+  std::string missing;
+  if (!s.robust_plan_ok) missing = "Robust plan";
+  if (!s.storage_ok) missing += missing.empty() ? "storage and land" : ", storage and land";
+  if (s.holdout.empty() || s.sensitivity.empty() || s.today_year == 0) missing += missing.empty() ? "checks" : ", checks";
+  if (!missing.empty()) {
+    fs::remove(path);  // the web build stops on a missing summary rather than show stale numbers
+    std::printf("site summary: not written (missing %s)\n", missing.c_str());
+    return;
+  }
+  const Fitted& fit = pl.fitted();
+  const HistoryPoint& h = fit.history.back();
+  const size_t last = f.years.size() - 1;
+  const int target = f.years[last];
+  const auto& q = f.quant.q[0][last];
+  JsonOut j(path);
+  j.obj();
+  j.integer("schema", 1);
+  j.str("about",
+        "Numbers shown on the landing page (web/landing.html), written by energy2047 from the same results as the "
+        "CSV files in this folder. Energy generated in TWh; fiscal years labelled by their start year.");
+  j.str("core", core_name(pl.core()));
+  j.integer("scenarios", static_cast<long long>(f.mc.draws));
+  j.obj("years").integer("base", h.year).str("base_label", fy_label(h.year));
+  j.integer("target", target).str("target_label", fy_label(target)).end();
+
+  j.obj("national");
+  j.num("base_twh", h.gen_twh);
+  static const char* qn[8] = {"p05", "p10", "p25", "p50", "p75", "p90", "p95", "mean"};
+  for (int k = 0; k < 8; ++k) j.num(qn[k], q[k]);
+  j.num("multiple_of_base", q[3] / h.gen_twh, 4);
+  j.num("growth_pct_per_year", 100 * (std::pow(q[3] / h.gen_twh, 1.0 / (target - h.year)) - 1));
+  j.num("captive_share_pct", 100 * fit.captive_share);
+  j.num("base_with_captive_twh", h.gen_twh * (1 + fit.captive_share));
+  j.num("p50_with_captive_twh", q[3] * (1 + fit.captive_share));
+  j.num("cross_country_p50_twh", s.cross_country_p50).integer("cross_country_year", s.cross_country_year);
+  // Frame of the national chart: years shown and a rounded upper end above the P90 path.
+  const auto [ymax, ystep] = nice_axis(1.05 * q[5]);
+  j.obj("chart").integer("x0", fit.history.front().year).integer("span", target - fit.history.front().year);
+  j.num("ymax", ymax, 0).arr("ticks");
+  for (int k = 0; k * ystep <= ymax + 1e-9; ++k) j.num(nullptr, k * ystep, 0);
+  j.end().end();
+  j.arr("history");
+  for (const auto& p : fit.history)
+    j.obj().integer("year", p.year).str("label", fy_label(p.year)).num("twh", p.gen_twh).end();
+  j.end().arr("forecast");
+  for (size_t t = 0; t < f.years.size(); ++t) {
+    const auto& v = f.quant.q[0][t];
+    j.obj().integer("year", f.years[t]).num("p10", v[1]).num("p50", v[3]).num("p90", v[5]).end();
+  }
+  j.end().arr("milestones");  // every fifth year from five years after the base year, and the target year
+  for (size_t t = 0; t < f.years.size(); ++t) {
+    const int y = f.years[t];
+    if (!((y % 5 == 0 && y >= h.year + 5 && y <= target - 5) || y == target)) continue;
+    const auto& v = f.quant.q[0][t];
+    j.obj().integer("year", y).str("label", fy_label(y)).num("p10", v[1]).num("p50", v[3]).num("p90", v[5]).end();
+  }
+  j.end().end();
+
+  j.obj("elasticity").num("beta", fit.india_fit.beta).str("from", fy_label(fit.india_fit.first));
+  j.str("to", fy_label(fit.india_fit.last)).end();
+
+  bool all_inside = true;
+  j.arr("holdout");
+  for (const auto& o : s.holdout) {
+    const bool inside = o.estimate_twh >= o.p05 && o.estimate_twh <= o.p95;
+    all_inside = all_inside && inside;
+    j.obj().integer("year", o.year).str("label", fy_label(o.year)).num("estimate_twh", o.estimate_twh);
+    j.num("model_p05", o.p05).num("model_p50", o.p50).num("model_p95", o.p95);
+    j.num("error_pct", 100 * (o.p50 / o.estimate_twh - 1)).str("in_range", inside ? "inside" : "outside").end();
+  }
+  j.end();
+  j.str("holdout_range_note", all_inside ? (s.holdout.size() == 2 ? "Both years fall inside the model's 90% range."
+                                                                    : "Every year falls inside the model's 90% range.")
+                                         : "Not every year falls inside the model's 90% range.");
+
+  // Drivers of uncertainty: change of the 2047 median against the base case.
+  {
+    struct Plain {
+      const char* key;
+      const char* label;
+    };
+    static const Plain plain[] = {
+        {"growth_plus_1.5", "Income growth 1.5 points higher"},
+        {"growth_minus_1.5", "Income growth 1.5 points lower"},
+        {"elasticity_decline_0.2", "Demand rises less as incomes rise"},
+        {"urban_plus_5", "Urban share 5 points above UN path"},
+        {"no_urban_term", "No urbanisation effect"},
+        {"pop_band_x2", "Population range twice as wide"},
+    };
+    const double base = s.sensitivity.front().p50;
+    struct Driver {
+      std::string key, label;
+      double p50, change;
+    };
+    std::vector<Driver> drivers;
+    for (const auto& c : s.sensitivity)
+      for (const Plain& p : plain)
+        if (c.key == p.key) drivers.push_back({c.key, p.label, c.p50, 100 * (c.p50 / base - 1)});
+    std::stable_sort(drivers.begin(), drivers.end(),
+                     [](const Driver& a, const Driver& b) { return std::abs(a.change) > std::abs(b.change); });
+    auto key_of = [](std::string k) {
+      std::replace(k.begin(), k.end(), '.', '_');  // dots separate the path parts in the page template
+      return k;
+    };
+    j.obj("sensitivity").num("base_p50_twh", base);
+    j.num("scale_pct", drivers.empty() ? 1.0 : std::max(1.0, std::abs(drivers.front().change)));
+    j.arr("drivers");
+    for (const Driver& d : drivers)
+      j.obj().str("key", key_of(d.key)).str("label", d.label).num("p50_twh", d.p50).num("change_pct", d.change).end();
+    j.end();
+    for (const auto& c : s.sensitivity) {
+      j.obj(key_of(c.key).c_str()).str("description", c.description).num("p50_twh", c.p50);
+      j.num("change_pct", 100 * (c.p50 / base - 1)).end();
+    }
+    j.end();
+  }
+
+  // Regional requirement (median) against today's NPP conventional generation.
+  {
+    double need_sum = 0, today_sum = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      need_sum += f.quant.q[1 + r][last][3];
+      today_sum += s.today_twh[r];
+    }
+    double scale = 0;
+    for (int r = 0; r < kRegions; ++r)
+      scale = std::max({scale, 100 * f.quant.q[1 + r][last][3] / need_sum, 100 * s.today_twh[r] / today_sum});
+    j.obj("regions").integer("today_year", s.today_year).str("today_label", fy_label(s.today_year));
+    j.num("today_total_twh", today_sum).num("scale_pct", scale).arr("list");
+    for (int r = 0; r < kRegions; ++r) {
+      const auto& v = f.quant.q[1 + r][last];
+      const double need = 100 * v[3] / need_sum, today = 100 * s.today_twh[r] / today_sum;
+      j.obj().str("name", region_name(r)).num("p10_twh", v[1]).num("p50_twh", v[3]).num("p90_twh", v[5]);
+      j.num("share_2047_pct", need).num("today_twh", s.today_twh[r]).num("share_today_pct", today);
+      j.num("gap_points", need - today).end();
+    }
+    j.end().end();
+  }
+
+  // Recommended plan: least cost under the Robust policy at the median requirement.
+  {
+    auto total = [](const std::array<double, kRegions>& x) {
+      double t = 0;
+      for (double v : x) t += v;
+      return t;
+    };
+    const AllocationResult& a = s.robust_plan;
+    struct Group {
+      const char* key;
+      const char* label;
+      const char* note;
+      std::vector<int> techs;
+    };
+    const Group groups[] = {
+        {"solar", "Solar", "ground-mounted, rooftop and agri-PV", {kSolar}},
+        {"firmed", "Firmed renewables", "solar and wind backed by storage, sold round the clock", {kFirmRE}},
+        {"coal", "Coal", "", {kCoal}},
+        {"wind", "Wind", "onshore and offshore", {kWind, kOffshore}},
+        {"hydro", "Hydro", "", {kHydro}},
+        {"nuclear", "Nuclear", "", {kNuclear}},
+        {"gasbio", "Gas and bioenergy", "", {kGas, kBio}},
+    };
+    struct Share {
+      const Group* g;
+      double twh;
+    };
+    std::vector<Share> mix;
+    for (const Group& g : groups) {
+      double twh = 0;
+      for (int t : g.techs) twh += a.national[t];
+      mix.push_back({&g, twh});
+    }
+    std::stable_sort(mix.begin(), mix.end(), [](const Share& x, const Share& y) { return x.twh > y.twh; });
+    const double req = total(a.requirement);
+    j.obj("plan").str("policy", "Robust").num("requirement_twh", req);
+    {
+      const PolicySettings& ps = s.robust_policy;  // the preset (pipeline/presets.hpp) as applied
+      j.obj("settings").num("nonfossil_min_pct", 100 * ps.nonfossil_min).num("solar_land_pct", 100 * ps.solar_land);
+      j.num("wind_land_pct", 100 * ps.wind_land).num("transfer_scale", ps.transfer_scale);
+      j.num("build_accel", ps.build_accel).num("nuclear_max_pct", 100 * ps.nuclear_max).end();
+    }
+    j.num("nonfossil_pct", 100 * a.nonfossil_share()).num("co2_mt", a.co2_mt).num("cost_busd", a.cost_busd);
+    j.num("unmet_twh", total(a.unserved)).num("generation_twh", a.total_twh);
+    j.num("scale_pct", a.total_twh > 0 ? 100 * mix.front().twh / a.total_twh : 1.0).arr("mix");
+    for (const Share& m : mix)
+      j.obj().str("key", m.g->key).str("label", m.g->label).str("note", m.g->note).num("twh", m.twh).num(
+          "share_pct", a.total_twh > 0 ? 100 * m.twh / a.total_twh : 0.0).end();
+    j.end().arr("regions");  // where the plan generates, and what each region sends to or takes from others
+    for (int r = 0; r < kRegions; ++r) {
+      double gen = 0;
+      for (int t = 0; t < kTechs; ++t) gen += a.gen[r][t];
+      j.obj().str("name", region_name(r)).num("requirement_twh", a.requirement[r]).num("generation_twh", gen);
+      j.num("net_export_twh", a.net_export[r]).end();
+    }
+    // Inter-regional corridors of this plan (capability computed as in corridors_2047.csv).
+    // "link" is from-to and "pair" lower-higher region index; the page draws them.
+    const auto& corridors = pl.allocation_inputs().corridors;
+    const PolicySettings& pol = s.robust_policy;
+    double flow_max = 0;
+    for (double x : a.corridor_flow) flow_max = std::max(flow_max, std::abs(x));
+    j.end().num("flow_scale_twh", std::max(1.0, flow_max));
+    for (int pass = 0; pass < 2; ++pass) {
+      j.arr(pass == 0 ? "corridors" : "flows");  // all corridors; those carrying at least 1 TWh
+      for (size_t k = 0; k < corridors.size() && k < a.corridor_flow.size(); ++k) {
+        const Corridor& cr = corridors[k];
+        const double x = a.corridor_flow[k];
+        if (pass == 1 && std::abs(x) < 1.0) continue;
+        const int from = x >= 0 ? cr.a : cr.b, to = x >= 0 ? cr.b : cr.a;
+        const double cap = cr.mw_2032 * pol.transfer_scale * pol.transfer_util * 8.76e-3;
+        j.obj().str("name", cr.name).str("from", region_name(from)).str("to", region_name(to));
+        j.str("link", std::to_string(from) + std::to_string(to));
+        j.str("pair", std::to_string(std::min(from, to)) + std::to_string(std::max(from, to)));
+        j.num("twh", std::abs(x)).num("capability_twh", cap).num("used_pct", cap > 0 ? 100 * std::abs(x) / cap : 0.0);
+        j.end();
+      }
+      j.end();
+    }
+    const AllocationResult& b = s.base_plan;
+    j.obj("base_policy").num("nonfossil_pct", 100 * b.nonfossil_share()).num("co2_mt", b.co2_mt);
+    j.num("cost_busd", b.cost_busd).num("unmet_twh", total(b.unserved)).end();
+    j.obj("p90").num("requirement_twh", q[5]).num("robust_unmet_twh", s.robust_p90_unserved);
+    j.num("levers_solar_land_pct", 100 * s.levers_solar_land).num("levers_build_accel", s.levers_build_accel);
+    j.num("levers_unmet_twh", s.levers_unserved).end();
+    j.end();
+
+    const StorageSizing& z = s.robust_storage.total;
+    j.obj("storage").num("power_gw", z.power_gw).num("energy_gwh", z.energy_day_gwh).num("duration_h", z.duration_h);
+    j.num("curtailed_pct", z.curtailed_day_pct()).num("shortfall_after_twh", z.unmet_day_twh);
+    j.num("shortfall_after_pct", req > 0 ? 100 * z.unmet_day_twh / req : 0.0).num("losses_twh", z.losses_twh);
+    j.num("cea_2029_power_gw", s.cea_power_gw).num("cea_2029_energy_gwh", s.cea_energy_gwh);
+    j.num("energy_multiple_of_cea", s.cea_energy_gwh > 0 ? z.energy_day_gwh / s.cea_energy_gwh : 0.0).end();
+
+    const StorageLandResult& L = s.robust_storage;
+    j.obj("land").num("solar_wind_km2", L.land.total_km2()).num("share_india_pct", L.pct_india);
+    j.num("share_wasteland_pct", L.pct_wasteland).num("solar_share_of_potential_pct", 100 * L.solar_share_of_potential);
+    j.num("wind_project_area_km2", L.land.wind_total_area());
+    j.num("p90_levers_km2", s.levers_storage.land.total_km2()).num("p90_levers_share_india_pct", s.levers_storage.pct_india);
+    j.end();
+  }
+  j.end();
+  std::printf("site summary: %s\n", path.string().c_str());
 }
 
 }  // namespace
@@ -414,19 +808,33 @@ int main(int argc, char** argv) {
     std::printf("  captive layer (literature, same share as FY%d): +%.0f TWh at P50\n", fit.history.back().year,
                 fit.captive_share * f.quant.q[0][last][3]);
     write_forecast(out, pl, f);
+    SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
 
     // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes
     // conventional generation (thermal, nuclear, hydro) for them but no RES, so the
     // check compares conventional + RES extended at its FY2018-23 NPP growth rate.
     {
       std::map<int, double> conv;
+      std::map<int, std::array<double, kRegions>> conv_region;  // same sources by region (landing page)
       const CsvTable t = CsvTable::read((root / "data/raw/npp/npp_region_generation_fy.csv").string());
       for (size_t i = 0; i < t.rows(); ++i) {
-        if (t.str(i, t.col("region")) != "All India" || t.str(i, t.col("partial")) == "True") continue;
+        if (t.str(i, t.col("partial")) == "True") continue;
         const std::string src = t.str(i, t.col("source"));
-        if (src == "thermal" || src == "nuclear" || src == "hydro")
-          conv[static_cast<int>(t.num(i, t.col("fy_start_year")))] += t.num(i, t.col("generation_gwh")) / 1000.0;
+        if (src != "thermal" && src != "nuclear" && src != "hydro") continue;
+        const int y = static_cast<int>(t.num(i, t.col("fy_start_year")));
+        const double twh = t.num(i, t.col("generation_gwh")) / 1000.0;
+        const std::string& region = t.str(i, t.col("region"));
+        if (region == "All India") conv[y] += twh;
+        for (int r = 0; r < kRegions; ++r)
+          if (region == region_name(r)) conv_region[y][r] += twh;
       }
+      // Today's regional generation: the latest complete fiscal year with every region.
+      for (auto it = conv_region.rbegin(); it != conv_region.rend(); ++it)
+        if (std::all_of(it->second.begin(), it->second.end(), [](double v) { return v > 0; })) {
+          site.today_year = it->first;
+          site.today_twh = it->second;
+          break;
+        }
       const auto& obs = fit.india.obs;
       const IndiaObs& o23 = obs.back();
       const IndiaObs& o18 = obs[obs.size() - 6];
@@ -445,6 +853,7 @@ int main(int argc, char** argv) {
         w.field(y).field(conv[y], 6).field(res, 6).field(tot, 6).field(q[0], 6).field(q[3], 6).field(q[6], 6);
         w.field(f.central[0][k], 6).field(q[3] / tot - 1, 4);
         w.endrow();
+        site.holdout.push_back({y, tot, q[0], q[3], q[6]});
         std::printf("  FY%d: conventional %.0f + RES %.0f = %.0f | model P50 %.0f (P5 %.0f, P95 %.0f) | error %+.1f%%\n", y,
                     conv[y], res, tot, q[3], q[0], q[6], 100 * (q[3] / tot - 1));
       }
@@ -482,6 +891,7 @@ int main(int argc, char** argv) {
         const auto& q = r.quant.q[0][r.years.size() - 1];
         w.field(k.name).field(k.desc).field(q[0], 6).field(q[3], 6).field(q[6], 6);
         w.endrow();
+        site.sensitivity.push_back({k.name, k.desc, q[3]});
         std::printf("  %-24s %6.0f %6.0f %6.0f\n", k.name, q[0], q[3], q[6]);
       }
     }
@@ -515,11 +925,14 @@ int main(int argc, char** argv) {
       w.endrow();
       std::printf("secondary (%s, %.0f ms): %d P5 %.0f P50 %.0f P95 %.0f TWh\n", core_name(sec.core()), t2.ms(),
                   r.years[l2], q2[0], q2[3], q2[6]);
+      site.cross_country_p50 = q2[3];
+      site.cross_country_year = r.years[l2];
     }
 
     const PolicySettings p;
     const StrategyResult st = pl.strategy(f, c, p);
     const AllocationResult& lc = st.least_cost;
+    site.base_plan = lc;
     std::printf("strategy (least cost): %s | non-fossil %.1f%% | CO2 %.0f Mt | cost %.0f bn USD/yr\n",
                 lc.status.c_str(), 100 * lc.nonfossil_share(), lc.co2_mt, lc.cost_busd);
     std::printf("  national mix:");
@@ -611,6 +1024,12 @@ int main(int argc, char** argv) {
           else
             w.field("infeasible").field("infeasible");
           w.endrow();
+          if (sp.name == "Base" && pp.name == "Robust") {  // the recommended plan on the landing page
+            site.robust_plan = a;
+            site.robust_plan_ok = a.ok;
+            site.robust_policy = ps;
+            site.robust_p90_unserved = r90.least_cost.ok ? u90 : -1.0;
+          }
           std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f | P90 unmet %6.1f %s\n",
                       sp.name.c_str(), pp.name.c_str(), q[3], 100 * a.nonfossil_share(), 100 * a.share(kCoal),
                       a.co2_mt, unserved, r90.least_cost.ok ? u90 : -1.0, a.ok ? "" : a.status.c_str());
@@ -646,7 +1065,8 @@ int main(int argc, char** argv) {
         std::printf("\n");
       }
     }
-    write_storage_land(out, pl, f, c);
+    write_storage_land(out, pl, f, c, site);
+    write_site_summary(out, pl, f, site);
     std::printf("outputs written to %s\n", out.string().c_str());
     return 0;
   } catch (const std::exception& e) {

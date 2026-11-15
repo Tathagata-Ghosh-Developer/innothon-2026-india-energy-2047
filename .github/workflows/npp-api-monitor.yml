@@ -1,0 +1,75 @@
+name: NPP API monitor
+
+# Weekly run of api/npp.postman_collection.json against the live National Power Portal,
+# so that changes in the NPP endpoints (fields, units, coverage) are noticed early.
+# Independent of the CI workflow: it never blocks a push or a pull request.
+# One run sends 9 requests to npp.gov.in, 2 seconds apart (up to 3 more when the
+# latest Merit day has no data).
+
+on:
+  schedule:
+    - cron: "30 3 * * 1"  # Mondays 03:30 UTC (09:00 IST)
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Merit day YYYY-MM-DD (empty: yesterday in IST)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npp-api-monitor
+  cancel-in-progress: false
+
+jobs:
+  newman:
+    name: Live NPP endpoints (Newman)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Run the collection against npp.gov.in
+        env:
+          MERIT_DATE: ${{ inputs.date }}
+        run: |
+          extra=()
+          if [ -n "$MERIT_DATE" ]; then
+            [[ "$MERIT_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || { echo "date must be YYYY-MM-DD"; exit 1; }
+            extra+=(--env-var "date=$MERIT_DATE")
+          fi
+          npx --yes -p newman@6.2.3 -p newman-reporter-htmlextra@1.23.1 \
+            newman run api/npp.postman_collection.json "${extra[@]}" \
+            --timeout-request 90000 \
+            --reporters cli,junit,htmlextra \
+            --reporter-junit-export newman/npp-junit.xml \
+            --reporter-htmlextra-export newman/npp-report.html \
+            --reporter-htmlextra-omitResponseBodies
+
+      - name: Summary
+        if: always()
+        run: |
+          f=newman/npp-junit.xml
+          if [ -f "$f" ]; then
+            {
+              echo "### NPP API monitor"
+              echo ""
+              echo "Assertions: $(grep -c '<testcase' "$f"), failed: $(grep -c '<failure' "$f")."
+              echo "The HTML report is in the npp-api-report artifact."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: npp-api-report
+          path: newman/
+          if-no-files-found: ignore
+          retention-days: 30

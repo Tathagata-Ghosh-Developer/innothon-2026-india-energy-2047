@@ -1,6 +1,7 @@
 # WebAssembly dashboard (Emscripten): data package, HTML shell and link settings.
 # Output: <build>/web/index.html, index.js, index.wasm, index.data.
-# build_web.cmd copies them with web/vercel.json into web/dist.
+# Target e47_site (end of file) stages the full site, landing page plus the dashboard
+# under app/, in <build>/site; build_web.cmd copies it into web/dist.
 
 # Only the dashboard is built for the browser.
 set_target_properties(energy2047 PROPERTIES EXCLUDE_FROM_ALL TRUE)
@@ -141,3 +142,29 @@ target_link_options(e47_dashboard PRIVATE
   -sPTHREAD_POOL_SIZE=10
   "SHELL:--shell-file ${CMAKE_BINARY_DIR}/web_shell.html"
   "SHELL:--preload-file ${E47_WEB_FS}@/")
+
+# --- Static site ---------------------------------------------------------------
+# Target e47_site stages the deployable site in <build>/site:
+#   index.html    landing page: web/landing.html filled from outputs/site_summary.json
+#                 (written by the native energy2047 run) by cmake/Site.cmake
+#   summary.json  that summary, linked from the page
+#   app/          the dashboard (index.html, .js, .wasm, .data)
+#   robots.txt, vercel.json
+# Not part of ALL: it needs outputs/site_summary.json, which only the native run writes.
+set(E47_SITE "${CMAKE_BINARY_DIR}/site")
+set(E47_SITE_SUMMARY "${PROJECT_SOURCE_DIR}/outputs/site_summary.json" CACHE FILEPATH
+  "Model summary the landing page is rendered from (energy2047 writes it)")
+add_custom_target(e47_site
+  COMMAND ${CMAKE_COMMAND} -E rm -rf "${E47_SITE}"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${E47_SITE}/app"
+  COMMAND ${CMAKE_COMMAND} "-DSUMMARY=${E47_SITE_SUMMARY}" "-DTEMPLATE=${PROJECT_SOURCE_DIR}/web/landing.html"
+          "-DOUT=${E47_SITE}/index.html" -P "${PROJECT_SOURCE_DIR}/cmake/Site.cmake"
+  COMMAND ${CMAKE_COMMAND} -E copy "${E47_SITE_SUMMARY}" "${E47_SITE}/summary.json"
+  COMMAND ${CMAKE_COMMAND} -E copy
+          "${CMAKE_BINARY_DIR}/web/index.html" "${CMAKE_BINARY_DIR}/web/index.js"
+          "${CMAKE_BINARY_DIR}/web/index.wasm" "${CMAKE_BINARY_DIR}/web/index.data" "${E47_SITE}/app/"
+  COMMAND ${CMAKE_COMMAND} -E copy
+          "${PROJECT_SOURCE_DIR}/web/vercel.json" "${PROJECT_SOURCE_DIR}/web/robots.txt" "${E47_SITE}/"
+  COMMENT "Staging the site (landing page + dashboard under app/) in ${E47_SITE}"
+  VERBATIM)
+add_dependencies(e47_site e47_dashboard)

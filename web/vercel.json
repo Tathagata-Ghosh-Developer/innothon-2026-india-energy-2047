@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/app", "destination": "/app/", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -10,6 +13,10 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [{ "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" }]
     },
     {
       "source": "/(.*)\\.wasm",

@@ -1,8 +1,10 @@
 @echo off
-rem Build the WebAssembly dashboard with Emscripten and stage a static site in web\dist.
+rem Build the WebAssembly dashboard with Emscripten and stage a static site in web\dist:
+rem landing page (web\landing.html + outputs\site_summary.json) at the root, dashboard in app\.
 rem Usage: build_web.cmd [extra CMake options]
-rem Needs: emsdk in %EMSDK% or %USERPROFILE%\emsdk (see docs/deployment.md), and
-rem CMake + Ninja (taken from Visual Studio 2022 Build Tools when not on PATH).
+rem Needs: emsdk in %EMSDK% or %USERPROFILE%\emsdk (see docs/deployment.md),
+rem CMake + Ninja (taken from Visual Studio 2022 Build Tools when not on PATH), and
+rem outputs\site_summary.json from a native run: energy2047 "<repo root>".
 rem Build directory: %E47_WEB_BUILD_DIR%, default %USERPROFILE%\.e47build_web
 rem (kept outside OneDrive so build files are not synced).
 setlocal
@@ -25,13 +27,15 @@ set "PATH=%VSCMAKE%\CMake\bin;%VSCMAKE%\Ninja;%PATH%"
 :have_tools
 
 call emcmake cmake -S "%SRC%." -B "%BUILD%" -G Ninja -DCMAKE_BUILD_TYPE=Release %* || exit /b 1
-cmake --build "%BUILD%" --target e47_dashboard --parallel || exit /b 1
+rem e47_site builds the dashboard, renders the landing page from outputs\site_summary.json
+rem (written by the native energy2047 run) and stages both in %BUILD%\site.
+cmake --build "%BUILD%" --target e47_site --parallel || exit /b 1
 
-rem Stage the site. Other files in web\dist (for example the .vercel project link) are kept.
+rem Stage the site: landing page at the root, dashboard under app\.
+rem Other files in web\dist (for example the .vercel project link) are kept.
 if not exist "%DIST%" mkdir "%DIST%"
-for %%f in (index.html index.js index.wasm index.data) do (
-  copy /y "%BUILD%\web\%%f" "%DIST%\%%f" >nul || exit /b 1
-)
-copy /y "%SRC%web\vercel.json" "%DIST%\vercel.json" >nul || exit /b 1
-echo Site staged in %DIST%
+rem Remove the dashboard files of the earlier layout (dashboard at the root).
+for %%f in (index.js index.wasm index.data) do if exist "%DIST%\%%f" del /q "%DIST%\%%f"
+xcopy "%BUILD%\site" "%DIST%" /e /i /y /q >nul || exit /b 1
+echo Site staged in %DIST%: landing page index.html, dashboard app\
 endlocal

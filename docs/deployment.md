@@ -4,7 +4,7 @@ The dashboard (`apps/dashboard`) builds in two ways from the same C++ sources:
 
 - **Native** (Windows, MSVC, optional CUDA): `build.cmd`.
 - **Web** (WebAssembly with Emscripten, WebGL 2): `build_web.cmd`.
-  The output in `web/dist` is a static site deployed on Vercel.
+  The output in `web/dist` is a static site deployed on Vercel: a static landing page at `/` and the dashboard at `/app/`.
 
 Both scripts keep their build trees outside OneDrive (`%USERPROFILE%\.e47build` and `%USERPROFILE%\.e47build_web`), because syncing build files slows builds.
 
@@ -37,22 +37,54 @@ The first build takes about 10 minutes (Emscripten builds its system libraries o
 
 ### Build
 
+The landing page is rendered from `outputs/site_summary.json`, which only the native command-line run writes, so run that first (once, and again whenever the model or its inputs change):
+
 ```bat
+build.cmd
+%USERPROFILE%\.e47build\apps\energy2047.exe "<repo root>"   :: writes outputs\*.csv and outputs\site_summary.json
 build_web.cmd
 build_web.cmd -DE47_WEB_CROSS_COUNTRY=OFF   :: smaller data package, see "Data package"
 ```
 
-This configures with `emcmake cmake` (the `if(EMSCRIPTEN)` branches in `CMakeLists.txt` and `cmake/*.cmake`, and `cmake/Web.cmake`), builds only the `e47_dashboard` target and stages the site:
+`build_web.cmd` configures with `emcmake cmake` (the `if(EMSCRIPTEN)` branches in `CMakeLists.txt` and `cmake/*.cmake`, and `cmake/Web.cmake`), builds the `e47_site` target (which builds `e47_dashboard` first) and copies `<build>\site` into `web/dist`:
 
 | File | Size | Sent by Vercel (Brotli) | Content |
 | --- | --- | --- | --- |
-| `index.html` | 3 KB | 1 KB | page from `web/shell.html`: loading indicator, full-window canvas |
-| `index.js` | 0.3 MB | 0.05 MB | Emscripten runtime and data-package index |
-| `index.wasm` | 3.6 MB | 1.1 MB | dashboard, pipeline and HiGHS |
-| `index.data` | 6.7 MB | 6.7 MB (LZ4 inside) | CSV inputs and the dashboard font |
-| `vercel.json` | | | headers, copied from `web/vercel.json` |
+| `index.html` | 64 KB | 14 KB | landing page: `web/landing.html` filled from `outputs/site_summary.json` |
+| `summary.json` | 16 KB | 4 KB | copy of `outputs/site_summary.json`, linked from the page |
+| `robots.txt`, `vercel.json` | | | copied from `web/` |
+| `app/index.html` | 4 KB | 2 KB | dashboard page from `web/shell.html`: top bar with the link back, loading status, full-window canvas |
+| `app/index.js` | 0.3 MB | 0.1 MB | Emscripten runtime and data-package index |
+| `app/index.wasm` | 3.8 MB | 1.4 MB | dashboard, pipeline and HiGHS |
+| `app/index.data` | 8.6 MB | 4.6 MB | CSV inputs and the dashboard font (LZ4 inside) |
 
+A first visit to the landing page transfers about 14 KB; opening the dashboard transfers about 6.1 MB more.
+`build_web.cmd` deletes `index.js`, `index.wasm` and `index.data` left at the root of `web/dist` by the earlier layout and keeps everything else there (for example the `.vercel` project link).
 `web/dist` is not committed (`web/.gitignore`).
+Building only the `e47_dashboard` target still produces the dashboard in `<build>/web` without the landing page; that target does not need the summary.
+
+### Landing page
+
+The page at `/` answers the brief without WebAssembly: plain HTML and CSS with inline SVG charts, no JavaScript, no fonts or scripts from other sites (the COOP/COEP headers below apply to it as well), about 14 KB over the network.
+Every number on it comes from the model:
+
+1. `energy2047` (`apps/energy2047.cpp`) collects the numbers from the same in-memory results that write the CSV files (forecast quantiles and path, holdout, sensitivity cases, regional requirement and NPP regional generation, the Robust plan from the preset matrix with its corridor flows, the base-policy plan, the P90 levers, and storage and land of the Robust median plan) and `write_site_summary()` writes them to `outputs/site_summary.json`.
+   If a part is missing (for example the storage inputs failed to load) it deletes the file instead of writing stale numbers.
+2. `cmake/Site.cmake` (CMake script mode, no other tools) fills `web/landing.html` from that JSON.
+   Placeholders are JSON paths, for example `{{national.p50|0}}` (rounded, thousands separators), `{{holdout.0.error_pct|+1}}` (signed) or `{{plan.scale_pct|r3}}` (plain number for SVG); `<!--each plan.mix-->...<!--/each-->` repeats a block per array element.
+   The syntax is listed at the top of the script.
+   An unknown path or a leftover placeholder stops the build.
+3. The numbers are embedded at build time, so the page needs neither `fetch` nor JavaScript and works on locked-down machines.
+
+Render the page alone, for example after editing `web/landing.html`:
+
+```bat
+cmake -DSUMMARY=outputs\site_summary.json -DTEMPLATE=web\landing.html -DOUT=web\dist\index.html -P cmake\Site.cmake
+```
+
+Design: dark control-room look, golden-ratio spacing and type steps as in the deck, the deck's validated series colours (text never uses series colours).
+Accessibility: skip link, landmarks, one `h1`, every chart an SVG with `role="img"`, title and description, plus a data table under "Show the numbers"; colour is never the only cue (direct labels, bar position, outline for "today").
+The region map is a schematic of the five grid regions (node positions only suggest geography; no borders are drawn).
 
 ### What differs in the web build
 
@@ -85,7 +117,7 @@ Configure warns about any `.csv` path piece in `src/` that matches no packaged f
 
 ### Test locally
 
-The page needs cross-origin isolation (`SharedArrayBuffer` for the worker threads), so the server must send
+The dashboard needs cross-origin isolation (`SharedArrayBuffer` for the worker threads), so the server must send
 
 ```text
 Cross-Origin-Opener-Policy: same-origin
@@ -99,35 +131,53 @@ call %USERPROFILE%\emsdk\emsdk_env.bat
 emrun --no_browser --port 8080 web\dist\index.html
 ```
 
-Then open <http://localhost:8080/index.html>.
-A plain static server (`python -m http.server`, `npx http-server`) does not send the headers; the page then shows which headers are missing instead of starting.
+Then open <http://localhost:8080/> (landing page) and <http://localhost:8080/app/> (dashboard).
+A plain static server (`python -m http.server`, `npx http-server`) does not send the headers; the landing page still works, but the dashboard then shows which headers are missing instead of starting.
 
 ## Deploy to Vercel
 
 Live site: <https://india-energy-2047.vercel.app> (Vercel project `india-energy-2047`, Hobby plan).
 
+| Path | Content |
+| --- | --- |
+| `/` | landing page (static HTML, the answer in text, charts and tables) |
+| `/app/` | interactive dashboard (WebAssembly); `/app` redirects to `/app/` so its relative file names resolve |
+| `/summary.json` | the numbers on the landing page |
+
 `web/dist` is deployed as a static site; no build runs on Vercel.
-`web/vercel.json` (copied into `web/dist`) sets the COOP/COEP headers, `application/wasm` for `.wasm`, and `Cache-Control: public, max-age=0, must-revalidate`.
+`web/vercel.json` (copied into `web/dist`) sets the `/app` redirect, the COOP/COEP headers for every path, `application/wasm` for `.wasm`, and `Cache-Control: public, max-age=0, must-revalidate`.
+The landing page loads nothing from other origins, so the headers do not affect it.
 File names are not content-hashed, so browsers revalidate with the ETag rather than keep a stale `.wasm` after a redeploy.
 
-First time (sign-in opens a browser page; the project name is an example):
+First time (sign-in opens a browser page):
 
 ```bat
 cd /d web\dist
-npx vercel login
-npx vercel link --yes --project india-energy-2047
-npx vercel deploy --prod
+vercel login
+vercel link --yes --project india-energy-2047
+vercel deploy --prod --yes
 ```
 
-Later deployments, after `build_web.cmd`:
+Redeploy, whenever the model or the page changes:
 
 ```bat
+build.cmd
+%USERPROFILE%\.e47build\apps\energy2047.exe "<repo root>"
+build_web.cmd
 cd /d web\dist
-npx vercel deploy --prod
+vercel deploy --prod --yes
 ```
 
-`build_web.cmd` replaces only the site files in `web/dist`, so the `.vercel` project link stays.
-`npx vercel deploy` prints the deployment URL.
+`build_web.cmd` replaces only the site files in `web/dist`, so the `.vercel` project link stays; if it is missing, run `vercel link --yes --project india-energy-2047` again.
+`vercel deploy` prints the deployment URL; the production domain follows within seconds.
+Check it:
+
+```bat
+curl -sI https://india-energy-2047.vercel.app/
+curl -sI https://india-energy-2047.vercel.app/app/
+```
+
+Both should return `200`, `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`.
 
 ## Limitations of the web version
 
@@ -145,5 +195,5 @@ Measured in Chrome on the development laptop (16 logical cores, served from loca
 - **No GPU and no CUDA.** The Monte Carlo runs on the CPU in WebAssembly.
 - **One compute thread.** WebAssembly has no OpenMP runtime, so the Monte Carlo, the bootstrap and the tornado LP runs are serial. The page stays responsive because the work runs on a web worker; the header shows "Recomputing..." meanwhile.
 - **Fewer draws and replicates.** The web defaults are 2^16 Monte Carlo draws (native 2^22) and 300 bootstrap replicates (native 2,000). The "Scenarios (2^n)" slider still goes higher, at about 3.4 s per 2^16 draws. Medians and 90% ranges agree with the native build to within about 0.5%.
-- **Download.** About 8 MB on first load (most of it the cross-country CSV), then cached.
+- **Download.** About 6 MB on first load with Vercel's Brotli compression (12.7 MB uncompressed, most of it the cross-country CSV), then cached.
 - **Browser requirements.** WebGL 2, WebAssembly SIMD and exceptions, and `SharedArrayBuffer`: current Chrome, Edge and Firefox, Safari 16.4 or later.
