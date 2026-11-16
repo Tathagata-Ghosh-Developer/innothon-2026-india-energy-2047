@@ -45,15 +45,15 @@
     {\fontsize{12}{14.5}\selectfont\color{white!90}A back-tested forecast from India's\\ own data and a robust regional plan}};
   \node[anchor=south west,text width=7.3cm,align=left,text=white] at ($(current page.south west)+(0.75,1.0)$) {%
     {\phiL\bfseries 4{,}703\,{\phiS TWh}}\par\vspace{0.5mm}
-    {\fontsize{8.5}{10.2}\selectfont\color{white!80}median utility generation in FY2047-48\\ 2.77$\times$ FY2023-24\\ about 5,320\,TWh including captive plants}};
+    {\fontsize{8.5}{10.2}\selectfont\color{white!80}median utility generation in FY2047-48, country total\\ 2.77$\times$ FY2023-24\\ +3,005\,TWh over the 1,698\,TWh of FY2023-24}};
   \node[anchor=south west,text width=15cm,align=left,text=white!70,font=\fontsize{6.5}{8}\selectfont] at ($(current page.south west)+(0.75,0.40)$) {%
     Ayush Kumar \textbullet{} Devendra Umbrajkar \textbullet{} Sai Anirudh Guttapati \textbullet{} Gaurav Choudhary \textbullet{} Tathagata Ghosh\quad\textbar\quad Indian Institute of Science, Bengaluru};
 \end{tikzpicture}
 \note{%
-\textbf{Message.} One number anchors the talk: India's utilities must generate about 4,703\,TWh in FY2047-48 (median), 2.77 times the 1,698\,TWh of FY2023-24 (4.3\% a year). Adding captive plants at today's share gives about 5,320\,TWh.\par\medskip
-\textbf{Scope, said once and kept.} The core forecast is NPP utility generation in fiscal years, labelled by start year (2047 = FY2047-48). Captive plants sit outside NPP and are shown beside the forecast, never inside it.\par\medskip
+\textbf{Message.} One number anchors the talk: India's utilities must generate about 4,703\,TWh in FY2047-48 (median), the country's total, 2.77 times the 1,698\,TWh of FY2023-24 (4.3\% a year), or 3,005\,TWh more.\par\medskip
+\textbf{Scope, said once and kept.} The core forecast is NPP utility generation in fiscal years, labelled by start year (2047 = FY2047-48). The organisers ruled on 16 Nov that only NPP generation is used, so captive plants are neither estimated nor reported, and that the headline is total TWh, not generation per person.\par\medskip
 \textbf{Design.} The motif is a golden rectangle with its nested squares and spiral. The same ratio sets every column split (0.605\,:\,0.365) and the type steps (10, 16.2, 26.2, 42.4\,pt). Numbers are the largest element on every slide.\par\medskip
-\textbf{Evidence.} NPP generation FY2023-24 (dashboard chart); median of 4,194,304 scenarios, \texttt{outputs/forecast\_national\_regional.csv}; captive layer, \texttt{outputs/core\_comparison.csv}.}
+\textbf{Evidence.} NPP generation FY2023-24 (dashboard chart); median of 4,194,304 scenarios, \texttt{outputs/forecast\_national\_regional.csv}.}
 \end{frame}
 }
 
@@ -61,32 +61,32 @@
 \begin{frame}{The answer on one page}
 \begin{columns}[T,onlytextwidth]
 \column{0.32\textwidth}
-  \stat{4,703\twh}{median FY2047-48, utility scope (P10--P90 3,497--6,400); 5,323 with captive plants}{\cite{npp_dashboard,organiser_dataset}}
+  \stat{4,703\twh}{median FY2047-48, country total (P10--P90 3,497--6,400); +3,005 over FY2023-24}{\cite{npp_dashboard,organiser_dataset}}
 \column{0.32\textwidth}
   \stat{3.3\%}{largest holdout error ($-$3.3\% FY2024-25, +0.5\% FY2025-26), both inside the 90\% range}{\cite{npp_18col}}
 \column{0.32\textwidth}
-  \stat{37\,bn USD}{a year saved by the robust plan, which also emits \up{377\,Mt less CO$_2$}}{\cite{e47_repo}}
+  \stat{37\,bn USD}{a year saved by the robust plan, which also emits \up{378\,Mt less CO$_2$}}{\cite{e47_repo}}
 \end{columns}
 \vspace{0.5mm}
 \begin{columns}[T,onlytextwidth]
 \column{\gA\textwidth}
   \card{\linewidth}{\fontsize{8}{9.7}\selectfont
-  \textbf{\color{navy}What we found.} \textbf{Income growth sets the size:} 1.5 points of growth per person moves 2047 by \textbf{+31\%} or \textbf{$-$24\%}. \textbf{Need is not where generation is:} the West makes 36\% of today's conventional generation but needs 27\% of 2047's. \textbf{Land binds:} both plans meet the median; at P90 the base plan is \down{1,529\,TWh short}, the robust plan \down{638}, at \up{176 instead of 213\,bn USD/yr}.}
+  \textbf{\color{navy}What we found.} \textbf{Income growth sets the size:} 1.5 points of growth per person moves 2047 by \textbf{+31\%} or \textbf{$-$24\%}. \textbf{Need is not where generation is:} the West makes 36\% of today's conventional generation but needs 26\% of 2047's. \textbf{Land binds:} both plans meet the median; at P90 the base plan is \down{1,529\,TWh short}, the robust plan \down{638}, at \up{176 instead of 213\,bn USD/yr}.}
 \column{\gB\textwidth}
   \card{\linewidth}{\fontsize{7.8}{9.4}\selectfont
   \textbf{\color{navy}Built on}\\[0.6mm]
   NPP generation, FY2006-07 to 2025-26\\
   state population, GSDP (Renewable India)\\
   4.2 million simulated futures\\
-  36 states, 5 grid regions\\
+  34 states, 5 grid regions (NPP)\\
   least-cost optimiser, 7 corridors}
 \end{columns}
-\evidence{Model outputs \texttt{forecast\_national\_regional.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv}, \texttt{presets.csv}, \texttt{core\_comparison.csv} \cite{e47_repo}; NPP \cite{npp_dashboard,npp_18col}; organiser data \cite{organiser_dataset}; captive plants \cite{cea_general_review_2025}.}
+\evidence{Model outputs \texttt{forecast\_national\_regional.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv}, \texttt{presets.csv}, \texttt{strategy\_2047\_regions.csv} \cite{e47_repo}; NPP \cite{npp_dashboard,npp_18col}; organiser data \cite{organiser_dataset}.}
 \note{%
-\textbf{Message.} Three numbers carry the case: the size of the need (4,703\,TWh), the credibility of the method (holdout errors of $-$3.3\% and +0.5\% on two years the model never saw, both inside its 90\% range) and the decision (a robust plan that costs 37\,bn USD/yr less, emits 377\,Mt less CO$_2$ and cuts the P90 shortfall by more than half).\par\medskip
-\textbf{Numbers to remember.} Base plan: 213\,bn USD/yr, 1,370\,Mt CO$_2$, 70.0\% non-fossil, 0\,TWh unmet at P50, 1,529 at P90. Robust plan: 176\,bn USD/yr, 993\,Mt, 78.3\%, 0 at P50, 638 at P90 (\texttt{presets.csv}, scenario Base).\par\medskip
+\textbf{Message.} Three numbers carry the case: the size of the need (4,703\,TWh, the country's total), the credibility of the method (holdout errors of $-$3.3\% and +0.5\% on two years the model never saw, both inside its 90\% range) and the decision (a robust plan that costs 37\,bn USD/yr less, emits 378\,Mt less CO$_2$ and cuts the P90 shortfall by more than half).\par\medskip
+\textbf{Numbers to remember.} Base plan: 213\,bn USD/yr, 1,371\,Mt CO$_2$, 70.0\% non-fossil, 0\,TWh unmet at P50, 1,529 at P90. Robust plan: 176\,bn USD/yr, 993\,Mt, 78.3\%, 0 at P50, 638 at P90 (\texttt{presets.csv}, scenario Base).\par\medskip
 \textbf{Likely questions.}\par
-\qa{Is this compliant with the two-dataset rule?}{Yes: the forecast is estimated only on NPP generation and the organiser's population and GSDP. Literature supplies one prior (urbanisation) and the captive share; both are switchable (slide 4).}
+\qa{Is this compliant with the two-dataset rule?}{Yes: the forecast is estimated only on NPP generation and the organiser's population and GSDP, and the regional split uses only the challenge data. The organisers' ruling of 16 Nov leaves the urbanisation prior to our judgment; it is switchable (slide 4). No captive generation is used.}
 \qa{Why is the robust plan cheaper?}{It unlocks cheap solar by relaxing land and build-rate limits that push the base plan onto nuclear and coal.}}
 \end{frame}
 
@@ -101,8 +101,8 @@
 \begin{columns}[T,onlytextwidth]
 \column{\gB\textwidth}
   \card{\linewidth}{\fontsize{8}{9.7}\selectfont
-  \textbf{\color{navy}1. Two datasets for the core.}\\ NPP energy generated; Renewable India population and GSDP. Its capacity columns are never read.\\[1.2mm]
-  \textbf{\color{navy}2. Literature only as priors and limits.}\\ Excess urbanisation ($\gamma$), captive share (+13.2\%, shown beside), potentials, costs. Each can be switched off.\\[1.2mm]
+  \textbf{\color{navy}1. Two datasets for the core.}\\ NPP generation and its state regions; Renewable India population and GSDP. Capacity columns never read.\\[1.2mm]
+  \textbf{\color{navy}2. Literature only as priors and limits.}\\ Excess urbanisation ($\gamma$, our judgment), potentials, costs. No captive generation.\\[1.2mm]
   \textbf{\color{navy}3. Requirement $\neq$ production.}\\ Need follows people and income; production follows resources. Corridors connect them.}
 \column{\gA\textwidth}
 \centering
@@ -126,14 +126,14 @@
   \draw[arr,draw=signal,line width=1.4pt] (prod) -- node[left,font=\fontsize{7.2}{8.6}\selectfont,text=signal,align=right]{transfers,\\7 corridors} (req);
 \end{tikzpicture}
 \end{columns}
-\evidence{Competition rule (kickoff, 13 Nov 2026). Core data \cite{npp_dashboard,npp_18col,organiser_dataset}; urbanisation prior \cite{liddle2013population,shahbaz2016role,holtedahl2004residential}; captive share \cite{cea_general_review_2025} (Table 1.6); limits \cite{mnre_restats_2425,cea_hydro_status,cea_nep_vol2}; \texttt{outputs/india\_fit.csv}; column audit \texttt{docs/data\_audit.md} \cite{e47_repo}.}
+\evidence{Competition rule (kickoff, 13 Nov 2026) and organisers' written ruling (16 Nov 2026). Core data \cite{npp_dashboard,npp_18col,organiser_dataset}; urbanisation prior \cite{liddle2013population,shahbaz2016role,holtedahl2004residential}; limits \cite{mnre_restats_2425,cea_hydro_status,cea_nep_vol2}; \texttt{outputs/india\_fit.csv}, \texttt{population\_consistency.csv}; column audit \texttt{docs/data\_audit.md} \cite{e47_repo}.}
 \note{%
-\textbf{Message.} The only parameter estimated for the 2047 total is the income elasticity, from the two challenge datasets. Literature supplies priors and limits only, each switchable.\par\medskip
-\textbf{Evidence.} NPP dashboard chart and CEA 18-column reports on NPP; organiser file read for Population and GSDP only (\texttt{docs/data\_audit.md}).\par\medskip
+\textbf{Message.} The only parameter estimated for the 2047 total is the income elasticity, from the two challenge datasets; the regional split also uses only the challenge data. Literature supplies priors and limits only, each switchable.\par\medskip
+\textbf{Evidence.} NPP dashboard chart and CEA 18-column reports on NPP; organiser file read for State, Year, Zone, Population and GSDP only (\texttt{docs/data\_audit.md}).\par\medskip
 \textbf{Likely questions.}\par
-\qa{Is this compliant with the two-dataset rule?}{The estimation is. Population and urban paths to 2047 are literature growth paths, which the rule allows. $\gamma = 0$, the pure two-dataset run, gives 4,453\,TWh (5\% lower). We have asked for a ruling on the prior and the captive layer.}
+\qa{Is this compliant with the two-dataset rule?}{The estimation is. Population and urban paths to 2047 are UN growth paths, which the organisers' ruling of 16 Nov allows (consistency: backup slide); $\gamma$ is our judgment, as ruled. $\gamma = 0$, the pure two-dataset run, gives 4,453\,TWh (5\% lower).}
 \qa{Why not installed capacity?}{It is banned as a metric, and capacity is not energy. GW potentials only cap generation, through stated capacity factors.}
-\qa{What about captive?}{224\,TWh in FY2023-24 (13.2\% of NPP utility generation), outside NPP; shown beside the forecast at that share.}}
+\qa{What about captive?}{Not used: the ruling allows NPP generation only.}}
 \end{frame}
 
 % =====================================================================  5
@@ -153,7 +153,7 @@
     1/4.85/0/{Elasticity from India}/{ln generation per person on ln real GSDP per person: $\beta = 0.83$ (s.e.\ 0.06); two windows, block bootstrap.}/2,
     2/9.7/0/{Excess urbanisation}/{$\beta$ already holds the urbanisation that came with income; only the faster part is added, $\gamma \sim N(1.0,\,0.5)$.}/3,
     3/0/-2.95/{4.2 million futures}/{Population, urban and income paths with shocks; a bootstrap replicate and model error in each; GPU Monte Carlo.}/4,
-    4/4.85/-2.95/{Regional split}/{36 states weighted by population and income; poorer states close 2.1\% of their income gap a year.}/5,
+    4/4.85/-2.95/{Regional split}/{34 states of the challenge dataset weighted by population and income; poorer states close 2.1\% of their income gap a year.}/5,
     5/9.7/-2.95/{Least-cost regional mix}/{Linear program with resource, firm-power, build-rate and corridor limits; stress-tested at P90.}/6} {
     \node[stepbox] (s\i) at (\x,\y) {\parbox[t][2.25cm][t]{4.05cm}{\raggedright
       \tikz[baseline=(c.base)]\node[circle,fill=navy,text=white,font=\bfseries\fontsize{9}{10}\selectfont,minimum size=5.6mm,inner sep=0] (c) {\n};\
@@ -170,7 +170,7 @@
 \textbf{Step 2.} Two windows: FY2011-12 to FY2023-24 on one price base ($\beta = 0.828$) and FY2006-07 to FY2023-24 with the 2011 price-base splice ($\beta = 0.866$; GSDP values copied from the year before do not count as growth). Circular blocks of three years (Durbin-Watson 0.99), both windows mixed: median 0.850, 90\% interval 0.731--0.939.\par\medskip
 \textbf{Step 3.} The projection adds $\gamma\,(\Delta u - \kappa\,\Delta x)$, where $\kappa = 0.092$ is the in-sample slope of urban share on log income; so $\beta$ does not depend on $\gamma$.\par\medskip
 \textbf{Step 4.} 4,194,304 futures. Income growth per person 4.95\%/yr to 2030 (organiser GSDP, FY2012-13 to FY2023-24 without the pandemic years), slowing by 1.5 points by 2047. Model error: an AR(1) residual from +0.070 in FY2023-24, persistence 0.51 ($= 1 - \mathrm{DW}/2$).\par\medskip
-\textbf{Step 5.} Convergence speed 0.021/yr (s.e.\ 0.011) from the organiser GSDP; regions add up to the national total.}
+\textbf{Step 5.} Dataset state populations in NPP's grid regions; convergence 0.021/yr (s.e.\ 0.011) from the organiser GSDP; regions add up to the national total.}
 \end{frame}
 
 % =====================================================================  7
@@ -239,16 +239,14 @@
   % CEA NEP 2022-32, Table 5.11 gross generation, FY2026-27 and FY2031-32
   \addplot[only marks,mark=diamond*,mark size=3pt,color=signal] coordinates {(2026,2025.0) (2031,2665.7)};
   \addlegendentry{CEA plan}
-  % outputs/core_comparison.csv
-  \addplot[only marks,mark=*,mark size=2.6pt,color=navy] coordinates {(2048.1,5323.1)};
-  \addlegendentry{+ captive layer}
+  % outputs/core_comparison.csv (cross-country panel: justification only, not estimation)
   \addplot[only marks,mark=square*,mark size=2.4pt,color=ink2,error bars/.cd,y dir=both,y explicit,error bar style={line width=1.2pt,ink2}]
     coordinates {(2049.4,4527.9) += (0,1082.4) -= (0,1179.6)};
   \addlegendentry{Cross-country check}
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
-\stat{4,703\twh}{median, NPP utility scope; about 5,320 with captive plants}{}
+\stat{4,703\twh}{median, country total of NPP utility generation; +3,005 over FY2023-24}{}
 {\fontsize{7.6}{9}\selectfont
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lrrr@{}}
@@ -263,15 +261,15 @@ Fiscal year & P10 & Median & P90\\
 \end{tabular}\par}
 \vspace{1mm}
 {\fontsize{7.5}{9}\selectfont\color{ink2}\textbf{\color{navy}CEA plan:} 2,666\,TWh in FY2031-32, between our P75 and P90.\par\vspace{0.5mm}
-\textbf{\color{navy}Check on non-core data:} 4,528\,TWh (P5--P95 3,348--5,610), 153 countries, captive included.}
+\textbf{\color{navy}Independent check, justification only:} 4,528\,TWh (P5--P95 3,348--5,610), 153 countries, total generation.}
 \end{columns}
-\evidence{NPP \cite{npp_dashboard,npp_18col}; population and GSDP \cite{organiser_dataset}; drivers \cite{un_wpp2024,un_wup2018}; \texttt{outputs/forecast\_national\_regional.csv}, \texttt{holdout.csv}, \texttt{core\_comparison.csv} \cite{e47_repo}; benchmark \cite{cea_nep2023} (Table 5.11); check uses \cite{ember_yearly,wb_wdi}; captive \cite{cea_general_review_2025}.}
+\evidence{NPP \cite{npp_dashboard,npp_18col}; population and GSDP \cite{organiser_dataset}; drivers \cite{un_wpp2024,un_wup2018}; \texttt{outputs/forecast\_national\_regional.csv}, \texttt{holdout.csv}, \texttt{core\_comparison.csv} \cite{e47_repo}; benchmark \cite{cea_nep2023} (Table 5.11); check uses \cite{ember_yearly,wb_wdi}.}
 \note{%
-\textbf{Message.} About 4,700\,TWh of utility generation in FY2047-48 (P10--P90 3,497--6,400), about 5,300\,TWh with captive plants. The band is wide because income growth over 24 years is uncertain (slide 10).\par\medskip
-\textbf{Reading the chart.} Black: NPP history FY2006-07 to FY2023-24. Open circles: FY2024-25 and FY2025-26 (holdout, slide 9). Red diamonds: CEA's own utility projections. Right edge: the captive layer (13.2\% on top of the median) and the cross-country model with its 90\% band, which uses Ember and World Bank data and therefore is only a check.\par\medskip
-\textbf{Why the check is lower.} It carries rich-country saturation into India (elasticity 0.44--0.57 at India's income). Its median sits inside our band and 15\% below our captive-inclusive 5,323.\par\medskip
+\textbf{Message.} About 4,700\,TWh of utility generation in FY2047-48 (P10--P90 3,497--6,400), the country's total, 3,005\,TWh more than in FY2023-24. The band is wide because income growth over 24 years is uncertain (slide 10).\par\medskip
+\textbf{Reading the chart.} Black: NPP history FY2006-07 to FY2023-24. Open circles: FY2024-25 and FY2025-26 (holdout, slide 9). Red diamonds: CEA's own utility projections. Right edge: the cross-country model with its 90\% band, which uses Ember and World Bank data and therefore is used for justification only, never for estimation.\par\medskip
+\textbf{Why the check is lower.} It carries rich-country saturation into India (elasticity 0.44--0.57 at India's income). Its median sits inside our band, 4\% below our median, although its scope (total generation, calendar years) is wider than NPP's.\par\medskip
 \textbf{Likely questions.}\par
-\qa{What happened to your 6,000\,TWh?}{It was our pre-data hypothesis at registration. With captive plants it lies between our median (5,323) and P75 (6,249).}
+\qa{What happened to your 6,000\,TWh?}{It was our pre-data hypothesis at registration. It lies between our P75 (5,521) and P90 (6,400).}
 \qa{Fiscal or calendar years?}{Fiscal, as NPP reports them; 2047 on the axis is FY2047-48.}}
 \end{frame}
 
@@ -387,33 +385,33 @@ Damped trend & 2.2 & 4.8 & 6.5 & 7.1 & 6.9\\
   \addplot[fill=muted!55,draw=white,line width=1pt] coordinates {(Northern,24.9) (Western,36.0) (Southern,20.1) (Eastern,17.7) (North-Eastern,1.3)};
   \addlegendentry{Generation, FY2025-26 (NPP)}
   % outputs/strategy_2047_regions.csv, requirement_twh / national (median)
-  \addplot[fill=navy,draw=white,line width=1pt] coordinates {(Northern,28.5) (Western,26.6) (Southern,24.3) (Eastern,17.1) (North-Eastern,3.4)};
+  \addplot[fill=navy,draw=white,line width=1pt] coordinates {(Northern,29.9) (Western,26.1) (Southern,22.7) (Eastern,17.9) (North-Eastern,3.4)};
   \addlegendentry{Requirement, FY2047-48}
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
 \vspace{1mm}
-\stat{36\% vs 27\%}{the West: share of today's conventional generation vs share of the 2047 need}{}
+\stat{36\% vs 26\%}{the West: share of today's conventional generation vs share of the 2047 need}{}
 {\fontsize{7.6}{9}\selectfont
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lrr@{}}
 \toprule
 Region, FY2047-48 & Median & P5--P95\\
 \midrule
-Northern & \textbf{1,341} & 921--1,992\\
-Western & \textbf{1,248} & 852--1,867\\
-Southern & \textbf{1,144} & 766--1,740\\
-Eastern & \textbf{805} & 543--1,202\\
+Northern & \textbf{1,405} & 961--2,088\\
+Western & \textbf{1,226} & 836--1,835\\
+Southern & \textbf{1,068} & 721--1,624\\
+Eastern & \textbf{840} & 565--1,254\\
 North-Eastern & \textbf{161} & 110--239\\
 \bottomrule
 \end{tabular}\par}
 \vspace{1mm}
-{\fontsize{7.6}{9.2}\selectfont\color{ink}\textbf{\color{navy}Why.} Need follows state population and income; poorer states close 2.1\% of their income gap a year.\par}
+{\fontsize{7.6}{9.2}\selectfont\color{ink}\textbf{\color{navy}Why.} Need follows state population and income in the challenge dataset; poorer states close 2.1\% of their income gap a year.\par}
 \end{columns}
-\evidence{Generation by region \cite{npp_18col} (Sub-report 2, FY2025-26, conventional stations, Bhutan import excluded); state population and GSDP \cite{organiser_dataset}; state paths \cite{techgroup2020}; convergence \cite{barro1992convergence}; \texttt{outputs/forecast\_national\_regional.csv}, \texttt{strategy\_2047\_regions.csv} \cite{e47_repo}.}
+\evidence{Generation by region and state-to-region map \cite{npp_18col} (Sub-reports 2 and 16; FY2025-26, conventional stations, Bhutan import excluded); state population and GSDP \cite{organiser_dataset}; India growth \cite{un_wpp2024}; convergence \cite{barro1992convergence}; \texttt{outputs/forecast\_national\_regional.csv}, \texttt{strategy\_2047\_regions.csv}, \texttt{population\_consistency.csv} \cite{e47_repo}.}
 \note{%
-\textbf{Message.} The regional transfer gap: the West produces 36.0\% of India's conventional generation but accounts for 26.6\% of the 2047 requirement; the North (24.9\% vs 28.5\%), South (20.1\% vs 24.3\%) and North-East (1.3\% vs 3.4\%) need more than they make. The East is close to balance (17.7\% vs 17.1\%).\par\medskip
-\textbf{Method.} Each state's weight is its population share times the national income response at its own income, which converges at 0.021/yr. Regions are scaled to the national total; the regional medians do not add exactly to the national median because medians do not add.\par\medskip
+\textbf{Message.} The regional transfer gap: the West produces 36.0\% of India's conventional generation but accounts for 26.1\% of the 2047 requirement; the North (24.9\% vs 29.9\%), South (20.1\% vs 22.7\%) and North-East (1.3\% vs 3.4\%) need more than they make. The East is close to balance (17.7\% vs 17.9\%).\par\medskip
+\textbf{Method.} Challenge data only, as ruled: each state's weight is its population share (dataset 2024, then UN India growth plus its own 2019--24 offset) times the national income response at its own income, which converges at 0.021/yr; states sit in NPP's grid regions. Regions are scaled to the national total; regional medians do not add exactly to the national median.\par\medskip
 \textbf{Likely questions.}\par
 \qa{Why only conventional generation for today?}{NPP has no regional renewable generation at all (Merit is all-India only, from September 2025). Adding RES would change the shares, and NPP cannot tell us by how much.}
 \qa{Is regional requirement observed?}{No: it is modelled from state population and income. NPP regional generation shows where plants are, not where power is used.}}
@@ -429,10 +427,10 @@ North-Eastern & \textbf{161} & 110--239\\
   ymin=0,ymax=1800,ylabel={TWh in FY2047-48},enlarge x limits=0.12,
   legend style={at={(0.99,0.99)},anchor=north east,font=\fontsize{6.6}{7.6}\selectfont},legend columns=5,
   title={Generation by region and source, base policy}]
-  % outputs/strategy_2047.csv, method = least_cost; wind = onshore + offshore; gas and bioenergy are zero
-  \addplot[fill=cCoal,draw=white,line width=0.6pt] coordinates {(Northern,430.8) (Western,367.6) (Southern,217.4) (Eastern,390.4) (North-Eastern,7.2)};
+  % outputs/strategy_2047.csv, method = least_cost; wind = onshore + offshore; gas is zero; bioenergy (1.1 TWh, North-East) not drawn
+  \addplot[fill=cCoal,draw=white,line width=0.6pt] coordinates {(Northern,430.8) (Western,429.3) (Southern,156.7) (Eastern,390.4) (North-Eastern,7.2)};
   \addlegendentry{Coal}
-  \addplot[fill=cNuclear,draw=white,line width=0.6pt] coordinates {(Northern,121.6) (Western,170.3) (Southern,114.2) (Eastern,48.7) (North-Eastern,0)};
+  \addplot[fill=cNuclear,draw=white,line width=0.6pt] coordinates {(Northern,121.6) (Western,170.3) (Southern,115.4) (Eastern,48.7) (North-Eastern,0)};
   \addlegendentry{Nuclear}
   \addplot[fill=cWind,draw=white,line width=0.6pt] coordinates {(Northern,152.6) (Western,303.1) (Southern,321.6) (Eastern,9.8) (North-Eastern,0.4)};
   \addlegendentry{Wind}
@@ -448,19 +446,19 @@ North-Eastern & \textbf{161} & 110--239\\
 \vspace{0.8mm}
 {\fontsize{7.8}{9.6}\selectfont
 \textbf{\color{navy}North:} solar 37\%, coal 32\%, hydro 11\%\\
-\textbf{\color{navy}West:} solar 41\%, wind 21\%; sends 220\,TWh east\\
-\textbf{\color{navy}South:} solar 40\%, wind 28\%\\
-\textbf{\color{navy}East:} coal 66\%, solar 20\%; imports 212\,TWh\\
-\textbf{\color{navy}North-East:} hydro 81\%\par}
+\textbf{\color{navy}West:} solar 40\%, wind 20\%; sends 304\,TWh\\
+\textbf{\color{navy}South:} solar 42\%, wind 30\%\\
+\textbf{\color{navy}East:} coal 66\%, solar 20\%; imports 246\,TWh\\
+\textbf{\color{navy}North-East:} hydro 80\%\par}
 \vspace{1.2mm}
-{\fontsize{7.8}{9.6}\selectfont\color{ink2}India: solar 36.2\%, coal 30.0\%, wind 16.7\% (offshore 3.1), nuclear 9.7\%, hydro 7.4\%, no gas or bioenergy; 1,370\,Mt CO$_2$; 213\,bn USD/yr.}
+{\fontsize{7.8}{9.6}\selectfont\color{ink2}India: solar 36.2\%, coal 30.0\%, wind 16.7\% (offshore 3.1), nuclear 9.7\%, hydro 7.4\%, no gas, 1\,TWh bioenergy; 1,371\,Mt CO$_2$; 213\,bn USD/yr.}
 \end{columns}
 \evidence{Potentials \cite{mnre_restats_2425,cea_hydro_status}; regional capacity factors \cite{cea_nep2023}; 2047 costs \cite{iea_weo2025,seci_auctions}; emission factors \cite{cea_co2_v21}; optimiser \cite{huangfu2018parallelizing}; \texttt{outputs/strategy\_2047.csv}, \texttt{strategy\_2047\_regions.csv}, \texttt{corridors\_2047.csv}, \texttt{presets.csv} \cite{e47_repo}.}
 \note{%
 \textbf{Message.} At the median requirement the cheapest plan is solar-led, keeps coal at 30\%, exactly what the 70\% non-fossil floor allows, and meets every region's requirement.\par\medskip
-\textbf{Evidence.} \texttt{strategy\_2047.csv} (least cost), \texttt{strategy\_2047\_regions.csv}, \texttt{corridors\_2047.csv} and \texttt{presets.csv} (Base, Base). The Eastern region needs 806\,TWh, produces 594 and imports 212 over the West--East corridor (220\,TWh sent, 92\% of its 240\,TWh capability); the North sends 14\,TWh to the North-East. Regional marginal costs are 70--76\,USD/MWh.\par\medskip
+\textbf{Evidence.} \texttt{strategy\_2047.csv} (least cost), \texttt{strategy\_2047\_regions.csv}, \texttt{corridors\_2047.csv} and \texttt{presets.csv} (Base, Base). The East needs 840\,TWh, produces 594 and imports 246 (240\,TWh sent over the full West--East corridor, 16 from the South); the West also sends 65\,TWh north and the North 13 to the North-East. Regional marginal costs are 101--109\,USD/MWh.\par\medskip
 \textbf{Constraints.} Usable resource 25\% of solar and wind potential; coal at least 60\% of each region's 2024 output and at most 110\% nationally; firm generation at least 45\% nationally and 25\% per region; build rates at most twice India's record annual increase; non-fossil at least 70\%.\par\medskip
-\textbf{Likely question.} \qa{Why does the East import so much?}{Its coal fleet is kept, but its solar and wind potential is small, so the West sends 220\,TWh over a corridor that is 92\% used. The plan has no margin: planned for P90 it leaves 1,529\,TWh unmet (slide 13).}}
+\textbf{Likely question.} \qa{Why does the East import so much?}{Its coal fleet is kept, but its solar and wind potential is small, so the West sends 240\,TWh over a corridor that is fully used. The plan has no margin: planned for P90 it leaves 1,529\,TWh unmet (slide 13).}}
 \end{frame}
 
 % ===================================================================== 13
@@ -478,7 +476,7 @@ North-Eastern & \textbf{161} & 110--239\\
   every node near coord/.append style={/pgf/number format/fixed,/pgf/number format/precision=0},
   title={One setting at a time, base policy}]
   % outputs/tornado.csv: unserved_low_twh / unserved_high_twh
-  \addplot[fill=cHydro,draw=white] coordinates {(0,Carbon price) (0,Corridors) (0,Coal floor) (0,Build rate) (201.8,Wind land) (807.7,Solar land) (0,Requirement)};
+  \addplot[fill=cHydro,draw=white] coordinates {(0,Carbon price) (0,Corridors) (0,Coal floor) (0,Build rate) (202.6,Wind land) (807.7,Solar land) (0,Requirement)};
   \addlegendentry{low setting}
   \addplot[fill=signal,draw=white] coordinates {(0,Carbon price) (0,Corridors) (0,Coal floor) (0,Build rate) (0,Wind land) (0,Solar land) (1529.2,Requirement)};
   \addlegendentry{high setting}
@@ -488,14 +486,14 @@ North-Eastern & \textbf{161} & 110--239\\
 \vspace{1mm}
 \stat{1,529\twh}{unmet if the requirement reaches its 90th percentile (6,400\,TWh), base policy}{}
 {\fontsize{7.8}{9.5}\selectfont
-\textbf{\color{navy}Land binds:} with 15\% of solar potential usable, \textbf{808\,TWh} goes unmet; with 35\%, none, and the plan costs 178 instead of 213\,bn USD/yr.\par\vspace{0.8mm}
+\textbf{\color{navy}Land binds:} with 15\% of solar potential usable, \textbf{808\,TWh} goes unmet; with 35\%, none, and the plan costs 179 instead of 213\,bn USD/yr.\par\vspace{0.8mm}
 \textbf{\color{navy}Build rate does not, at the median:} 1.5$\times$ India's record year still meets it, at 218\,bn USD/yr.\par\vspace{0.8mm}
-\textbf{\color{navy}Nor do wires and prices:} 3$\times$ corridors change nothing; 60\,USD/t of carbon cuts CO$_2$ from 1,370 to 1,137\,Mt.\par}
+\textbf{\color{navy}Nor do wires and prices:} 3$\times$ corridors change nothing; 60\,USD/t of carbon cuts CO$_2$ from 1,371 to 1,166\,Mt.\par}
 \end{columns}
 \evidence{14 settings, 28 parallel least-cost solves: \texttt{outputs/tornado.csv}, \texttt{presets.csv} \cite{e47_repo}; robust-decision framing \cite{lempert2003shaping}; resource potentials \cite{mnre_restats_2425}.}
 \note{%
 \textbf{Message.} What makes the plan run short is land for solar and wind and the size of the requirement, not costs, corridors or the speed of building.\par\medskip
-\textbf{How the sweep works.} Each setting moves to a low and a high value with everything else at the base policy (28 problems solved in parallel). Settings not shown (firm shares and the costs of solar, nuclear, coal and firmed RE) leave nothing unmet; they move cost between 184 and 242\,bn USD/yr (coal cost 0.7--1.3$\times$). A 60\% non-fossil floor also meets the median (1,415\,Mt CO$_2$); an 85\% floor is infeasible with the coal floor.\par\medskip
+\textbf{How the sweep works.} Each setting moves to a low and a high value with everything else at the base policy (28 problems solved in parallel). Settings not shown (firm shares and the costs of solar, nuclear, coal and firmed RE) leave nothing unmet; they move cost between 184 and 243\,bn USD/yr (coal cost 0.7--1.3$\times$). A 60\% non-fossil floor also meets the median (1,415\,Mt CO$_2$); an 85\% floor is infeasible with the coal floor.\par\medskip
 \textbf{Requirement row.} Planning for P10 meets everything; planning for P90 (6,400\,TWh) leaves 1,529\,TWh unmet.\par\medskip
 \textbf{Likely question.} \qa{Why does the coal floor change nothing?}{At the median the 70\% non-fossil floor sets coal at 30\% whatever the coal floor; what runs out is renewable land.}}
 \end{frame}
@@ -514,7 +512,7 @@ North-Eastern & \textbf{161} & 110--239\\
   \addplot[fill=muted!60,draw=white] coordinates {(Base,213)}; \addplot[fill=good,draw=white] coordinates {(Robust,176)};
 \end{axis}
 \begin{axis}[mini,xshift=2.28cm,title={CO$_2$\\Mt/yr},ymax=1640,point meta=explicit symbolic]
-  \addplot[fill=muted!60,draw=white] coordinates {(Base,1370) [1{,}370]}; \addplot[fill=good,draw=white] coordinates {(Robust,993) [993]};
+  \addplot[fill=muted!60,draw=white] coordinates {(Base,1371) [1{,}371]}; \addplot[fill=good,draw=white] coordinates {(Robust,993) [993]};
 \end{axis}
 \begin{axis}[mini,xshift=4.56cm,title={Non-fossil\\\% of 2047},ymax=92,every node near coord/.append style={/pgf/number format/precision=1,/pgf/number format/fixed zerofill}]
   \addplot[fill=muted!60,draw=white] coordinates {(Base,70.0)}; \addplot[fill=good,draw=white] coordinates {(Robust,78.3)};
@@ -530,12 +528,12 @@ North-Eastern & \textbf{161} & 110--239\\
   xticklabel={\pgfmathprintnumber{\tick}\%},
   legend style={at={(0.5,1.03)},anchor=south,font=\fontsize{6.6}{7.6}\selectfont},legend columns=6]
   % outputs/presets.csv, scenario Base; shares in %; wind = onshore + offshore; gas and bioenergy are zero in both
-  \addplot[fill=cCoal,draw=white] coordinates {(30.00,Base) (21.73,Robust)}; \addlegendentry{Coal}
-  \addplot[fill=cNuclear,draw=white] coordinates {(9.65,Base) (1.16,Robust)}; \addlegendentry{Nuclear}
-  \addplot[fill=cWind,draw=white] coordinates {(16.71,Base) (4.39,Robust)}; \addlegendentry{Wind}
-  \addplot[fill=cHydro,draw=white] coordinates {(7.40,Base) (7.40,Robust)}; \addlegendentry{Hydro}
-  \addplot[fill=cSolar,draw=white] coordinates {(36.24,Base) (50.71,Robust)}; \addlegendentry{Solar}
-  \addplot[fill=cFirm,draw=white] coordinates {(0,Base) (14.61,Robust)}; \addlegendentry{Firmed RE}
+  \addplot[fill=cCoal,draw=white] coordinates {(30.00,Base) (21.72,Robust)}; \addlegendentry{Coal}
+  \addplot[fill=cNuclear,draw=white] coordinates {(9.67,Base) (1.16,Robust)}; \addlegendentry{Nuclear}
+  \addplot[fill=cWind,draw=white] coordinates {(16.70,Base) (4.46,Robust)}; \addlegendentry{Wind}
+  \addplot[fill=cHydro,draw=white] coordinates {(7.39,Base) (7.39,Robust)}; \addlegendentry{Hydro}
+  \addplot[fill=cSolar,draw=white] coordinates {(36.21,Base) (50.67,Robust)}; \addlegendentry{Solar}
+  \addplot[fill=cFirm,draw=white] coordinates {(0,Base) (14.60,Robust)}; \addlegendentry{Firmed RE}
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
@@ -549,12 +547,12 @@ North-Eastern & \textbf{161} & 110--239\\
 \item Corridors 3$\times$ the 2032 plan; 75\% non-fossil floor; coal floor 50\% of the 2024 fleet.
 \end{enumerate}\par
 \vspace{1mm}
-\textbf{\color{signal}Still short at P90:} 638\,TWh. Meeting P90 needs 45\% usable solar land; 4$\times$ build rates without it still leave 238\,TWh.}
+\textbf{\color{signal}Still short at P90:} 638\,TWh. Meeting P90 needs 45\% usable solar land; 4$\times$ build rates without it still leave 240\,TWh.}
 \end{columns}
 \evidence{\texttt{outputs/presets.csv} (scenario Base, policies Base and Robust), \texttt{p90\_levers.csv} \cite{e47_repo}; firmed-renewable cost from round-the-clock tenders \cite{seci_auctions}; solar cost path \cite{iea_weo2025}; robust decision making \cite{lempert2003shaping}.}
 \note{%
-\textbf{The decision.} The robust policy dominates the base policy: 176 vs 213\,bn USD/yr, 993 vs 1,370\,Mt CO$_2$, 78.3\% vs 70.0\% non-fossil; both meet the median, and the robust plan leaves 638 instead of 1,529\,TWh unmet at P90.\par\medskip
-\textbf{Honesty.} Robust here means cheaper and cleaner at the median and less short at P90, not adequate at P90. \texttt{p90\_levers.csv}: at the robust build rate (2.5$\times$), 45\% usable solar land meets P90 for 257\,bn USD/yr (55\%: 232); with 35\%, even 4$\times$ build rates leave 238\,TWh unmet.\par\medskip
+\textbf{The decision.} The robust policy dominates the base policy: 176 vs 213\,bn USD/yr, 993 vs 1,371\,Mt CO$_2$, 78.3\% vs 70.0\% non-fossil; both meet the median, and the robust plan leaves 638 instead of 1,529\,TWh unmet at P90.\par\medskip
+\textbf{Honesty.} Robust here means cheaper and cleaner at the median and less short at P90, not adequate at P90. \texttt{p90\_levers.csv}: at the robust build rate (2.5$\times$), 45\% usable solar land meets P90 for 257\,bn USD/yr (55\%: 233); with 35\%, even 4$\times$ build rates leave 240\,TWh unmet.\par\medskip
 \textbf{Firmed RE.} Solar and wind bundled with storage and sold round the clock, priced from SECI tenders plus the 2047 solar cost; today's premium held constant in real terms.\par\medskip
 \textbf{Likely question.} \qa{Is 35--45\% of solar potential realistic?}{It is the lever the model says matters most; rooftop and agri-PV add land without new sites. We show the trade-off rather than assume it.}}
 \end{frame}
@@ -570,35 +568,35 @@ North-Eastern & \textbf{161} & 110--239\\
   xlabel={CO$_2$ from generation in FY2047-48, Mt/yr (deeper cuts to the right)},xlabel style={yshift=2pt},
   ylabel={extra cost, million USD/yr},xmajorgrids,
   title={Robust plan at the median under a falling CO$_2$ cap}]
-  % outputs/pareto_2047.csv: co2_mt and cost_busd, cost relative to the uncapped plan (175.722 bn USD/yr)
+  % outputs/pareto_2047.csv: co2_mt and cost_busd, cost relative to the uncapped plan (175.925 bn USD/yr)
   \draw[muted,dashed,line width=0.6pt] (axis cs:643.4,0) -- (axis cs:643.4,800);
-  \addplot[navy,line width=1.8pt,mark=*,mark size=1.7pt] table[x=co2_mt,y expr=1000*(\thisrow{cost_busd}-175.722),col sep=comma] {data/pareto_2047.csv};
+  \addplot[navy,line width=1.8pt,mark=*,mark size=1.7pt] table[x=co2_mt,y expr=1000*(\thisrow{cost_busd}-175.925),col sep=comma] {data/pareto_2047.csv};
   % marginal abatement cost, column marginal_abatement_usd_per_t
-  \node[lab,anchor=south,yshift=3pt] at (axis cs:963.5,19) {0.68\,USD/t};
-  \node[lab,anchor=south east] at (axis cs:876.2,108) {1.39\,USD/t};
-  \node[lab,anchor=south east] at (axis cs:759.8,288) {3.86\,USD/t};
-  \node[lab,anchor=south east] at (axis cs:643.4,676) {3.97\,USD/t};
+  \node[lab,anchor=south,yshift=3pt] at (axis cs:963.5,20) {0.68\,USD/t};
+  \node[lab,anchor=south east] at (axis cs:876.2,104) {1.39\,USD/t};
+  \node[lab,anchor=south east] at (axis cs:730.7,354) {3.86\,USD/t};
+  \node[lab,anchor=south east] at (axis cs:643.4,653) {6.32\,USD/t};
   \node[lab,anchor=south east,text=muted,align=right] at (axis cs:647,8) {all coal at its floor\\(50\% of 2024 output)};
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
 \vspace{1mm}
-\stat{$-$35\%}{CO$_2$ of the robust plan, 993 to 643\,Mt/yr, for 0.67\,bn USD/yr more (+0.4\%)}{}
+\stat{$-$35\%}{CO$_2$ of the robust plan, 993 to 643\,Mt/yr, for 0.65\,bn USD/yr more (+0.4\%)}{}
 {\fontsize{7.8}{9.5}\selectfont
-\textbf{\color{navy}Marginal abatement cost:} 0.68 rising to 3.97\,USD/t; about 1.9\,USD/t on average.\par\vspace{0.8mm}
+\textbf{\color{navy}Marginal abatement cost:} 0.68 rising to 6.32\,USD/t; about 1.9\,USD/t on average.\par\vspace{0.8mm}
 \textbf{\color{navy}Nuclear replaces coal:} nuclear 1.2\% $\to$ 8.8\% of generation, coal 21.7\% $\to$ 14.1\%; solar stays at its land limit (50.7\%).\par\vspace{0.8mm}
 \textbf{\color{navy}The limit is the fleet, not money:} at 643\,Mt all coal is at its floor; a lower cap could only be met by leaving requirement unserved.\par}
 \end{columns}
 \evidence{\texttt{outputs/pareto\_2047.csv}, \texttt{presets.csv} (Base, Robust), \texttt{strategy\_2047.csv} (2024 coal by region) \cite{e47_repo}; emission factors \cite{cea_co2_v21}; 2047 costs \cite{iea_weo2025}; optimiser \cite{huangfu2018parallelizing}; method: \texttt{docs/methodology.md}, section 6.5.}
 \note{%
-\textbf{Message.} The next 35\% of the robust plan's CO$_2$ costs 0.67\,bn USD/yr on top of 175.72 (0.4\%). The young coal fleet, not money, stops further cuts.\par\medskip
+\textbf{Message.} The next 35\% of the robust plan's CO$_2$ costs 0.65\,bn USD/yr on top of 175.92 (0.4\%). The young coal fleet, not money, stops further cuts.\par\medskip
 \textbf{Method.} An $\varepsilon$-constraint sweep of a national CO$_2$ cap in the least-cost LP, solved without a carbon price. Bisection finds the lowest cap that still meets the requirement; twelve caps between it and the uncapped plan (993\,Mt) are solved in parallel and dominated points dropped. The cap's dual value is the marginal abatement cost (\texttt{marginal\_abatement\_usd\_per\_t}).\par\medskip
 \textbf{Why it stops at 643\,Mt.} The robust policy keeps coal at no less than 50\% of each region's 2024 output (a young fleet). At the last point every region is at that floor: 664\,TWh at 0.969\,t/MWh is 643\,Mt. A lower cap would leave requirement unserved.\par\medskip
-\textbf{Likely question.} \qa{Why so cheap?}{Nuclear replaces coal for 0.7 to 3.8\,USD more per MWh (the dual times 0.969\,t/MWh) and stays inside the 15\% nuclear limit; solar is already at its land limit.}}
+\textbf{Likely question.} \qa{Why so cheap?}{Nuclear replaces coal for 0.7 to 6.1\,USD more per MWh (the dual times 0.969\,t/MWh) and stays inside the 15\% nuclear limit; solar is already at its land limit.}}
 \end{frame}
 
 % ===================================================================== 16
-\begin{frame}{The engine: a million futures in 8.4 milliseconds}
+\begin{frame}{The engine: a million futures in 7.7 milliseconds}
 \begin{columns}[T,onlytextwidth]
 \column{\gA\textwidth}
 \begin{tikzpicture}
@@ -609,14 +607,14 @@ North-Eastern & \textbf{161} & 110--239\\
   point meta=explicit symbolic,
   title={Same draws, same seed, three devices}]
   % outputs/timings.csv (1 thread: scaled from a 1/16 run)
-  \addplot[fill=muted!60,draw=white] coordinates {(23442,cpu1) [23.4 s]};
-  \addplot[fill=navy3,draw=white] coordinates {(2417,cpu16) [2.42 s]};
-  \addplot[fill=good,draw=white] coordinates {(8.40,gpu) [8.4 ms]};
+  \addplot[fill=muted!60,draw=white] coordinates {(19972,cpu1) [20.0 s]};
+  \addplot[fill=navy3,draw=white] coordinates {(2209,cpu16) [2.21 s]};
+  \addplot[fill=good,draw=white] coordinates {(7.72,gpu) [7.7 ms]};
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
 \vspace{1mm}
-\stat{290$\times$}{faster than 16 CPU threads (2,800$\times$ faster than one thread)}{}
+\stat{290$\times$}{faster than 16 CPU threads (2,600$\times$ faster than one thread)}{}
 \vspace{2mm}
 {\fontsize{8.5}{10.5}\selectfont
 \textbf{\color{navy}Why it matters.} The jury can move any assumption and see the full uncertainty and the regional plan recomputed in seconds.\par\vspace{1.5mm}
@@ -624,8 +622,8 @@ North-Eastern & \textbf{161} & 110--239\\
 \end{columns}
 \evidence{Measured on an RTX 3070 Ti Laptop GPU and an i7-12650H, run of 16 Nov 2026, \texttt{outputs/timings.csv} \cite{e47_repo}; Philox generator \cite{salmon2011parallel}.}
 \note{%
-\textbf{Message.} The expensive part is uncertainty: millions of independent futures, each a 24-year path with a 36-state split. They are independent, so one GPU thread per future fits naturally.\par\medskip
-\textbf{Evidence.} \texttt{timings.csv}: GPU 8.40\,ms, 16 threads 2,417\,ms, one thread 23,442\,ms (scaled from a 1/16 run): 288$\times$ and 2,791$\times$. The full forecast uses 4,194,304 futures.\par\medskip
+\textbf{Message.} The expensive part is uncertainty: millions of independent futures, each a 24-year path with a 34-state split. They are independent, so one GPU thread per future fits naturally.\par\medskip
+\textbf{Evidence.} \texttt{timings.csv}: GPU 7.72\,ms, 16 threads 2,209\,ms, one thread 19,972\,ms (scaled from a 1/16 run): 286$\times$ and 2,588$\times$. The full forecast uses 4,194,304 futures.\par\medskip
 \textbf{Optimisations.} Inputs in constant memory (broadcast to a warp); the model choice is shared by each group of 32 futures, so warps never diverge; machine code for the exact GPU; histograms by atomic add; CPU path with thread-private histograms and a parallel merge.\par\medskip
 \textbf{Honesty.} CPU timings vary with background load from run to run. The CUDA kernel passes the Compute Sanitizer memory, initialisation, race and synchronisation checks with no errors.}
 \end{frame}
@@ -667,12 +665,12 @@ Policy: base, low carbon, robust, energy security}
 \item \textbf{Unlock land}: 35\% of solar potential usable cuts the base plan's cost by 35\,bn USD/yr; P90 needs 45\%.
 \item \textbf{Build faster}: 2.5$\times$ India's record annual addition, with 45\% usable solar land, meets even P90.
 \item \textbf{Serve the North, South and North-East}: their need grows beyond what they make today.
-\item \textbf{Cap CO$_2$, then capture}: a cap takes the robust plan from 993 to 643\,Mt for 0.67\,bn USD/yr; the 14\% coal left is a large opportunity for carbon capture.
+\item \textbf{Cap CO$_2$, then capture}: a cap takes the robust plan from 993 to 643\,Mt for 0.65\,bn USD/yr; the 14\% coal left is a large opportunity for carbon capture.
 \end{enumerate}}
 \column{\gB\textwidth}
 {\fontsize{8.2}{10}\selectfont
 \textbf{\color{navy}Before the final}\par\vspace{1mm}
-Organiser ruling on the urbanisation prior and the captive layer.\\[0.8mm]
+Organisers' answers to three follow-up questions.\\[0.8mm]
 Regional renewable generation (not on NPP).\\[0.8mm]
 Storage and land of the plan (hourly NPP Merit profiles) on a slide.\\[0.8mm]
 Industrial-demand layer for steel and aluminium regions.\par\vspace{2.5mm}
@@ -682,7 +680,8 @@ Regional requirement is modelled, not observed; history includes supply shortage
 \evidence{Recommendations follow from slides 10--15: \texttt{outputs/sensitivity\_2047.csv}, \texttt{tornado.csv}, \texttt{presets.csv}, \texttt{p90\_levers.csv}, \texttt{pareto\_2047.csv} \cite{e47_repo}; NPP coverage \cite{npp_dashboard,npp_merit}; assumptions: \texttt{docs/assumptions\_and\_uncertainty.md}.}
 \note{%
 \textbf{Why recommendation 5 matters to ExxonMobil.} Even the robust plan keeps 21.7\% coal in 2047 (993\,Mt CO$_2$), and a CO$_2$ cap can take it only to 14.1\% (643\,Mt), because the existing fleet is young (coal floor 50\% of 2024 output). The CO$_2$ that remains is concentrated at large stations, which is where carbon capture and storage is most practical.\par\medskip
-\textbf{Rulings requested.} (1) May a literature prior (urbanisation) enter the core, given that urban share is in neither dataset? Our $\gamma = 0$ run (4,453\,TWh) is ready if not. (2) May captive generation be reported as a separate layer?\par\medskip
+\textbf{Ruling of 16 Nov, applied.} External projections if consistent with the dataset's state growth (checked); $\gamma$ our judgment; no captive generation; cross-country model and potentials for justification only; regional split from the challenge data; headline in total TWh.\par\medskip
+\textbf{Follow-up questions sent on 16 Nov.} (a) Generation only, or may consumption data be used anywhere? (b) May resource potentials, costs and emission factors serve as limits and prices inside the mix optimisation? (c) NPP's five grid regions or the dataset's six zones (four blocks) for the regional results?\par\medskip
 \textbf{Data gaps.} NPP has no renewable generation after FY2023-24 except all-India Merit solar and wind from 18 September 2025, and none by region.}
 \end{frame}
 
@@ -703,8 +702,7 @@ Regional requirement is modelled, not observed; history includes supply shortage
 Model & Scope (base year) & Base & 2047 P5 & \textbf{2047 median} & 2047 P95\\
 \midrule
 \textbf{India-only (core)} & NPP utility generation (FY2023-24) & 1,698 & 3,217 & \textbf{4,703} & 7,002\\
-India-only + captive layer & utility + captive, CEA share held & 1,922 & 3,642 & \textbf{5,323} & 7,926\\
-Cross-country panel (check) & Ember total incl.\ captive (calendar 2025) & 2,080 & 3,348 & \textbf{4,528} & 5,610\\
+Cross-country panel (check) & Ember total generation (calendar 2025) & 2,080 & 3,348 & \textbf{4,528} & 5,610\\
 \midrule
 India-only, $\gamma = 0$ & two datasets only & 1,698 & 2,950 & 4,453 & 6,871\\
 India-only, elasticity decline 0.2 & saturation as in the panel & 1,698 & 3,089 & 4,197 & 5,643\\
@@ -712,9 +710,9 @@ India-only, elasticity decline 0.2 & saturation as in the panel & 1,698 & 3,089 
 \end{tabular}\par}
 \vspace{2mm}
 {\fontsize{8}{9.8}\selectfont
-The check lands inside the core's range, 15\% below the captive-inclusive core. The gap is the elasticity: 153 countries imply 0.44--0.57 at India's income, falling with income; India's own data give 0.78--0.87. A decline of 0.2 per unit of log income brings the core to 4,197\,TWh, close to the check.\par}
-\evidence{\texttt{outputs/core\_comparison.csv}, \texttt{sensitivity\_2047.csv}, \texttt{forecast\_secondary\_cross\_country.csv} \cite{e47_repo}; check data \cite{ember_yearly,wb_wdi}; captive \cite{cea_general_review_2025}; cross-country elasticities: \texttt{docs/methodology.md}, section 3.}
-\note{Use this slide if asked why two numbers exist. The core is the only forecast; the check uses non-core data and answers one question: does an independent method land in the same range? It does, and the gap is explained by one parameter.}
+The check lands inside the core's range, 4\% below the core median, although its scope (total generation, calendar years) is wider. The gap is the elasticity: 153 countries imply 0.44--0.57 at India's income, falling with income; India's own data give 0.78--0.87. A decline of 0.2 per unit of log income brings the core to 4,197\,TWh, close to the check. As the organisers ruled, the check is used for justification only, not for estimation.\par}
+\evidence{\texttt{outputs/core\_comparison.csv}, \texttt{sensitivity\_2047.csv}, \texttt{forecast\_secondary\_cross\_country.csv} \cite{e47_repo}; check data \cite{ember_yearly,wb_wdi}; cross-country elasticities: \texttt{docs/methodology.md}, section 3.}
+\note{Use this slide if asked why two numbers exist. The core is the only forecast; the check uses non-core data, is used for justification only and answers one question: does an independent method land in the same range? It does, and the gap is explained by one parameter.}
 \end{frame}
 
 \begin{frame}{Backup: assumptions and their controls}
@@ -730,7 +728,7 @@ Income growth per person & 4.95\%/yr to 2030 (s.d.\ 1.5\%), slowing 1.5\,pp by 2
 Model error & AR(1) residual from +0.070 (FY2023-24), persistence 0.51 & Durbin-Watson 0.99, \texttt{india\_fit.csv}\\
 Population, urban share & UN WPP 2024 medium; UN WUP 2018 change, $\pm$2\,pp & \cite{un_wpp2024,un_wup2018}\\
 State income convergence & 0.021/yr (s.e.\ 0.011) & \cite{organiser_dataset,barro1992convergence}\\
-Captive layer & 13.2\% of utility generation, held & \cite{cea_general_review_2025} (Table 1.6)\\
+State population (split) & dataset level, UN growth + own offset & \cite{organiser_dataset,un_wpp2024}\\
 Usable resource & 25\% of solar and wind, 70\% of hydro & \cite{mnre_restats_2425,cea_hydro_status}\\
 Coal fleet & floor 60\% of 2024; national cap 110\% & \cite{cea_nep2023}\\
 Build rates & $\le$ 2025 + 22 yr $\times$ 2 $\times$ record annual increase & \cite{ember_yearly}\\
@@ -738,7 +736,7 @@ Costs 2047; corridors & IEA India LCOE, SECI tenders; 2$\times$ 2032 plan at 60\
 \bottomrule
 \end{tabular}}
 \evidence{Full list with sources and the dashboard control for each: \texttt{docs/assumptions\_and\_uncertainty.md}; values \texttt{outputs/india\_fit.csv} \cite{e47_repo}.}
-\note{Every row is adjustable in the dashboard and documented with its source. Build-rate records use Ember generation history (outside the core, as a limit, not a forecast input).}
+\note{Every row is adjustable in the dashboard and documented with its source. Build-rate records use Ember generation history (outside the core, as a limit, not a forecast input). Under the organisers' ruling of 16 Nov, $\gamma$ is the team's judgment, and state population starts from the dataset's 2024 level and grows at UN India growth plus the state's own 2019--24 offset, in the grid region NPP reports it under.}
 \end{frame}
 
 \begin{frame}{Backup: twelve futures, four policies}
@@ -749,20 +747,20 @@ Costs 2047; corridors & IEA India LCOE, SECI tenders; 2$\times$ 2032 plan at 60\
 \toprule
 Scenario & Policy & Median TWh & Non-fossil & CO$_2$ Mt & Cost bn USD & Unmet at median & Unmet at P90\\
 \midrule
-Base & Base & 4,703 & 70.0\% & 1,370 & 213 & 0 & 1,529\\
-Base & Low carbon & 4,703 & 80.1\% & 822 & 196 & 0 & 1,551\\
+Base & Base & 4,703 & 70.0\% & 1,371 & 213 & 0 & 1,529\\
+Base & Low carbon & 4,703 & 80.0\% & 823 & 197 & 0 & 1,551\\
 Base & \textbf{Robust} & 4,703 & \textbf{78.3\%} & \textbf{993} & \textbf{176} & \textbf{0} & \textbf{638}\\
-Base & Energy security & 4,703 & 70.0\% & 1,370 & 214 & 0 & 1,529\\
+Base & Energy security & 4,703 & 70.0\% & 1,371 & 214 & 0 & 1,529\\
 High growth & Base & 6,785 & 70.0\% & 1,416 & 236 & 1,914 & 4,403\\
 High growth & Robust & 6,785 & 75.0\% & 1,396 & 254 & 1,023 & 3,512\\
-Low growth & Base & 3,397 & 76.6\% & 772 & 127 & 0 & 0\\
+Low growth & Base & 3,397 & 76.7\% & 772 & 127 & 0 & 0\\
 Low growth & Robust & 3,397 & 80.5\% & 643 & 121 & 0 & 0\\
 \bottomrule
 \end{tabular}}
 \vspace{2mm}
 {\fontsize{8}{9.8}\selectfont\color{ink2}High growth: income growth 1.5 points above history, urban share +3 points, 100--300\,TWh of new loads. Low growth: 1.5 points below, urban share $-$2 points.\par}
 \evidence{\texttt{outputs/presets.csv} (all twelve combinations) \cite{e47_repo}.}
-\note{In the base scenario every policy meets the median; the robust policy is the cheapest and has the smallest P90 shortfall, and the low-carbon policy emits least (822\,Mt). Under low growth every policy meets even the P90, and the low-carbon policy is cheapest and cleanest (117\,bn USD, 450\,Mt). Under high growth no preset meets the median: 6,785\,TWh needs the land and build-rate levers pushed well beyond the robust settings. Energy security under high growth is infeasible at P90.}
+\note{In the base scenario every policy meets the median; the robust policy is the cheapest and has the smallest P90 shortfall, and the low-carbon policy emits least (823\,Mt). Under low growth every policy meets even the P90, and the low-carbon policy is cheapest and cleanest (117\,bn USD, 450\,Mt). Under high growth no preset meets the median: 6,785\,TWh needs the land and build-rate levers pushed well beyond the robust settings. Energy security under high growth is infeasible at P90.}
 \end{frame}
 
 \begin{frame}{Backup: data limits we work around}
@@ -776,12 +774,58 @@ NPP all-India series ends FY2023-24; RES after that only as Merit solar and wind
 No regional RES on NPP & Today's regional shares are conventional only & Compare shares, not levels; flag the bias\\
 Urban share in neither dataset & Cannot be estimated separately from income & Literature prior $\gamma$; $\gamma = 0$ run shown ($-$5\%)\\
 Organiser GSDP: 2011 price-base break; values copied across years; 2024 incomplete & Spurious jump in 2011; false zero growth & Impute 2011 growth (4.63\%); skip copied values; drop 2024\\
-Captive plants outside NPP & Utility scope only & Separate layer at 13.2\%\\
+No state urban share in the dataset; Zone $\neq$ NPP regions & No state urban term; regions to map & Urban effect in the national total; NPP regions, Zone as fallback\\
 History includes supply shortages & Elasticity may be high & State it; elasticity-decline case\\
 \bottomrule
 \end{tabular}}
-\evidence{NPP coverage, \texttt{data/raw/npp/SOURCES.md} \cite{npp_dashboard,npp_18col,npp_merit}; organiser data \cite{organiser_dataset}; captive plants \cite{cea_general_review_2025}; \texttt{outputs/india\_fit.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv} \cite{e47_repo}.}
-\note{These are the roadblocks reported at the midpoint review. Each has a stated workaround and a switch in the model, so the jury can see its effect.}
+\evidence{NPP coverage, \texttt{data/raw/npp/SOURCES.md} \cite{npp_dashboard,npp_18col,npp_merit}; organiser data \cite{organiser_dataset}; \texttt{outputs/india\_fit.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv}, \texttt{population\_consistency.csv} \cite{e47_repo}.}
+\note{These are the roadblocks reported at the midpoint review. Each has a stated workaround and a switch in the model, so the jury can see its effect. Captive plants, outside NPP, are no longer a roadblock: the organisers ruled on 16 Nov that only NPP generation is used.}
+\end{frame}
+
+\begin{frame}{Backup: population paths vs the challenge dataset}
+\begin{columns}[T,onlytextwidth]
+\column{\gA\textwidth}
+\begin{tikzpicture}
+\begin{axis}[e47,width=\linewidth,height=5.2cm,xmin=0,xmax=2.5,ymin=0,ymax=2.5,
+  xtick={0,0.5,1,1.5,2,2.5},ytick={0,0.5,1,1.5,2,2.5},
+  xticklabel style={/pgf/number format/fixed,/pgf/number format/precision=1},
+  yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=1},
+  xlabel={challenge dataset, 2019--24, \% a year},ylabel={model path, 2024--30, \% a year},xlabel style={yshift=2pt},
+  xmajorgrids,legend pos=north west,legend style={font=\fontsize{6.8}{7.8}\selectfont},
+  title={Population growth of India and 34 states}]
+  \addplot[muted,dashed,line width=0.8pt,domain=0:2.5,samples=2] {x};
+  \addlegendentry{equal growth}
+  % outputs/population_consistency.csv (first row is India)
+  \addplot[only marks,mark=*,mark size=1.9pt,color=navy3,skip coords between index={0}{1}] table[x=dataset_cagr_pct_2019_2024,y=model_cagr_pct_2024_2030,col sep=comma] {data/population_consistency.csv};
+  \addlegendentry{states}
+  \addplot[only marks,mark=diamond*,mark size=3.6pt,color=signal] coordinates {(0.973,0.835)};
+  \addlegendentry{India}
+\end{axis}
+\end{tikzpicture}
+\column{\gB\textwidth}
+\vspace{1mm}
+\stat{0.14\,pts}{a year: every state's path to 2030 sits this far below its own 2019--24 growth}{}
+{\fontsize{7.4}{9}\selectfont
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+India, \% a year & Dataset & UN WPP & \textbf{Model}\\
+\midrule
+2011--24 & 1.12 & 1.08 & \\
+2019--24 & 0.97 & 0.88 & \\
+2024--30 & & 0.83 & \textbf{0.83}\\
+2024--47 & & 0.60 & \textbf{0.60}\\
+\bottomrule
+\end{tabular}\par\vspace{1mm}
+States to 2047: $-$0.08\% (Lakshadweep) to 1.90\% a year (Puducherry). Dataset 2024: 1.399\,bn (Technical Group, reference only: 1.403\,bn).\par}
+\end{columns}
+\evidence{Ruling of 16 Nov 2026: projections ``reasonably consistent with the state-level population growth'' of the dataset. Data \cite{organiser_dataset,un_wpp2024}; reference \cite{techgroup2020}; \texttt{outputs/population\_consistency.csv} \cite{e47_repo}.}
+\note{%
+\textbf{Message.} The regional split uses the challenge dataset's own state populations, as the organisers ruled, and the paths stay consistent with the dataset's growth.\par\medskip
+\textbf{Rule.} Each state starts from its 2024 population in the dataset and grows at UN WPP 2024 medium growth for India plus its own 2019--24 offset from India's growth in the dataset: $g_s = g_{\mathrm{UN}} + (g_{s,2019\text{--}24} - g_{\mathrm{India},2019\text{--}24})$. Shares are renormalised every year; the national population path of the forecast does not change.\par\medskip
+\textbf{Evidence.} \texttt{population\_consistency.csv}: every state's 2024--30 path is 0.137--0.140 points below its own 2019--24 growth, so the dataset's ranking of states is kept.\par\medskip
+\textbf{Regions.} As NPP reports each state; the Zone only for Chandigarh. NPP over Zone: Andaman and Nicobar and Sikkim Eastern, Rajasthan Northern. Ladakh and Dadra and Nagar Haveli and Daman and Diu have no dataset rows.\par\medskip
+\textbf{Likely question.} \qa{Why not carry each state's own growth to 2047?}{India would then grow 0.97\% a year, far above the UN reference of 0.60\%.}}
 \end{frame}
 
 \end{document}

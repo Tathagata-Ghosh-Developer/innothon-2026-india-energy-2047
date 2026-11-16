@@ -40,6 +40,7 @@ The ensemble weights are inversely proportional to backtest error.
   We first applied the urban coefficient to cross-state urban levels, which gave the Southern region 33 percent of the 2026 requirement.
   That is implausible, because the coefficient is estimated from changes within a country over time, not from differences between regions.
   It was revised on 2026-11-15.
+  Since 2026-11-16 the split has no state urban term and uses only the challenge data (D12).
 - **Production.** Where generation is sited, chosen by the allocation step according to regional resource strengths.
 - **Net transfer.** Production minus requirement.
   It sums to zero nationally by construction.
@@ -83,6 +84,7 @@ Resource potentials published in GW are converted to annual generation potential
 That conversion is labelled wherever it appears.
 It is used only as an upper bound on generation.
 We have asked the organisers to confirm that this conversion is acceptable.
+Their ruling of 16 November allows resource potentials for justification only, not estimation; whether they may bound the mix optimisation is an open follow-up question (D12).
 
 ## D6. Compute: C++20, OpenMP by default, optional CUDA
 
@@ -102,11 +104,11 @@ Those draws are independent, so they parallelize well, and the GPU lets the dash
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| 1 CPU thread | 23.4 s |
-| 16 threads | 2.42 s |
-| RTX 3070 Ti Laptop GPU | 8.4 ms |
+| 1 CPU thread | 20.0 s |
+| 16 threads | 2.21 s |
+| RTX 3070 Ti Laptop GPU | 7.7 ms |
 
-Run of 16 November 2026 (`outputs/timings.csv`; the single-thread time is scaled from a 1/16 run).
+Run of 16 November 2026 (`outputs/timings.csv`; the single-thread time is scaled from a 1/16 run; CPU timings vary with background load).
 
 The GPU kernel builds machine code for sm_86 directly (`86-real`).
 The toolkit (CUDA 13.5) is newer than the driver (CUDA 13.3), so the driver could not JIT-compile its PTX.
@@ -155,10 +157,10 @@ D1 used Ember and World Bank data in the core, so it no longer qualifies as the 
 - Urbanisation enters only as its excess over the income-implied path, gamma (du - kappa dx), with gamma from the literature (normal 1.0, s.d. 0.5). gamma = 0 is the pure two-dataset ablation, shown in every output.
 - Moving-block (3-year) residual bootstrap, because the residuals are serially correlated.
 - Base FY2023-24, the last year of the NPP all-India series; FY2024-25 and FY2025-26 serve as a holdout.
-- Scope is NPP utility generation; captive plants are a separately labelled layer.
+- Scope is NPP utility generation; captive plants are a separately labelled layer. (The layer was removed after the organisers' ruling of 16 November; see D12.)
 - The damped trend is a benchmark, not an ensemble member, and backtest errors are not used as weights.
-- The regional split stays driver-based (population, income convergence, urbanisation); NPP regional generation is compared with it as a transfer gap and is never fitted.
-- The cross-country model stays in the code and the dashboard as an independent check on non-core data.
+- The regional split stays driver-based (population, income convergence, urbanisation); NPP regional generation is compared with it as a transfer gap and is never fitted. (Since D12 the split uses challenge-dataset population and income only, with NPP's grid regions and no state urban term.)
+- The cross-country model stays in the code and the dashboard as an independent check on non-core data. (Since D12 it is used for justification only, not for estimation.)
 
 **Reason.** The decision went through a structured review with five independent critiques, anonymous peer review and a synthesis.
 All reviewers agreed on the points above.
@@ -176,6 +178,7 @@ Key arguments:
 - Inverse-MAPE weights from the India backtest: seven short origins give noisy weights.
 
 **Open.** A written query to the organisers asks whether external population and urban projections, a literature urbanisation coefficient, the captive layer and the cross-country check are acceptable as stated.
+The organisers answered in writing on 16 November 2026; the ruling and how it is applied are in D12.
 
 ## D11. Independent code review and fixes (2026-11-16)
 
@@ -216,3 +219,75 @@ The FY2011-12 elasticity (0.828, s.e. 0.063) does not change.
 The base policy now meets the median requirement, so the case for the Robust policy rests on cost (37 bn USD a year less), CO2 (377 Mt less) and the shortfall at P90 (638 instead of 1,529 TWh), not on adequacy at the median.
 
 **New capability.** The least-cost LP accepts an optional national CO2 cap whose dual is the marginal abatement cost, and an epsilon-constraint sweep traces the cost-CO2 trade-off ([methodology.md](methodology.md), section 6.5; [results.md](results.md), section 3.5).
+
+## D12. Organisers' data ruling and how it is applied (2026-11-16)
+
+**Trigger.** On 16 November 2026 the organisers answered the written query of D10 in writing:
+
+1. External population and urbanisation projections may be used if they are reasonably consistent with the state-level population growth in the challenge (GitHub) dataset; UN India-level growth is a reference.
+2. The urbanisation coefficient is the team's own judgment.
+3. Captive generation is not allowed: use generation from the NPP dataset only, and no external data for estimation.
+4. The cross-country model may be used for justification only, not for estimation.
+5. The regional split must use the challenge dataset.
+6. Resource potentials may be used for justification only, not for estimation.
+
+The headline must also be the country's total in TWh, not generation per person.
+
+**Choice.** What changed in the code (commit 6c7eb56):
+
+- **Regional split from the challenge data** (`src/regional/states.cpp`, `Pipeline` constructor in `src/pipeline/pipeline.cpp`).
+  State populations start from the dataset's 2024 values and grow at the UN WPP 2024 medium growth of India plus the state's own 2019-2024 offset from the dataset's national growth, g_s = g_UN + (g_s,2019-24 - g_India,2019-24); the shares are renormalised every year.
+  Each state takes the grid region NPP reports it under (`data/raw/npp/npp_state_generation_fy.csv`), and the dataset Zone (Central as Western) only where NPP lists no state.
+  NPP prevails where the two disagree: Andaman and Nicobar Islands are Eastern (Zone South), Rajasthan Northern (Zone West) and Sikkim Eastern (Zone North-East); Chandigarh, which NPP does not list, is Northern by its Zone.
+  Ladakh and Dadra and Nagar Haveli and Daman and Diu have no rows in the dataset and are left out, so the split has 34 states and union territories instead of 36.
+  The Technical Group projections and `data/external/state_region_map.csv` no longer feed the split.
+- **No state urbanisation term.** The dataset has no state urban share, so the term is removed from the regional weights (`state_log_index` in `src/forecast/mc.hpp`). The national urban effect (gamma) stays in the national total that is split.
+- **Population consistency check.** The new `outputs/population_consistency.csv` compares the dataset's growth, the model's paths and UN WPP 2024 medium for India and every state; the Technical Group appears in it as a reference column only.
+  India grew 1.12 percent a year in the dataset over 2011-2024 and 0.97 percent over 2019-2024; the model path grows 0.83 percent a year over 2024-2030 and 0.60 percent over 2024-2047, equal to UN WPP 2024 medium.
+  Every state's 2024-2030 path is within 0.14 points a year of its own 2019-2024 growth in the dataset.
+  The dataset's 2024 total is 1.399 billion, against 1.403 billion in the Technical Group projection for 1 July 2024.
+- **Captive layer removed** from the code, the outputs (`india_fit.csv`, `core_comparison.csv`, `site_summary.json`), the dashboard and the landing page.
+- **Cross-country model for justification only.** Its label (`core_name()` in `src/pipeline/pipeline.hpp`), the dashboard and the landing page say so; no number from it enters the forecast, the split or the plan.
+- **Headline in total TWh.** The dashboard's per-person card is replaced by "Increase over FY2023-24" (+3,005 TWh), and `site_summary.json` carries `increase_twh`. Generation per person remains the quantity the regression explains, inside the model.
+- **Checks.** `tests/test_regions.cpp` (new) checks the state-to-region mapping against the two files, that the shares sum to 1 in every year, that the first-year shares equal the dataset's 2024 shares and that the national forecast does not depend on the split. The suite has seven tests (mc_parity, allocation, storage, pareto, india, regions, site_format).
+
+**What stays the same, and why.**
+
+- **The national forecast**: 4,703 TWh median in FY2047-48 (P5 3,217, P95 7,002), from 1,698 TWh in FY2023-24. Its estimation already used only NPP generation and the organiser population and GSDP. India's population and urban paths are UN projections, which point 1 allows and which the consistency check supports; the urbanisation coefficient is the team's judgment (point 2), kept as the prior gamma ~ N(1.0, 0.5), truncated at zero, from `data/external/literature_priors.csv`. The split divides the national total and does not change it.
+- **The recommended plan**: the Robust policy keeps 78.3 percent non-fossil, 993 Mt CO2, about 176 bn USD a year, no unmet energy at the median and 638 TWh unmet at P90 (none with 45 percent usable solar land). Its national mix hardly moves because the national requirement is unchanged; the regional requirements, and with them regional siting and corridor flows, do change.
+- **The trade-off**: a CO2 cap still takes the Robust plan from 993 to 643 Mt a year (-35 percent) until the coal fleet floor binds; it now costs 0.65 bn USD a year more (0.67 before) and the highest marginal abatement cost is 6.32 USD per tonne (3.97 before).
+- **Storage and land** of the Robust plan: 447 GW, 3,042 GWh and 6.8 hours; 19,990 km² (0.61 percent of India).
+- **Resource potentials** (point 6) never entered the forecast or the split; they bound the supply plan only, which is open question b below.
+
+**Effect on results** (before: the copies in `docs/beamer/data/` committed with 07f8b3d; after: `outputs/` of this run).
+
+| Quantity | Before | After |
+| --- | --- | --- |
+| FY2047-48 national median (P5 to P95), TWh | 4,703 (3,217 to 7,002) | unchanged |
+| States and union territories in the split | 36 (Technical Group) | 34 (challenge dataset) |
+| Northern median, TWh (share of requirement) | 1,341 (28.5%) | 1,405 (29.9%) |
+| Western | 1,248 (26.6%) | 1,226 (26.1%) |
+| Southern | 1,144 (24.3%) | 1,068 (22.7%) |
+| Eastern | 805 (17.1%) | 840 (17.9%) |
+| North-Eastern | 161 (3.4%) | 161 (3.4%) |
+| Captive layer | about 5,320 TWh including captive plants | removed |
+| Robust plan: non-fossil, CO2, cost, unmet at P90 | 78.3%, 993 Mt, 176 bn USD, 638 TWh | unchanged |
+| Robust plan: Western exports; Eastern imports | 258 TWh; about 210 TWh | 280 TWh; 246 TWh |
+| Base plan: CO2; regional marginal costs | 1,370 Mt; 70 to 76 USD/MWh | 1,371 Mt; 101 to 109 USD/MWh |
+| CO2 cap to 643 Mt: extra cost; highest marginal abatement cost | 0.67 bn USD/yr; 3.97 USD/t | 0.65 bn USD/yr; 6.32 USD/t |
+| Robust plan storage, daily cycle | 447 GW, 3,039 GWh | 447 GW, 3,042 GWh |
+
+**Rejected.**
+
+- Keeping the Technical Group state projections: they are not the challenge dataset (point 5).
+- Carrying each state's own 2019-2024 growth to 2047: India would then grow at 0.97 percent a year to 2047, far above the UN reference (0.60 percent). The offset form keeps the dataset's differences between states and UN's national level.
+- Using the dataset Zone for every state: its six zones do not match NPP's five grid regions, and it places Rajasthan in the West, Sikkim in the North-East and the Andaman and Nicobar Islands in the South, while NPP reports their generation in the Northern and Eastern regions. The Zone is kept as the fallback for a state NPP does not list.
+- A state urban term from external state urban projections: point 5 requires the split to use the challenge dataset, which has no state urban share.
+
+**Open.** Three follow-up questions were sent to the organisers on 16 November 2026:
+
+- (a) Generation only: the kickoff guidance asked for energy generated only, not consumption, and we continue to use NPP generation only. We asked the organisers to confirm this is correct.
+- (b) Supply mix: published resource potentials (solar, wind and hydro, converted from GW to TWh a year with capacity factors), costs and emission factors from public literature (CEA, IEA, MNRE) act only as limits and prices inside the least-cost mix; the 2047 total requirement uses none of them. We asked whether this is acceptable, or whether the potentials should only be shown beside the mix as a justification.
+- (c) Regions: we use the five grid regions reported by NPP (Northern, Western, Southern, Eastern, North-Eastern). The challenge dataset's Zone column has six zones, including Central, and the kickoff mentioned four regional blocks. We asked whether the NPP five-region split is acceptable.
+
+Until they answer, the plan uses the published limits and prices as before, and the split uses NPP's five grid regions.

@@ -8,27 +8,30 @@ The "Control" column names the dashboard slider where one exists.
 | # | Assumption | Value | Basis | Control |
 | --- | --- | --- | --- | --- |
 | F1 | Generation per person grows with real income per person at India's own historical elasticity | 0.828 (FY2011-12 to FY2023-24) and 0.866 (FY2006-07 to FY2023-24); bootstrap mixture median 0.850, 90 percent interval 0.731 to 0.939 | NPP generation and organiser population and GSDP only; GSDP values copied unchanged from the previous year are not counted as income growth | Elasticity decline |
-| F2 | Scope is NPP utility generation; captive plants are a separate layer | Captive 13.2 percent of utility generation, held | NPP; CEA General Review 2025 Table 1.6 | none |
+| F2 | Scope is the country's total NPP utility generation; no captive generation is estimated or reported | Headline in total TWh (1,698 TWh in FY2023-24) | NPP; organisers' ruling of 16 Nov 2026 ([decisions.md](decisions.md), D12) | none |
 | F3 | Base year FY2023-24; model error is a persistent residual that starts at the FY2023-24 residual and reverts to the fitted relation (AR(1)) | 1,698 TWh observed; residual +0.070 log points (1.9 residual s.d.); persistence 0.51; innovation s.d. 0.032 | Durbin-Watson 0.99, persistence = 1 - DW / 2; residual s.d. 0.037 | none |
-| F4 | Population path | UN WPP 2024 medium, anchored to the organiser FY2023-24 population; low/high variants treated as a 90 percent band | UN WPP 2024 | Population band |
+| F4 | Population path | UN WPP 2024 medium, anchored to the organiser FY2023-24 population; low/high variants treated as a 90 percent band | UN WPP 2024; the organisers allow external projections consistent with the dataset's state growth (`outputs/population_consistency.csv`) | Population band |
 | F5 | Urban share path | UN WUP 2018 change from FY2023-24; plus or minus 2 percentage points (1 s.d.) by 2047 | UN WUP 2018 | Urban shift |
-| F6 | Urbanisation beyond the income-implied path raises generation per person | gamma normal(1.0, 0.5), truncated at 0; kappa = 0.092 | Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004 | Model weights (0 / 1 / 0 = no urban term) |
+| F6 | Urbanisation beyond the income-implied path raises generation per person | gamma normal(1.0, 0.5), truncated at 0; kappa = 0.092 | Our judgment, as the organisers' ruling leaves it to the team, based on Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004 (`data/external/literature_priors.csv`) | Model weights (0 / 1 / 0 = no urban term) |
 | F7 | Income growth per person | 4.95 percent a year to 2030 (organiser data, FY2012-13 to FY2023-24, pandemic years left out), then slowing by 1.5 points by 2047 | Organiser GSDP; the slowdown is our assumption, consistent with slower growth at higher income | Growth, slowdown |
 | F8 | Growth uncertainty | Persistent shift with s.d. 0.9 points (90 percent band of the average about +-1.5 points), plus annual shocks with s.d. 1.50 percent and AR(1) persistence 0.63 | Organiser GSDP (persistence from consecutive retained years only); the persistent shift spans published low and high growth paths | Growth uncertainty |
 | F9 | Model weights | 1 / 0 / 0 (elasticity with urban prior / no urban term / damped trend) | Backtest errors from seven short origins are too noisy for weights; the trend has no drivers | Model weights |
 | F10 | New loads not seen in history (green hydrogen, data centres, electric mobility beyond trend) | 0 by default | Not in the base case to avoid double counting with the income response | New loads |
 
-The cross-country secondary check keeps its own assumptions: FE-Quad and FE-Gompertz fitted on 153 countries (1990-2025), base 2,080 TWh in 2025 (Ember, including captive), World Bank GDP per capita growth 4.90 percent to 2030 with persistent s.d. 0.9 points, weights 0.26 / 0.60 / 0.14 from a 2010-origin backtest.
+The cross-country model is an independent check used for justification, not for estimation, and keeps its own assumptions: FE-Quad and FE-Gompertz fitted on 153 countries (1990-2025), base 2,080 TWh in 2025 (Ember total generation, beyond NPP's utility series), World Bank GDP per capita growth 4.90 percent to 2030 with persistent s.d. 0.9 points, weights 0.26 / 0.60 / 0.14 from a 2010-origin backtest.
 
 ## 2. Regional assumptions
+
+The regional split uses the challenge data only, as the organisers ruled on 16 November 2026 ([decisions.md](decisions.md), D12).
 
 | # | Assumption | Basis |
 | --- | --- | --- |
 | R1 | A state's requirement per person follows the same income response as the national model | Model consistency; no state-level generation-need data exist under the generation-only rule |
-| R2 | Base-year regional split from population and income only; urbanisation enters through each state's projected change in urban share | The urban coefficient is a within-country effect over time; applying it to cross-state levels exaggerated differences (South 33 percent at base). Recorded in [decisions.md](decisions.md), D3. |
+| R2 | The split uses population and income only; there is no state urbanisation term, and the national urban effect stays in the national total being split | The challenge dataset has no state urban share. Earlier versions used each state's projected change in urban share from the Technical Group; applying the coefficient to cross-state levels had exaggerated differences (South 33 percent at base), see [decisions.md](decisions.md), D3. |
 | R3 | State income gaps close at 2.1 percent a year (s.e. 1.1), sampled in the Monte Carlo | Beta-convergence of relative GSDP per capita, organiser data 2006-2024 |
-| R4 | State population shares follow the Technical Group projections to 2036, then each state's 2031-2036 trend | Technical Group on Population Projections (2020) |
-| R5 | The regional requirements are planned at the national median and split by regional medians | Regional quantiles do not add up to the national quantile |
+| R4 | State population starts from the challenge dataset's 2024 value and grows at UN WPP 2024 medium growth for India plus the state's own 2019-2024 offset from India's growth in the dataset; shares renormalised every year | Challenge dataset; UN WPP 2024 as the India-level reference. Every state's path to 2030 is within 0.14 points a year of its own 2019-2024 growth (`outputs/population_consistency.csv`) |
+| R5 | Each state is in the grid region NPP reports it under; the dataset Zone (Central as Western) only where NPP lists no state | NPP state generation reports; NPP prevails over the Zone for Andaman and Nicobar Islands (Eastern), Rajasthan (Northern) and Sikkim (Eastern); Chandigarh is Northern by its Zone; Ladakh and Dadra and Nagar Haveli and Daman and Diu have no dataset population and are left out |
+| R6 | The regional requirements are planned at the national median and split by regional medians | Regional quantiles do not add up to the national quantile |
 
 ## 3. Strategy assumptions (defaults)
 
@@ -52,9 +55,9 @@ The cross-country secondary check keeps its own assumptions: FE-Quad and FE-Gomp
 | Population | Draw-level normal shift scaled to the UN low/high band |
 | Urbanisation | Draw-level normal shift growing to 2 points by 2047 |
 | Income growth | Persistent shift plus AR(1) annual shocks |
-| Model structure | Primary: one driver model; the no-urban-term and damped-trend slots are ablations. Secondary: three models mixed by backtest weights |
+| Model structure | Primary: one driver model; the no-urban-term and damped-trend slots are ablations. Cross-country check: three models mixed by backtest weights |
 | Model error | Primary: AR(1) residual of ln(kWh per person), starting at the FY2023-24 residual (+0.070), persistence 0.51, innovation s.d. 0.032 |
-| Parameter estimates | Primary: 2,000 moving-block (3-year) bootstrap replicates of the residuals of the years without the pandemic dummy, rescaled for degrees of freedom, half from each estimation window, each with a gamma draw from its prior (truncated normal). Secondary: 2,000 country-cluster bootstrap replicates per model |
+| Parameter estimates | Primary: 2,000 moving-block (3-year) bootstrap replicates of the residuals of the years without the pandemic dummy, rescaled for degrees of freedom, half from each estimation window, each with a gamma draw from its prior (truncated normal). Cross-country check: 2,000 country-cluster bootstrap replicates per model |
 | State convergence | Normal draw of the convergence speed |
 | New loads | Uniform draw between the dashboard limits |
 | Policy and cost settings | One-at-a-time sweep of 14 settings (tornado), 28 least-cost solves |
@@ -62,13 +65,13 @@ The cross-country secondary check keeps its own assumptions: FE-Quad and FE-Gomp
 
 ## 5. Limitations
 
-1. **Regional requirement is modelled, not observed.** Under the generation-only rule there is no regional need series to validate against. The base-year split is checked for plausibility against regional generation shares (which include transfers).
+1. **Regional requirement is modelled, not observed.** Under the generation-only rule there is no regional need series to validate against. The base-year split is checked for plausibility against regional generation shares (which include transfers). The challenge dataset has no state urban share, so states that urbanise faster than India get no extra weight. NPP's five grid regions and the dataset's six zones do not match; the split follows NPP, and the team has asked the organisers which grouping they expect ([decisions.md](decisions.md), D12).
 2. **Industrial structure.** Heavy industry (steel, aluminium, cement) is concentrated in the Eastern and Western regions. Population and income alone understate it. A sector-based extension is future work.
 3. **Annual energy in the plan.** The plan balances annual energy. Storage and the extra generation that hourly balancing needs are worked out afterwards from one representative year ([results.md](results.md), section 3.6) and do not feed back into the plan. Ramping and reserve margins are not modelled; firm-generation floors are a proxy for reliability.
 4. **Eighteen annual points.** India's annual NPP series starts in FY2006-07, so only the income elasticity is estimated from it. A quadratic, a saturation curve or a free urban coefficient cannot be identified. The uncertainty of the forecast is driven mostly by the income path, not by the model form.
 5. **Supply-constrained history.** Energy shortages closed between the late 2000s and FY2017-18, so part of past generation growth was catch-up, which can raise the estimated elasticity. The FY2011-12 window and the first-difference estimates (0.78 and 0.79) are lower than the full-window estimate (0.87); the elasticity-decline setting shows the size of the effect.
-6. **Costs to 2047 are uncertain.** IEA projections are a single published path. The sensitivity sweep varies solar, coal and nuclear costs by plus or minus 30 percent.
-7. **Captive generation.** The forecast covers NPP utility generation. Captive plants (224 TWh in FY2023-24) are reported as a layer, not planned in the regional mix.
+6. **Costs to 2047 are uncertain.** IEA projections are a single published path. The sensitivity sweep varies solar, coal and nuclear costs by plus or minus 30 percent. Whether published potentials, costs and emission factors may serve as limits and prices inside the mix optimisation is an open question to the organisers ([decisions.md](decisions.md), D12).
+7. **Captive generation.** The forecast covers NPP utility generation only. Captive plants inside industries are outside it, and under the organisers' ruling they are neither estimated nor planned.
 8. **Model-error persistence from a short series.** The persistence of the residual (0.51) comes from the Durbin-Watson statistic of 13 annual residuals, not from a direct lag regression, which the slow drift of the early, supply-constrained years would dominate.
 9. **Placeholder income data.** Five states and union territories repeat a GSDP figure across years in the organiser data (four of them from 2006 to 2010, Nagaland in 2007). Those year pairs are left out of national income growth, so national income growth for 2007 to 2010 rests on the remaining states.
 

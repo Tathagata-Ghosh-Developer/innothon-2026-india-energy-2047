@@ -210,7 +210,7 @@ Added on 2026-11-16 (details in section F):
 
 ## F. Urbanisation prior (gamma) for the India-only core
 
-Read on 2026-11-16. The model's prior is gamma ~ N(1.0, 0.5), truncated at zero (`outputs/india_fit.csv`, row `gamma_mean`). The three papers below are the basis. None of them measures exactly our quantity (the effect of urban share on total electricity generation per person in India), so each one comes with a caveat. That is why the prior is wide and why the deck always shows the gamma = 0 run beside it.
+Read on 2026-11-16. The model's prior is gamma ~ N(1.0, 0.5), truncated at zero (`outputs/india_fit.csv`, row `gamma_mean`). The organisers' ruling of 16 Nov 2026 leaves the urbanisation coefficient to the team's judgment (`docs/decisions.md`, D12). The three papers below are the basis. None of them measures exactly our quantity (the effect of urban share on total electricity generation per person in India), so each one comes with a caveat. That is why the prior is wide and why the deck always shows the gamma = 0 run beside it.
 
 ### F1. Liddle (2013), key `liddle2013population`
 - Crossref: https://api.crossref.org/works/10.1016/j.envsoft.2012.10.002 (no issue number). Full text read in the author version, MPRA paper 52088, https://mpra.ub.uni-muenchen.de/52088/1/MPRA_paper_52088.pdf, which states "Published in Environmental Modelling & Software, 40 (2013), 255-266." Pages below other than the abstract are MPRA page numbers; the journal page for Table 6 was not reachable (ScienceDirect returned 403).
@@ -241,8 +241,9 @@ Read on 2026-11-16. The model's prior is gamma ~ N(1.0, 0.5), truncated at zero 
 Residential use is about a quarter of India's electricity (`docs/methodology.md`, section 2.3), and the papers' estimates range from about 0.6 (total energy, India) to about 1.0 (residential electricity, poor countries) as elasticities, and 3.3 to 3.9 as semi-elasticities (residential, Taiwan). A mean of 1.0 with s.d. 0.5 covers that range for total electricity. The data cannot pin gamma down (urban share is in neither challenge dataset and moved in step with income), so the deck reports the gamma = 0 run: 4,453 TWh in FY2047-48 against 4,703 TWh with the prior (`outputs/sensitivity_2047.csv`).
 
 ### F5. Captive generation, CEA General Review 2025 (key `cea_general_review_2025`)
+- No longer used in the model or the deck: the organisers' ruling of 16 Nov 2026 allows NPP generation only and no external data for estimation, so the captive layer was removed (`docs/decisions.md`, D12). The notes below are kept as the record of the earlier layer.
 - Table 1.6, "Growth of Electricity Generation From Captive Power Plants...", PDF page 31: 223,903 GWh in 2023-24. Recorded when the table was extracted into `data/raw/generation/national/cea_national_generation_fy.csv` (`data/raw/generation/SOURCES.md`, item 4).
-- Derived: 223,903 / 1,698,030 GWh of NPP utility generation in FY2023-24 = 13.2% (`outputs/india_fit.csv`, row `captive_share` = 0.13186).
+- Derived: 223,903 / 1,698,030 GWh of NPP utility generation in FY2023-24 = 13.2% (the former `captive_share` row of `outputs/india_fit.csv`, 0.13186).
 - The 2025 report could not be re-opened from this session on 2026-11-16 (CEA links returned 404), so the table number and value rest on the repository's extraction.
 
 ### F6. National Power Portal (keys `npp_dashboard`, `npp_18col`, `npp_merit`)

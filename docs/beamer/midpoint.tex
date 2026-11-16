@@ -35,20 +35,20 @@
 \step{2}{Elasticity, block bootstrap}
 \step{3}{Urbanisation prior $\gamma$}
 \step{4}{4.2 million GPU futures}
-\step{5}{36 states, convergence}
+\step{5}{34 states, convergence}
 \step{6}{Least-cost mix, P90 test}}
 {\fontsize{6.6}{7.7}\selectfont\color{ink2}$\gamma \sim N(1,\,0.5)$; $\gamma = 0$ is the two-dataset run\par}
 % ---------------------------------------------------------------- findings
 \column{0.371\textwidth}
 \colhead{Findings}{navy}
 \begin{minipage}[t]{0.5\linewidth}\num{4,703}{TWh, median FY2047-48}\end{minipage}%
-\begin{minipage}[t]{0.5\linewidth}\raggedright\vspace{0.6mm}{\fontsize{6.8}{8}\selectfont\color{ink2}NPP utility scope\\ P10--P90: 3,497--6,400\\ about 5,320 with captive plants\par}\end{minipage}\gap
+\begin{minipage}[t]{0.5\linewidth}\raggedright\vspace{0.6mm}{\fontsize{6.8}{8}\selectfont\color{ink2}country total, NPP scope\\ P10--P90: 3,497--6,400\\ +3,005 over FY2023-24\par}\end{minipage}\gap
 \begin{minipage}[t]{0.5\linewidth}\num{\mn3.3\%}{holdout, FY2024-25}\end{minipage}%
 \begin{minipage}[t]{0.5\linewidth}\num{+0.5\%}{holdout, FY2025-26}\end{minipage}\gap
 \begin{minipage}[t]{0.5\linewidth}\num{\mn24\%}{income growth \mn1.5 pts}\end{minipage}%
 \begin{minipage}[t]{0.5\linewidth}\num{+31\%}{income growth +1.5 pts}\end{minipage}\gap
 \begin{minipage}[t]{0.5\linewidth}\num{36\%}{West, generation today}\end{minipage}%
-\begin{minipage}[t]{0.5\linewidth}\num{27\%}{West, 2047 requirement}\end{minipage}
+\begin{minipage}[t]{0.5\linewidth}\num{26\%}{West, 2047 requirement}\end{minipage}
 % ---------------------------------------------------------------- roadblocks
 \column{0.371\textwidth}
 \colhead{Roadblocks and what we do}{signal}
@@ -57,11 +57,11 @@
 \rblock{No regional RES on NPP}{regional shares use conventional generation}
 \rblock{Urban share in neither dataset}{literature prior; $\gamma = 0$ ablation gives $-$5\%}
 \rblock{GSDP: 2011 base break, repeated values}{2011 imputed, repeats skipped, 2024 dropped}
-\rblock{Captive plants outside NPP}{separate layer, 13.2\% of utility generation}
+\rblock{No captive; split from challenge data}{dataset populations, NPP regions (ruling, 16 Nov)}
 \rblock{History includes supply shortages}{elasticity may be high; elasticity-decline case $-$11\%}
 \vspace{0.6mm}
-\textbf{\color{signal}Ruling requested:} literature priors in the core; the captive layer.\par}
+\textbf{\color{signal}Asked (16 Nov):} consumption data; limits in the optimiser; NPP regions vs dataset zones.\par}
 \end{columns}
-\evidence{NPP dashboard chart, CEA 18-column reports and Merit data on NPP; Renewable India dataset; CEA General Review 2025, Table 1.6; prior: Liddle (2013), Shahbaz et al.\ (2016), Holtedahl and Joutz (2004). Outputs of 16 Nov 2026: \texttt{forecast\_national\_regional}, \texttt{india\_fit}, \texttt{holdout}, \texttt{sensitivity\_2047}, \texttt{strategy\_2047\_regions}.}
+\evidence{NPP dashboard chart, CEA 18-column reports and Merit data on NPP; Renewable India dataset; UN WPP 2024; prior: Liddle (2013), Shahbaz et al.\ (2016), Holtedahl and Joutz (2004). Outputs of 16 Nov 2026: \texttt{forecast\_national\_regional}, \texttt{india\_fit}, \texttt{holdout}, \texttt{sensitivity\_2047}, \texttt{strategy\_2047\_regions}, \texttt{population\_consistency}.}
 \end{frame}
 \end{document}

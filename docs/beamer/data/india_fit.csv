@@ -20,7 +20,6 @@ anchor_shift,0,base-year anchor moved to fitted + mean residual of FY2021-22..FY
 splice_growth,0.0462977,imputed ln growth of GSDP per person for 2011
 gamma_mean,1,"Liddle 2013 (Environmental Modelling & Software 40:255-266, Table 6); Shahbaz et al. 2016 (Energy Economics 55:52-68, Table 5); Holtedahl & Joutz 2004 (Energy Economics 26:201-224)"
 gamma_sd,0.5,
-captive_share,0.13186,captive / NPP utility generation in the base year (CEA)
 g_hist_mean,0.0495072,mean ln growth of GSDP per person (organiser data)
 g_hist_sd,0.0149689,
 g_hist_rho,0.630476,

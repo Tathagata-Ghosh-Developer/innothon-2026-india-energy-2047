@@ -1,12 +1,13 @@
 # Presentation deck (LaTeX Beamer)
 
 The core forecast is the India-only model, built only on the two challenge datasets (National Power Portal generation; Renewable India state population and GSDP), as the organisers ruled at the kickoff on 13 Nov 2026.
-The cross-country model (Ember and World Bank, 153 countries) appears only as an independent check on non-core data.
+The cross-country model (Ember and World Bank, 153 countries) appears only as an independent check on non-core data, used for justification and not for estimation.
+The deck follows the organisers' written ruling of 16 Nov 2026 (`docs/decisions.md`, D12): no captive layer, the regional split from the challenge data, and the headline as the country's total in TWh.
 
 | File | Contents |
 | --- | --- |
-| `main.pdf` | Presentation, 28 pages: 18 slides, 6 pages of references and 4 backup slides |
-| `reader.pdf` | Reader's edition, 50 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions) |
+| `main.pdf` | Presentation, 29 pages: 18 slides, 6 pages of references and 5 backup slides |
+| `reader.pdf` | Reader's edition, 52 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions) |
 | `midpoint.pdf`, `midpoint.png` | One 16:9 slide for the midpoint review of 18 Nov 2026: approach, findings, roadblocks (PNG rendered at 220 dpi) |
 | `main.tex` | Deck source; `reader.tex` sets a flag and inputs it |
 | `midpoint.tex` | Midpoint slide source (same theme; columns in golden proportion 1 : phi : phi) |
@@ -29,7 +30,7 @@ The cross-country model (Ember and World Bank, 153 countries) appears only as an
 | 5 | Five advances over the state of practice | several |
 | 6 | Approach in six steps | `india_fit.csv` |
 | 7 | Why the elasticity is 0.83 | `india_fit.csv`, `sensitivity_2047.csv` |
-| 8 | Fan chart from NPP history, with the CEA plan, the captive layer and the cross-country check | `forecast_national_regional.csv`, `holdout.csv`, `core_comparison.csv` |
+| 8 | Fan chart from NPP history, with the CEA plan and the cross-country check | `forecast_national_regional.csv`, `holdout.csv`, `core_comparison.csv` |
 | 9 | Backtest and holdout | `backtest.csv`, `backtest_horizon.csv`, `holdout.csv` |
 | 10 | Sensitivity: income growth dominates | `sensitivity_2047.csv` |
 | 11 | Regional transfer gap | `data/raw/npp/npp_region_generation_fy.csv`, `strategy_2047_regions.csv`, `forecast_national_regional.csv` |
@@ -41,6 +42,7 @@ The cross-country model (Ember and World Bank, 153 countries) appears only as an
 | 17 | Live dashboard | `docs/img/1_national_forecast.png` |
 | 18 | Recommendations and next steps | slides 10 to 15 |
 | B1-B4 | Core vs check; assumptions; preset matrix; data limits | `core_comparison.csv`, `india_fit.csv`, `presets.csv` |
+| B5 | State population paths against the challenge dataset (the ruling's consistency condition) | `population_consistency.csv` |
 
 ## Design
 
@@ -72,6 +74,6 @@ pdftoppm -r 220 -png -singlefile midpoint.pdf midpoint
 
 1. Run `energy2047 <repo_root>` to regenerate the outputs.
 2. Copy `outputs\*.csv` into `data\` (`bootstrap_params.csv` is not needed).
-3. The fan chart (slide 8), the backtest chart (slide 9) and the trade-off chart (slide 15) read the CSV files directly. Every other chart and table carries its values inline and names its source file in a comment next to the values: update those values from the new CSV files.
+3. The fan chart (slide 8), the backtest chart (slide 9), the trade-off chart (slide 15) and the population chart (backup B5) read the CSV files directly. Every other chart and table carries its values inline and names its source file in a comment next to the values: update those values from the new CSV files.
 4. The regional generation shares on slide 11 come from `data/raw/npp/npp_region_generation_fy.csv` (FY2025-26 totals, Bhutan import excluded).
 5. Rebuild the three PDFs and the PNG, then check every page for clipped or overlapping text.

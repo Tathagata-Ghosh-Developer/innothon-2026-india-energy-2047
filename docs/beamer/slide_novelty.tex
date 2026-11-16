@@ -14,7 +14,7 @@
  & Every input carries a probability; parameter uncertainty from a block bootstrap \cite{kunsch1989jackknife} & Income growth $\pm$1.5 pts moves 2047 by $-$24\% / +31\%\\
 \textbf{Planning} & A plan built around one demand path \cite{pib_nep_2023}
  & Robust plan, stress-tested at the 90th-percentile requirement \cite{lempert2003shaping} & Unmet at P90 1,529 $\to$ \textbf{638\,TWh}; cost $-$37\,bn USD/yr\\
-\textbf{Speed and audit} & Studies rerun in batch & A million futures in 8.4\,ms on a GPU; identical inputs on CPU and GPU \cite{salmon2011parallel} & 8.4\,ms vs 2.42\,s on 16 CPU threads; parity within 0.2\%\\
+\textbf{Speed and audit} & Studies rerun in batch & A million futures in 7.7\,ms on a GPU; identical inputs on CPU and GPU \cite{salmon2011parallel} & 7.7\,ms vs 2.21\,s on 16 CPU threads; parity within 0.2\%\\
 \bottomrule
 \end{tabular}}
 \evidence{Practice: CEA National Electricity Plan 2022--32 and 20th EPS \cite{pib_nep_2023,iep_20th_eps_2022,powerline_20th_eps_2022}; IEA scenario framing \cite{iea_weo_scenarios,iea_weo2025_scenarios_commentary}. Our results: \texttt{outputs/forecast\_national\_regional.csv}, \texttt{india\_fit.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv}, \texttt{presets.csv}, \texttt{timings.csv} \cite{e47_repo}.}
