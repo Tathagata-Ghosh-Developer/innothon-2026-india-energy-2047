@@ -102,9 +102,11 @@ Those draws are independent, so they parallelize well, and the GPU lets the dash
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| 1 CPU thread | 22.7 s |
-| 16 threads | 2.07 s |
-| RTX 3070 Ti Laptop GPU | 7.5 ms |
+| 1 CPU thread | 23.4 s |
+| 16 threads | 2.42 s |
+| RTX 3070 Ti Laptop GPU | 8.4 ms |
+
+Run of 16 November 2026 (`outputs/timings.csv`; the single-thread time is scaled from a 1/16 run).
 
 The GPU kernel builds machine code for sm_86 directly (`86-real`).
 The toolkit (CUDA 13.5) is newer than the driver (CUDA 13.3), so the driver could not JIT-compile its PTX.
@@ -174,3 +176,43 @@ Key arguments:
 - Inverse-MAPE weights from the India backtest: seven short origins give noisy weights.
 
 **Open.** A written query to the organisers asks whether external population and urban projections, a literature urbanisation coefficient, the captive layer and the cross-country check are acceptable as stated.
+
+## D11. Independent code review and fixes (2026-11-16)
+
+An independent review of the India-only core, the Monte Carlo and the allocation found these problems, all now fixed.
+
+| Severity | Finding | Fix |
+| --- | --- | --- |
+| Medium | The base-year anchor was a threshold rule: when the FY2023-24 residual (+0.070 log points) exceeded one residual s.d., the anchor moved to the fitted value plus the mean residual of the last three years. A threshold switch makes the forecast jump with a small change in the data, and the ensemble carried no model error, so its near-term band was too narrow: the FY2024-25 holdout fell outside the 90 percent range. | The Monte Carlo carries an AR(1) residual of ln(kWh per person) that starts at the FY2023-24 residual and reverts to the fitted relation, with persistence rho = 1 - DW / 2 = 0.51 and innovation s.d. = residual s.d. x sqrt(1 - rho^2) = 0.032. Central paths use the expected residual path. The anchor rule is removed (`anchor_shift` = 0 in `outputs/india_fit.csv`). |
+| Medium | Several organiser GSDP values are copied unchanged from the previous year (Telangana, Jammu and Kashmir, Andaman and Nicobar Islands and Lakshadweep for 2006 to 2010, Nagaland for 2007). Chaining national income growth counted them as zero growth. | Copied values are left out of national income growth; population growth still uses every matched state. The 2011 price-base splice now requires both neighbouring years. |
+| Low | The bootstrap resampled every residual, including the pandemic year whose residual is zero by construction, without a degrees-of-freedom correction, which understates the spread. | It resamples the residuals of the years without the dummy, rescaled by the square root of (pooled residuals) / (years minus regressors). |
+| Low | The first-difference elasticity of the spliced window used the imputed 2011 change, which is not observed. | That change is left out. |
+| Low | The urbanisation prior was censored at zero (negative draws set to zero), which puts a point mass at gamma = 0. | Negative draws are redrawn (a truncated normal). |
+| Low | The persistence of income-growth shocks paired years across the gap left by the pandemic years. | Only consecutive retained years are paired. |
+| Low | The cost-CO2 trade-off sweep inherited the policy's carbon price, so the cap's dual was net of that price. | The sweep sets the carbon price to zero; the cap's dual is the marginal abatement cost of resource cost alone. |
+| Low | If the `std::thread` fallback of the CPU Monte Carlo (builds without OpenMP) could not start a thread, the program terminated; the web build used fewer India bootstrap replicates than the command line, so the browser and the command line could show different parameters. | Workers that cannot be started run on the calling thread; the India bootstrap keeps 2,000 replicates in every build. |
+| Low | The dashboard switched to a requested forecast core before it had loaded, so a failed load could leave the page without controls; the national chart reset its year axis on every frame, so it could not be zoomed; the elasticity-decline control went up to 0.5. | The current core stays on screen until the new one has loaded; the year axis is set once; the decline control is capped at 0.3. |
+
+**Checks added.**
+
+- `tests/test_india.cpp`: copied GSDP rows are ignored, and both holdout years fall inside the model's 90 percent range.
+- `tests/test_pareto.cpp` (new with the CO2 cap): slack and binding caps, the cap's dual against the finite-difference slope, a monotone frontier.
+- `tests/test_mc_parity.cpp` now exercises the model-error path on the CPU and the GPU.
+- The test suite has five tests (mc_parity including the GPU, allocation, storage, pareto, india).
+- The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and synccheck tools with no errors.
+
+**Effect on results** (`outputs/` of 16 Nov 2026; the earlier values are the copies committed in `docs/beamer/data/` with b3d6754).
+
+| Quantity | Before | After |
+| --- | --- | --- |
+| FY2047-48 median (P5 to P95), TWh | 4,894 (3,248 to 7,526) | 4,703 (3,217 to 7,002) |
+| Elasticity, FY2006-07 window; first differences | 0.896; 0.869 | 0.866; 0.787 |
+| Elasticity used (bootstrap mixture), median and 90 percent interval | 0.870 (0.747 to 0.950) | 0.850 (0.731 to 0.939) |
+| Holdout errors FY2024-25 / FY2025-26 | -4.0% / +1.6%; FY2024-25 outside the 90 percent range | -3.3% / +0.5%; both inside |
+| Base policy, unmet at the median | 28 TWh (Eastern region) | 0 |
+| Robust policy: cost, CO2, unmet at P90 | 188 bn USD, 1,114 Mt, 1,067 TWh | 176 bn USD, 993 Mt, 638 TWh |
+
+The FY2011-12 elasticity (0.828, s.e. 0.063) does not change.
+The base policy now meets the median requirement, so the case for the Robust policy rests on cost (37 bn USD a year less), CO2 (377 Mt less) and the shortfall at P90 (638 instead of 1,529 TWh), not on adequacy at the median.
+
+**New capability.** The least-cost LP accepts an optional national CO2 cap whose dual is the marginal abatement cost, and an epsilon-constraint sweep traces the cost-CO2 trade-off ([methodology.md](methodology.md), section 6.5; [results.md](results.md), section 3.5).

@@ -39,17 +39,18 @@ The plan below runs to the final evaluation.
 
 1. **Is the forecast compliant with the two-dataset rule?**
    Yes for the core: generation comes from the National Power Portal, population and real GSDP from the Renewable India dataset.
-   Population and urban projections are driver assumptions, and the urbanisation coefficient is a literature prior; the run without it (two datasets only) gives 4,647 TWh, 5 percent below the forecast.
+   Population and urban projections are driver assumptions, and the urbanisation coefficient is a literature prior; the run without it (two datasets only) gives 4,453 TWh, 5 percent below the forecast.
    The cross-country model is shown only as an independent check.
 2. **Why an elasticity of 0.83?**
    It is India's own: generation per person grew 0.83 percent for every 1 percent of real income per person from FY2011-12 to FY2023-24.
-   It holds in growth rates too (0.78), so it is not a spurious trend fit, and it is between 0.78 and 0.90 in every window.
+   It holds in growth rates too (0.78), so it is not a spurious trend fit, and it is between 0.78 and 0.87 in every window and form.
    Part of the early growth was catch-up as power shortages closed, which is why the later window carries half the weight and an elasticity-decline setting is in the dashboard.
 3. **How good is the model on data it has not seen?**
-   FY2024-25 and FY2025-26 were not used: errors -4.0 and +1.6 percent.
-   Rolling backtests from seven origins: 2 percent one year ahead, 8 percent five years ahead.
+   FY2024-25 and FY2025-26 were not used: errors -3.3 and +0.5 percent, both inside the model's 90 percent range.
+   Rolling backtests from seven origins: 2 percent one year ahead, 6 percent five years ahead.
+   The model carries its own error: a persistent residual that starts at FY2023-24 (+0.070 log points) and reverts to the fitted relation.
 4. **Why is the 2047 range so wide?**
-   Mostly income growth: 1.5 points more or less growth a year moves the 2047 median by +32 or -24 percent.
+   Mostly income growth: 1.5 points more or less growth a year moves the 2047 median by +31 or -24 percent.
    Elasticity, urbanisation and population each move it by 0 to 11 percent.
 5. **Is any capacity or consumption data used?**
    No capacity or consumption data enters the forecast.
@@ -57,17 +58,20 @@ The plan below runs to the final evaluation.
    See [data_audit.md](data_audit.md).
 6. **What about captive power?**
    NPP covers utilities.
-   Captive plants generated 224 TWh in FY2023-24 (13 percent more); held at that share, the total is about 5,540 TWh in FY2047-48.
+   Captive plants generated 224 TWh in FY2023-24 (13 percent more); held at that share, the total is about 5,320 TWh in FY2047-48.
 7. **Why does the cross-country model give less (4,528 TWh including captive)?**
    Across 153 countries the elasticity falls with income (0.44 to 0.57 at India's income); India's own data show no decline yet.
-   An elasticity decline of 0.2 per unit of ln income brings the India model to 4,367 TWh.
+   An elasticity decline of 0.2 per unit of ln income brings the India model to 4,197 TWh.
 8. **Where is power needed versus generated?**
    The Western region generates 36 percent of India's conventional power but accounts for 27 percent of the 2047 requirement; the Northern and Southern regions need more than they produce, so corridors must grow.
 9. **What is the binding constraint?**
-   Land for solar and wind, not money.
-   The Robust policy meets the median with no unmet energy, at lower cost and CO2 than the base policy.
-   The P90 needs about 45 percent of the solar potential usable (rooftop, agri-PV) and 3.5 times India's record build rate.
+   Land for solar and wind, not money or build rate.
+   Both the base and the Robust policy meet the median; the Robust policy costs 37 bn USD a year less and emits 377 Mt less CO2 (176 bn USD, 993 Mt).
+   The P90 (6,400 TWh) needs about 45 percent of the solar potential usable (rooftop, agri-PV); at the Robust build rate (2.5 times India's record year) that is enough, while building four times faster without more land still leaves 238 TWh unmet.
 10. **Why use a GPU?**
     The uncertainty analysis is millions of independent scenarios.
-    The GPU runs 4 million in about 30 ms, so the dashboard recomputes live as the jury changes assumptions.
+    The GPU runs 4 million in about 35 ms, so the dashboard recomputes live as the jury changes assumptions.
     The CPU and WebAssembly paths give the same results, checked by the parity test.
+11. **Can CO2 fall further without losing adequacy?**
+    Yes, cheaply: a CO2 cap takes the Robust plan from 993 to 643 Mt a year (35 percent less) for 0.67 bn USD a year more; the marginal abatement cost stays below 4 USD per tonne, as nuclear replaces coal.
+    It stops at 643 Mt because coal reaches its floor, half of its 2024 output in every region (a young fleet).

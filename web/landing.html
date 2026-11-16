@@ -206,6 +206,22 @@
   .legend__swatch--band { background: rgb(70 211 230 / 0.3); }
   .legend__swatch--outline { background: transparent; border: 2px solid var(--color-today); }
 
+  /* Cost-CO2 trade-off chart */
+  .trade { margin-block-start: var(--space-l); }
+  .trade__plot { position: relative; aspect-ratio: 2.618; margin-inline-start: 3.25rem; margin-block-start: var(--space-s); }
+  .trade__svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+  .trade__area { fill: var(--color-accent); fill-opacity: 0.14; }
+  .trade__dot { stroke: var(--color-accent); stroke-width: 7; stroke-linecap: round; }
+  .trade__ytick, .trade__xtick {
+    position: absolute; color: var(--color-ink-3); font-size: var(--text-xs); line-height: 1.2;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .trade__ytick { inset-inline-end: calc(100% + 0.5rem); translate: 0 50%; }
+  .trade__axis { position: relative; block-size: 1.5rem; margin-inline-start: 3.25rem; }
+  .trade__xtick { inset-block-start: 0.35rem; translate: -50% 0; }
+  .trade__xtick:first-child { translate: 0 0; }
+  .trade__xtick:last-child { translate: -100% 0; }
+
   /* KPI tiles */
   .kpi { display: grid; gap: var(--space-2xs); align-content: start; }
   .kpi__value { font-size: var(--text-xl); font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums lining-nums; }
@@ -581,6 +597,33 @@
         </div>
       </div>
     </div>
+    <figure class="panel chart trade" aria-labelledby="trade-caption">
+      <figcaption class="panel__title" id="trade-caption">Cutting CO₂ further: extra cost of the recommended plan</figcaption>
+      <p class="kpi__detail">A national CO₂ cap, tightened step by step, lowers the plan's emissions from <strong class="num">{{plan.tradeoff.co2_first_mt|0}} to {{plan.tradeoff.co2_last_mt|0}} Mt a year</strong> ({{plan.tradeoff.cut_pct|0}}% less) for <strong class="num">{{plan.tradeoff.extra_busd|+1}} bn USD a year</strong> ({{plan.tradeoff.extra_pct|+1}}%). Each extra tonne avoided costs at most <strong class="num">{{plan.tradeoff.max_mac_usd_per_t|0}} USD</strong>. Below {{plan.tradeoff.co2_last_mt|0}} Mt the young coal fleet, kept at {{plan.tradeoff.coal_floor_pct|0}}% of its 2024 output, is the limit, not cost.</p>
+      <div class="trade__plot">
+        <svg class="trade__svg" viewBox="0 -{{plan.tradeoff.ymax|r3}} {{plan.tradeoff.xmax|r3}} {{plan.tradeoff.ymax|r3}}" preserveAspectRatio="none" role="img" aria-labelledby="trade-t trade-d">
+          <title id="trade-t">Extra system cost against CO₂ avoided, recommended plan</title>
+          <desc id="trade-d">From the least-cost plan at {{plan.tradeoff.co2_first_mt|0}} Mt a year, avoiding {{plan.tradeoff.cut_mt|0}} Mt raises the cost by {{plan.tradeoff.extra_busd|2}} bn USD a year; the cost of the last tonne avoided never exceeds {{plan.tradeoff.max_mac_usd_per_t|1}} USD.</desc>
+          <!--each plan.tradeoff.yticks--><path class="fan__grid" vector-effect="non-scaling-stroke" d="M0 -{{@.v|r3}}h{{plan.tradeoff.xmax|r3}}"/><!--/each-->
+          <path class="trade__area" d="M0 0<!--each plan.tradeoff.points-->L{{@.avoided_mt|r3}} -{{@.extra_busd|r3}}<!--/each-->V0Z"/>
+          <path class="fan__median" vector-effect="non-scaling-stroke" d="M<!--each plan.tradeoff.points--> {{@.avoided_mt|r3}} -{{@.extra_busd|r3}}<!--/each-->"/>
+          <!--each plan.tradeoff.points--><path class="trade__dot" vector-effect="non-scaling-stroke" d="M{{@.avoided_mt|r3}} -{{@.extra_busd|r3}}h0"><title>{{@.co2_mt|0}} Mt a year: {{@.extra_busd|+2}} bn USD a year, last tonne {{@.mac_usd_per_t|1}} USD</title></path><!--/each-->
+        </svg>
+        <!--each plan.tradeoff.yticks--><span class="trade__ytick" aria-hidden="true" style="inset-block-end: {{@.pct|r3}}%">{{@.v|2}}</span><!--/each-->
+      </div>
+      <div class="trade__axis" aria-hidden="true"><!--each plan.tradeoff.xticks--><span class="trade__xtick" style="inset-inline-start: {{@.pct|r3}}%">{{@.v|0}}</span><!--/each--></div>
+      <p class="note">Horizontal: CO₂ avoided, Mt a year, below the least-cost plan's {{plan.tradeoff.co2_first_mt|0}} Mt. Vertical: extra cost, bn USD a year. Each point is the least-cost plan under a tighter national CO₂ cap; the cap's shadow price is the cost of the last tonne avoided.</p>
+      <details class="data">
+        <summary class="data__toggle">Show the numbers</summary>
+        <div class="data__scroll" tabindex="0" role="region" aria-labelledby="trade-table-caption">
+          <table class="table">
+            <caption class="table__caption" id="trade-table-caption">Recommended plan under a tightening CO₂ cap</caption>
+            <thead><tr><th class="table__head table__head--num" scope="col">CO₂, Mt a year</th><th class="table__head table__head--num" scope="col">Extra cost, bn USD a year</th><th class="table__head table__head--num" scope="col">Last tonne, USD</th><th class="table__head table__head--num" scope="col">Non-fossil</th><th class="table__head table__head--num" scope="col">Coal</th></tr></thead>
+            <tbody><!--each plan.tradeoff.points--><tr><th class="table__cell table__cell--num" scope="row">{{@.co2_mt|0}}</th><td class="table__cell table__cell--num">{{@.extra_busd|+2}}</td><td class="table__cell table__cell--num">{{@.mac_usd_per_t|1}}</td><td class="table__cell table__cell--num">{{@.nonfossil_pct|1}}%</td><td class="table__cell table__cell--num">{{@.coal_pct|1}}%</td></tr><!--/each--></tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
   </div>
 </section>
 

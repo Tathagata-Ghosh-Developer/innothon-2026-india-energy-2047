@@ -422,6 +422,7 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
   const fs::path path = out / "site_summary.json";
   std::string missing;
   if (!s.robust_plan_ok) missing = "Robust plan";
+  if (s.pareto.size() < 2) missing = "cost-CO2 trade-off";
   if (!s.storage_ok) missing += missing.empty() ? "storage and land" : ", storage and land";
   if (s.holdout.empty() || s.sensitivity.empty() || s.today_year == 0) missing += missing.empty() ? "checks" : ", checks";
   if (!missing.empty()) {
@@ -644,11 +645,31 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.num("levers_solar_land_pct", 100 * s.levers_solar_land).num("levers_build_accel", s.levers_build_accel);
     j.num("levers_unmet_twh", s.levers_unserved).end();
     // Cost-CO2 trade-off of the recommended plan (epsilon-constraint sweep on CO2).
-    j.arr("tradeoff");
-    for (const ParetoPoint& t : s.pareto)
-      j.obj().num("co2_mt", t.co2_mt).num("cost_busd", t.cost_busd).num("mac_usd_per_t", t.marginal_usd_per_t)
-          .num("nonfossil_pct", 100 * t.plan.nonfossil_share()).num("coal_pct", 100 * t.plan.share(kCoal)).end();
-    j.end();
+    // Points are measured from the least-cost plan: CO2 avoided and extra cost.
+    {
+      const ParetoPoint& first = s.pareto.front();
+      const ParetoPoint& last = s.pareto.back();
+      const double cut = first.co2_mt - last.co2_mt, extra = last.cost_busd - first.cost_busd;
+      double max_mac = 0;
+      for (const ParetoPoint& t : s.pareto) max_mac = std::max(max_mac, t.marginal_usd_per_t);
+      const auto [xmax, xstep] = nice_axis(std::max(1e-6, cut));
+      const auto [ymax, ystep] = nice_axis(std::max(1e-6, 1.05 * extra));
+      j.obj("tradeoff");
+      j.num("co2_first_mt", first.co2_mt).num("co2_last_mt", last.co2_mt).num("cut_mt", cut);
+      j.num("cut_pct", 100 * cut / first.co2_mt).num("extra_busd", extra).num("extra_pct", 100 * extra / first.cost_busd);
+      j.num("max_mac_usd_per_t", max_mac).num("coal_last_pct", 100 * last.plan.share(kCoal));
+      j.num("nonfossil_last_pct", 100 * last.plan.nonfossil_share()).num("coal_floor_pct", 100 * s.robust_policy.coal_floor);
+      j.num("xmax", xmax, 3).num("ymax", ymax, 3).arr("xticks");
+      for (double v = 0; v <= xmax + 1e-9; v += xstep) j.obj().num("v", v, 3).num("pct", 100 * v / xmax, 3).end();
+      j.end().arr("yticks");
+      for (double v = 0; v <= ymax + 1e-9; v += ystep) j.obj().num("v", v, 3).num("pct", 100 * v / ymax, 3).end();
+      j.end().arr("points");
+      for (const ParetoPoint& t : s.pareto)
+        j.obj().num("co2_mt", t.co2_mt).num("cost_busd", t.cost_busd).num("avoided_mt", first.co2_mt - t.co2_mt)
+            .num("extra_busd", t.cost_busd - first.cost_busd, 4).num("mac_usd_per_t", t.marginal_usd_per_t)
+            .num("nonfossil_pct", 100 * t.plan.nonfossil_share()).num("coal_pct", 100 * t.plan.share(kCoal)).end();
+      j.end().end();
+    }
     j.end();
 
     const StorageSizing& z = s.robust_storage.total;

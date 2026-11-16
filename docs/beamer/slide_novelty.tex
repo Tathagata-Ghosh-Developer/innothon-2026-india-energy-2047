@@ -1,25 +1,25 @@
 % Slide 5: advances over the state of practice, each with evidence (outputs/ run of 16 Nov 2026).
 {\fontsize{7.4}{8.9}\selectfont
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.22}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.85cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{3.85cm}@{}}
 \toprule
 & \textbf{\color{muted}State of practice} & \textbf{\color{navy}This work} & \textbf{\color{good}Evidence}\\
 \midrule
 \textbf{Demand outlook} & One demand path per year from the 20th Electric Power Survey, plus a flat +5\% case \cite{pib_nep_2023,powerline_nep_scenarios_2023}
- & A full probability distribution from 4.2 million consistent futures & FY2047-48: P5 3,248, median 4,894, P95 7,526\,TWh\\
+ & A full probability distribution from 4.2 million consistent futures & FY2047-48: P5 3,217, median 4,703, P95 7,002\,TWh\\
 \textbf{Long-range method} & 2036--47 values ``by extrapolating\ldots with the application of suitable growth rates'' \cite{powerline_20th_eps_2022}
- & Elasticity of generation per person on income from India's own NPP and state data; saturation tested \cite{yoo2010electricity,wolfram2012energy} & $\beta = 0.83$; holdout errors $-$4.0\% and +1.6\%\\
+ & Elasticity of generation per person on income from India's own NPP and state data; saturation tested \cite{yoo2010electricity,wolfram2012energy} & $\beta = 0.83$; holdout errors $-$3.3\% and +0.5\%, both inside the 90\% range\\
 \textbf{Scenarios} & Conditional scenarios: ``None of the individual WEO scenarios should be regarded as a forecast'' \cite{iea_weo_scenarios}
- & Every input carries a probability; parameter uncertainty from a block bootstrap \cite{kunsch1989jackknife} & Income growth $\pm$1.5 pts moves 2047 by $-$24\% / +32\%\\
+ & Every input carries a probability; parameter uncertainty from a block bootstrap \cite{kunsch1989jackknife} & Income growth $\pm$1.5 pts moves 2047 by $-$24\% / +31\%\\
 \textbf{Planning} & A plan built around one demand path \cite{pib_nep_2023}
- & Robust plan, stress-tested at the 90th-percentile requirement \cite{lempert2003shaping} & Unmet at median 28 $\to$ \textbf{0\,TWh}; cost $-$45\,bn USD/yr\\
-\textbf{Speed and audit} & Studies rerun in batch & A million futures in 7.8\,ms on a GPU; identical inputs on CPU and GPU \cite{salmon2011parallel} & 7.8\,ms vs 7.85\,s on 16 CPU threads; parity within 0.2\%\\
+ & Robust plan, stress-tested at the 90th-percentile requirement \cite{lempert2003shaping} & Unmet at P90 1,529 $\to$ \textbf{638\,TWh}; cost $-$37\,bn USD/yr\\
+\textbf{Speed and audit} & Studies rerun in batch & A million futures in 8.4\,ms on a GPU; identical inputs on CPU and GPU \cite{salmon2011parallel} & 8.4\,ms vs 2.42\,s on 16 CPU threads; parity within 0.2\%\\
 \bottomrule
 \end{tabular}}
 \evidence{Practice: CEA National Electricity Plan 2022--32 and 20th EPS \cite{pib_nep_2023,iep_20th_eps_2022,powerline_20th_eps_2022}; IEA scenario framing \cite{iea_weo_scenarios,iea_weo2025_scenarios_commentary}. Our results: \texttt{outputs/forecast\_national\_regional.csv}, \texttt{india\_fit.csv}, \texttt{holdout.csv}, \texttt{sensitivity\_2047.csv}, \texttt{presets.csv}, \texttt{timings.csv} \cite{e47_repo}.}
 \note{%
 \textbf{How to present.} Read the middle column as our contribution and the right column as the proof. Each row is a claim the jury can check in the dashboard or the repository.\par\medskip
 \textbf{Fair framing of the state of practice.} The CEA plan is a carefully built bottom-up study; its long-range values (2036--37, 2041--42) come from extrapolation with growth rates, and its demand side has a single base path plus a +5\% sensitivity. The IEA explicitly says its scenarios are not forecasts. ExxonMobil's Outlook is a single ``most probable'' projection. None attaches probabilities to electricity demand; that is the gap we fill.\par\medskip
-\textbf{Saturation.} Cross-country studies find per-capita electricity flattening with income (Yoo and Lee 2010) and S-shaped appliance adoption (Wolfram, Shelef and Gertler 2012). India's own data show no decline yet, so saturation enters as a sensitivity: an elasticity falling 0.2 per unit of log income gives 4,367\,TWh ($-$11\%).\par\medskip
-\textbf{Likely question.} \qa{Is the planning row a fair win?}{The robust plan still leaves 1,067\,TWh unmet at P90; we show it rather than hide it (slide 14).}}
+\textbf{Saturation.} Cross-country studies find per-capita electricity flattening with income (Yoo and Lee 2010) and S-shaped appliance adoption (Wolfram, Shelef and Gertler 2012). India's own data show no decline yet, so saturation enters as a sensitivity: an elasticity falling 0.2 per unit of log income gives 4,197\,TWh ($-$11\%).\par\medskip
+\textbf{Likely question.} \qa{Is the planning row a fair win?}{The robust plan still leaves 638\,TWh unmet at P90; we show it rather than hide it (slide 14).}}

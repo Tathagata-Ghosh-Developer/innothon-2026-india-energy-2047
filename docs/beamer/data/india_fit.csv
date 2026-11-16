@@ -3,24 +3,24 @@ window_first,2011,fiscal-year start (2011 = FY2011-12)
 window_last,2023,
 beta,0.827714,income elasticity of NPP generation per person
 beta_se,0.0631323,OLS standard error
-beta_boot_p05,0.747308,"moving-block bootstrap, block 3"
-beta_boot_p50,0.870452,
-beta_boot_p95,0.950272,
+beta_boot_p05,0.731399,"moving-block bootstrap, block 3"
+beta_boot_p50,0.850099,
+beta_boot_p95,0.938921,
 covid_fy2020,-0.0553686,"FY2020-21 dummy, log points"
 resid_sd,0.0366903,
 durbin_watson,0.985985,
 kappa,0.0922485,slope of urban share on ln income over the window
 beta_first_difference,0.781846,"first differences, FY2020-21 and FY2021-22 changes left out"
-beta_full_window,0.895801,FY2006-07..FY2023-24 with the 2011 price-base splice
-beta_full_window_se,0.0338851,
-beta_full_window_first_difference,0.869309,
-kappa_full_window,0.0857397,
+beta_full_window,0.865522,FY2006-07..FY2023-24 with the 2011 price-base splice
+beta_full_window_se,0.031447,
+beta_full_window_first_difference,0.786573,
+kappa_full_window,0.0825895,
 resid_base_year,0.0703687,"residual of the base year (FY2023-24), log points"
-anchor_shift,-0.0427957,base-year anchor moved to fitted + mean residual of FY2021-22..FY2023-24 when |resid| > resid_sd
-splice_growth,0.0426796,imputed ln growth of GSDP per person for 2011
+anchor_shift,0,base-year anchor moved to fitted + mean residual of FY2021-22..FY2023-24 when |resid| > resid_sd
+splice_growth,0.0462977,imputed ln growth of GSDP per person for 2011
 gamma_mean,1,"Liddle 2013 (Environmental Modelling & Software 40:255-266, Table 6); Shahbaz et al. 2016 (Energy Economics 55:52-68, Table 5); Holtedahl & Joutz 2004 (Energy Economics 26:201-224)"
 gamma_sd,0.5,
 captive_share,0.13186,captive / NPP utility generation in the base year (CEA)
 g_hist_mean,0.0495072,mean ln growth of GSDP per person (organiser data)
 g_hist_sd,0.0149689,
-g_hist_rho,0.696877,
+g_hist_rho,0.630476,

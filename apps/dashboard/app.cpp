@@ -456,7 +456,7 @@ void App::tab_forecast() {
     help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), an income path "
          "(real GSDP per person) with persistent and annual shocks, an income elasticity from a block bootstrap of "
          "India's own NPP and organiser data (two estimation windows), a literature urbanisation coefficient, and "
-         "optional new loads. Anchored on FY2023-24 (smoothed over the last three years; see Models).");
+         "optional new loads. Starts from FY2023-24; a model-error term starts at that year's gap to the fitted line and fades out (see Models).");
   else
     help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), a GDP-per-capita "
          "path with persistent and annual shocks, one of three models with bootstrap parameters, and optional new loads. "

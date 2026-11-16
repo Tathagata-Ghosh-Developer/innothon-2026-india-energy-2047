@@ -61,7 +61,7 @@ inline const std::vector<PolicyPreset>& policy_presets() {
       {"Robust",
        "Meets the median requirement with margin: 75% non-fossil, 35% usable solar and 30% wind land (incl. rooftop "
        "and agri-PV), corridors 3x the 2032 plan, nuclear up to 15%, build rates 2.5x the record year, coal floor 50%. "
-       "Meeting the P90 also needs 45% usable solar land at 3.5x build rates (outputs/p90_levers.csv).",
+       "Meeting the P90 also needs 45% of the solar potential usable; 2.5x build rates are then enough (outputs/p90_levers.csv).",
        [](PolicySettings& p) {
          p.nonfossil_min = 0.75;
          p.solar_land = 0.35;

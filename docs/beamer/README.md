@@ -5,8 +5,8 @@ The cross-country model (Ember and World Bank, 153 countries) appears only as an
 
 | File | Contents |
 | --- | --- |
-| `main.pdf` | Presentation, 27 pages: 17 slides, 6 pages of references and 4 backup slides |
-| `reader.pdf` | Reader's edition, 48 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions) |
+| `main.pdf` | Presentation, 28 pages: 18 slides, 6 pages of references and 4 backup slides |
+| `reader.pdf` | Reader's edition, 50 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions) |
 | `midpoint.pdf`, `midpoint.png` | One 16:9 slide for the midpoint review of 18 Nov 2026: approach, findings, roadblocks (PNG rendered at 220 dpi) |
 | `main.tex` | Deck source; `reader.tex` sets a flag and inputs it |
 | `midpoint.tex` | Midpoint slide source (same theme; columns in golden proportion 1 : phi : phi) |
@@ -22,7 +22,7 @@ The cross-country model (Ember and World Bank, 153 countries) appears only as an
 
 | # | Slide | Main numbers from |
 | --- | --- | --- |
-| 1 | Title: 4,894 TWh median utility generation in FY2047-48 | `forecast_national_regional.csv`, `core_comparison.csv` |
+| 1 | Title: 4,703 TWh median utility generation in FY2047-48 | `forecast_national_regional.csv`, `core_comparison.csv` |
 | 2 | The answer on one page | `holdout.csv`, `sensitivity_2047.csv`, `presets.csv` |
 | 3 | Alignment with ExxonMobil's Global Outlook 2026 | `presets.csv` |
 | 4 | The core uses only the two challenge datasets | `india_fit.csv` |
@@ -36,9 +36,10 @@ The cross-country model (Ember and World Bank, 153 countries) appears only as an
 | 12 | Least-cost mix by region, base policy | `strategy_2047.csv`, `corridors_2047.csv`, `presets.csv` |
 | 13 | Stress test of the base plan | `tornado.csv` |
 | 14 | Robust plan vs base plan | `presets.csv`, `p90_levers.csv` |
-| 15 | GPU engine timings | `timings.csv` |
-| 16 | Live dashboard | `docs/img/1_national_forecast.png` |
-| 17 | Recommendations and next steps | slides 10 to 14 |
+| 15 | Cost-CO2 trade-off of the robust plan: deeper cuts cost almost nothing until the coal fleet floor binds | `pareto_2047.csv`, `presets.csv`, `strategy_2047.csv` |
+| 16 | GPU engine timings | `timings.csv` |
+| 17 | Live dashboard | `docs/img/1_national_forecast.png` |
+| 18 | Recommendations and next steps | slides 10 to 15 |
 | B1-B4 | Core vs check; assumptions; preset matrix; data limits | `core_comparison.csv`, `india_fit.csv`, `presets.csv` |
 
 ## Design
@@ -71,6 +72,6 @@ pdftoppm -r 220 -png -singlefile midpoint.pdf midpoint
 
 1. Run `energy2047 <repo_root>` to regenerate the outputs.
 2. Copy `outputs\*.csv` into `data\` (`bootstrap_params.csv` is not needed).
-3. The fan chart (slide 8) and the backtest chart (slide 9) read the CSV files directly. Every other chart and table carries its values inline and names its source file in a comment next to the values: update those values from the new CSV files.
+3. The fan chart (slide 8), the backtest chart (slide 9) and the trade-off chart (slide 15) read the CSV files directly. Every other chart and table carries its values inline and names its source file in a comment next to the values: update those values from the new CSV files.
 4. The regional generation shares on slide 11 come from `data/raw/npp/npp_region_generation_fy.csv` (FY2025-26 totals, Bhutan import excluded).
 5. Rebuild the three PDFs and the PNG, then check every page for clipped or overlapping text.

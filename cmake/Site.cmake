@@ -52,7 +52,12 @@ function(_site_format out value spec)
   # Round half up on the absolute value, in integer units of 10^-dec.
   string(SUBSTRING "${_frac}" 0 ${_dec} _keep)
   string(SUBSTRING "${_frac}" ${_dec} 1 _next)
-  string(REGEX REPLACE "^0+([0-9])" "\\1" _scaled "${_int}${_keep}")
+  # Strip leading zeros one at a time: CMake's REGEX REPLACE applies "^" again after
+  # every match, so "^0+([0-9])" would also eat zeros inside the number ("0103" -> "13").
+  set(_scaled "${_int}${_keep}")
+  while(_scaled MATCHES "^0[0-9]")
+    string(SUBSTRING "${_scaled}" 1 -1 _scaled)
+  endwhile()
   if(_next GREATER_EQUAL 5)
     math(EXPR _scaled "${_scaled} + 1")
   endif()
