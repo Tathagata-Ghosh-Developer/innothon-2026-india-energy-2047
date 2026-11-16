@@ -18,6 +18,10 @@ add_executable(test_india test_india.cpp)
 target_link_libraries(test_india PRIVATE e47_core)
 add_test(NAME india COMMAND test_india ${PROJECT_SOURCE_DIR})
 
+add_executable(test_regions test_regions.cpp)
+target_link_libraries(test_regions PRIVATE e47_core)
+add_test(NAME regions COMMAND test_regions ${PROJECT_SOURCE_DIR})
+
 # Landing-page number formatting (CMake script, no compiler needed).
 add_test(NAME site_format
          COMMAND ${CMAKE_COMMAND} -DSRC=${PROJECT_SOURCE_DIR} -DWORK=${CMAKE_CURRENT_BINARY_DIR}/site_format

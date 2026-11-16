@@ -9,6 +9,7 @@
 #include "../core/csv.hpp"
 #include "../core/philox.hpp"
 #include "../core/stats.hpp"
+#include "../regional/states.hpp"
 
 namespace e47 {
 
@@ -18,6 +19,13 @@ namespace {
 
 constexpr int kTargetYear = 2047;
 constexpr int kRelIncomeYear = 2024;  // latest year of the organiser GSDP data
+// State population paths: each state's growth relative to India's over the dataset's
+// last five years (2019-2024), the window the organisers' consistency condition refers
+// to. kPopLongFrom only adds the long 2011-2024 span to the consistency report, and
+// kPopNear is the near-term check year of that report.
+constexpr int kStateGrowthFrom = 2019;
+constexpr int kPopLongFrom = 2011;
+constexpr int kPopNear = 2030;
 
 // India-only core: fiscal-year start years.
 constexpr int kIndiaFirst = 2006;     // first year with annual NPP generation and organiser data
@@ -240,16 +248,10 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     // residual and reverts to the fitted relation at the estimated speed.
     fit_.anchor_shift = 0.0;
 
-    // Captive generation (outside the NPP utility series): CEA General Review, a
-    // literature layer reported next to the forecast, never inside it.
-    {
-      const CsvTable t = CsvTable::read((r / "data/raw/generation/national/cea_national_generation_fy.csv").string());
-      for (size_t i = 0; i < t.rows(); ++i) {
-        if (t.str(i, t.col("scope")) != "captive" || t.str(i, t.col("source")) != "total") continue;
-        if (static_cast<int>(t.num(i, t.col("fy_end_year"))) != last + 1) continue;
-        fit_.captive_share = t.num(i, t.col("generation_gwh")) / 1000.0 / s.obs.back().gen_twh;
-      }
-    }
+    // Scope is NPP utility generation. Captive generation is outside NPP's series and,
+    // under the organisers' ruling of 16 November 2026 ("Use energy production ... from
+    // the NPP dataset. Do not use any external data for estimation"), it is neither
+    // estimated nor reported.
     fit_.boot = boot_for(ScenarioControls{});
   }
   fit_.convergence = estimate_convergence((r / "data/raw/competition/renewable_energy_dataset.csv").string(), 2006,
@@ -276,6 +278,7 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
       drv_.wpp_high.push_back(interp(high, y));
     }
     drv_.wpp_med.insert(drv_.wpp_med.begin(), interp(med, last));  // index 0 = base year
+    drv_.wpp_med_by_year = med;  // India-level reference growth for the state paths (section 3)
   }
   {
     const CsvTable t = CsvTable::read((r / "data/external/urbanization.csv").string());
@@ -301,82 +304,71 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     }
   }
 
-  // 3. States: Technical Group projections (1 July), grid regions, urban gap, relative income.
+  // 3. States of the regional split, from the challenge data only (organisers' ruling
+  //    of 16 November 2026): population from the challenge dataset, grid region from
+  //    NPP (the dataset Zone where NPP does not list the state), relative income from
+  //    the organiser GSDP. The challenge data have no state urban share, so the split
+  //    has no state urbanisation term.
+  //
+  //    Population path of state s: its own recent growth relative to the dataset's
+  //    national growth, on top of UN WPP 2024 medium growth for India,
+  //      g_s(y) = g_UN(y) + (g_s,2019-24 - g_India,2019-24),
+  //    starting from the dataset's 2024 population, so
+  //      P_s(y) = P_s(2024) x WPP(y) / WPP(2024) x exp(offset_s (y - 2024)).
+  //    Years align as in the India core: dataset year t is fiscal year t, so the
+  //    dataset's 2024 is FY2024-25, the first projection year after the FY2023-24
+  //    base. Only the shares enter the Monte Carlo (renormalised every year); the
+  //    national population path of the forecast is not changed.
   {
-    std::map<std::string, int> region_of;
-    {
-      const CsvTable t = CsvTable::read((r / "data/external/state_region_map.csv").string());
-      const std::map<std::string, int> idx = {{"Northern", 0}, {"Western", 1}, {"Southern", 2},
-                                              {"Eastern", 3},  {"North-Eastern", 4}};
-      for (size_t i = 0; i < t.rows(); ++i) {
-        auto it = idx.find(t.str(i, t.col("grid_region")));
-        if (it != idx.end() && t.str(i, t.col("row_type")) != "composite")
-          region_of[normalize_state(t.str(i, t.col("state")))] = it->second;
-      }
-    }
-    const CsvTable t = CsvTable::read((r / "data/external/population_projection.csv").string());
-    std::map<std::string, std::map<int, double>> pop, ush;
-    for (size_t i = 0; i < t.rows(); ++i) {
-      if (t.str(i, t.col("variant")) != "Technical Group projection") continue;
-      const std::string date = t.str(i, t.col("reference_date"));
-      if (date.size() < 10 || date.substr(5) != "07-01") continue;
-      const std::string s = normalize_state(t.str(i, t.col("state")));
-      const int y = static_cast<int>(t.num(i, t.col("year")));
-      pop[s][y] = t.num(i, t.col("population"));
-      ush[s][y] = t.num(i, t.col("urban_share"));
-    }
+    const StatePopulation sp =
+        load_state_population((r / "data/raw/competition/renewable_energy_dataset.csv").string(),
+                              (r / "data/raw/npp/npp_state_generation_fy.csv").string());
+    drv_.region_notes = sp.notes;
+    drv_.state_pop_year = sp.last_year;
+    drv_.state_growth_from = kStateGrowthFrom;
+    drv_.state_growth_india = state_population_growth(sp, "", kStateGrowthFrom, sp.last_year);
+    if (!std::isfinite(drv_.state_growth_india))
+      throw std::runtime_error("challenge dataset: no national population growth " + std::to_string(kStateGrowthFrom) +
+                               "-" + std::to_string(sp.last_year));
     std::map<std::string, double> rel;
     for (const auto& si : fit_.convergence.states) {
       auto it = si.ln_rel.find(kRelIncomeYear);
       if (it != si.ln_rel.end()) rel[si.state] = it->second;
     }
-    for (const auto& [s, series] : pop) {
-      if (s == "india") continue;
-      auto rg = region_of.find(s);
-      if (rg == region_of.end()) continue;
-      drv_.states.push_back(s);
-      drv_.state_region.push_back(rg->second);
-      {
-        // State urban share path: projections to the last projected year, then the
-        // 5-year trend continued linearly; expressed as change since the base year.
-        const auto& us = ush.at(s);
-        const int ulast = us.rbegin()->first;
-        const double base_u = interp(us, last);
-        const double slope = (interp(us, ulast) - interp(us, ulast - 5)) / 5.0;
-        std::vector<double> delta;
-        for (int y : drv_.years) {
-          const double u = y <= ulast ? interp(us, y) : std::min(0.95, interp(us, ulast) + slope * (y - ulast));
-          delta.push_back(u - base_u);
-        }
-        drv_.state_urb_delta.push_back(std::move(delta));
+    for (const StateRecord& rec : sp.states) {
+      drv_.states.push_back(rec.state);
+      drv_.state_region.push_back(rec.region);
+      drv_.state_region_from.push_back(rec.region_from);
+      drv_.state_pop_data.push_back(rec.pop);
+      double offset = state_population_growth(sp, rec.state, kStateGrowthFrom, sp.last_year) - drv_.state_growth_india;
+      if (!std::isfinite(offset)) {
+        drv_.region_notes.push_back(rec.state + ": no population for " + std::to_string(kStateGrowthFrom) +
+                                    "; grows at the national rate");
+        offset = 0;
       }
-      double lr = 0;
-      if (rel.count(s))
-        lr = rel[s];
-      else if (s == "ladakh" && rel.count("jammu and kashmir"))
-        lr = rel["jammu and kashmir"];
-      drv_.state_ln_rel_income.push_back(lr);
+      drv_.state_growth_offset.push_back(offset);
+      auto it = rel.find(rec.state);
+      if (it == rel.end())
+        drv_.region_notes.push_back(rec.state + ": no GSDP for " + std::to_string(kRelIncomeYear) +
+                                    "; national income per person assumed");
+      drv_.state_ln_rel_income.push_back(it == rel.end() ? 0.0 : it->second);
     }
     if (drv_.states.size() > static_cast<size_t>(kMaxStates)) throw std::runtime_error("too many states");
-    // Shares by year; beyond the last projected year, extend each state's 5-year log-share trend.
-    const int tg_last = pop.at("india").rbegin()->first;
     const size_t ns = drv_.states.size();
+    const double un_start = interp(drv_.wpp_med_by_year, sp.last_year);
+    drv_.state_pop.assign(ns, std::vector<double>(drv_.years.size(), 0.0));
     drv_.state_pop_share.assign(ns, std::vector<double>(drv_.years.size(), 0.0));
     for (size_t t_i = 0; t_i < drv_.years.size(); ++t_i) {
       const int y = drv_.years[t_i];
+      const double un_ratio = interp(drv_.wpp_med_by_year, y) / un_start;
       double total = 0;
-      std::vector<double> v(ns);
       for (size_t k = 0; k < ns; ++k) {
-        const auto& ser = pop.at(drv_.states[k]);
-        if (y <= tg_last) {
-          v[k] = interp(ser, y);
-        } else {
-          const double a = interp(ser, tg_last - 5), b = interp(ser, tg_last);
-          v[k] = b * std::pow(b / a, (y - tg_last) / 5.0);
-        }
-        total += v[k];
+        const double v = drv_.state_pop_data[k].at(sp.last_year) * un_ratio *
+                         std::exp(drv_.state_growth_offset[k] * (y - sp.last_year));
+        drv_.state_pop[k][t_i] = v;
+        total += v;
       }
-      for (size_t k = 0; k < ns; ++k) drv_.state_pop_share[k][t_i] = v[k] / total;
+      for (size_t k = 0; k < ns; ++k) drv_.state_pop_share[k][t_i] = drv_.state_pop[k][t_i] / total;
     }
   }
 
@@ -470,10 +462,7 @@ McInputs Pipeline::build_inputs(const ScenarioControls& c) const {
   for (int s = 0; s < in.n_states; ++s) {
     in.state_region[s] = drv_.state_region[s];
     in.state_ln_rel_income[s] = static_cast<float>(drv_.state_ln_rel_income[s]);
-    for (int t = 0; t < n; ++t) {
-      in.state_pop_share[s][t] = static_cast<float>(drv_.state_pop_share[s][t]);
-      in.state_urb_delta[s][t] = static_cast<float>(drv_.state_urb_delta[s][t]);
-    }
+    for (int t = 0; t < n; ++t) in.state_pop_share[s][t] = static_cast<float>(drv_.state_pop_share[s][t]);
   }
   in.conv_mean = static_cast<float>(fit_.convergence.lambda);
   in.conv_sd = static_cast<float>(fit_.convergence.lambda_se);
@@ -532,6 +521,95 @@ ForecastResult Pipeline::forecast(const ScenarioControls& c) const {
     f.central[2][t] = std::exp(damped_forecast(fit_.damped, static_cast<int>(t) + 1));
   }
   return f;
+}
+
+PopulationConsistency Pipeline::population_consistency() const {
+  PopulationConsistency pc;
+  pc.long_from = kPopLongFrom;
+  pc.recent_from = drv_.state_growth_from;
+  pc.base = drv_.state_pop_year;
+  pc.near = kPopNear;
+  pc.target = kTargetYear;
+  // Compound annual growth rate between two levels; NaN when either is missing.
+  const auto cagr = [](double a, double b, int years) {
+    return (a > 0 && b > 0 && years > 0) ? std::pow(b / a, 1.0 / years) - 1.0 : kNaN;
+  };
+  const auto& un = drv_.wpp_med_by_year;
+  const auto un_cagr = [&](int from, int to) { return cagr(interp(un, from), interp(un, to), to - from); };
+  pc.un_long = un_cagr(pc.long_from, pc.base);
+  pc.un_recent = un_cagr(pc.recent_from, pc.base);
+  pc.un_near = un_cagr(pc.base, pc.near);
+  pc.un_target = un_cagr(pc.base, pc.target);
+
+  // Technical Group projections (1 July), reference column only: never used by the model.
+  std::map<std::string, std::map<int, double>> tg;
+  {
+    const CsvTable t = CsvTable::read((fs::path(root_) / "data/external/population_projection.csv").string());
+    for (size_t i = 0; i < t.rows(); ++i) {
+      if (t.str(i, t.col("variant")) != "Technical Group projection") continue;
+      const std::string date = t.str(i, t.col("reference_date"));
+      if (date.size() < 10 || date.substr(5) != "07-01") continue;
+      tg[normalize_state(t.str(i, t.col("state")))][static_cast<int>(t.num(i, t.col("year")))] =
+          t.num(i, t.col("population"));
+    }
+  }
+  const auto tg_cagr = [&](const std::string& s) {
+    auto it = tg.find(s);
+    if (it == tg.end() || !it->second.count(pc.base) || !it->second.count(pc.near)) return kNaN;
+    return cagr(it->second.at(pc.base), it->second.at(pc.near), pc.near - pc.base);
+  };
+  // Index of a projection year in drv_.years; -1 if it is not projected.
+  const auto year_index = [&](int y) {
+    auto it = std::find(drv_.years.begin(), drv_.years.end(), y);
+    return it == drv_.years.end() ? -1 : static_cast<int>(it - drv_.years.begin());
+  };
+  const int i_base = year_index(pc.base), i_near = year_index(pc.near), i_target = year_index(pc.target);
+  const auto level = [](const std::vector<double>& path, int i) { return i >= 0 ? path[i] : kNaN; };
+  const auto data_cagr = [&](const std::map<int, double>& p, int from, int to) {
+    auto a = p.find(from), b = p.find(to);
+    return (a == p.end() || b == p.end()) ? kNaN : cagr(a->second, b->second, to - from);
+  };
+
+  // India: the dataset over the states reported in both years; the model path is the
+  // forecast's population input (base-year dataset level x UN WPP 2024 medium ratio).
+  {
+    PopulationGrowth g;
+    g.area = "India";
+    double long0 = 0, long1 = 0, recent0 = 0, recent1 = 0;  // sums over the states reported in both years
+    for (const auto& p : drv_.state_pop_data) {
+      g.pop_base += p.at(pc.base);
+      if (p.count(pc.long_from)) long0 += p.at(pc.long_from), long1 += p.at(pc.base);
+      if (p.count(pc.recent_from)) recent0 += p.at(pc.recent_from), recent1 += p.at(pc.base);
+    }
+    g.share_base = g.share_target = 1.0;
+    g.data_long = cagr(long0, long1, pc.base - pc.long_from);
+    g.data_recent = cagr(recent0, recent1, pc.base - pc.recent_from);
+    const double h_pop = fit_.history.back().pop;
+    std::vector<double> national(drv_.years.size());
+    for (size_t t = 0; t < drv_.years.size(); ++t) national[t] = h_pop * drv_.wpp_med[t + 1] / drv_.wpp_med[0];
+    g.model_near = cagr(level(national, i_base), level(national, i_near), pc.near - pc.base);
+    g.model_target = cagr(level(national, i_base), level(national, i_target), pc.target - pc.base);
+    g.tg_near = tg_cagr("india");
+    pc.rows.push_back(g);
+  }
+  // States: the dataset's own series and the projected paths of the regional split.
+  const double total_base = pc.rows.front().pop_base;
+  for (size_t k = 0; k < drv_.states.size(); ++k) {
+    PopulationGrowth g;
+    g.area = drv_.states[k];
+    g.region = region_name(drv_.state_region[k]);
+    g.region_from = drv_.state_region_from[k];
+    g.pop_base = drv_.state_pop_data[k].at(pc.base);
+    g.share_base = g.pop_base / total_base;
+    g.share_target = level(drv_.state_pop_share[k], i_target);
+    g.data_long = data_cagr(drv_.state_pop_data[k], pc.long_from, pc.base);
+    g.data_recent = data_cagr(drv_.state_pop_data[k], pc.recent_from, pc.base);
+    g.model_near = cagr(level(drv_.state_pop[k], i_base), level(drv_.state_pop[k], i_near), pc.near - pc.base);
+    g.model_target = cagr(level(drv_.state_pop[k], i_base), level(drv_.state_pop[k], i_target), pc.target - pc.base);
+    g.tg_near = tg_cagr(drv_.states[k]);
+    pc.rows.push_back(g);
+  }
+  return pc;
 }
 
 StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const {

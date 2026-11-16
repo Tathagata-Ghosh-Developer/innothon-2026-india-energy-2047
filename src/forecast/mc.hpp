@@ -75,15 +75,13 @@ struct McInputs {
   // Optional new loads (green hydrogen, data centres), TWh in the final year, linear ramp
   float addon_lo, addon_hi;
 
-  // Regional split
+  // Regional split: state population and relative income only. The challenge data
+  // have no state urban share, so the split has no state urbanisation term; the
+  // national urban effect is already in the national total being split.
   int n_states;
   int state_region[kMaxStates];
   float state_pop_share[kMaxStates][kMaxYears];  // share of national population
   float state_ln_rel_income[kMaxStates];         // ln(state GDP pc / national GDP pc) at base
-  // Change in each state's urban share since the base year (state projections).
-  // Base-year urban levels do not enter the split: the urban coefficient is a
-  // within-country (over time) effect, not a cross-state one.
-  float state_urb_delta[kMaxStates][kMaxYears];
   float conv_mean, conv_sd;                      // convergence speed of relative income, per year
   float rel_income_lag;                          // years between the relative-income year and base_year
 
@@ -103,16 +101,16 @@ E47_HD const float* quad_params(int model, const float* p, int quad_only) {
   return (model == kFeGompertz && quad_only) ? p + 4 : p;
 }
 
-// Per-state log index of generation per person, up to terms common to all states.
-// u is the change in the state's urban share since the base year.
+// Per-state log index of generation per person from the state's income, up to terms
+// common to all states (the urban term is common: there is no state urban share).
 template <class Real>
-E47_HD Real state_log_index(int model, const float* p, Real y_k, Real u, int quad_only) {
+E47_HD Real state_log_index(int model, const float* p, Real y_k, int quad_only) {
   using std::exp;
   using std::log;
-  if (model == kFeGompertz && !quad_only) return -Real(p[4]) * exp(-Real(p[5]) * y_k) + Real(p[6]) * u;
+  if (model == kFeGompertz && !quad_only) return -Real(p[4]) * exp(-Real(p[5]) * y_k);
   const float* q = quad_params(model, p, quad_only);
   const Real x = log(y_k * Real(0.1));  // ln(y / 10) with y in thousands (any currency; only changes matter)
-  return Real(q[0]) * x + Real(q[1]) * x * x + Real(q[2]) * u;
+  return Real(q[0]) * x + Real(q[1]) * x * x;
 }
 
 // Model choice is shared by each group of 32 consecutive draws (one GPU warp),
@@ -194,15 +192,14 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
     emit(0, t, gen);
 
     if (in.n_states > 0) {
-      // Regional requirement share: population x per-person index from the same response.
+      // Regional requirement share: population x per-person index from the same income response.
       const int rmodel = model == kDamped ? kFeQuad : model;
       Real reg[kRegions] = {0, 0, 0, 0, 0};
       Real total = 0;
       const Real decay = exp(-lambda * (Real(t + 1) + Real(in.rel_income_lag)));
       for (int s = 0; s < in.n_states; ++s) {
         const Real ys = y * exp(Real(in.state_ln_rel_income[s]) * decay);
-        const Real dus = Real(in.state_urb_delta[s][t]);
-        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, dus, in.quad_only));
+        const Real w = Real(in.state_pop_share[s][t]) * exp(state_log_index<Real>(rmodel, p, ys, in.quad_only));
         reg[in.state_region[s]] += w;
         total += w;
       }

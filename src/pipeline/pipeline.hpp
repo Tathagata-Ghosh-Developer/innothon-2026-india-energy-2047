@@ -3,11 +3,13 @@
 // -> 2047 regional requirement -> generation strategy. Used by the command-line
 // tool and the dashboard.
 #include <array>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "../allocation/allocate.hpp"
 #include "../allocation/storage.hpp"
+#include "../core/csv.hpp"  // kNaN
 #include "../forecast/backtest.hpp"
 #include "../forecast/india.hpp"
 #include "../forecast/mc.hpp"
@@ -30,10 +32,12 @@ constexpr int kDefaultBootstrapReplicates = 2000;
 // Forecast core.
 //   kIndia (primary): NPP generation and the organiser state data only; urban
 //     share and population paths are external drivers.
-//   kCrossCountry (secondary check): 153-country Ember/World Bank panel.
+//   kCrossCountry: 153-country Ember/World Bank panel, an independent check used
+//     for justification, not for estimation (organisers' ruling of 16 November 2026).
 enum class CoreModel : int { kIndia = 0, kCrossCountry = 1 };
 inline const char* core_name(CoreModel c) {
-  return c == CoreModel::kIndia ? "India-only (NPP + organiser data)" : "Cross-country panel (secondary check)";
+  return c == CoreModel::kIndia ? "India-only (NPP + organiser data)"
+                                : "Cross-country panel (independent check used for justification, not for estimation)";
 }
 
 // Scenario settings exposed in the dashboard.
@@ -65,16 +69,26 @@ struct DriverData {
   int base_year = 0;
   std::vector<int> years;                       // projection years
   std::vector<double> wpp_med, wpp_low, wpp_high;  // persons
+  std::map<int, double> wpp_med_by_year;         // UN WPP 2024 medium, India, every year in the file (persons)
   std::vector<double> wup;                      // urban share, fraction (UN WUP 2018, national definition)
   double wup_base = 0;
   double g_hist_mean = 0, g_hist_sd = 0, g_hist_rho = 0;
   int g_hist_from = 0, g_hist_to = 0;
-  // States
+  // States of the regional split, from the challenge data only (see the constructor).
+  // The challenge data have no state urban share, so the split has no state
+  // urbanisation term; the national urban effect stays in the national total.
   std::vector<std::string> states;
   std::vector<int> state_region;
-  std::vector<std::vector<double>> state_pop_share;  // [state][t]
+  std::vector<std::string> state_region_from;         // "NPP" or "dataset zone"
+  std::vector<std::map<int, double>> state_pop_data;  // challenge dataset: year -> persons
+  int state_pop_year = 0;          // last dataset year (2024): where the state paths start
+  int state_growth_from = 0;       // start of the recent-growth window (2019)
+  double state_growth_india = 0;   // dataset ln growth of India's population per year over that window
+  std::vector<double> state_growth_offset;           // state's ln growth over the window minus India's
+  std::vector<std::vector<double>> state_pop;        // [state][t] projected persons
+  std::vector<std::vector<double>> state_pop_share;  // [state][t], sums to 1 every year
   std::vector<double> state_ln_rel_income;
-  std::vector<std::vector<double>> state_urb_delta;  // [state][t], change since base year
+  std::vector<std::string> region_notes;  // how states were mapped to grid regions
   // Published generation projections for comparison (CEA NEP 2022-32, gross generation, TWh).
   // x = fiscal-year midpoint (e.g. 2026-27 -> 2026.75).
   std::vector<std::pair<double, double>> nep_generation;
@@ -92,8 +106,7 @@ struct Fitted {
   std::vector<double> india_gamma;  // prior draws, one per replicate
   double gamma_mean = 0, gamma_sd = 0;
   std::string gamma_source;
-  double captive_share = 0;  // captive / utility generation in the base year (CEA, literature layer)
-  double anchor_shift = 0;   // retired (always 0): the base-year residual now decays through the AR(1) model error
+  double anchor_shift = 0;  // retired (always 0): the base-year residual now decays through the AR(1) model error
   // Cross-country core
   Panel panel;
   Design design;
@@ -136,6 +149,27 @@ struct StrategyResult {
   StorageLandResult storage;
 };
 
+// Population growth check (organisers' ruling of 16 November 2026: external
+// projections must be "reasonably consistent with the state-level population growth
+// provided in the GitHub dataset"). Compound annual growth rates as fractions per
+// year; NaN where a span is not available.
+struct PopulationGrowth {
+  std::string area;         // "India" or the state (normalised name)
+  std::string region;       // grid region; empty for India
+  std::string region_from;  // "NPP" or "dataset zone"; empty for India
+  double pop_base = 0;      // challenge dataset, year `base` (India: sum over the states)
+  double share_base = 0, share_target = 0;  // share of the states' total in `base` and `target`
+  double data_long = kNaN, data_recent = kNaN;   // dataset: long_from..base, recent_from..base
+  double model_near = kNaN, model_target = kNaN;  // model path: base..near, base..target
+  double tg_near = kNaN;  // Technical Group projection base..near: a reference column only, not used
+};
+
+struct PopulationConsistency {
+  int long_from = 0, recent_from = 0, base = 0, near = 0, target = 0;
+  double un_long = kNaN, un_recent = kNaN, un_near = kNaN, un_target = kNaN;  // UN WPP 2024 medium, India
+  std::vector<PopulationGrowth> rows;  // India first, then the states
+};
+
 class Pipeline {
  public:
   explicit Pipeline(std::string repo_root, CoreModel core = CoreModel::kIndia,
@@ -152,6 +186,12 @@ class Pipeline {
   McInputs build_inputs(const ScenarioControls& c) const;
   ForecastResult forecast(const ScenarioControls& c) const;
   StrategyResult strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const;
+
+  // Growth of the challenge dataset's populations against the model's population
+  // paths and UN WPP 2024 (outputs/population_consistency.csv). India's model path is
+  // the forecast's population input; a state's path is its projected population.
+  // Reads the Technical Group projections for the reference column only.
+  PopulationConsistency population_consistency() const;
 
  private:
   std::string root_;

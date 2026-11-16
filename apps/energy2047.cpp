@@ -315,6 +315,62 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
               si.bench_energy_gwh / (si.bench_generation_twh * si.bench_vre_share));
 }
 
+// outputs/population_consistency.csv: growth of the challenge dataset's state and
+// national populations against the model's population paths and UN WPP 2024 (the
+// organisers' condition that external projections be "reasonably consistent with the
+// state-level population growth provided in the GitHub dataset"). Rates are compound
+// annual growth in percent a year; an empty cell means the span is not available.
+// The Technical Group column is a reference only: the model does not read it.
+void write_population_consistency(const fs::path& out, const Pipeline& pl) {
+  const PopulationConsistency pc = pl.population_consistency();
+  const DriverData& drv = pl.drivers();
+  const auto span = [](const char* what, int a, int b) {
+    return std::string(what) + "_cagr_pct_" + std::to_string(a) + "_" + std::to_string(b);
+  };
+  CsvWriter w((out / "population_consistency.csv").string());
+  w.field("area").field("grid_region").field("region_from").field("population_" + std::to_string(pc.base));
+  w.field("share_pct_" + std::to_string(pc.base)).field("share_pct_" + std::to_string(pc.target));
+  w.field(span("dataset", pc.long_from, pc.base)).field(span("dataset", pc.recent_from, pc.base));
+  w.field(span("model", pc.base, pc.near)).field(span("model", pc.base, pc.target));
+  w.field(span("un_wpp2024_india", pc.long_from, pc.base)).field(span("un_wpp2024_india", pc.recent_from, pc.base));
+  w.field(span("un_wpp2024_india", pc.base, pc.near)).field(span("un_wpp2024_india", pc.base, pc.target));
+  w.field(span("technical_group_reference", pc.base, pc.near));
+  w.endrow();
+  for (const PopulationGrowth& g : pc.rows) {
+    w.field(g.area).field(g.region).field(g.region_from).field(g.pop_base, 12);
+    w.field(100 * g.share_base, 6).field(100 * g.share_target, 6);
+    w.field(100 * g.data_long, 5).field(100 * g.data_recent, 5).field(100 * g.model_near, 5).field(100 * g.model_target, 5);
+    w.field(100 * pc.un_long, 5).field(100 * pc.un_recent, 5).field(100 * pc.un_near, 5).field(100 * pc.un_target, 5);
+    w.field(100 * g.tg_near, 5);
+    w.endrow();
+  }
+
+  // Short summary: India against the dataset and UN; how far each state's path for the
+  // next six years is from its own recent growth; the range of state paths to 2047.
+  const PopulationGrowth& india = pc.rows.front();
+  std::printf("population (compound growth, %% a year; challenge dataset | model path | UN WPP 2024 medium):\n");
+  std::printf("  India: dataset %d-%d %.2f, %d-%d %.2f | model %d-%d %.2f, %d-%d %.2f | UN %d-%d %.2f, %d-%d %.2f, "
+              "%d-%d %.2f\n",
+              pc.long_from, pc.base, 100 * india.data_long, pc.recent_from, pc.base, 100 * india.data_recent, pc.base,
+              pc.near, 100 * india.model_near, pc.base, pc.target, 100 * india.model_target, pc.recent_from, pc.base,
+              100 * pc.un_recent, pc.base, pc.near, 100 * pc.un_near, pc.base, pc.target, 100 * pc.un_target);
+  double worst = 0, lo = 1, hi = -1;
+  std::string worst_s, lo_s, hi_s;
+  for (size_t k = 1; k < pc.rows.size(); ++k) {
+    const PopulationGrowth& g = pc.rows[k];
+    if (std::abs(g.model_near - g.data_recent) > worst) worst = std::abs(g.model_near - g.data_recent), worst_s = g.area;
+    if (g.model_target < lo) lo = g.model_target, lo_s = g.area;
+    if (g.model_target > hi) hi = g.model_target, hi_s = g.area;
+  }
+  std::printf("  %zu states: g_state = g_UN + (g_state - g_India over %d-%d); paths %d-%d within %.2f points of each "
+              "state's own %d-%d growth (widest: %s); %d-%d from %.2f (%s) to %.2f (%s)\n",
+              pc.rows.size() - 1, drv.state_growth_from, drv.state_pop_year, pc.base, pc.near, 100 * worst,
+              pc.recent_from, pc.base, worst_s.c_str(), pc.base, pc.target, 100 * lo, lo_s.c_str(), 100 * hi,
+              hi_s.c_str());
+  std::printf("  grid regions: NPP state file; dataset zone where NPP lists no state (Central -> Western)\n");
+  for (const std::string& n : drv.region_notes) std::printf("    %s\n", n.c_str());
+}
+
 // Minimal JSON writer. Numbers are written in fixed notation (never exponents) so the
 // web build (cmake/Site.cmake) can round and format them; non-finite numbers become null.
 class JsonOut {
@@ -452,9 +508,9 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
   for (int k = 0; k < 8; ++k) j.num(qn[k], q[k]);
   j.num("multiple_of_base", q[3] / h.gen_twh, 4);
   j.num("growth_pct_per_year", 100 * (std::pow(q[3] / h.gen_twh, 1.0 / (target - h.year)) - 1));
-  j.num("captive_share_pct", 100 * fit.captive_share);
-  j.num("base_with_captive_twh", h.gen_twh * (1 + fit.captive_share));
-  j.num("p50_with_captive_twh", q[3] * (1 + fit.captive_share));
+  // The headline is the country's total in TWh (organisers' ruling of 16 November 2026).
+  j.num("increase_twh", q[3] - h.gen_twh);
+  // Cross-country panel: an independent check used for justification, not for estimation.
   j.num("cross_country_p50_twh", s.cross_country_p50).integer("cross_country_year", s.cross_country_year);
   // Frame of the national chart: years shown and a rounded upper end above the P90 path.
   const auto [ymax, ystep] = nice_axis(1.05 * q[5]);
@@ -714,8 +770,8 @@ int main(int argc, char** argv) {
     std::printf("  first differences: beta %.3f | base-year residual %+.4f\n", fi.fd_beta, fi.resid.back());
     std::printf("  full window FY%d-%d (2011 splice imputed %.4f): beta %.3f (se %.3f, first diff %.3f)\n", ff.first,
                 ff.last, fit.india.splice_growth, ff.beta, ff.beta_se, ff.fd_beta);
-    std::printf("  urban excess gamma prior: mean %.2f sd %.2f (%s) | captive/utility FY%d %.3f\n", fit.gamma_mean,
-                fit.gamma_sd, fit.gamma_source.c_str(), fit.history.back().year, fit.captive_share);
+    std::printf("  urban excess gamma prior: mean %.2f sd %.2f (%s)\n", fit.gamma_mean, fit.gamma_sd,
+                fit.gamma_source.c_str());
     {
       // Rolling-origin backtest: mean absolute percentage error by horizon (1..5 years).
       CsvWriter w((out / "backtest_horizon.csv").string());
@@ -771,7 +827,6 @@ int main(int argc, char** argv) {
       row("splice_growth", fit.india.splice_growth, "imputed ln growth of GSDP per person for 2011");
       row("gamma_mean", fit.gamma_mean, fit.gamma_source);
       row("gamma_sd", fit.gamma_sd, "");
-      row("captive_share", fit.captive_share, "captive / NPP utility generation in the base year (CEA)");
       row("g_hist_mean", drv.g_hist_mean, "mean ln growth of GSDP per person (organiser data)");
       row("g_hist_sd", drv.g_hist_sd, "");
       row("g_hist_rho", drv.g_hist_rho, "");
@@ -781,8 +836,10 @@ int main(int argc, char** argv) {
     std::printf("GDP pc growth %d-%d: mean %.4f sd %.4f rho %.2f | convergence lambda %.4f (se %.4f)\n",
                 drv.g_hist_from, drv.g_hist_to, drv.g_hist_mean, drv.g_hist_sd, drv.g_hist_rho,
                 fit.convergence.lambda, fit.convergence.lambda_se);
-    std::printf("states %zu; WPP medium %d %.0f M -> 2047 %.0f M; urban (WUP) %.3f -> %.3f\n", drv.states.size(),
-                drv.base_year, drv.wpp_med.front() / 1e6, drv.wpp_med.back() / 1e6, drv.wup_base, drv.wup.back());
+    std::printf("states %zu (challenge dataset %d); WPP medium %d %.0f M -> 2047 %.0f M; urban (WUP) %.3f -> %.3f\n",
+                drv.states.size(), drv.state_pop_year, drv.base_year, drv.wpp_med.front() / 1e6,
+                drv.wpp_med.back() / 1e6, drv.wup_base, drv.wup.back());
+    write_population_consistency(out, pl);
 
     ScenarioControls c;
     if (argc > 2) c.draws = std::stoull(argv[2]);
@@ -833,8 +890,15 @@ int main(int argc, char** argv) {
     std::printf("  central paths %d: %s %.0f, %s %.0f, %s %.0f TWh\n", f.years[last], fit.model_names[0].c_str(),
                 f.central[0][last], fit.model_names[1].c_str(), f.central[1][last], fit.model_names[2].c_str(),
                 f.central[2][last]);
-    std::printf("  captive layer (literature, same share as FY%d): +%.0f TWh at P50\n", fit.history.back().year,
-                fit.captive_share * f.quant.q[0][last][3]);
+    {
+      // Headline: the country's total in TWh (NPP utility generation), not per person.
+      const auto& q = f.quant.q[0][last];
+      const HistoryPoint& h = fit.history.back();
+      std::printf("  headline: %s needs %.0f TWh (median; 90%% range %.0f-%.0f TWh), +%.0f TWh over the %.0f TWh of %s "
+                  "(NPP utility generation, country total)\n",
+                  fy_label(f.years[last]).c_str(), q[3], q[0], q[6], q[3] - h.gen_twh, h.gen_twh,
+                  fy_label(h.year).c_str());
+    }
     write_forecast(out, pl, f);
     SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
 
@@ -924,7 +988,8 @@ int main(int argc, char** argv) {
       }
     }
 
-    // Secondary check: the cross-country panel core, same scenario settings.
+    // Cross-country panel core, same scenario settings: an independent check used for
+    // justification, not for estimation (organisers' ruling of 16 November 2026).
     {
       Timer t2;
       const Pipeline sec(root.string(), CoreModel::kCrossCountry);
@@ -942,17 +1007,12 @@ int main(int argc, char** argv) {
       w.field(fit.history.back().year).field(fit.history.back().gen_twh, 6).field(f.years[last]);
       w.field(q1[0], 6).field(q1[3], 6).field(q1[6], 6);
       w.endrow();
-      w.field("India-only + captive layer").field("utility + captive (CEA share held at base year)");
-      w.field(fit.history.back().year).field(fit.history.back().gen_twh * (1 + fit.captive_share), 6).field(f.years[last]);
-      w.field(q1[0] * (1 + fit.captive_share), 6).field(q1[3] * (1 + fit.captive_share), 6);
-      w.field(q1[6] * (1 + fit.captive_share), 6);
-      w.endrow();
-      w.field(core_name(sec.core())).field("Ember total generation incl. captive, calendar year");
+      w.field(core_name(sec.core())).field("Ember total generation (beyond NPP's utility series), calendar year");
       w.field(sec.fitted().history.back().year).field(sec.fitted().history.back().gen_twh, 6).field(r.years[l2]);
       w.field(q2[0], 6).field(q2[3], 6).field(q2[6], 6);
       w.endrow();
-      std::printf("secondary (%s, %.0f ms): %d P5 %.0f P50 %.0f P95 %.0f TWh\n", core_name(sec.core()), t2.ms(),
-                  r.years[l2], q2[0], q2[3], q2[6]);
+      std::printf("%s, %.0f ms: %d P5 %.0f P50 %.0f P95 %.0f TWh\n", core_name(sec.core()), t2.ms(), r.years[l2], q2[0],
+                  q2[3], q2[6]);
       site.cross_country_p50 = q2[3];
       site.cross_country_year = r.years[l2];
     }

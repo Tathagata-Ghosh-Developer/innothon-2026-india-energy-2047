@@ -235,8 +235,8 @@ void App::sidebar() {
                           "population paths are external drivers.");
     ImGui::SameLine();
     ImGui::RadioButton("Cross-country (check)", &c, 1);
-    ImGui::SetItemTooltip("Independent check on non-core data: 153-country Ember / World Bank panel. Calendar years, "
-                          "total generation including captive.");
+    ImGui::SetItemTooltip("Independent check used for justification, not for estimation: 153-country Ember / World "
+                          "Bank panel. Calendar years, total generation beyond NPP's utility series.");
     if (c != (pending_core_ >= 0 ? pending_core_ : core_)) request_core(c);
     if (pending_core_ >= 0) help("Loading the other forecast core...");
   }
@@ -373,7 +373,6 @@ void App::tab_forecast() {
   const auto& q = f.quant.q[0];
   const HistoryPoint& h0 = fit.history.back();
   const double p50 = q[last][3];
-  const double pop47 = f.inputs.pop_med[last] * 1e6;
   const float w = (ImGui::GetContentRegionAvail().x - 3 * ImGui::GetStyle().ItemSpacing.x) / 4;
   stat_card("2047 requirement (median)", with_commas(p50) + " TWh", "Energy generated, P50 of the ensemble", w);
   ImGui::SameLine();
@@ -388,16 +387,11 @@ void App::tab_forecast() {
   stat_card(("Growth vs " + base_label).c_str(), buf, ("Multiple of " + base_label + " generation, compound rate").c_str(),
             w);
   ImGui::SameLine();
-  std::snprintf(buf, sizeof buf, "%s kWh", with_commas(p50 * 1e9 / pop47).c_str());
-  stat_card(india ? "Per person, 2047 (organiser population)" : "Per person, 2047", buf, (base_label + ": " + with_commas(h0.gen_twh * 1e9 / h0.pop) + " kWh").c_str(), w);
-  if (india) {
-    std::snprintf(buf, sizeof buf,
-                  "Scope: NPP utility generation. Captive plants (outside NPP; CEA, %.1f%% of utility generation in "
-                  "%s, share held): +%s TWh at P50, total %s TWh.",
-                  100 * fit.captive_share, base_label.c_str(), with_commas(fit.captive_share * p50).c_str(),
-                  with_commas((1 + fit.captive_share) * p50).c_str());
-    help(buf);
-  }
+  // The headline is the country's total in TWh, so the last card is the increase in TWh.
+  std::snprintf(buf, sizeof buf, "%s%s TWh", p50 >= h0.gen_twh ? "+" : "", with_commas(p50 - h0.gen_twh).c_str());
+  stat_card(("Increase over " + base_label).c_str(), buf,
+            ("2047 median minus " + with_commas(h0.gen_twh) + " TWh generated in " + base_label).c_str(), w);
+  if (india) help("Country total of utility generation, the scope of the National Power Portal (NPP) series.");
 
   ImGui::Checkbox("Show model central paths", &show_models_);
   ImGui::SameLine();
@@ -561,9 +555,11 @@ void App::tab_regions() {
     }
     ImGui::EndTable();
   }
-  help("Requirement is driven by each state's population, income and urban share through the same per-person response "
-       "as the national model, then scaled to the national total. It is not where power is generated: today the "
-       "Western and Eastern regions generate more than their share and export to the North.");
+  help("The national total is split by each state's population and income (challenge dataset: population growing at "
+       "the state's own 2019-2024 rate relative to India's; GSDP per person converging) through the same income "
+       "response as the national model; states are placed in the grid regions NPP reports them under. It is not "
+       "where power is generated: today the Western and Eastern regions generate more than their share and export "
+       "to the North.");
 }
 
 void App::tab_mix() {
@@ -1065,19 +1061,24 @@ void App::tab_data() {
         {"All-India generation by source, FY1946-47 to FY2023-24", "National Power Portal (challenge dataset)",
          "Primary forecast: history and elasticity"},
         {"State population and real GSDP, 2006-2024", "Renewable India dataset (challenge dataset; capacity columns not used)",
-         "Primary forecast: income and population; state income convergence"},
+         "Primary forecast: income and population; regional split: state population paths and income convergence"},
+        {"States by grid region", "National Power Portal state generation reports (dataset Zone where NPP lists no state)",
+         "Regional split: state-to-region mapping"},
         {"Region / state conventional generation, monthly, Jul-2018 to Sep-2026", "National Power Portal (CEA 18-column reports)",
          "Holdout check FY2024-26; regional supply today"},
         {"Hourly generation by source, Sep-2025 to Nov-2026", "National Power Portal (Merit India real-time)",
          "Solar and wind profiles, storage sizing"},
         {"Urbanisation coefficient", "Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004", "Literature prior"},
-        {"Captive generation", "CEA General Review 2025", "Reported beside the forecast, never inside it"},
-        {"Electricity generation, 153 countries, 1990-2025", "Ember yearly electricity data", "Secondary check only"},
-        {"GDP per capita PPP, population, urban share", "World Bank WDI", "Secondary check only"},
+        {"Electricity generation, 153 countries, 1990-2025", "Ember yearly electricity data",
+         "Independent check used for justification, not for estimation"},
+        {"GDP per capita PPP, population, urban share", "World Bank WDI",
+         "Independent check used for justification, not for estimation"},
         {"India regional and state generation by source", "Ember India; CEA General Review", "2024 base mix, existing fleets"},
-        {"Population projections 2026-2047", "UN WPP 2024 (medium, low, high)", "National population paths"},
-        {"State population projections 2011-2036", "Technical Group on Population Projections (2020)", "Regional requirement split"},
-        {"Urban share projections", "UN WUP 2018; Technical Group", "Urbanisation paths, state urban gaps"},
+        {"Population projections 2026-2047", "UN WPP 2024 (medium, low, high)",
+         "National population paths; India-level growth on which the state paths are built"},
+        {"State population projections 2011-2036", "Technical Group on Population Projections (2020)",
+         "Reference column in the population consistency table only; not used"},
+        {"Urban share projections", "UN WUP 2018", "National urbanisation path"},
         {"Solar, wind, hydro, bioenergy potential", "NISE, NIWE, CEA reassessment, MNRE", "Upper bounds on generation"},
         {"Capacity factors", "CEA NEP 2022-32; Ember observed", "Potential to generation conversion"},
         {"Costs 2047", "IEA WEO 2025; SECI auctions; CERC", "Least-cost optimisation"},

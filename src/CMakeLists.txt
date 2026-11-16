@@ -6,6 +6,7 @@ add_library(e47_core STATIC
   forecast/india.cpp
   forecast/mc_cpu.cpp
   regional/convergence.cpp
+  regional/states.cpp
   allocation/inputs.cpp
   allocation/allocate.cpp
   allocation/storage.cpp

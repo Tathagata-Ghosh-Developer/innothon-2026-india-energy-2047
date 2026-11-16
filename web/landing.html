@@ -351,8 +351,9 @@
       <p class="hero__value"><span class="hero__number">{{national.p50|0}}</span><span class="hero__unit">TWh</span></p>
       <p class="hero__range">Median of {{scenarios|0}} scenarios. 80% range: <strong class="num">{{national.p10|0}} to {{national.p90|0}} TWh</strong> (P10 to P90).</p>
       <ul class="hero__facts">
-        <li class="hero__fact"><strong class="num">{{national.multiple_of_base|1}} times</strong> the {{national.base_twh|0}} TWh of {{years.base_label}}, about {{national.growth_pct_per_year|1}}% more each year.</li>
-        <li class="hero__fact">Utility generation as published by the National Power Portal. Adding factories' own (captive) plants at today's {{national.captive_share_pct|1}}% share gives <strong class="num">about {{national.p50_with_captive_twh|0}} TWh</strong>.</li>
+        <li class="hero__fact"><strong class="num">{{national.increase_twh|0}} TWh more</strong> than the {{national.base_twh|0}} TWh generated in {{years.base_label}}.</li>
+        <li class="hero__fact"><strong class="num">{{national.multiple_of_base|1}} times</strong> the {{years.base_label}} total, about {{national.growth_pct_per_year|1}}% more each year.</li>
+        <li class="hero__fact">Country total of utility generation, the scope of the National Power Portal (NPP) series.</li>
       </ul>
       <div class="hero__actions">
         <a class="button button--primary" href="app/">Launch the interactive model</a>
@@ -665,8 +666,8 @@
       <h2 class="section__title" id="method-title">How it works</h2>
     </div>
     <ol class="steps">
-      <li class="steps__item">Electricity generated per person is linked to income per person using India's own data: from {{elasticity.from}} to {{elasticity.to}}, each 1% rise in income came with about {{elasticity.beta|2}}% more generation per person.</li>
-      <li class="steps__item">{{scenarios|0}} scenarios of income growth, population, urbanisation and that link give the range for {{years.target_label}}, split by region from each state's population and income.</li>
+      <li class="steps__item">Inside the model, electricity generated per person is linked to income per person using India's own data: from {{elasticity.from}} to {{elasticity.to}}, each 1% rise in income came with about {{elasticity.beta|2}}% more generation per person.</li>
+      <li class="steps__item">{{scenarios|0}} scenarios of income growth, population, urbanisation and that link give the country's total in TWh for {{years.target_label}}, split by region from each state's population and income in the challenge dataset.</li>
       <li class="steps__item">A least-cost planning model then chooses what to build in each region within land, build-rate, policy and transmission limits, and an hour-by-hour check sizes storage and land.</li>
     </ol>
   </section>
@@ -678,7 +679,7 @@
     <div class="stack">
       <p>The core 2047 prediction uses only the two challenge datasets: generation from the National Power Portal (NPP) and the organisers' state population and GSDP.</p>
       <p>Only energy generated (TWh) is forecast and compared; installed capacity and energy consumption are never inputs. Published studies supply only planning limits such as costs, resource potential, build rates and emissions.</p>
-      <p class="note">An independent cross-country model, kept outside the forecast, gives {{national.cross_country_p50_twh|0}} TWh for {{national.cross_country_year}} including captive plants. Years are fiscal years: {{years.target_label}} runs from April {{years.target}} to March of the next year.</p>
+      <p class="note">A cross-country model of 153 countries gives {{national.cross_country_p50_twh|0}} TWh for {{national.cross_country_year}} (calendar year, total generation beyond NPP's utility series); it is an independent check used for justification, not for estimation. Years are fiscal years: {{years.target_label}} runs from April {{years.target}} to March of the next year.</p>
     </div>
   </section>
 </div>
