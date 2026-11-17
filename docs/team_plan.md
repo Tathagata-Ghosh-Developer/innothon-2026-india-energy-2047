@@ -13,7 +13,7 @@ The plan below runs to the final evaluation.
 | Date | Milestone | What must be ready |
 | --- | --- | --- |
 | 16-17 Nov, 18:00-20:00 | Office hours | Send the written query below; get feedback on the method |
-| 18 Nov | Midpoint review (regional model review, sensitivity checks) | One slide: approach, findings, roadblocks ([beamer/midpoint.pdf](beamer/midpoint.pdf)) |
+| 18 Nov | Midpoint review (regional model review, sensitivity checks) | One slide: approach, findings, roadblocks ([beamer/midpoint.pdf](beamer/midpoint.pdf)); 6:00 PM slot; talk script [midpoint_talk.md](midpoint_talk.md), questions [midpoint_qa.md](midpoint_qa.md) |
 | 21-22 Nov | Final evaluation | Defensibility deck, live dashboard demo (deployed URL), recorded backup video |
 | 30 Nov | Prize ceremony | |
 
@@ -38,7 +38,7 @@ The organisers also asked for the headline as the country's total in TWh, not pe
 
 - (a) Generation only or also consumption data: whether the analysis must rest on generation data alone, or whether consumption data may be used anywhere.
 - (b) Whether resource potentials, costs and emission factors may serve as limits and prices inside the mix optimisation.
-- (c) NPP's five grid regions or the challenge dataset's six zones (four blocks) for the regional results.
+- (c) Is the NPP five-region split acceptable, given that the dataset's Zone column has six zones (including Central) and the kickoff mentioned four regional blocks?
 
 ## Workstreams
 
