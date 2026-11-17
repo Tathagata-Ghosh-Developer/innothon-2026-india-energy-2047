@@ -75,6 +75,27 @@ The elasticity already carries the structural change of the past 18 years. Genui
 
 *If pressed:* we have not modelled each new load separately yet. This is planned with the industrial layer before the final.
 
+**11a. How does your forecast compare with CEA's?**
+Against CEA's 20th Electric Power Survey our median is close:
+
+- 2,382 TWh in FY2031-32 against 2,474 (−4%);
+- 3,020 in FY2036-37 against 3,096 (−2%);
+- 3,745 in FY2041-42 against 3,776 (−1%).
+
+CEA has published no 2047 figure. Our 4,703 TWh is inside the 4,100 to 4,800 TWh band that comes from extending CEA's own growth.
+
+**11b. CEA's 2026 review gives about 3,365 BU for 2035-36. You are about 20% lower. Why?**
+Our median for FY2035-36 is 2,884 TWh. CEA's 3,596 BU of gross generation sits at our 95th percentile (3,634), so it is inside our range, at the high end.
+
+- CEA's surveys have run high before: the 18th survey forecast 1,905 BU for 2021-22 against an actual 1,376 (38% high), and the 19th was 12 to 14% high by 2020-22.
+- Our scope is NPP utility generation, without captive plants.
+- Our path is calibrated on actual NPP generation up to FY2025-26.
+
+*If pressed:* the 2026 review figures come from press reports; the CEA document itself is not public yet.
+
+**11c. Your 5th percentile (3,217 TWh) is below every published 2047 figure. Is that credible?**
+Published studies report central cases, not tails. Our 5th percentile is the slow-growth future: income per person growing 1.5 points a year slower than the central path gives about 24% less. We show it so the plan is tested against both ends, not because we expect it.
+
 ## Regions and the mix (Speaker 4)
 
 **12. Why is there no gas in your mix?**
