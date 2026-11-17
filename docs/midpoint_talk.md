@@ -98,7 +98,7 @@ Gaurav will close with our roadblocks and next steps.
 
 ## 5. Roadblocks, questions asked, next steps (Speaker 5, 1:45)
 
-*Cursor: down the right column, then the "Organisers confirmed" line.*
+*Cursor: down the right column, then the "Organisers" line.*
 
 Thank you. The right column lists the roadblocks we hit and what we did about each.
 
@@ -108,7 +108,7 @@ Thank you. The right column lists the roadblocks we hit and what we did about ea
 - Captive power is ruled out, so we use NPP generation only, and the regional split uses the dataset's own state populations.
 - The history includes years of power shortages, which may inflate the elasticity. A declining-elasticity case gives 11 percent less, and it is a control in the dashboard.
 
-We also checked our approach with the organisers in writing. They confirmed that we use generation data only, that published resource and cost data may inform the mix, and that four, five or six regions are all acceptable. So nothing in our approach has to change.
+We also checked our approach with the organisers in writing. They confirmed that we use generation data only, and that four, five or six regions are all acceptable. On the published cost and resource data behind the generation mix, the reply was "use insights from this data source", and we have asked a short follow-up to be sure we read it correctly. Either way, the 2047 requirement itself uses only the two challenge datasets.
 
 Before the final, we will check the plan hour by hour with NPP's solar and wind profiles to size storage, and add an industrial demand layer for the steel and aluminium regions. Everything already runs in a live dashboard where every assumption is a control.
 

@@ -8,6 +8,7 @@ Talk script: [midpoint_talk.md](midpoint_talk.md). Full list of jury questions: 
 **If we do not know.** Say so plainly: "We have not tested that yet; we will add it before the final." Never guess a number.
 
 **Words to use.**
+
 - Say "generation requirement" or "generation", never "demand" or "consumption".
 - Lead with TWh; capacity in GW is not our forecast metric.
 - "2047" means FY2047-48.
@@ -15,15 +16,26 @@ Talk script: [midpoint_talk.md](midpoint_talk.md). Full list of jury questions: 
 ## Data and compliance (Speaker 1)
 
 **1. Do you use any data beyond the two challenge datasets?**
-The forecast is estimated only on NPP generation and the Renewable India state data. Three inputs are assumptions the organisers' ruling allows:
+The forecast is estimated only on NPP generation and the Renewable India state data. Two inputs are assumptions the organisers' ruling allows:
+
 - the UN population path, which matches the dataset's state growth within 0.14 points a year;
-- the urbanisation prior, which is our judgment;
-- costs and resource limits, which are used only in the mix, not in the forecast.
+- the urbanisation prior, which is our judgment.
+
+Published costs, emission factors and resource limits are used only to choose the generation mix, never in the 2047 requirement (see question 2a).
 
 *If pressed:* without the urbanisation prior, the run is purely the two datasets and gives 4,453 TWh, 5% lower.
 
 **2. Do you use installed capacity or consumption anywhere?**
-Not in the forecast. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. The organisers' written answer on this use: "Use insights from this data source".
+Not in the forecast. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. The organisers' written answer on this use was "Use insights from this data source". We read that as allowed in the mix, and we have asked them to confirm.
+
+**2a. Is it within the rules to use published cost and resource data for the mix?**
+
+- At the kickoff, the organisers said publicly available literature may be used for the growth rates and constraints of each energy source; only the 2047 energy prediction must use the two datasets.
+- The two datasets have no costs, emission factors or resource potentials, and their installed capacity may not be used. So a mix justified by cost, energy security and CO2 needs published figures.
+- They decide only the mix; the 2047 requirement uses none of them.
+- Their written reply on this point was "Use insights from this data source", and we have asked a short follow-up to confirm our reading.
+
+*If pressed:* if the organisers rule that these figures may only justify the mix, the 2047 requirement and the regional split do not change; only the way the mix is chosen does.
 
 **3. What about captive power?**
 The organisers ruled that only NPP generation is used, so captive plants are neither estimated nor added. Our 4,703 TWh is India's utility generation in FY2047-48.
@@ -38,6 +50,7 @@ We have 18 years of annual national data. A model with one estimated slope can b
 
 **6. Is 0.83 too high? India had power shortages.**
 It may be slightly high, because part of the early growth was catch-up as shortages closed. That is why:
+
 - the later window, FY2011-12 to FY2023-24, carries half the weight;
 - the dashboard has an elasticity-decline setting: a fall of 0.2 per unit of log income gives 4,197 TWh, 11% lower.
 
@@ -50,6 +63,7 @@ The organisers allow it for justification only, not estimation. It agrees within
 ## Validation and uncertainty (Speaker 3)
 
 **9. How do you know the model works?**
+
 - On two held-back years (FY2024-25, FY2025-26) the errors are −3.3% and +0.5%, both inside the 90% range.
 - Rolling backtests from seven start years give average errors of 2% one year ahead and 6% five years ahead.
 
@@ -70,6 +84,7 @@ At IEA's 2047 cost projections for India, gas generation costs more per MWh than
 
 **13. Why is coal still 22% in 2047?**
 India's coal fleet is young, so the plan keeps at least half of 2024 coal output in each region (the coal floor).
+
 - A CO2 cap brings coal down to 14% and CO2 from 993 to 643 Mt, for only 0.65 bn USD a year more, because nuclear replaces coal.
 - The coal that remains sits at large stations, which suits carbon capture.
 
@@ -80,8 +95,10 @@ It is cost. In the base plan, with less land, nuclear reaches its 10% limit. In 
 Firmed renewables (solar and wind with storage, round-the-clock) are 14.6% of the Robust plan. We also back-calculate total storage from NPP's hourly Merit profiles: about 3,000 GWh, around 6.8 hours. Land for the plan is 19,990 km², 0.61% of India.
 
 **16. Where do costs and limits come from?**
+
 - Costs: IEA WEO 2025 India projections to 2047, and CEA/MNRE tariffs.
 - Resource potentials: MNRE, NIWE and CEA.
+
 Every number has a source row in the repository.
 
 **17. What about transmission?**
@@ -93,6 +110,7 @@ The plan has inter-regional corridors with losses. The Robust plan allows three 
 The uncertainty is millions of independent futures. The GPU runs a million in 7.7 ms, against 2.21 s on 16 CPU threads. So the dashboard recomputes live when someone changes an assumption. CPU and GPU results agree within 0.2%, checked by an automated parity test.
 
 **19. What is left before the final?**
+
 - Check the plan hour by hour with NPP's Merit profiles.
 - Add an industrial demand layer for the steel and aluminium regions.
 - Rehearse the live demo.
