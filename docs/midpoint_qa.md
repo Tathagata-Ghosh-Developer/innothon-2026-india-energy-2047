@@ -16,6 +16,7 @@ Talk script: [midpoint_talk.md](midpoint_talk.md). Full list of jury questions: 
 ## Data and compliance (Speaker 1)
 
 **1. Do you use any data beyond the two challenge datasets?**
+Our primary, trusted sources are the two the organisers gave us: the National Power Portal and the Renewable India dataset. Everything else is secondary and labelled.
 The forecast is estimated only on NPP generation and the Renewable India state data. Two inputs are assumptions the organisers' ruling allows:
 
 - the UN population path, which matches the dataset's state growth within 0.14 points a year;
@@ -26,7 +27,7 @@ Published costs, emission factors and resource limits are used only to choose th
 *If pressed:* without the urbanisation prior, the run is purely the two datasets and gives 4,453 TWh, 5% lower.
 
 **2. Do you use installed capacity or consumption anywhere?**
-Not in the forecast. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. The organisers' written answer on this use was "Use insights from this data source". We read that as allowed in the mix, and we have asked them to confirm.
+Not in any calculation. Where solar and wind are being built, from the Renewable India dataset, is only a qualitative check on regional strengths; it never enters any calculation. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. The organisers' written answer on this use was "Use insights from this data source". We read that as allowed in the mix, and we have asked them to confirm.
 
 **2a. Is it within the rules to use published cost and resource data for the mix?**
 

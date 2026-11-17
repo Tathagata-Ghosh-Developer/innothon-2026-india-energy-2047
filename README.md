@@ -54,6 +54,7 @@ Installed capacity and energy consumption are never forecasting inputs or compar
 The core 2047 prediction uses only the two challenge datasets: NPP generation and the organiser state population and GSDP.
 The organisers' written ruling of 16 November 2026 is applied: NPP generation only (no captive generation), the regional split from the challenge data, and the cross-country model and resource potentials for justification only ([docs/decisions.md](docs/decisions.md), D12).
 The organiser dataset in [data/raw/competition/](data/raw/competition/) contains installed-capacity columns; only its State, Year, Zone, Population and GSDP columns are read.
+The two organiser sources, the National Power Portal (https://npp.gov.in/landing-home) and the Renewable India dataset (https://github.com/chrisjaimyantony/renewable-india-dataset), are the primary, trusted sources; every other source is secondary and labelled as such.
 See [docs/data_audit.md](docs/data_audit.md).
 
 ## Method in one paragraph

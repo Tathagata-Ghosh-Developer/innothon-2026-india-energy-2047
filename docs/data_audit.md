@@ -9,6 +9,18 @@ Detailed extraction notes (URLs, pages, tables, unit conversions, checksums) are
 - [data/external/SOURCES.md](../data/external/SOURCES.md)
 - [data/external/techno_economic/SOURCES.md](../data/external/techno_economic/SOURCES.md)
 
+## Source hierarchy
+
+Two sources are primary, because the organisers provided them:
+
+1. **National Power Portal**, https://npp.gov.in/landing-home, including the CEA generation reports it hosts (18-column monthly reports, daily generation reports, Merit real-time data).
+2. **Renewable India dataset**, https://github.com/chrisjaimyantony/renewable-india-dataset/blob/main/data/renewable_energy_dataset.csv (our copy matches the upstream file byte for byte).
+
+Every other source is secondary: UN population projections, CEA and MNRE publications not hosted on NPP, IEA costs, Ember and World Bank data, and published studies.
+The analysis relies on the two primary sources first.
+Secondary sources enter only where the rules allow them: national population and urban-share drivers, limits and prices in the generation mix, and benchmarks and justification.
+Each secondary input is labelled with its source.
+
 ## Rule check
 
 | Rule | Status |
@@ -19,7 +31,7 @@ Detailed extraction notes (URLs, pages, tables, unit conversions, checksums) are
 | Comparisons use generation | Yes. The only external benchmark plotted is the CEA NEP *gross generation* projection. |
 | Capacity figures in the strategy | Only to convert published resource potentials (GW) into generation potential (TWh/yr), as upper bounds, with the capacity factor stated. Capacity policy targets (500 GW, 100 GW nuclear) are context only. See [decisions.md](decisions.md), D5. |
 | Core 2047 prediction uses only the two challenge datasets (kickoff, 13 Nov 2026) | Yes for the primary core: generation from the National Power Portal, population and real GSDP from the Renewable India dataset. External inputs are drivers and constraints the rules allow from literature: India's population and urban-share projections, the urbanisation coefficient prior, and the strategy's resource, cost and policy data. |
-| Organisers' written ruling (16 Nov 2026; [decisions.md](decisions.md), D12) | 1. UN WPP 2024 and UN WUP 2018 are used for India; `outputs/population_consistency.csv` shows the paths are consistent with the dataset's state growth. 2. The urbanisation coefficient is the team's judgment (literature prior). 3. No captive generation: NPP generation only; the CEA captive layer is removed. 4. The cross-country model (Ember, World Bank) is an independent check used for justification only. 5. The regional split uses the challenge dataset (state population; Zone where NPP lists no state) and NPP's state-to-region mapping. 6. Resource potentials never enter the forecast; they only bound the supply plan, which is an open question to the organisers. |
+| Organisers' written ruling (16 Nov 2026; [decisions.md](decisions.md), D12) | 1. UN WPP 2024 and UN WUP 2018 are used for India; `outputs/population_consistency.csv` shows the paths are consistent with the dataset's state growth. 2. The urbanisation coefficient is the team's judgment (literature prior). 3. No captive generation: NPP generation only; the CEA captive layer is removed. 4. The cross-country model (Ember, World Bank) is an independent check used for justification only. 5. The regional split uses the challenge dataset (state population; Zone where NPP lists no state) and NPP's state-to-region mapping. 6. Resource potentials never enter the forecast; they only bound the supply plan. On this use the organisers replied "Use insights from this data source", and a clarification has been requested (D12). |
 
 ## Forecast inputs: primary core (India only)
 
