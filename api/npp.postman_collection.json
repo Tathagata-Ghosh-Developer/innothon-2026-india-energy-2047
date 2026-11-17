@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "d616fdc3-a8c6-4822-99a1-b1d0d3eb16f2",
 		"name": "National Power Portal (NPP) public endpoints",
-		"description": "Public, unauthenticated endpoints of the National Power Portal (https://npp.gov.in, Central Electricity\nAuthority) used by the India Energy 2047 project. NPP is one of the two challenge datasets allowed for the\ncore 2047 prediction. Sources, field meanings and extraction steps: data/raw/npp/SOURCES.md.\n\nRun: npx --yes newman run api/npp.postman_collection.json\n\nEvery request waits {{delayMs}} ms first (collection pre-request script). The Merit requests use {{date}}:\n\"auto\" (default) means yesterday in Indian Standard Time; override with --env-var date=YYYY-MM-DD.\n\nOffline against the recorded responses in api/fixtures: start node api/mock/server.js, then run with\n-e api/npp-mock.postman_environment.json. See api/README.md and api/NPP_SERVICES.md.",
+		"description": "Public, unauthenticated endpoints of the National Power Portal (https://npp.gov.in, Central Electricity\nAuthority) used by the India Energy 2047 project. NPP is one of the two challenge datasets allowed for the\ncore 2047 prediction. Sources, field meanings and extraction steps: data/raw/npp/SOURCES.md.\n\nRun: npx --yes newman run api/npp.postman_collection.json\n\nEvery request waits {{delayMs}} ms first (collection pre-request script). The Merit requests use {{date}}:\n\"auto\" (default) means yesterday in Indian Standard Time; override with --env-var date=YYYY-MM-DD.\nThe latest daily generation report uses {{dgrDay}} the same way (\"auto\" = two days before today, IST).\n\nOffline against the recorded responses in api/fixtures: start node api/mock/server.js, then run with\n-e api/npp-mock.postman_environment.json. See api/README.md and api/NPP_SERVICES.md.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -542,6 +542,101 @@
 						"description": "Station, state, zone and district lists and project details for the dashboard map (about 0.75 MB). No generation values. Not used by the pipeline."
 					},
 					"response": []
+				},
+				{
+					"name": "Transmission map data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/json\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/json/i);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"",
+									"const n = { type: [\"number\", \"null\"] };",
+									"pm.test(\"Body matches the transmission map schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        type: \"object\",",
+									"        required: [\"mapTLine\", \"headerMap\"],",
+									"        properties: {",
+									"            mapTLine: {",
+									"                type: \"object\",",
+									"                required: [\"transLineList\", \"yTransList\"],",
+									"                properties: {",
+									"                    transLineList: {",
+									"                        type: \"array\", minItems: 1,",
+									"                        items: {",
+									"                            type: \"object\",",
+									"                            required: [\"voltage_level\", \"transmission_line_ckm_cumm\", \"transform_capacity_mva_cumm\"],",
+									"                            properties: { voltage_level: { type: \"string\" }, transmission_line_ckm_cumm: n, transform_capacity_mva_cumm: n }",
+									"                        }",
+									"                    },",
+									"                    yTransList: {",
+									"                        type: \"array\", minItems: 1,",
+									"                        items: {",
+									"                            type: \"object\",",
+									"                            required: [\"fin_year_id\", \"transmission_line_growth\", \"transform_capacity_growth\"],",
+									"                            properties: { fin_year_id: { type: \"integer\" }, transmission_line_growth: n, transform_capacity_growth: n }",
+									"                        }",
+									"                    }",
+									"                }",
+									"            },",
+									"            headerMap: { type: \"object\", required: [\"GN_OBJ\", \"TR_OBJ\"] }",
+									"        }",
+									"    });",
+									"});",
+									"const body = pm.response.json();",
+									"pm.test(\"Voltage levels include 400 kV and 765 kV\", () => {",
+									"    const levels = body.mapTLine.transLineList.map((x) => x.voltage_level);",
+									"    pm.expect(levels).to.include.members([\"400 kV\", \"765 kV\"]);",
+									"});",
+									"pm.test(\"Yearly list ends with the fiscal year of the header (\" + body.headerMap.TR_OBJ.fin_year_id + \")\", () => {",
+									"    const ids = body.mapTLine.yTransList.map((x) => x.fin_year_id);",
+									"    pm.expect(ids[ids.length - 1]).to.eql(body.headerMap.TR_OBJ.fin_year_id);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json, text/javascript, */*; q=0.01",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/dashBoard/getTransmissionLine?ID=IND",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"dashBoard",
+								"getTransmissionLine"
+							],
+							"query": [
+								{
+									"key": "ID",
+									"value": "IND",
+									"description": "Sent by the page as IND"
+								}
+							]
+						},
+						"description": "Transmission map dashboard (https://npp.gov.in/dashBoard/trans-map-dashboard): transmission lines commissioned (circuit km) and transformation capacity added (MVA) by voltage level for the current and the previous fiscal year (`mapTLine.transLineList`), their yearly growth since FY2022-23 (`yTransList`), and the same header figures as getAllZoneGen (`headerMap`). Network capacity, not generation, so the pipeline does not use it; kept only to watch the service."
+					},
+					"response": []
 				}
 			]
 		},
@@ -801,6 +896,217 @@
 						"description": "CEA monthly generation report, actuals, Sub-report 2 \"Summary - Region wise\" for {{MON}} {{yyyy}} (MON = JAN..DEC; earliest Jul-2019). Sub-report N: replace -2_ with -N_. Feeds npp_region_generation_monthly.csv and npp_region_generation_fy.csv (read by apps/energy2047.cpp); Sub-report 16 feeds npp_state_generation_fy.csv."
 					},
 					"response": []
+				},
+				{
+					"name": "18-column report, Sub-report 2 (region wise), tentative, XLS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/vnd.ms-excel\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/vnd\\.ms-excel/i);",
+									"});",
+									"pm.test(\"Content-Length is above 1 kB\", () => {",
+									"    pm.expect(Number(pm.response.headers.get(\"Content-Length\") || 0)).to.be.above(1024);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "HEAD",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.ms-excel, */*",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/public-reports/cea/monthly/generation/18_col_ten/{{tenYyyy}}/{{tenMON}}/18_col_ten-2_{{tenYyyy}}-{{tenMON}}.xls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public-reports",
+								"cea",
+								"monthly",
+								"generation",
+								"18_col_ten",
+								"{{tenYyyy}}",
+								"{{tenMON}}",
+								"18_col_ten-2_{{tenYyyy}}-{{tenMON}}.xls"
+							]
+						},
+						"description": "CEA monthly generation report, tentative figures, Sub-report 2 \"Summary - Region wise\" for {{tenMON}} {{tenYyyy}}, published about a month before the actual report of the same month (earliest Jul-2019). Feeds npp_region_generation_tentative.csv (Oct-2026: the month, and April to October, by region and source). Not read by the model."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CEA daily reports",
+			"description": "Daily generation reports (DGR) published on NPP (https://npp.gov.in/dgrReports). Only the headers are requested. Sub-report 1 gives, for each region, thermal, nuclear and hydro generation of the day and from 1 April to the day (MU = GWh; stations above 25 MW, no RES).",
+			"item": [
+				{
+					"name": "Daily generation report, Sub-report 1 (region wise), latest XLS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Report day: {{dgrDay}} as YYYY-MM-DD, or \"auto\" (the default) = two days before today in",
+									"// Indian Standard Time (the file for day D appears on the evening of D+1), stepped back by",
+									"// dgrBackoffDays when that file is missing (see the test script).",
+									"const given = String(pm.variables.get(\"dgrDay\") || \"auto\").trim();",
+									"let day = given;",
+									"if (given.toLowerCase() === \"auto\") {",
+									"    const back = Number(pm.collectionVariables.get(\"dgrBackoffDays\") || 0);",
+									"    const istNow = Date.now() + 330 * 60 * 1000;",
+									"    day = new Date(istNow - (2 + back) * 24 * 3600 * 1000).toISOString().slice(0, 10);",
+									"    pm.variables.set(\"dgrDayIsAuto\", \"true\");",
+									"} else {",
+									"    pm.variables.set(\"dgrDayIsAuto\", \"false\");",
+									"}",
+									"pm.variables.set(\"dgrIso\", day);",
+									"pm.variables.set(\"dgrDir\", day.slice(8, 10) + \"-\" + day.slice(5, 7) + \"-\" + day.slice(0, 4));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const auto = pm.variables.get(\"dgrDayIsAuto\") === \"true\";",
+									"const back = Number(pm.collectionVariables.get(\"dgrBackoffDays\") || 0);",
+									"const maxBack = Number(pm.variables.get(\"dgrMaxBackoffDays\") || 3);",
+									"const day = pm.variables.get(\"dgrIso\");",
+									"if (pm.response.code === 404 && auto && back < maxBack) {",
+									"    // Some days have no DGR file (for example 31 Mar 2020); step back one day and repeat.",
+									"    console.log(\"No DGR file for \" + day + \"; trying the day before\");",
+									"    pm.collectionVariables.set(\"dgrBackoffDays\", String(back + 1));",
+									"    pm.execution.setNextRequest(pm.info.requestName);",
+									"} else {",
+									"    pm.collectionVariables.set(\"dgrBackoffDays\", \"0\");",
+									"    pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"    pm.test(\"Content-Type is application/vnd.ms-excel\", () => {",
+									"        pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/vnd\\.ms-excel/i);",
+									"    });",
+									"    pm.test(\"Content-Length is above 1 kB\", () => {",
+									"        pm.expect(Number(pm.response.headers.get(\"Content-Length\") || 0)).to.be.above(1024);",
+									"    });",
+									"    const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"    pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));",
+									"    pm.test(\"File was written after the report day \" + day + \" ended (IST)\", () => {",
+									"        const modified = Date.parse(pm.response.headers.get(\"Last-Modified\") || \"\");",
+									"        pm.expect(modified, \"Last-Modified\").to.be.at.least(Date.parse(day + \"T00:00:00+05:30\") + 86400000);",
+									"    });",
+									"    const maxStale = Number(pm.variables.get(\"maxStaleDays\"));",
+									"    pm.test(\"Report day is at most \" + maxStale + \" days old\", () => {",
+									"        const ageDays = (Date.now() - Date.parse(day + \"T00:00:00+05:30\")) / 86400000;",
+									"        pm.expect(ageDays).to.be.below(maxStale);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "HEAD",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.ms-excel, */*",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/public-reports/cea/daily/dgr/{{dgrDir}}/dgr1-{{dgrIso}}.xls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public-reports",
+								"cea",
+								"daily",
+								"dgr",
+								"{{dgrDir}}",
+								"dgr1-{{dgrIso}}.xls"
+							]
+						},
+						"description": "CEA daily generation report, Sub-report 1 \"All India / Region wise power generation overview\" for {{dgrDay}} (default auto: two days before today, IST). Folder DD-MM-YYYY, file name YYYY-MM-DD; Sub-report N: replace dgr1 with dgrN (N = 1..17). The \"Apr 1 Till Date\" actual of fiscal-year ends and of the latest day feeds npp_region_generation_dgr_fy.csv and npp_region_generation_dgr_monthly.csv. Not read by the model."
+					},
+					"response": []
+				},
+				{
+					"name": "Daily generation report, Sub-report 1, archive start (31 Mar 2018)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Content-Type is application/vnd.ms-excel\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\") || \"\").to.match(/^application\\/vnd\\.ms-excel/i);",
+									"});",
+									"pm.test(\"Content-Length is above 1 kB\", () => {",
+									"    pm.expect(Number(pm.response.headers.get(\"Content-Length\") || 0)).to.be.above(1024);",
+									"});",
+									"const limitMs = Number(pm.variables.get(\"maxResponseMs\"));",
+									"pm.test(\"Response time under \" + limitMs + \" ms\", () => pm.expect(pm.response.responseTime).to.be.below(limitMs));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "HEAD",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "{{userAgent}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/vnd.ms-excel, */*",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/public-reports/cea/daily/dgr/31-03-2018/dgr1-2018-03-31.xls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"public-reports",
+								"cea",
+								"daily",
+								"dgr",
+								"31-03-2018",
+								"dgr1-2018-03-31.xls"
+							]
+						},
+						"description": "The oldest fiscal-year end in the DGR archive. Its April-to-March total is the only NPP source of FY2017-18 generation by region (npp_region_generation_dgr_fy.csv). Files before about 25 Mar 2018 answer 404; a failure here means NPP has trimmed the archive."
+					},
+					"response": []
 				}
 			]
 		}
@@ -907,6 +1213,31 @@
 			"value": "SEP",
 			"type": "string",
 			"description": "Report month, JAN..DEC"
+		},
+		{
+			"key": "tenYyyy",
+			"value": "2026",
+			"type": "string"
+		},
+		{
+			"key": "tenMON",
+			"value": "OCT",
+			"type": "string"
+		},
+		{
+			"key": "dgrDay",
+			"value": "auto",
+			"type": "string"
+		},
+		{
+			"key": "dgrBackoffDays",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "dgrMaxBackoffDays",
+			"value": "3",
+			"type": "string"
 		},
 		{
 			"key": "chartLatestFy",

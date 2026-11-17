@@ -1,0 +1,121 @@
+month,fiscal_year,fy_start_year,region,source,generation_gwh,is_subtotal,partial,period_start,period_end,origin,source_id
+2018-04,2018-19,2018,Northern,thermal,18363.13,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Northern,nuclear,857.38,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Northern,hydro,3589.49,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Northern,total,22810.0,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Western,thermal,37619.46,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Western,nuclear,979.54,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Western,hydro,808.16,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Western,total,39407.16,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Southern,thermal,20086.38,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Southern,nuclear,1379.46,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Southern,hydro,1836.1,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Southern,total,23301.94,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Eastern,thermal,15639.36,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Eastern,hydro,1082.62,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Eastern,total,16721.98,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,North-Eastern,thermal,914.87,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,North-Eastern,hydro,205.96,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,North-Eastern,total,1120.83,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,Bhutan import,bhutan_import,93.13,False,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,All India,thermal,92623.2,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,All India,nuclear,3216.38,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,All India,hydro,7522.33,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,All India,bhutan_import,93.13,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-04,2018-19,2018,All India,total,103455.04,True,False,2018-04-01,2018-04-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-04-30_apr1_till_date_actual
+2018-05,2018-19,2018,Northern,thermal,20928.33,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Northern,nuclear,959.63,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Northern,hydro,6011.25,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Northern,total,27899.21,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Western,thermal,39492.2,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Western,nuclear,711.48,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Western,hydro,1065.28,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Western,total,41268.96,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Southern,thermal,19537.31,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Southern,nuclear,1422.4,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Southern,hydro,1382.73,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Southern,total,22342.44,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Eastern,thermal,15636.34,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Eastern,hydro,1734.34,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Eastern,total,17370.68,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,North-Eastern,thermal,985.78,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,North-Eastern,hydro,444.52,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,North-Eastern,total,1430.3,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,Bhutan import,bhutan_import,297.49,False,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,All India,thermal,96579.96,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,All India,nuclear,3093.51,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,All India,hydro,10638.12,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,All India,bhutan_import,297.49,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-05,2018-19,2018,All India,total,110609.08,True,False,2018-05-01,2018-05-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30
+2018-06,2018-19,2018,Northern,thermal,19978.78,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Northern,nuclear,970.65,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Northern,hydro,8675.89,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Northern,total,29625.32,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Western,thermal,35487.53,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Western,nuclear,925.5,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Western,hydro,478.26,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Western,total,36891.29,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Southern,thermal,15549.59,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Southern,nuclear,1505.22,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Southern,hydro,1488.32,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Southern,total,18543.13,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Eastern,thermal,14434.54,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Eastern,hydro,2010.15,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Eastern,total,16444.69,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,North-Eastern,thermal,918.5,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,North-Eastern,hydro,644.78,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,North-Eastern,total,1563.28,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,Bhutan import,bhutan_import,403.95,False,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,All India,thermal,86368.94,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,All India,nuclear,3401.37,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,All India,hydro,13297.4,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,All India,bhutan_import,403.95,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2018-06,2018-19,2018,All India,total,103471.66,True,False,2018-06-01,2018-06-30,dgr_apr1_till_date_difference,npp_cea_dgr1_2018-06-30_apr1_till_date_actual_minus_2018-05-31
+2026-10,2026-27,2026,Northern,thermal,26979.18,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Northern,nuclear,1608.81,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Northern,hydro,5399.98,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Northern,total,33987.97,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Western,thermal,48406.91,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Western,nuclear,2168.93,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Western,hydro,2066.09,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Western,total,52641.93,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Southern,thermal,24519.9,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Southern,nuclear,2104.68,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Southern,hydro,2182.11,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Southern,total,28806.69,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Eastern,thermal,24153.69,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Eastern,hydro,1846.04,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Eastern,total,25999.73,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,North-Eastern,thermal,1114.59,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,North-Eastern,hydro,1238.71,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,North-Eastern,total,2353.3,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,Bhutan import,bhutan_import,660.39,False,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,All India,thermal,125174.27,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,All India,nuclear,5882.42,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,All India,hydro,12732.93,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,All India,bhutan_import,660.39,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-10,2026-27,2026,All India,total,144450.01,True,False,2026-10-01,2026-10-31,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-10-31_apr1_till_date_actual_minus_2026-09-30
+2026-11,2026-27,2026,Northern,thermal,11946.85,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Northern,nuclear,871.2,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Northern,hydro,2005.33,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Northern,total,14823.38,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Western,thermal,22449.14,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Western,nuclear,910.34,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Western,hydro,681.16,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Western,total,24040.64,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Southern,thermal,11227.44,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Southern,nuclear,1108.98,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Southern,hydro,804.92,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Southern,total,13141.34,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Eastern,thermal,11939.79,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Eastern,hydro,648.9,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Eastern,total,12588.69,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,North-Eastern,thermal,543.97,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,North-Eastern,hydro,370.69,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,North-Eastern,total,914.66,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,Bhutan import,bhutan_import,36.26,False,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,All India,thermal,58107.19,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,All India,nuclear,2890.52,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,All India,hydro,4511.0,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,All India,bhutan_import,36.26,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31
+2026-11,2026-27,2026,All India,total,65544.97,True,True,2026-11-01,2026-11-16,dgr_apr1_till_date_difference,npp_cea_dgr1_2026-11-16_apr1_till_date_actual_minus_2026-10-31

@@ -1,0 +1,49 @@
+period_type,fiscal_year,fy_start_year,month,period,region,source,generation_gwh,is_subtotal,partial,origin,source_id
+month,2026-27,2026,2026-10,2026-10,Northern,thermal,26979.06,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Northern,nuclear,1582.67,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Northern,hydro,5405.27,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Northern,total,33967.0,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Western,thermal,48380.61,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Western,nuclear,2166.24,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Western,hydro,2053.45,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Western,total,52600.3,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Southern,thermal,24507.82,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Southern,nuclear,2104.84,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Southern,hydro,2172.67,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Southern,total,28785.33,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Eastern,thermal,24128.46,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Eastern,hydro,1839.41,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Eastern,total,25967.87,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,North-Eastern,thermal,1114.47,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,North-Eastern,hydro,1236.64,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,North-Eastern,total,2351.11,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,Bhutan import,bhutan_import,726.09,False,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,All India,thermal,125110.42,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,All India,nuclear,5853.75,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,All India,hydro,12707.44,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,All India,bhutan_import,726.09,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+month,2026-27,2026,2026-10,2026-10,All India,total,144397.7,True,False,tentative_current_month,npp_cea_18col_ten_sr2_2026-OCT_col4_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Northern,thermal,186531.86,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Northern,nuclear,10267.64,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Northern,hydro,60425.14,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Northern,total,257224.64,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Western,thermal,322042.5,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Western,nuclear,13692.87,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Western,hydro,10738.42,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Western,total,346473.79,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Southern,thermal,167327.2,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Southern,nuclear,14293.2,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Southern,hydro,16389.42,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Southern,total,198009.82,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Eastern,thermal,163817.78,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Eastern,hydro,9949.95,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Eastern,total,173767.73,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,North-Eastern,thermal,7200.46,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,North-Eastern,hydro,9211.24,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,North-Eastern,total,16411.7,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,Bhutan import,bhutan_import,6382.74,False,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,All India,thermal,846919.8,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,All India,nuclear,38253.71,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,All India,hydro,106714.17,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,All India,bhutan_import,6382.74,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual
+fiscal_year_to_date,2026-27,2026,,Apr-Oct,All India,total,998270.42,True,True,tentative_cumulative,npp_cea_18col_ten_sr2_2026-OCT_col9_tentative_actual

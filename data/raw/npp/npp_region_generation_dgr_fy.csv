@@ -1,0 +1,217 @@
+fiscal_year,fy_start_year,region,source,generation_gwh,is_subtotal,partial,period,as_of_date,origin,source_id
+2017-18,2017,Northern,thermal,225560.83,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Northern,nuclear,12236.33,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Northern,hydro,74731.07,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Northern,total,312528.23,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Western,thermal,426089.89,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Western,nuclear,6860.36,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Western,hydro,9184.16,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Western,total,442134.41,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Southern,thermal,205598.54,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Southern,nuclear,19043.71,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Southern,hydro,19029.1,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Southern,total,243671.35,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Eastern,thermal,168807.11,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Eastern,hydro,17535.55,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Eastern,total,186342.66,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,North-Eastern,thermal,10315.96,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,North-Eastern,hydro,5668.18,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,North-Eastern,total,15984.14,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,Bhutan import,bhutan_import,4918.23,False,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,All India,thermal,1036372.33,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,All India,nuclear,38140.4,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,All India,hydro,126148.06,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,All India,bhutan_import,4918.23,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2017-18,2017,All India,total,1205579.02,True,False,Apr-Mar,2018-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2018-03-31_apr1_till_date_actual
+2018-19,2018,Northern,thermal,226775.19,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Northern,nuclear,11155.32,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Northern,hydro,72404.09,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Northern,total,310334.6,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Western,thermal,449235.04,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Western,nuclear,11766.1,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Western,hydro,9914.51,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Western,total,470915.65,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Southern,thermal,210440.48,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Southern,nuclear,14688.38,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Southern,hydro,28802.65,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Southern,total,253931.51,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Eastern,thermal,173214.17,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Eastern,hydro,18907.04,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Eastern,total,192121.21,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,North-Eastern,thermal,12189.04,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,North-Eastern,hydro,5025.38,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,North-Eastern,total,17214.42,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,Bhutan import,bhutan_import,4461.2,False,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,All India,thermal,1071853.92,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,All India,nuclear,37609.8,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,All India,hydro,135053.67,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,All India,bhutan_import,4461.2,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2018-19,2018,All India,total,1248978.59,True,False,Apr-Mar,2019-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2019-03-31_apr1_till_date_actual
+2020-21,2020,Northern,thermal,207175.92,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Northern,nuclear,10638.16,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Northern,hydro,75255.81,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Northern,total,293069.89,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Western,thermal,457874.77,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Western,nuclear,11598.8,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Western,hydro,16648.52,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Western,total,486122.09,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Southern,thermal,165493.98,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Southern,nuclear,20656.22,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Southern,hydro,31350.62,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Southern,total,217500.82,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Eastern,thermal,188849.44,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Eastern,hydro,21178.4,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Eastern,total,210027.84,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,North-Eastern,thermal,12735.77,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,North-Eastern,hydro,5806.47,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,North-Eastern,total,18542.24,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,Bhutan import,bhutan_import,8819.13,False,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,All India,thermal,1032129.88,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,All India,nuclear,42893.18,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,All India,hydro,150239.82,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,All India,bhutan_import,8819.13,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2020-21,2020,All India,total,1234082.01,True,False,Apr-Mar,2021-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2021-03-31_apr1_till_date_actual
+2021-22,2021,Northern,thermal,236026.21,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Northern,nuclear,11814.68,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Northern,hydro,73887.86,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Northern,total,321728.75,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Western,thermal,450240.54,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Western,nuclear,12105.79,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Western,hydro,13725.0,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Western,total,476071.33,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Southern,thermal,198856.82,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Southern,nuclear,23098.23,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Southern,hydro,37242.94,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Southern,total,259197.99,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Eastern,thermal,215720.87,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Eastern,hydro,20465.28,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Eastern,total,236186.15,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,North-Eastern,thermal,13859.79,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,North-Eastern,hydro,6374.14,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,North-Eastern,total,20233.93,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,Bhutan import,bhutan_import,7483.89,False,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,All India,thermal,1114704.23,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,All India,nuclear,47018.7,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,All India,hydro,151695.22,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,All India,bhutan_import,7483.89,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2021-22,2021,All India,total,1320902.04,True,False,Apr-Mar,2022-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2022-03-31_apr1_till_date_actual
+2022-23,2022,Northern,thermal,276980.82,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Northern,nuclear,9726.25,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Northern,hydro,77588.36,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Northern,total,364295.43,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Western,thermal,460758.32,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Western,nuclear,12624.63,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Western,hydro,19580.15,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Western,total,492963.1,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Southern,thermal,214585.46,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Southern,nuclear,23448.07,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Southern,hydro,36866.63,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Southern,total,274900.16,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Eastern,thermal,238230.79,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Eastern,hydro,20880.47,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Eastern,total,259111.26,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,North-Eastern,thermal,15472.75,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,North-Eastern,hydro,7144.66,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,North-Eastern,total,22617.41,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,Bhutan import,bhutan_import,6773.12,False,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,All India,thermal,1206028.14,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,All India,nuclear,45798.95,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,All India,hydro,162060.27,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,All India,bhutan_import,6773.12,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2022-23,2022,All India,total,1420660.48,True,False,Apr-Mar,2023-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2023-03-31_apr1_till_date_actual
+2023-24,2023,Northern,thermal,280692.99,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Northern,nuclear,9861.53,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Northern,hydro,73079.0,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Northern,total,363633.52,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Western,thermal,532690.51,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Western,nuclear,15658.85,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Western,hydro,16586.49,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Western,total,564935.85,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Southern,thermal,247871.51,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Southern,nuclear,22296.88,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Southern,hydro,20248.63,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Southern,total,290417.02,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Eastern,thermal,249737.54,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Eastern,hydro,17770.05,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Eastern,total,267507.59,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,North-Eastern,thermal,14782.39,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,North-Eastern,hydro,6288.29,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,North-Eastern,total,21070.68,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,Bhutan import,bhutan_import,4695.96,False,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,All India,thermal,1325774.94,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,All India,nuclear,47817.26,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,All India,hydro,133972.46,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,All India,bhutan_import,4695.96,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2023-24,2023,All India,total,1512260.62,True,False,Apr-Mar,2024-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2024-03-31_apr1_till_date_actual
+2024-25,2024,Northern,thermal,297164.35,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Northern,nuclear,11022.71,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Northern,hydro,76357.46,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Northern,total,384544.52,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Western,thermal,542429.9,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Western,nuclear,20767.1,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Western,hydro,19695.01,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Western,total,582892.01,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Southern,thermal,248880.65,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Southern,nuclear,24841.67,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Southern,hydro,33954.04,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Southern,total,307676.36,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Eastern,thermal,261618.38,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Eastern,hydro,11195.73,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Eastern,total,272814.11,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,North-Eastern,thermal,13277.34,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,North-Eastern,hydro,7271.55,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,North-Eastern,total,20548.89,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,Bhutan import,bhutan_import,5471.01,False,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,All India,thermal,1363370.62,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,All India,nuclear,56631.48,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,All India,hydro,148473.79,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,All India,bhutan_import,5471.01,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2024-25,2024,All India,total,1573946.9,True,False,Apr-Mar,2025-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2025-03-31_apr1_till_date_actual
+2025-26,2025,Northern,thermal,283931.04,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Northern,nuclear,13565.33,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Northern,hydro,82670.29,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Northern,total,380166.66,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Western,thermal,510617.59,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Western,nuclear,20169.21,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Western,hydro,20284.02,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Western,total,551070.82,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Southern,thermal,242844.68,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Southern,nuclear,21429.49,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Southern,hydro,43440.79,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Southern,total,307714.96,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Eastern,thermal,257257.05,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Eastern,hydro,12537.68,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Eastern,total,269794.73,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,North-Eastern,thermal,12186.39,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,North-Eastern,hydro,8223.5,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,North-Eastern,total,20409.89,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,Bhutan import,bhutan_import,7804.03,False,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,All India,thermal,1306836.75,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,All India,nuclear,55164.03,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,All India,hydro,167156.28,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,All India,bhutan_import,7804.03,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2025-26,2025,All India,total,1536961.09,True,False,Apr-Mar,2026-03-31,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-03-31_apr1_till_date_actual
+2026-27,2026,Northern,thermal,198469.49,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Northern,nuclear,11099.69,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Northern,hydro,62459.54,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Northern,total,272028.72,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Western,thermal,344467.66,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Western,nuclear,14600.21,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Western,hydro,11410.76,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Western,total,370478.63,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Southern,thermal,178506.77,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Southern,nuclear,15402.36,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Southern,hydro,17193.17,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Southern,total,211102.3,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Eastern,thermal,175747.8,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Eastern,hydro,10586.14,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Eastern,total,186333.94,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,North-Eastern,thermal,7742.16,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,North-Eastern,hydro,9583.13,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,North-Eastern,total,17325.29,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,Bhutan import,bhutan_import,6519.04,False,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,All India,thermal,904933.88,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,All India,nuclear,41102.26,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,All India,hydro,111232.74,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,All India,bhutan_import,6519.04,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual
+2026-27,2026,All India,total,1063787.92,True,True,Apr 1-Nov 16,2026-11-16,dgr_apr1_till_date_actual,npp_cea_dgr1_2026-11-16_apr1_till_date_actual

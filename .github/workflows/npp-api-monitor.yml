@@ -3,8 +3,9 @@ name: NPP API monitor
 # Weekly run of api/npp.postman_collection.json against the live National Power Portal,
 # so that changes in the NPP endpoints (fields, units, coverage) are noticed early.
 # Independent of the CI workflow: it never blocks a push or a pull request.
-# One run sends 9 requests to npp.gov.in, 2 seconds apart (up to 3 more when the
-# latest Merit day has no data).
+# One run sends 13 requests to npp.gov.in, 2 seconds apart (up to 3 more when the
+# latest Merit day has no data, and up to 3 more when the latest daily generation
+# report file is missing).
 
 on:
   schedule:

@@ -7,7 +7,9 @@ All tidy files hold **energy generated** (GWh; 1 GWh = 1 million units, MU) or, 
 generation power (MW) together with the energy derived from it. Installed or monitored capacity, plant load factor,
 programme / target, consumption and demand columns of the raw reports are **not** carried into the tidy files.
 
-Access date for every download and API call: **2026-11-15**.
+Access date for every download and API call: **2026-11-15**, except the three files added on **2026-11-17**
+(`npp_region_generation_dgr_fy.csv`, `npp_region_generation_dgr_monthly.csv`, `npp_region_generation_tentative.csv`)
+and their raw files.
 
 ## Folder layout
 
@@ -17,6 +19,9 @@ Access date for every download and API call: **2026-11-15**.
 | `npp_region_generation_monthly.csv` | Monthly generation by grid region and source (CEA 18-column Sub-report 2), Jul-2018 to Sep-2026 |
 | `npp_region_generation_fy.csv` | Fiscal-year generation by grid region and source (same report), FY2018-19 to FY2025-26, plus FY2026-27 Apr-Sep (partial) |
 | `npp_state_generation_fy.csv` | Fiscal-year generation by state and fuel, aggregated from station rows (CEA 18-column Sub-report 16) |
+| `npp_region_generation_dgr_fy.csv` | Fiscal-year generation by grid region and source from the CEA daily generation report, Sub-report 1: FY2017-18, FY2018-19, FY2020-21 to FY2025-26, plus FY2026-27 1 Apr to 16 Nov 2026 (partial) |
+| `npp_region_generation_dgr_monthly.csv` | Monthly generation by grid region and source from the same report: Apr-Jun 2018 (missing from the monthly file above), Oct-2026 and 1-16 Nov 2026 (partial) |
+| `npp_region_generation_tentative.csv` | Oct-2026 and Apr-Oct 2026 generation by grid region and source, CEA 18-column Sub-report 2, tentative figures |
 | `npp_res_generation_monthly.csv` | Monthly All-India solar and wind generation integrated from the NPP Merit real-time snapshots, Sep-2025 to Nov-2026 |
 | `npp_merit_generation_hourly.csv` | Hourly All-India generation by source (Merit real-time snapshots), 2025-09-18 to 2026-11-15 |
 | `npp_merit_generation_daily.csv` | Daily All-India generation by source (same), 2025-09-18 to 2026-11-15 |
@@ -66,7 +71,8 @@ Columns: `month, fiscal_year, fy_start_year, region, source, generation_gwh, is_
   (87 months, 2,088 rows).
 * `origin = same_month_last_year`: column 5 "ACTUAL SAME MONTH LAST YEAR" of the report published 12 months later. Used
   only where the month's own report is not on NPP: Jul-2018 to Jun-2019 (12 months, 288 rows).
-* Coverage: 99 months, Jul-2018 to Sep-2026, no gaps. Apr-Jun 2018 are **not** available month by month (see caveats);
+* Coverage: 99 months, Jul-2018 to Sep-2026, no gaps. Apr-Jun 2018 are **not** in this file (see caveats; the daily
+  reports give them in `npp_region_generation_dgr_monthly.csv`);
   FY2018-19 is therefore incomplete in this file but complete in the fiscal-year file.
 
 ### `npp_region_generation_fy.csv` (216 rows)
@@ -135,6 +141,50 @@ Columns: `date, source, energy_gwh, mean_mw, coverage, n_obs, is_complete, estim
   biased when the missing hours are daytime or night-time only; filter on `is_complete` or `coverage` before use.
 * Coverage: 399 days with data between 2025-09-18 and 2026-11-15 (7 rows per day). 25 days return no data (below).
 
+### `npp_region_generation_dgr_fy.csv` (216 rows, added 2026-11-17)
+
+Columns: `fiscal_year, fy_start_year, region, source, generation_gwh, is_subtotal, partial, period, as_of_date, origin,
+source_id` (as `npp_region_generation_fy.csv`, plus `as_of_date`).
+
+* Source: CEA **daily generation report (DGR), Sub-report 1 "All India / Regionwise Power Generation Overview"**,
+  column "Apr 1 Till Date", "Actual" (MU = GWh), read from the report of the last day of each fiscal year
+  (`as_of_date` = 31 March) and from the latest report (16 Nov 2026). `origin = dgr_apr1_till_date_actual`;
+  `source_id = npp_cea_dgr1_{as_of_date}_apr1_till_date_actual`.
+* Same region x source grid and the same `is_subtotal` rule as `npp_region_generation_fy.csv` (24 rows per year). The
+  report prints Bhutan import only under All India; it is repeated as region `Bhutan import`, as in the other file.
+  The report's `R.E.S` row holds installed capacity only and is not carried over.
+* Coverage: FY2017-18 (31 Mar 2018, the oldest fiscal-year end on NPP; the archive starts on 22 Mar 2018), FY2018-19,
+  FY2020-21 to FY2025-26, and FY2026-27 from 1 Apr to 16 Nov 2026 (`partial = True`, `period = Apr 1-Nov 16`).
+  **FY2019-20 is absent**: no DGR file exists for 31 Mar 2020 (nor 30 Mar or 1 Apr 2020); use
+  `npp_region_generation_fy.csv` for that year.
+* FY2017-18 is the only fiscal year here that the Sub-report 2 files do not cover. For the other years the Sub-report 2
+  values (`npp_region_generation_fy.csv`) are the reference; this file is a cross-check and an extension.
+
+### `npp_region_generation_dgr_monthly.csv` (120 rows, added 2026-11-17)
+
+Columns: `month, fiscal_year, fy_start_year, region, source, generation_gwh, is_subtotal, partial, period_start,
+period_end, origin, source_id`.
+
+* Source: DGR Sub-report 1 as above. Monthly value = "Apr 1 Till Date" actual at the month's last report day minus the
+  same at the previous month's last day (April: the value itself). `origin = dgr_apr1_till_date_difference`;
+  `source_id` names both reports, e.g. `npp_cea_dgr1_2018-05-31_apr1_till_date_actual_minus_2018-04-30`.
+* Months: 2018-04, 2018-05, 2018-06 (the three months missing from `npp_region_generation_monthly.csv`), 2026-10
+  (cross-check of the tentative report) and 2026-11 up to the 16th (`partial = True`, `period_end = 2026-11-16`).
+* Same 24-row region x source grid per month.
+
+### `npp_region_generation_tentative.csv` (48 rows, added 2026-11-17)
+
+Columns: `period_type, fiscal_year, fy_start_year, month, period, region, source, generation_gwh, is_subtotal, partial,
+origin, source_id`.
+
+* Source: CEA 18-column report, **tentative**, Sub-report 2 "Summary - Region wise", Oct-2026 (the latest month; the
+  actual report for Oct-2026 was not yet on NPP on 2026-11-17). Same layout as the actual report: physical column 4 =
+  month ACTUAL, column 9 = cumulative ACTUAL from April.
+* `period_type = month` (column 4, `month = 2026-10`, `origin = tentative_current_month`) and
+  `period_type = fiscal_year_to_date` (column 9, `period = Apr-Oct`, `partial = True`, `origin = tentative_cumulative`);
+  24 rows each.
+* Replace these rows with the actual report when it appears (expected about a month later).
+
 ## Endpoints and URL patterns
 
 All requests are plain HTTPS GET with a browser User-Agent; no login, cookie or token is needed.
@@ -142,8 +192,8 @@ All requests are plain HTTPS GET with a browser User-Agent; no login, cookie or 
 | What | URL / parameters | Notes |
 | --- | --- | --- |
 | 18-column monthly report, actual | `https://npp.gov.in/public-reports/cea/monthly/generation/18_col_act/{YYYY}/{MON}/18_col_act-{N}_{YYYY}-{MON}.xls` (also `.pdf`) | `{MON}` = `JAN`..`DEC`, `N` = 1..20. Earliest month on NPP: Jul-2019 (earlier months return HTTP 404). Latest at access: Sep-2026. |
-| 18-column monthly report, tentative | `https://npp.gov.in/public-reports/cea/monthly/generation/18_col_ten/{YYYY}/{MON}/18_col_ten-{N}_{YYYY}-{MON}.xls` | Latest at access: Oct-2026 (not used). |
-| Daily generation reports (DGR) | `https://npp.gov.in/public-reports/cea/daily/dgr/{DD-MM-YYYY}/dgr{N}-{YYYY-MM-DD}.xls` (also `.pdf`) | `N` = 1..17. Archive page: https://npp.gov.in/dgrReports. Not used (conventional stations only, see below). |
+| 18-column monthly report, tentative | `https://npp.gov.in/public-reports/cea/monthly/generation/18_col_ten/{YYYY}/{MON}/18_col_ten-{N}_{YYYY}-{MON}.xls` | Jul-2019 to Oct-2026 on 2026-11-17. Sub-report 2 of Oct-2026 feeds `npp_region_generation_tentative.csv`. |
+| Daily generation reports (DGR) | `https://npp.gov.in/public-reports/cea/daily/dgr/{DD-MM-YYYY}/dgr{N}-{YYYY-MM-DD}.xls` (also `.pdf`) | `N` = 1..17 (7 and 10A are listed with no file). Archive page: `https://npp.gov.in/dgrReports`. First file: 22 Mar 2018; 31 Mar to 1 Apr 2020 missing. The file for day D appears on the evening of D+1 (IST). Sub-report 1 feeds the two `npp_region_generation_dgr_*` files. Conventional stations only. |
 | Dashboard generation chart | `https://npp.gov.in/dashBoard/get_generation_chart_list` | No parameters. JSON keys `linechartforGeneration`, `initialChartData`. |
 | Dashboard header / daily figures | `https://npp.gov.in/dashBoard/getAllZoneGen?ID=IND` | `ID` is ignored. Daily and cumulative conventional generation, capacity, coal stock, PLF. Not used. |
 | Dashboard map data | `https://npp.gov.in/dashBoard/getBMapData?ID=IND` | Station list (thermal, hydro, nuclear only), state and zone lists, projects. No generation. Not used. |
@@ -156,7 +206,8 @@ without them. `res/getWbDbData`, referenced in an old script, returns 404.
 18-column sub-reports (Sep-2026 titles): 1 All India summary; 2 Region wise; 3 Thermal, hydro and nuclear
 consolidated; 4 Sector wise; 5-7 Thermal by central / state / private sector; 8-10 Hydro by sector and nuclear;
 11 Fuel wise coal / lignite / multi fuel; 12-14 Fuel wise gas and liquid fuel; 15 Fuel wise diesel; 16 Region, state
-and station wise; 17 Summary all India (MU and PLF by region); 18-20 Sector wise details (central, state, private).
+and station wise; 17 Summary all India (MU and PLF by region, gas-based stations only: 20,122 MW monitored in
+Sep-2026); 18-20 Sector wise details of gas-based stations (central, state, private).
 
 ## Extraction procedure (reproducible)
 
@@ -187,6 +238,17 @@ their outputs are stored here. Steps:
    93 GW to 57 GW for 30 minutes). Small negative solar values at night (522 snapshots, median -25 MW) are kept.
    Interpolate each source linearly on a 1-minute grid across gaps of at most 30 minutes, then average to hours,
    days and months as described above.
+6. **DGR Sub-report 1 (2026-11-17).** Fetch `dgr1` for 31 March of 2018 to 2026 (2020 answers 404), for 30 Apr,
+   31 May and 30 Jun 2018, for 30 Sep and 31 Oct 2026, and for 16 Nov 2026 (the latest day): 14 files, sequential,
+   2 s apart. The layout drifts (13 to 17 columns; numbers stored as text with thousands separators from the
+   Mar-2019 file on). In each file the header row holding "Today's Program" gives the column of "Apr 1 Till Date"; the row
+   below it must read "Program", "Actual" there, and the "Actual" column is read. Region blocks (`Northern` ...
+   `ALL INDIA`) hold `THERMAL`, `NUCLEAR`, `HYDRO` and `Total` rows; All India also holds `Bhutan IMP.` and `R.E.S`
+   (capacity only, skipped). The fiscal year is taken from the header "Generation YYYY-YY (MU)" and the day from the
+   title. Fiscal years = the 31 March values; months = differences between consecutive month-end values.
+7. **Tentative Sub-report 2 (2026-11-17).** Fetch `18_col_ten-2` for Oct-2026 (the latest month) and, for the
+   revision check only, Oct-2025, Mar-2026 and Sep-2026. The layout is the same as the actual report (checked against
+   the column-number row): column 4 for the month, column 9 for April to the month.
 
 ## Validation
 
@@ -216,6 +278,21 @@ their outputs are stored here. Steps:
   Merit is a real-time telemetry series, probably net of auxiliary consumption and possibly incomplete in station
   coverage; it is suitable for daily / hourly shapes and for solar and wind, not as a replacement for the CEA gross
   figures.
+* **DGR fiscal years vs Sub-report 2** (FY2018-19 and FY2020-21 to FY2025-26): All-India totals agree within 0.07 %
+  (DGR always slightly lower), region totals within 0.35 % (largest: North-Eastern FY2021-22), region x source within
+  1.6 % (Western hydro FY2018-19), Bhutan import within 1.3 %. The DGR is the daily first print; Sub-report 2 is the
+  monthly compilation.
+* **DGR Apr-Jun 2018 vs Sub-report 2.** The DGR quarter (317,535.78 GWh All India) is 0.45 % below the quarter derived
+  from the Jul-2019 Sub-report 2 last-year columns (318,985.01 GWh). With the DGR months, the twelve months of FY2018-19
+  sum to 1,247,887 GWh, 0.12 % below the Sub-report 2 fiscal-year total.
+* **DGR vs Sub-report 2 for FY2026-27.** "Apr 1 Till Date" on 30 Sep 2026 is within 0.04 % of the Sep-2026 actual
+  cumulative for every region total; on 31 Oct 2026 within 0.02 % of the tentative Apr-Oct cumulative; the DGR
+  October month is within 0.12 % of the tentative October month for every region total.
+* **Tentative vs actual (Sub-report 2, month column).** Oct-2025, Mar-2026, Sep-2026: All India total -0.23 %, -0.18 %,
+  -0.02 %; region totals within 0.75 % (Eastern, Mar-2026); region x source within 5.6 % (Eastern hydro, Mar-2026);
+  Bhutan import up to 34 % (Mar-2026).
+* All three new files: in every period the five regions sum to the All-India value of each source (Bhutan import
+  added for the total), and thermal + nuclear + hydro to each region total, within 0.05 GWh.
 
 ## Renewable generation on NPP
 
@@ -228,6 +305,9 @@ their outputs are stored here. Steps:
   2. the Merit real-time series (`npp_merit_*`, `npp_res_generation_monthly.csv`): All-India **solar** and **wind**
      separately, from 2025-09-18. No region or state split exists on NPP for either.
 * So FY2024-25 is not covered by any NPP RES series, and FY2025-26 only from 18 September 2025 (with gaps).
+* Re-checked on 2026-11-17 (pages, scripts, unlinked report names, service names, DGR Sub-report 2 and 18-column
+  Sub-report 16 station lists): still no regional or state RES generation on NPP. The Renewable India dataset has
+  state RES installed capacity only. Details: `api/NPP_SERVICES.md`, "Renewable generation by region or state".
 
 ## Caveats
 
@@ -236,9 +316,10 @@ their outputs are stored here. Steps:
   All-India `total` in Sub-report 2 includes Bhutan import; the chart's `total_gwh` here does not.
 * **Bhutan import** is electricity imported from hydro stations in Bhutan. It is reported as its own region and is not
   generation inside India; exclude it when modelling domestic generation.
-* **Apr-Jun 2018** monthly values are not recoverable: the earliest report on NPP is Jul-2019 and its last-year column
-  reaches back only to Jul-2018. The Apr-Jun 2018 quarter total can be derived (Jul-2019 report: column 10 minus
-  column 5), but is not stored.
+* **Apr-Jun 2018** monthly values are not in the 18-column reports: the earliest report on NPP is Jul-2019 and its
+  last-year column reaches back only to Jul-2018. The Apr-Jun 2018 quarter total can be derived (Jul-2019 report:
+  column 10 minus column 5), but is not stored. Since 2026-11-17 the three months are available from the daily
+  reports in `npp_region_generation_dgr_monthly.csv` (daily first prints, 0.45 % below the derived quarter).
 * **First print vs revised values.** Monthly values are first prints; CEA revises some months later (see validation).
 * **NPP chart RES vs other CEA publications.** The chart's RES is 15-25 % lower than the RES totals in the CEA General
   Review / Growth of Electricity Sector publications used in `data/raw/generation/` (FY2018-19: 97,924 vs 126,759 GWh;
@@ -256,16 +337,18 @@ their outputs are stored here. Steps:
   2026-08-08, 2026-08-09, 2026-10-04.
 * **Units.** CEA reports print GWh (= MU). Merit values are MW snapshots; energy is derived by time integration.
 
-## Raw downloads (`downloads/`, about 11 MB, every file below 1 MB)
+## Raw downloads (`downloads/`, about 12 MB, every file below 1 MB)
 
 | Path | Content |
 | --- | --- |
 | `downloads/npp_dashboard/get_generation_chart_list_2026-11-15.json` | Response of `dashBoard/get_generation_chart_list` |
 | `downloads/cea_18col_sr2/18_col_act-2_{YYYY}-{MON}.xls` | Sub-report 2, 87 files, Jul-2019 to Sep-2026 (original files, original names) |
 | `downloads/cea_18col_sr16/18_col_act-16_{YYYY}-{MON}.xls` | Sub-report 16, Mar-2020 to Mar-2026 and Sep-2026 (8 files) |
+| `downloads/cea_18col_ten_sr2/18_col_ten-2_{YYYY}-{MON}.xls` | Tentative Sub-report 2: Oct-2026 (feeds `npp_region_generation_tentative.csv`), and Oct-2025, Mar-2026, Sep-2026 (revision check only); 4 files, 2026-11-17 |
+| `downloads/cea_dgr_sr1/dgr1-{YYYY-MM-DD}.xls` | DGR Sub-report 1: 31 March of 2018, 2019 and 2021 to 2026; 30 Apr, 31 May, 30 Jun 2018; 30 Sep, 31 Oct, 16 Nov 2026 (14 files, 2026-11-17) |
 | `downloads/merit/merit_generation_snapshots_{YYYY-MM}.csv.gz` | All `demandmet2chartdata` responses of the month, flattened without any change: `requested_date, updated_on, name_of_data, value_of_data` (916,188 snapshot values) |
 | `downloads/merit/merit_demandmet_snapshots_{YYYY-MM}.csv.gz` | All `demandmet1chartdata` responses (All-India demand met, MW), same layout. Raw only; not a generation series. |
 
 Not copied (URLs only, see the patterns above): Sub-report 1 (Jul-2019 to Sep-2026, used only for the cross-check),
-the other 18-column sub-reports, the DGR files, `getAllZoneGen` and `getBMapData` responses, and the 848 individual
+the other 18-column sub-reports, the other DGR files, `getAllZoneGen` and `getBMapData` responses, and the 848 individual
 Merit JSON responses (88 MB uncompressed; their full content is in the monthly `.csv.gz` files).
