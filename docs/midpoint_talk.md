@@ -39,7 +39,7 @@ Our answer is the big number in the middle of the slide. India will need about 4
 
 But a single number is not enough for a plan that runs 25 years. So we forecast the full range. Eight futures in ten fall between 3,500 and 6,400 terawatt-hours. Our idea is to plan against that whole range, not one line, and to test every plan at the high end.
 
-Two rules shape everything we did. First, we model energy generated, never installed capacity or consumption. Second, the forecast uses only the two challenge datasets: generation from the National Power Portal, and state population and income from the Renewable India dataset. The organisers clarified our data questions on 16 November, and this slide follows that ruling.
+Two rules shape everything we did. First, we model energy generated, never installed capacity or consumption. Second, the forecast uses only the two challenge datasets: generation from the National Power Portal, and state population and income from the Renewable India dataset. The organisers answered our data questions in writing, and this slide follows their ruling.
 
 Sai Anirudh will now explain how the model works.
 
@@ -98,7 +98,7 @@ Gaurav will close with our roadblocks and next steps.
 
 ## 5. Roadblocks, questions asked, next steps (Speaker 5, 1:45)
 
-*Cursor: down the right column, then the "Asked (16 Nov)" line.*
+*Cursor: down the right column, then the "Organisers confirmed" line.*
 
 Thank you. The right column lists the roadblocks we hit and what we did about each.
 
@@ -108,9 +108,9 @@ Thank you. The right column lists the roadblocks we hit and what we did about ea
 - Captive power is ruled out, so we use NPP generation only, and the regional split uses the dataset's own state populations.
 - The history includes years of power shortages, which may inflate the elasticity. A declining-elasticity case gives 11 percent less, and it is a control in the dashboard.
 
-On 16 November we asked the organisers three follow-up questions. Should we stay with generation data only? May resource potentials and costs act as limits and prices inside the optimisation? Is NPP's five-region split acceptable?
+We also checked our approach with the organisers in writing. They confirmed that we use generation data only, that published resource and cost data may inform the mix, and that four, five or six regions are all acceptable. So nothing in our approach has to change.
 
-Before the final, we will fold in their answers, check the plan hour by hour with NPP's solar and wind profiles to size storage, and add an industrial demand layer for the steel and aluminium regions. Everything already runs in a live dashboard where every assumption is a control.
+Before the final, we will check the plan hour by hour with NPP's solar and wind profiles to size storage, and add an industrial demand layer for the steel and aluminium regions. Everything already runs in a live dashboard where every assumption is a control.
 
 Thank you. We welcome your questions.
 

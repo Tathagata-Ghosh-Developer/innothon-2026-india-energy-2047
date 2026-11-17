@@ -23,13 +23,13 @@ The forecast is estimated only on NPP generation and the Renewable India state d
 *If pressed:* without the urbanisation prior, the run is purely the two datasets and gives 4,453 TWh, 5% lower.
 
 **2. Do you use installed capacity or consumption anywhere?**
-Not in the forecast. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. We have asked the organisers to confirm this use (16 Nov).
+Not in the forecast. Resource potentials published in GW only cap generation in the mix, after an explicit conversion to TWh with capacity factors. The organisers' written answer on this use: "Use insights from this data source".
 
 **3. What about captive power?**
 The organisers ruled that only NPP generation is used, so captive plants are neither estimated nor added. Our 4,703 TWh is India's utility generation in FY2047-48.
 
 **4. Why five regions?**
-NPP reports generation by its five grid regions, and the dataset's Zone column fills in any state NPP does not list. We asked the organisers on 16 Nov whether the five-region split is acceptable.
+NPP reports generation by its five grid regions, and the dataset's Zone column fills in any state NPP does not list. The organisers confirmed in writing: "Four, five, or six regions - either is fine".
 
 ## Model (Speaker 2)
 
@@ -93,7 +93,6 @@ The plan has inter-regional corridors with losses. The Robust plan allows three 
 The uncertainty is millions of independent futures. The GPU runs a million in 7.7 ms, against 2.21 s on 16 CPU threads. So the dashboard recomputes live when someone changes an assumption. CPU and GPU results agree within 0.2%, checked by an automated parity test.
 
 **19. What is left before the final?**
-- Fold in the organisers' answers.
 - Check the plan hour by hour with NPP's Merit profiles.
 - Add an industrial demand layer for the steel and aluminium regions.
 - Rehearse the live demo.

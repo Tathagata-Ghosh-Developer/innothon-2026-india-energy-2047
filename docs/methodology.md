@@ -355,7 +355,7 @@ Two allocation methods then meet it.
 
 Resource potentials, costs and emission factors come from published sources, not from the challenge datasets.
 The organisers ruled on 16 November 2026 that resource potentials are for justification, not estimation: they never enter the forecast or the regional split, and here they only bound the supply plan.
-Whether potentials, costs and emission factors may serve as limits and prices inside the mix optimisation is one of the follow-up questions sent to the organisers ([decisions.md](decisions.md), D12).
+Asked whether potentials, costs and emission factors may serve as limits and prices inside the mix optimisation, the organisers replied "Use insights from this data source" ([decisions.md](decisions.md), D12).
 
 **Objective:** minimise generation cost plus carbon price times emissions.
 

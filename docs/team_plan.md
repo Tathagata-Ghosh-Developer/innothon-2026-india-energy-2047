@@ -34,11 +34,13 @@ The plan below runs to the final evaluation.
 
 The organisers also asked for the headline as the country's total in TWh, not per person.
 
-## Follow-up questions (sent 16 Nov; answers awaited)
+## Follow-up questions (sent 16 Nov; answered)
 
-- (a) Generation only or also consumption data: whether the analysis must rest on generation data alone, or whether consumption data may be used anywhere.
-- (b) Whether resource potentials, costs and emission factors may serve as limits and prices inside the mix optimisation.
-- (c) Is the NPP five-region split acceptable, given that the dataset's Zone column has six zones (including Central) and the kickoff mentioned four regional blocks?
+- (a) Generation only, not consumption? Answer: "Generation data". We already use NPP generation only.
+- (b) May resource potentials, costs and emission factors serve as limits and prices inside the mix optimisation? Answer: "Use insights from this data source". They stay as limits and prices in the mix, never in the requirement.
+- (c) Is the NPP five-region split acceptable, given that the dataset's Zone column has six zones (including Central) and the kickoff mentioned four regional blocks? Answer: "Four, five, or six regions - either is fine". We keep NPP's five regions.
+
+No model change follows from these answers ([decisions.md](decisions.md), D12).
 
 ## Workstreams
 

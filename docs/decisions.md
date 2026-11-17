@@ -83,8 +83,7 @@ Capacity targets (500 GW non-fossil by 2030, 100 GW nuclear by 2047) appear only
 Resource potentials published in GW are converted to annual generation potential (TWh per year) with sourced capacity factors.
 That conversion is labelled wherever it appears.
 It is used only as an upper bound on generation.
-We have asked the organisers to confirm that this conversion is acceptable.
-Their ruling of 16 November allows resource potentials for justification only, not estimation; whether they may bound the mix optimisation is an open follow-up question (D12).
+Their ruling of 16 November allows resource potentials for justification only, not estimation. Asked whether they may bound the mix optimisation, the organisers replied "Use insights from this data source" (D12), so they stay as limits in the supply plan and never enter the requirement.
 
 ## D6. Compute: C++20, OpenMP by default, optional CUDA
 
@@ -257,7 +256,7 @@ The headline must also be the country's total in TWh, not generation per person.
 - **The recommended plan**: the Robust policy keeps 78.3 percent non-fossil, 993 Mt CO2, about 176 bn USD a year, no unmet energy at the median and 638 TWh unmet at P90 (none with 45 percent usable solar land). Its national mix hardly moves because the national requirement is unchanged; the regional requirements, and with them regional siting and corridor flows, do change.
 - **The trade-off**: a CO2 cap still takes the Robust plan from 993 to 643 Mt a year (-35 percent) until the coal fleet floor binds; it now costs 0.65 bn USD a year more (0.67 before) and the highest marginal abatement cost is 6.32 USD per tonne (3.97 before).
 - **Storage and land** of the Robust plan: 447 GW, 3,042 GWh and 6.8 hours; 19,990 km² (0.61 percent of India).
-- **Resource potentials** (point 6) never entered the forecast or the split; they bound the supply plan only, which is open question b below.
+- **Resource potentials** (point 6) never entered the forecast or the split; they bound the supply plan only, which the organisers' answer to question b below allows.
 
 **Effect on results** (before: the copies in `docs/beamer/data/` committed with 07f8b3d; after: `outputs/` of this run).
 
@@ -284,10 +283,10 @@ The headline must also be the country's total in TWh, not generation per person.
 - Using the dataset Zone for every state: its six zones do not match NPP's five grid regions, and it places Rajasthan in the West, Sikkim in the North-East and the Andaman and Nicobar Islands in the South, while NPP reports their generation in the Northern and Eastern regions. The Zone is kept as the fallback for a state NPP does not list.
 - A state urban term from external state urban projections: point 5 requires the split to use the challenge dataset, which has no state urban share.
 
-**Open.** Three follow-up questions were sent to the organisers on 16 November 2026:
+**Follow-up questions and answers.** Three follow-up questions were sent to the organisers on 16 November 2026, and they answered in writing before the midpoint review (answers quoted verbatim):
 
-- (a) Generation only: the kickoff guidance asked for energy generated only, not consumption, and we continue to use NPP generation only. We asked the organisers to confirm this is correct.
-- (b) Supply mix: published resource potentials (solar, wind and hydro, converted from GW to TWh a year with capacity factors), costs and emission factors from public literature (CEA, IEA, MNRE) act only as limits and prices inside the least-cost mix; the 2047 total requirement uses none of them. We asked whether this is acceptable, or whether the potentials should only be shown beside the mix as a justification.
-- (c) Regions: we use the five grid regions reported by NPP (Northern, Western, Southern, Eastern, North-Eastern). The challenge dataset's Zone column has six zones, including Central, and the kickoff mentioned four regional blocks. We asked whether the NPP five-region split is acceptable.
+- (a) Generation only: the kickoff guidance asked for energy generated only, not consumption, and we continue to use NPP generation only. We asked the organisers to confirm this is correct. Answer: "Generation data".
+- (b) Supply mix: published resource potentials (solar, wind and hydro, converted from GW to TWh a year with capacity factors), costs and emission factors from public literature (CEA, IEA, MNRE) act only as limits and prices inside the least-cost mix; the 2047 total requirement uses none of them. We asked whether this is acceptable, or whether the potentials should only be shown beside the mix as a justification. Answer: "Use insights from this data source". We read this as allowing the published data to inform the mix as limits and prices, which is how we use them.
+- (c) Regions: we use the five grid regions reported by NPP (Northern, Western, Southern, Eastern, North-Eastern). The challenge dataset's Zone column has six zones, including Central, and the kickoff mentioned four regional blocks. We asked whether the NPP five-region split is acceptable. Answer: "Four, five, or six regions - either is fine".
 
-Until they answer, the plan uses the published limits and prices as before, and the split uses NPP's five grid regions.
+No change follows. The forecast already uses NPP generation only; the published potentials, costs and emission factors stay as limits and prices in the mix and never enter the 2047 requirement; the results stay on NPP's five grid regions.
