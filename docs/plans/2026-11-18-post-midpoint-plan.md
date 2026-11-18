@@ -293,3 +293,35 @@
 
 - [ ] **Step 1:** Run an independent code review of all commits since this plan (correctness, rules compliance, source labelling).
 - [ ] **Step 2:** Fix the findings, re-run ctest and CI, and push.
+
+---
+
+## Addendum (19 Nov 2026): alignment with the official challenge page
+
+The official page (https://em-innothon-challenge.web.app/, last modified 4 Nov 2026) has not changed since the kickoff. It frames the strategy around six energy vectors (coal, hydro, solar, wind, nuclear, natural gas). Its regional cards name solar in the Northern Region, wind and natural gas in the Western Region ("Transition Fuel: flexible peaking capacity, LNG terminal infrastructure, reliable bridge fuel for intermittent renewables"), hydro in the North-Eastern Region and nuclear in the Southern Region. Its key evidence sources are historical generation, population and demographics, the existing regional generation mix, geographic and climatic indicators, land availability, and economic development and urbanisation.
+
+### Task 9a: Committed builds and the role of gas
+
+**Files:** `src/allocation/inputs.*`, `src/allocation/allocate.*`, `src/pipeline/presets.hpp`, `apps/energy2047.cpp`, `tests/test_allocation.cpp`
+
+- **Committed-build floors.** Nuclear units under construction or sanctioned (`nuclear_pipeline.csv`) and large hydro under construction (`resource_potential.csv`, `under_construction_mw`) set lower bounds on 2047 generation in their regions. Each bound is GW × the CUF from `build_limits.csv` × 8.76. Plants already being built generate in 2047 whatever the LP's cost ranking says. This is standard practice: existing and committed capacity is exogenous in capacity-expansion models.
+- **Gas as a peaking and transition fuel.** Add `PolicySettings::gas_min_share` (default 0 in Base). The Robust preset keeps the existing gas fleet in service for peaking: gas generation of at least the NPP fleet floor (R11), sited by the regional base shares, with most in the Western Region. The hourly storage check reports how many evening-peak hours gas covers.
+- **Tests:** `committed_nuclear_floor_binds`, `gas_min_share_respected`, and the LP stays feasible at the defaults.
+
+### Task 11b: Landing page in the structure of the official challenge page
+
+**Files:** `web/landing.html` (and `cmake/Site.cmake` only if a new template feature is needed)
+
+- Follow the official page's information architecture and visual language: white background, navy headings, a red accent for the call to action, a large two-line headline, stat cards, numbered steps and deliverable cards, a timeline, and an FAQ accordion.
+- Map our evidence onto it:
+  - the hero, with 4,703 TWh and the three headline cards;
+  - "at a glance" (2047, national + regional, energy generated);
+  - an interactive regional map with six vector chips, using our numbers and each region's strength;
+  - Steps 01 Forecast, 02 Strategy, 03 Explore;
+  - key evidence sources, each labelled primary or secondary;
+  - Deliverables 01-05, each linked to its evidence;
+  - our timeline against the official one;
+  - an FAQ built from the midpoint panel's questions;
+  - the existing charts (fan, holdout, drivers, regions, mix, trade-off, land and storage).
+- **Do not copy** the ExxonMobil logo, wordmark or any brand asset, and do not present the page as the official site. The header names the team and says "Submission to ExxonMobil INNOTHON 2026".
+- Keep the accessibility standard: WCAG 2.2 AA, keyboard-operable accordion and map chips, light and dark themes, no layout shift, and a table view for every chart.
