@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
+#include <functional>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -957,9 +958,17 @@ int main(int argc, char** argv) {
       w.field("case").field("description").field("p05").field("p50").field("p95");
       w.endrow();
       struct Case {
-        const char* name;
-        const char* desc;
-        void (*apply)(ScenarioControls&);
+        std::string name, desc;
+        std::function<void(ScenarioControls&)> apply;
+      };
+      // Elasticity cases: one OLS standard error of the FY2011-12 onward fit either way,
+      // each window on its own, and the mixture recentred on the first-difference estimate.
+      const double se = fi.beta_se;
+      const double fd_shift = fi.fd_beta - mean(fit.india_beta_boot);
+      auto with_value = [](const char* fmt, double v) {
+        char b[128];
+        std::snprintf(b, sizeof b, fmt, v);
+        return std::string(b);
       };
       const Case cases[] = {
           {"base", "India elasticity with the excess-urbanisation prior", [](ScenarioControls&) {}},
@@ -974,6 +983,17 @@ int main(int argc, char** argv) {
           {"urban_plus_5", "urban share 5 points above the UN path by 2047",
            [](ScenarioControls& s) { s.urban_shift_2047 = 0.05; }},
           {"pop_band_x2", "population uncertainty doubled", [](ScenarioControls& s) { s.pop_band_scale = 2.0; }},
+          {"beta_minus_1se", with_value("income elasticity lower by one OLS standard error (%.3f) in every replicate", se),
+           [se](ScenarioControls& s) { s.beta_shift = -se; }},
+          {"beta_plus_1se", with_value("income elasticity higher by one OLS standard error (%.3f) in every replicate", se),
+           [se](ScenarioControls& s) { s.beta_shift = se; }},
+          {"beta_window_s1", "elasticity from the FY2011-12 onward window only (one price base)",
+           [](ScenarioControls& s) { s.beta_window = 1; }},
+          {"beta_window_s3", "elasticity from the FY2006-07 onward window only (spliced price bases)",
+           [](ScenarioControls& s) { s.beta_window = 2; }},
+          {"beta_first_difference",
+           with_value("elasticity recentred on the first-difference estimate (shift %+.3f in every replicate)", fd_shift),
+           [fd_shift](ScenarioControls& s) { s.beta_shift = fd_shift; }},
       };
       std::printf("sensitivity (2047 national, TWh P5 / P50 / P95):\n");
       for (const Case& k : cases) {
@@ -984,7 +1004,7 @@ int main(int argc, char** argv) {
         w.field(k.name).field(k.desc).field(q[0], 6).field(q[3], 6).field(q[6], 6);
         w.endrow();
         site.sensitivity.push_back({k.name, k.desc, q[3]});
-        std::printf("  %-24s %6.0f %6.0f %6.0f\n", k.name, q[0], q[3], q[6]);
+        std::printf("  %-24s %6.0f %6.0f %6.0f\n", k.name.c_str(), q[0], q[3], q[6]);
       }
     }
 

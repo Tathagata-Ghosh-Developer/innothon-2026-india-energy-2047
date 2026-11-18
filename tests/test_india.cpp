@@ -3,6 +3,8 @@
 //     placeholder, not data) must not dilute national income growth.
 //  2. Forecast: the two holdout years (FY2024-25, FY2025-26), never used in
 //     fitting, must fall inside the model's 90 percent band.
+//  3. Elasticity controls: a higher income elasticity gives a higher 2047 median,
+//     and each estimation window on its own gives a usable forecast.
 // Usage: test_india <repo_root>
 #include <cmath>
 #include <cstdio>
@@ -10,6 +12,7 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "core/csv.hpp"
 #include "forecast/india.hpp"
@@ -93,6 +96,48 @@ void holdout_inside_band(const std::string& root) {
   }
 }
 
+void elasticity_shift_monotone(const std::string& root) {
+  std::printf("elasticity controls\n");
+  const Pipeline pl(root, CoreModel::kIndia);
+  auto median_2047 = [&](double shift, int window) {
+    ScenarioControls c;
+    c.draws = 1u << 14;
+    c.use_gpu = false;
+    c.beta_shift = shift;
+    c.beta_window = window;
+    const ForecastResult f = pl.forecast(c);
+    return f.quant.q[0][f.years.size() - 1][3];
+  };
+  const double lo = median_2047(-0.063, 0), mid = median_2047(0, 0), hi = median_2047(0.063, 0);
+  const double s1 = median_2047(0, 1), s3 = median_2047(0, 2);
+  std::printf("    2047 P50: beta -0.063 %.0f | base %.0f | beta +0.063 %.0f | S1 only %.0f | S3 only %.0f TWh\n", lo, mid,
+              hi, s1, s3);
+  check(lo < mid && mid < hi, "median rises with beta_shift (-0.063 < 0 < +0.063)");
+  check(std::isfinite(s1) && std::isfinite(s3), "S1-only and S3-only windows give finite medians");
+  check(s3 >= s1, "S3-only median >= S1-only median (S3 beta 0.866 > S1 0.828)");
+
+  // Window selection: slot 4 of a replicate is beta (no urban term, no decline), so the
+  // mean over the packed array must equal the mean of that window's half.
+  const auto& bb = pl.fitted().india_beta_boot;
+  const size_t h1 = bb.size() / 2;
+  auto half_mean = [&](size_t from, size_t to) {
+    double m = 0;
+    for (size_t k = from; k < to; ++k) m += bb[k];
+    return m / static_cast<double>(to - from);
+  };
+  auto slot4_mean = [&](int window) {
+    ScenarioControls c;
+    c.beta_window = window;
+    const std::vector<float> boot = pl.boot_for(c);
+    const size_t n = boot.size() / kBootStride;
+    double m = 0;
+    for (size_t k = 0; k < n; ++k) m += boot[k * kBootStride + 4];
+    return m / static_cast<double>(n);
+  };
+  check(std::abs(slot4_mean(1) - half_mean(0, h1)) < 1e-5, "beta_window 1 uses the S1 replicates only");
+  check(std::abs(slot4_mean(2) - half_mean(h1, bb.size())) < 1e-5, "beta_window 2 uses the S3 replicates only");
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -100,6 +145,7 @@ int main(int argc, char** argv) {
     const std::string root = argc > 1 ? argv[1] : ".";
     stale_rows_are_ignored(fs::temp_directory_path() / "e47_test_india");
     holdout_inside_band(root);
+    elasticity_shift_monotone(root);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;
   } catch (const std::exception& e) {

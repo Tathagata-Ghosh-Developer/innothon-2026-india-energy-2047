@@ -381,13 +381,22 @@ std::vector<float> Pipeline::boot_for(const ScenarioControls& c) const {
   // India-only core. Slot 0: beta with the excess-urbanisation prior; slot 1: gamma = 0.
   // An optional elasticity decline delta keeps the base-year elasticity at beta:
   //   elasticity(x) = beta - delta (x - x0)  =>  b2 = -delta / 2, b1 = beta + delta x0.
+  // beta_shift is added to beta in every replicate. beta_window 1 or 2 fills every slot
+  // with that window's half of the mixture (S1 first, then S3), each replicate of the
+  // half repeated equally, so the array keeps its size and the draw count is unchanged.
   const size_t n = fit_.india_beta_boot.size();
+  const size_t h1 = n / 2;  // S1 half; matches the split in the constructor
+  size_t from = 0, len = n;
+  if (c.beta_window == 1) len = h1;
+  if (c.beta_window == 2) from = h1, len = n - h1;
   const double x0 = std::log(fit_.history.back().gdp_pc / 10.0);
   const double delta = std::max(0.0, c.elasticity_decline);
   std::vector<float> out(n * kBootStride);
   for (size_t k = 0; k < n; ++k) {
     float* p = out.data() + k * kBootStride;
-    const double beta = fit_.india_beta_boot[k], gamma = fit_.india_gamma[k], kappa = fit_.india_kappa_boot[k];
+    const size_t j = from + k * len / n;
+    const double beta = fit_.india_beta_boot[j] + c.beta_shift, gamma = fit_.india_gamma[j],
+                 kappa = fit_.india_kappa_boot[j];
     p[0] = static_cast<float>(beta - gamma * kappa + delta * x0);
     p[1] = static_cast<float>(-0.5 * delta);
     p[2] = static_cast<float>(gamma);

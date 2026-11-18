@@ -58,6 +58,12 @@ struct ScenarioControls {
   // India-only core: fall in the income elasticity per unit increase of ln(income)
   // (0 = constant elasticity, the estimated model).
   double elasticity_decline = 0;
+  // India-only core: added to the income elasticity beta of every bootstrap replicate.
+  double beta_shift = 0;
+  // India-only core: which estimation window the replicates come from.
+  // 0 = specification mixture (estimated model), 1 = S1 only (FY2011-12 onward),
+  // 2 = S3 only (FY2006-07 onward, spliced price bases).
+  int beta_window = 0;
 };
 
 struct HistoryPoint {
