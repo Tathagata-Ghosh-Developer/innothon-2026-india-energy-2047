@@ -33,7 +33,7 @@ using RegionTech = std::array<std::array<double, kTechs>, kRegions>;
 struct AllocationInputs {
   // Base year: fiscal year by its start year (2023 = FY2023-24, April to March).
   // base_twh = NPP regional conventional generation (thermal split into coal and gas
-  // with CEA regional shares) + CEA renewable generation by state (base_res_twh).
+  // with NPP station sums by state) + CEA renewable generation by state (base_res_twh).
   int base_year = 2023;
   RegionTech base_twh{};        // generation in base year (utilities), TWh
   RegionTech base_res_twh{};    // part of base_twh from CEA renewables by state (solar, wind, small hydro, bioenergy)

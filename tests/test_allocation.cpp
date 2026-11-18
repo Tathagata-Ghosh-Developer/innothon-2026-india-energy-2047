@@ -33,14 +33,16 @@ int base_mix_matches_npp(const std::string& root, const AllocationInputs& in) {
     if (!ok) ++fails;
   };
   std::printf("base_mix_matches_npp\n");
-  // NPP regional totals (thermal + nuclear + hydro); Bhutan import is a region of its own.
-  std::array<double, kRegions> npp{};
+  // NPP regional totals (thermal + nuclear + hydro) and thermal; Bhutan import is a region of its own.
+  std::array<double, kRegions> npp{}, npp_thermal{};
   {
     const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_region_generation_fy.csv");
     for (size_t i = 0; i < t.rows(); ++i) {
-      if (t.str(i, t.col("fiscal_year")) != "2023-24" || t.str(i, t.col("source")) != "total") continue;
+      if (t.str(i, t.col("fiscal_year")) != "2023-24") continue;
       const int r = region_of(t.str(i, t.col("region")));
-      if (r >= 0) npp[r] = t.num(i, t.col("generation_gwh")) / 1000.0;
+      const std::string s = t.str(i, t.col("source"));
+      if (r >= 0 && s == "total") npp[r] = t.num(i, t.col("generation_gwh")) / 1000.0;
+      if (r >= 0 && s == "thermal") npp_thermal[r] = t.num(i, t.col("generation_gwh")) / 1000.0;
     }
   }
   // CEA renewable generation by region and type (region rows of the same table).
@@ -64,6 +66,8 @@ int base_mix_matches_npp(const std::string& root, const AllocationInputs& in) {
                 npp[r]);
     check(npp[r] > 0 && std::abs(conv / npp[r] - 1.0) < 0.005,
           std::string(region_name(r)) + ": conventional within 0.5% of NPP FY2023-24");
+    check(npp_thermal[r] > 0 && std::abs((b[kCoal] + b[kGas]) / npp_thermal[r] - 1.0) < 0.005,
+          std::string(region_name(r)) + ": coal + gas within 0.5% of NPP FY2023-24 thermal");
   }
   for (int r = 0; r < kRegions; ++r)
     for (int k : {kSolar, kWind, kHydro, kBio}) {

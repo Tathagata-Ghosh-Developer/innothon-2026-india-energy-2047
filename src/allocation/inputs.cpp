@@ -109,9 +109,9 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
   const auto state_reg = load_state_regions(gen_dir + "/state/state_region_map.csv");
 
   // 1. Base-year generation by region and source, FY2023-24 (in.base_year is the start year).
-  //    Conventional stations: NPP (primary). Their thermal total is split into coal and gas
-  //    with CEA General Review regional shares (secondary). Renewables: CEA General Review
-  //    by state and type (secondary), each state in the grid region NPP reports it under.
+  //    Conventional stations: NPP (primary), thermal split into coal and gas with NPP's own
+  //    station sums by state. Renewables: CEA General Review by state and type (secondary),
+  //    each state in the grid region NPP reports it under.
   {
     const std::string fy = fiscal_label(in.base_year);
     auto at = [&](const char* rel) { return root + "/" + rel; };
@@ -158,10 +158,11 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         fy.c_str(), conv_total, bhutan));
 
     // 1b. NPP state file (Sub-report 16, station sums by state): the grid region of each
-    //     state (the map of the regional split, src/regional/states.cpp) and NPP's own
-    //     coal / gas split of thermal (fallback and cross-check).
+    //     state (the map of the regional split, src/regional/states.cpp) and the coal /
+    //     gas split of thermal by region.
     std::map<std::string, int> npp_region;
     std::array<double, kRegions> npp_coal{}, npp_thermal{};
+    double npp_diesel = 0;
     {
       const CsvTable t = CsvTable::read(at("data/raw/npp/npp_state_generation_fy.csv"));
       const size_t cfy = t.col("fiscal_year"), cr = t.col("region"), cst = t.col("state"), cs = t.col("source"),
@@ -177,18 +178,54 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         const double twh = t.num(r, cg) / 1000.0;
         if (std::isnan(twh)) continue;
         if (src == "coal_lignite") npp_coal[reg] += twh;
+        if (src == "diesel") npp_diesel += twh;
         if (src == "coal_lignite" || src == "gas" || src == "diesel") npp_thermal[reg] += twh;
       }
     }
 
-    // 1c. Coal and gas shares of thermal by region (CEA General Review, Table 4.4), applied
-    //     to NPP thermal. Oil and diesel go with gas: both are non-coal fossil generation.
+    // 1c. Coal and gas shares of thermal by region from NPP's station sums, applied to NPP
+    //     regional thermal (the two NPP sub-reports agree to the GWh). Diesel goes with gas:
+    //     both are non-coal fossil generation. A region without station rows would take
+    //     NPP's national share. CEA's regional split (General Review Table 4.4) is only a
+    //     cross-check.
     {
+      double nat_coal = 0, nat_thermal = 0, coal_total = 0, gas_total = 0;
+      for (int r = 0; r < kRegions; ++r) {
+        nat_coal += npp_coal[r];
+        nat_thermal += npp_thermal[r];
+      }
+      std::string fallback;
+      for (int r = 0; r < kRegions; ++r) {
+        double share;
+        if (npp_thermal[r] > 0) {
+          share = npp_coal[r] / npp_thermal[r];
+        } else if (nat_thermal > 0) {
+          share = nat_coal / nat_thermal;
+          fallback += (fallback.empty() ? "" : ", ") + std::string(region_name(r));
+        } else {
+          throw std::runtime_error("no NPP coal and gas split of " + fy + " thermal generation");
+        }
+        in.base_twh[r][kCoal] = thermal[r] * share;
+        in.base_twh[r][kGas] = thermal[r] * (1.0 - share);
+        coal_total += in.base_twh[r][kCoal];
+        gas_total += in.base_twh[r][kGas];
+      }
+      src_notes.push_back(strf(
+          "Primary: NPP station sums by state (CEA 18-column reports, Sub-report 16, "
+          "data/raw/npp/npp_state_generation_fy.csv): coal and gas shares of FY%s thermal generation by region, "
+          "applied to NPP regional thermal: coal and lignite %.1f TWh, gas %.1f TWh. Gas includes combined-cycle "
+          "stations run on liquid fuel; diesel stations (%.1f TWh) are counted with gas.",
+          fy.c_str(), coal_total, gas_total, npp_diesel));
+      if (!fallback.empty())
+        src_notes.push_back(strf("Primary: no NPP station rows for %s; NPP's national coal share of thermal (%.3f) "
+                                 "used there.",
+                                 fallback.c_str(), nat_coal / nat_thermal));
+
+      // Cross-check: the CEA General Review regional coal share applied to the same thermal.
       const CsvTable t = CsvTable::read(at("data/raw/generation/region/cea_region_generation_fy.csv"));
       const size_t cfy = t.col("fiscal_year"), cr = t.col("region"), ct = t.col("row_type"), cs = t.col("source"),
                    cg = t.col("generation_gwh");
       std::array<double, kRegions> coal{}, other{};
-      double oil = 0;
       for (size_t r = 0; r < t.rows(); ++r) {
         if (t.str(r, cfy) != fy || t.str(r, ct) != "region_total") continue;
         const int reg = region_index(t.str(r, cr));
@@ -197,45 +234,23 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         if (reg < 0 || std::isnan(gwh)) continue;
         if (src == "coal") coal[reg] += gwh;
         if (src == "gas" || src == "oil_diesel") other[reg] += gwh;
-        if (src == "oil_diesel") oil += gwh / 1000.0;
       }
-      double nat_coal = 0, nat_thermal = 0, coal_total = 0, gas_total = 0, worst = 0;
+      std::string diffs;
+      double worst = 0;
+      bool any = false;
       for (int r = 0; r < kRegions; ++r) {
-        nat_coal += npp_coal[r];
-        nat_thermal += npp_thermal[r];
+        if (coal[r] + other[r] <= 0) continue;
+        const double d = thermal[r] * coal[r] / (coal[r] + other[r]) - in.base_twh[r][kCoal];
+        diffs += strf("%s%s %+.2f", any ? ", " : "", region_name(r), d);
+        worst = std::max(worst, std::abs(d));
+        any = true;
       }
-      std::string fallback;
-      for (int r = 0; r < kRegions; ++r) {
-        double share;
-        if (coal[r] + other[r] > 0) {
-          share = coal[r] / (coal[r] + other[r]);
-        } else if (nat_thermal > 0) {
-          share = nat_coal / nat_thermal;
-          fallback += (fallback.empty() ? "" : ", ") + std::string(region_name(r));
-        } else {
-          throw std::runtime_error("no coal and gas split of " + fy + " thermal generation for " +
-                                   std::string(region_name(r)));
-        }
-        in.base_twh[r][kCoal] = thermal[r] * share;
-        in.base_twh[r][kGas] = thermal[r] * (1.0 - share);
-        coal_total += in.base_twh[r][kCoal];
-        gas_total += in.base_twh[r][kGas];
-        if (npp_thermal[r] > 0) worst = std::max(worst, std::abs(in.base_twh[r][kCoal] - npp_coal[r]));
-      }
-      src_notes.push_back(strf(
-          "Secondary: CEA General Review 2025, Table 4.4 (data/raw/generation/region/cea_region_generation_fy.csv): "
-          "coal and gas shares of FY%s thermal generation by region, applied to NPP thermal: coal %.1f TWh, gas %.1f "
-          "TWh. Oil and diesel (%.1f TWh) are counted with gas.",
-          fy.c_str(), coal_total, gas_total, oil));
-      if (!fallback.empty())
-        src_notes.push_back(strf("Primary: no CEA split for %s; NPP's national coal share of thermal (%.3f, Sub-report "
-                                 "16 station sums) used there instead.",
-                                 fallback.c_str(), nat_coal / nat_thermal));
-      if (nat_thermal > 0)
-        src_notes.push_back(strf("Primary: cross-check only: NPP station sums by state (Sub-report 16, "
-                                 "data/raw/npp/npp_state_generation_fy.csv) put coal within %.2f TWh of this split in "
-                                 "every region.",
-                                 worst));
+      if (any)
+        src_notes.push_back(strf(
+            "Secondary: cross-check only, not used: CEA General Review 2025, Table 4.4 "
+            "(data/raw/generation/region/cea_region_generation_fy.csv) regional coal shares would change coal by "
+            "%s TWh (largest %.2f TWh).",
+            diffs.c_str(), worst));
     }
 
     // 1d. Renewables by state and type (CEA General Review, Table 4.7). Solar and wind;
@@ -357,9 +372,9 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
                                in.base_year + 1, ember_cy));
     }
     in.notes.push_back("Base generation FY" + fy +
-                       ": NPP regional conventional generation (primary), thermal split into coal and gas with CEA "
-                       "regional shares (secondary), plus CEA renewable generation by state (secondary); see the "
-                       "base-mix provenance lines.");
+                       ": NPP regional conventional generation, thermal split into coal and gas with NPP station "
+                       "sums (primary), plus CEA renewable generation by state (secondary); see the base-mix "
+                       "provenance lines.");
   }
 
   // 1b. National generation history: build-rate evidence for 2047 upper bounds.
