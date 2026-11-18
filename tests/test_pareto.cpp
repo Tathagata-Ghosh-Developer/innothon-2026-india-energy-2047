@@ -57,9 +57,11 @@ int main(int argc, char** argv) {
       check(std::abs(a.co2_cap_dual) < 1e-6, "cap dual is zero (cap slack)");
     }
 
-    std::printf("binding cap 200 Mt below the unconstrained CO2\n");
+    // 100 Mt: inside the range the published build limits leave for meeting the requirement in
+    // full (the sweep below ends about 160 Mt below the unconstrained plan).
+    std::printf("binding cap 100 Mt below the unconstrained CO2\n");
     PolicySettings pb = p0;
-    pb.co2_cap_mt = free.co2_mt - 200.0;
+    pb.co2_cap_mt = free.co2_mt - 100.0;
     const AllocationResult b = solve_least_cost(in, pb, req);
     {
       check(b.ok, "solves");

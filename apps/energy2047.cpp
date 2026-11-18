@@ -122,14 +122,16 @@ struct SiteSummary {
   bool storage_ok = false;
   StorageLandResult robust_storage;  // Robust policy, median requirement
   StorageLandResult levers_storage;  // Robust policy with the P90 levers, P90 requirement
-  double levers_unserved = -1, levers_solar_land = 0, levers_build_accel = 0;
+  double levers_unserved = -1, levers_solar_land = 0;
+  double levers_build_accel = 0;  // multiplier on the published additions of levers_build_case
+  int levers_build_case = kBuildHigh;
   double cea_power_gw = 0, cea_energy_gwh = 0;
   std::vector<ParetoPoint> pareto;  // cost-CO2 trade-off, Robust policy, median requirement
 };
 
 // Storage and land back-calculated from the least-cost plan: Base and Robust policy
 // at the median and P90 requirement, plus the Robust plan with the P90 levers
-// (45% usable solar land, build rates 3.5x the record year), which meets the P90.
+// (45% usable solar land, build rates at the published high-case limits), which meets the P90.
 void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const ScenarioControls& c,
                         SiteSummary& site) {
   const StorageInputs& si = pl.storage_inputs();
@@ -141,13 +143,13 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
     const char* plan;
     const char* policy;
     double quantile;
-    double solar_land, build_accel;  // < 0 = preset value
+    double solar_land, build_accel;  // < 0 = preset value; build_accel x the published limits
   };
   const Case cases[] = {{"robust_p50", "Robust", 0.5, -1, -1},
                         {"base_p50", "Base", 0.5, -1, -1},
                         {"robust_p90", "Robust", 0.9, -1, -1},
                         {"base_p90", "Base", 0.9, -1, -1},
-                        {"robust_p90_levers", "Robust", 0.9, 0.45, 3.5}};
+                        {"robust_p90_levers", "Robust", 0.9, 0.45, 1.0}};
   CsvWriter w((out / "storage_land_2047.csv").string());
   w.field("plan").field("quantity").field("value").field("unit").field("note");
   w.endrow();
@@ -235,11 +237,15 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
       site.levers_unserved = unserved;
       site.levers_solar_land = ps.solar_land;
       site.levers_build_accel = ps.build_accel;
+      site.levers_build_case = ps.build_case;
     }
     const AllocationResult& a = r.least_cost;
-    char desc[160];
-    std::snprintf(desc, sizeof desc, "%s policy, P%.0f requirement%s", k.policy, 100 * k.quantile,
-                  k.solar_land > 0 ? ", 45% usable solar land, build rates 3.5x" : "");
+    char levers[128] = "";
+    if (k.solar_land > 0 || k.build_accel > 0)
+      std::snprintf(levers, sizeof levers, ", %.0f%% usable solar land, build rates %.2fx the published %s case",
+                    100 * ps.solar_land, ps.build_accel, build_case_name(ps.build_case));
+    char desc[224];
+    std::snprintf(desc, sizeof desc, "%s policy, P%.0f requirement%s", k.policy, 100 * k.quantile, levers);
     row(plan, "requirement", req, "TWh", desc);
     row(plan, "unserved_in_plan", unserved, "TWh", "annual shortfall of the plan itself (LP); storage cannot supply it");
     row(plan, "solar_generation", a.national[kSolar], "TWh", "");
@@ -843,7 +849,9 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
       const PolicySettings& ps = s.robust_policy;  // the preset (pipeline/presets.hpp) as applied
       j.obj("settings").num("nonfossil_min_pct", 100 * ps.nonfossil_min).num("solar_land_pct", 100 * ps.solar_land);
       j.num("wind_land_pct", 100 * ps.wind_land).num("transfer_scale", ps.transfer_scale);
-      j.num("build_accel", ps.build_accel).num("nuclear_max_pct", 100 * ps.nuclear_max).end();
+      // build_accel multiplies the published build limits of case build_case (low, central, high).
+      j.num("build_accel", ps.build_accel).str("build_case", build_case_name(ps.build_case));
+      j.num("nuclear_max_pct", 100 * ps.nuclear_max).end();
     }
     j.num("nonfossil_pct", 100 * a.nonfossil_share()).num("co2_mt", a.co2_mt).num("cost_busd", a.cost_busd);
     j.num("unmet_twh", total(a.unserved)).num("generation_twh", a.total_twh);
@@ -886,6 +894,7 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.num("cost_busd", b.cost_busd).num("unmet_twh", total(b.unserved)).end();
     j.obj("p90").num("requirement_twh", q[5]).num("robust_unmet_twh", s.robust_p90_unserved);
     j.num("levers_solar_land_pct", 100 * s.levers_solar_land).num("levers_build_accel", s.levers_build_accel);
+    j.str("levers_build_case", build_case_name(s.levers_build_case));
     j.num("levers_unmet_twh", s.levers_unserved).end();
     // Cost-CO2 trade-off of the recommended plan (epsilon-constraint sweep on CO2).
     // Points are measured from the least-cost plan: CO2 avoided and extra cost.
@@ -1428,17 +1437,18 @@ int main(int argc, char** argv) {
       }
     }
     {
-      // What it takes to meet the P90 requirement: Robust policy with faster builds
-      // and more usable solar land (rooftop, agri-PV, canal tops).
+      // What it takes to meet the P90 requirement: Robust policy (published high-case build
+      // limits) with builds faster than the published limits and more usable solar land
+      // (rooftop, agri-PV, canal tops). build_accel multiplies the published additions.
       CsvWriter w((out / "p90_levers.csv").string());
-      w.field("build_accel").field("solar_land").field("unserved_p90_twh").field("cost_busd").field("co2_mt").field(
-          "nonfossil_share");
+      w.field("build_case").field("build_accel_x_published").field("solar_land").field("unserved_p90_twh").field(
+          "cost_busd").field("co2_mt").field("nonfossil_share");
       w.endrow();
       ScenarioControls s90 = c;
       s90.requirement_quantile = 0.9;
       std::printf("P90 levers (Robust policy; unmet TWh at P90):\n");
-      for (double accel : {2.5, 3.0, 3.5, 4.0}) {
-        std::printf("  build %.1fx:", accel);
+      for (double accel : {1.0, 1.25, 1.5, 2.0}) {
+        std::printf("  build %.2fx published:", accel);
         for (double land : {0.35, 0.45, 0.55}) {
           PolicySettings ps;
           for (const auto& pp : policy_presets())
@@ -1448,7 +1458,8 @@ int main(int argc, char** argv) {
           const StrategyResult r = pl.strategy(f, s90, ps);
           double u = 0;
           for (double x : r.least_cost.unserved) u += x;
-          w.field(accel, 3).field(land, 3).field(u, 5).field(r.least_cost.cost_busd, 5).field(r.least_cost.co2_mt, 5);
+          w.field(build_case_name(ps.build_case)).field(accel, 3).field(land, 3).field(u, 5);
+          w.field(r.least_cost.cost_busd, 5).field(r.least_cost.co2_mt, 5);
           w.field(r.least_cost.nonfossil_share(), 4);
           w.endrow();
           std::printf("  land %.0f%% -> %6.0f", 100 * land, u);

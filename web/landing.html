@@ -534,7 +534,7 @@
   <div class="container">
     <div class="section__head">
       <h2 class="section__title" id="plan-title">The recommended 2047 mix</h2>
-      <p class="lead">The least-cost plan under our Robust policy: {{plan.settings.solar_land_pct|0}}% of the solar potential usable (including rooftop and agri-PV), corridors between regions {{plan.settings.transfer_scale|0}} times the 2032 plan, building up to {{plan.settings.build_accel|1}} times India's record year, and renewables backed by storage. The tiles compare it with the least-cost plan under base policy settings.</p>
+      <p class="lead">The least-cost plan under our Robust policy: {{plan.settings.solar_land_pct|0}}% of the solar potential usable (including rooftop and agri-PV), corridors between regions {{plan.settings.transfer_scale|0}} times the 2032 plan, building at up to {{plan.settings.build_accel|2}} times the published {{plan.settings.build_case}}-case build limits, and renewables backed by storage. The tiles compare it with the least-cost plan under base policy settings.</p>
     </div>
     <div class="grid grid--tiles">
       <article class="panel kpi" aria-labelledby="kpi-nonfossil">
@@ -590,11 +590,11 @@
       <div class="stack">
         <aside class="callout" aria-labelledby="p90-title">
           <h3 class="callout__title" id="p90-title">If demand comes in high</h3>
-          <p>At the P90 requirement ({{plan.p90.requirement_twh|0}} TWh) the same policy leaves <strong class="num">{{plan.p90.robust_unmet_twh|0}} TWh</strong> unmet. Making {{plan.p90.levers_solar_land_pct|0}}% of the solar potential usable and building at {{plan.p90.levers_build_accel|1}} times India's record rate leaves {{plan.p90.levers_unmet_twh|0}} TWh unmet. Land, not money, is the binding limit.</p>
+          <p>At the P90 requirement ({{plan.p90.requirement_twh|0}} TWh) the same policy leaves <strong class="num">{{plan.p90.robust_unmet_twh|0}} TWh</strong> unmet. Making {{plan.p90.levers_solar_land_pct|0}}% of the solar potential usable and building at {{plan.p90.levers_build_accel|2}} times the published {{plan.p90.levers_build_case}}-case build limits leaves {{plan.p90.levers_unmet_twh|0}} TWh unmet. Land, not money, is the binding limit.</p>
         </aside>
         <div class="panel">
           <h3 class="panel__title">Policy settings of the plan</h3>
-          <p class="kpi__detail">At least {{plan.settings.nonfossil_min_pct|0}}% non-fossil generation; {{plan.settings.solar_land_pct|0}}% of the solar and {{plan.settings.wind_land_pct|0}}% of the wind potential usable; nuclear up to {{plan.settings.nuclear_max_pct|0}}%; corridors {{plan.settings.transfer_scale|0}} times the 2032 plan; building up to {{plan.settings.build_accel|1}} times the record year.</p>
+          <p class="kpi__detail">At least {{plan.settings.nonfossil_min_pct|0}}% non-fossil generation; {{plan.settings.solar_land_pct|0}}% of the solar and {{plan.settings.wind_land_pct|0}}% of the wind potential usable; nuclear up to {{plan.settings.nuclear_max_pct|0}}%; corridors {{plan.settings.transfer_scale|0}} times the 2032 plan; building at up to {{plan.settings.build_accel|2}} times the published {{plan.settings.build_case}}-case build limits.</p>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdio>
 #include <numeric>
+#include <stdexcept>
 #include <string>
 
 namespace e47 {
@@ -69,6 +70,46 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
     hi[kFirmRE] = kHighsInf;  // limited by the shared solar and wind resource row
   }
   return b;
+}
+
+std::vector<BuildCap> build_caps(const AllocationInputs& in, const PolicySettings& p) {
+  if (p.build_case < 0 || p.build_case >= kBuildCases)
+    throw std::invalid_argument("build_case must be 0 (low), 1 (central) or 2 (high)");
+  struct Group {
+    const char* name;
+    std::vector<int> techs, evidence;
+  };
+  static const Group groups[] = {
+      {"Solar, onshore wind and firmed RE", {kSolar, kWind, kFirmRE}, {kSolar, kWind}},
+      {"Offshore wind", {kOffshore}, {kOffshore}},
+      {"Nuclear", {kNuclear}, {kNuclear}},
+      {"Hydro", {kHydro}, {kHydro}},
+      {"Bioenergy", {kBio}, {kBio}},
+      {"Gas", {kGas}, {kGas}},
+      {"Coal", {kCoal}, {kCoal}},
+  };
+  const double years = static_cast<double>(p.target_year - in.rate_last_year);
+  std::vector<BuildCap> caps;
+  for (const Group& g : groups) {
+    BuildCap c;
+    c.name = g.name;
+    c.techs = g.techs;
+    for (int s : g.evidence) {
+      double add;
+      if (in.has_published_build[s]) {
+        add = p.target_year == in.build_target_year
+                  ? in.published_build_twh[p.build_case][s]
+                  : published_build_twh(in.build_limits, s, p.build_case, in.rate_last_year, p.target_year);
+      } else {
+        add = years * in.max_annual_increase[s];
+        c.published = false;
+      }
+      c.base_twh += in.national_last_twh[s];
+      c.cap_twh += in.national_last_twh[s] + std::max(0.0, p.build_accel * add);  // never below base
+    }
+    caps.push_back(std::move(c));
+  }
+  return caps;
 }
 
 AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettings& p,
@@ -136,22 +177,19 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
       rb.set(gas, v, (s == kGas ? 1.0 : 0.0) - p.gas_max);
       if (s == kNuclear) rb.set(nuclear, v, 1.0);
     }
-  // Build-rate limits from India's record annual generation increases.
-  const double years = static_cast<double>(p.target_year - in.rate_last_year);
-  auto rate_cap = [&](std::initializer_list<int> techs, std::initializer_list<int> evidence) {
-    double cap = 0;
-    for (int s : evidence) cap += in.national_last_twh[s] + years * p.build_accel * in.max_annual_increase[s];
-    const int row = rb.add(-kHighsInf, cap);
+  // National build limits: FY2023-24 generation + build_accel x the published additions to
+  // 2047 (build_caps). Firmed RE is solar and wind with storage, so it shares their cap.
+  const std::vector<BuildCap> caps = build_caps(in, p);
+  std::vector<int> cap_rows;
+  for (const BuildCap& c : caps) {
+    const int row = rb.add(-kHighsInf, c.cap_twh);
     for (int r = 0; r < kRegions; ++r)
-      for (int s : techs) rb.set(row, gvar(r, s), 1.0);
-  };
-  rate_cap({kSolar, kWind, kFirmRE}, {kSolar, kWind});
-  rate_cap({kNuclear}, {kNuclear});
-  rate_cap({kHydro}, {kHydro});
-  rate_cap({kBio}, {kBio});
-  rate_cap({kGas}, {kGas});
+      for (int s : c.techs) rb.set(row, gvar(r, s), 1.0);
+    cap_rows.push_back(row);
+  }
   {
-    // National coal ceiling: existing plus under-construction fleet.
+    // National coal ceiling: existing plus under-construction fleet. The published coal
+    // build limit above applies as well.
     double base_coal = 0;
     for (int r = 0; r < kRegions; ++r) base_coal += in.base_twh[r][kCoal];
     const int row = rb.add(-kHighsInf, p.coal_cap * base_coal);
@@ -243,6 +281,7 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   }
   // Minimisation with a <= row: the dual is <= 0; the abatement cost is its negative.
   if (co2_row >= 0) res.co2_cap_dual = std::max(0.0, -sol.row_dual[co2_row]);
+  for (int row : cap_rows) res.build_cap_dual.push_back(std::max(0.0, -sol.row_dual[row]));
   res.corridor_flow.resize(nc);
   double circulating = 0;
   for (int c = 0; c < nc; ++c) {
@@ -341,7 +380,8 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
       {"Usable solar land", 0.15, 0.35, [](PolicySettings& p, double v) { p.solar_land = v; }, "%.0f%%"},
       {"Usable wind land", 0.15, 0.35, [](PolicySettings& p, double v) { p.wind_land = v; }, "%.0f%%"},
       {"Corridor capacity (x 2032 plan)", 1.0, 3.0, [](PolicySettings& p, double v) { p.transfer_scale = v; }, "%.1fx"},
-      {"Build-rate acceleration", 1.5, 3.0, [](PolicySettings& p, double v) { p.build_accel = v; }, "%.1fx"},
+      {"Build-rate acceleration (x published limit)", 0.75, 1.5,
+       [](PolicySettings& p, double v) { p.build_accel = v; }, "%.2fx"},
       {"Carbon price (USD/t)", 0.0, 60.0, [](PolicySettings& p, double v) { p.carbon_price = v; }, "%.0f"},
       {"Solar cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kSolar] = v; }, "%.1fx"},
       {"Nuclear cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kNuclear] = v; }, "%.1fx"},

@@ -30,6 +30,32 @@ struct Corridor {
 
 using RegionTech = std::array<std::array<double, kTechs>, kRegions>;
 
+// Cases of the published build limits (build_limits.csv: gw_per_year_low, _central, _high).
+enum BuildCase : int { kBuildLow, kBuildCentral, kBuildHigh, kBuildCases };
+const char* build_case_name(int k);  // "low", "central", "high"
+
+// One row of data/external/techno_economic/build_limits.csv for a model source: the
+// largest capacity a source may add per year over a period of fiscal years.
+struct BuildLimitRow {
+  int tech = -1;
+  int period_start = 0, period_end = 0;          // fiscal start years, inclusive
+  std::array<double, kBuildCases> gw_per_year{};  // low, central, high
+  double cuf = 0;                                  // capacity utilisation factor, fraction
+};
+
+// Reads build_limits.csv. Rows for sources the model has no variable for (pumped storage,
+// which the storage check sizes) are skipped. Throws on a missing column, a missing or
+// out-of-range CUF, low > central > high order broken, or overlapping periods of a source.
+std::vector<BuildLimitRow> read_build_limits(const std::string& csv_path);
+
+// Generation (TWh a year) in to_year from what source `tech` may add after from_year in a
+// case: the sum over build years y = from_year + 1 .. to_year of GW per year x CUF x 8.76.
+// Every GW added by to_year generates in to_year. A year after a period's end holds that
+// period's rate until the next period starts (so the last period's rate runs on to to_year);
+// a year before the first period takes the first period's rate. 0 when the source has no rows.
+double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int build_case, int from_year,
+                           int to_year);
+
 struct AllocationInputs {
   // Base year: fiscal year by its start year (2023 = FY2023-24, April to March).
   // base_twh = NPP regional conventional generation (thermal split into coal and gas
@@ -45,10 +71,22 @@ struct AllocationInputs {
   std::array<double, kRegions> nuclear_units{};  // reactor units built or in pipeline
   std::vector<Corridor> corridors;
 
-  // National build-rate evidence (Ember national, utilities + captive).
-  int rate_last_year = 2025;
-  std::array<double, kTechs> national_last_twh{};   // generation in rate_last_year
-  std::array<double, kTechs> max_annual_increase{};  // largest year-on-year increase, 2010-2025, TWh
+  // National build limits for 2047 (allocate.cpp, build_caps). Each source's 2047 generation
+  // is at most its national base-year generation plus what the published limits let it add.
+  int rate_last_year = 2023;                         // base year, FY2023-24 (fiscal start year)
+  std::array<double, kTechs> national_last_twh{};    // base_twh summed over regions, TWh
+  // Published limits (build_limits.csv, secondary): rows by source, and the TWh each source
+  // can add from rate_last_year to build_target_year, by case [low, central, high][source].
+  std::vector<BuildLimitRow> build_limits;
+  int build_target_year = 2047;
+  std::array<std::array<double, kTechs>, kBuildCases> published_build_twh{};
+  std::array<bool, kTechs> has_published_build{};    // false: the record-based fallback applies
+  // NPP national generation (primary): largest year-on-year increase between consecutive
+  // fiscal years, TWh. NPP gives thermal and renewables as totals, so the thermal record is
+  // shared between coal and gas and the renewable record between solar, wind and bioenergy
+  // in proportion to their base-year generation. Fallback for a source with no published
+  // rows, and a cross-check line in notes.
+  std::array<double, kTechs> max_annual_increase{};
   std::vector<std::string> notes;  // derivation notes for the provenance table
 };
 

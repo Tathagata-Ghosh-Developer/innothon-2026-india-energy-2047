@@ -101,6 +101,67 @@ bool tech_is_firm(int s) { return s == kCoal || s == kGas || s == kNuclear || s 
 bool tech_is_fossil(int s) { return s == kCoal || s == kGas; }
 bool tech_is_variable(int s) { return s == kSolar || s == kWind || s == kOffshore; }
 
+const char* build_case_name(int k) {
+  static const char* n[kBuildCases] = {"low", "central", "high"};
+  return k >= 0 && k < kBuildCases ? n[k] : "?";
+}
+
+std::vector<BuildLimitRow> read_build_limits(const std::string& path) {
+  const CsvTable t = CsvTable::read(path);
+  const size_t ct = t.col("tech"), cs = t.col("period_start"), ce = t.col("period_end"), cc = t.col("cuf");
+  const size_t cg[kBuildCases] = {t.col("gw_per_year_low"), t.col("gw_per_year_central"), t.col("gw_per_year_high")};
+  std::vector<BuildLimitRow> rows;
+  for (size_t r = 0; r < t.rows(); ++r) {
+    const std::string& name = t.str(r, ct);
+    if (name == "pumped_storage") continue;  // no generation variable; the storage check sizes storage
+    int tech = -1;
+    for (int s = 0; s < kTechs; ++s)
+      if (s != kFirmRE && name == tech_key(s)) tech = s;  // firmed RE uses the solar and wind limits
+    const std::string where = path + " row " + std::to_string(r + 2) + " (" + name + ")";
+    if (tech < 0) throw std::runtime_error("build limits: unknown source in " + where);
+    BuildLimitRow b;
+    b.tech = tech;
+    const double y0 = t.num(r, cs), y1 = t.num(r, ce);
+    if (std::isnan(y0) || std::isnan(y1) || y0 > y1) throw std::runtime_error("build limits: bad period in " + where);
+    b.period_start = static_cast<int>(y0);
+    b.period_end = static_cast<int>(y1);
+    for (int k = 0; k < kBuildCases; ++k) {
+      b.gw_per_year[k] = t.num(r, cg[k]);
+      if (std::isnan(b.gw_per_year[k]) || b.gw_per_year[k] < 0)
+        throw std::runtime_error(std::string("build limits: missing or negative ") + build_case_name(k) + " in " + where);
+    }
+    if (b.gw_per_year[kBuildLow] > b.gw_per_year[kBuildCentral] || b.gw_per_year[kBuildCentral] > b.gw_per_year[kBuildHigh])
+      throw std::runtime_error("build limits: low <= central <= high broken in " + where);
+    b.cuf = t.num(r, cc);
+    if (std::isnan(b.cuf) || b.cuf <= 0 || b.cuf > 1)
+      throw std::runtime_error("build limits: CUF must be a fraction in (0, 1] in " + where);
+    for (const BuildLimitRow& o : rows)
+      if (o.tech == tech && o.period_start <= b.period_end && b.period_start <= o.period_end)
+        throw std::runtime_error("build limits: overlapping periods in " + where);
+    rows.push_back(b);
+  }
+  return rows;
+}
+
+double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int build_case, int from_year,
+                           int to_year) {
+  if (build_case < 0 || build_case >= kBuildCases) throw std::invalid_argument("build case must be 0, 1 or 2");
+  std::vector<const BuildLimitRow*> own;
+  for (const BuildLimitRow& r : rows)
+    if (r.tech == tech) own.push_back(&r);
+  if (own.empty()) return 0.0;
+  std::sort(own.begin(), own.end(),
+            [](const BuildLimitRow* a, const BuildLimitRow* b) { return a->period_start < b->period_start; });
+  double twh = 0;
+  for (int y = from_year + 1; y <= to_year; ++y) {
+    const BuildLimitRow* use = own.front();  // before the first period: the first period's rate
+    for (const BuildLimitRow* r : own)
+      if (r->period_start <= y) use = r;  // the latest period begun by y; past its end its rate holds
+    twh += use->gw_per_year[build_case] * use->cuf * kHoursTWhPerGW;
+  }
+  return twh;
+}
+
 AllocationInputs load_allocation_inputs(const std::string& root) {
   AllocationInputs in;
   const std::string gen_dir = root + "/data/raw/generation";
@@ -377,27 +438,107 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
                        "provenance lines.");
   }
 
-  // 1b. National generation history: build-rate evidence for 2047 upper bounds.
+  // 1b. National build limits for 2047. Base: the FY2023-24 base mix summed over regions
+  //     (NPP conventional + CEA renewables). NPP's national series gives thermal and
+  //     renewables only as totals, so it cannot give coal, gas, solar or wind on their own.
+  in.rate_last_year = in.base_year;
+  for (int r = 0; r < kRegions; ++r)
+    for (int s = 0; s < kTechs; ++s) in.national_last_twh[s] += in.base_twh[r][s];
+  const double build_years = static_cast<double>(in.build_target_year - in.rate_last_year);
   {
-    const CsvTable t = CsvTable::read(gen_dir + "/national/ember_national_generation_cy.csv");
-    const std::map<std::string, int> src = {{"coal", kCoal},       {"gas", kGas},     {"nuclear", kNuclear},
-                                            {"hydro", kHydro},     {"solar", kSolar}, {"wind", kWind},
-                                            {"biomass", kBio}};
-    std::map<int, std::array<double, kTechs>> by_year;
-    for (size_t r = 0; r < t.rows(); ++r) {
-      if (t.str(r, t.col("is_subtotal")) == "True") continue;
-      auto it = src.find(t.str(r, t.col("source")));
-      if (it == src.end()) continue;
-      by_year[static_cast<int>(t.num(r, t.col("year")))][it->second] += t.num(r, t.col("generation_gwh")) / 1000.0;
+    // Published limits (secondary): GW per year x CUF x 8.76, summed over the build years.
+    in.build_limits = read_build_limits(te + "/build_limits.csv");
+    int first = 9999;
+    for (const BuildLimitRow& row : in.build_limits) {
+      in.has_published_build[row.tech] = true;
+      first = std::min(first, row.period_start);
     }
-    in.rate_last_year = by_year.rbegin()->first;
-    in.national_last_twh = by_year.rbegin()->second;
-    for (int y = 2010; y <= in.rate_last_year; ++y) {
-      if (!by_year.count(y) || !by_year.count(y - 1)) continue;
+    for (int k = 0; k < kBuildCases; ++k)
       for (int s = 0; s < kTechs; ++s)
-        in.max_annual_increase[s] = std::max(in.max_annual_increase[s], by_year[y][s] - by_year[y - 1][s]);
+        in.published_build_twh[k][s] =
+            published_build_twh(in.build_limits, s, k, in.rate_last_year, in.build_target_year);
+    const auto& c = in.published_build_twh[kBuildCentral];
+    in.notes.push_back(strf(
+        "Build limits (secondary): published GW-per-year additions by source, period and case "
+        "(data/external/techno_economic/build_limits.csv: CEA NEP 2022-32, CEA Dec 2024, NITI Aayog 2026, DAE, MoP), "
+        "each year's GW x the row's CUF x 8.76, summed over build years FY%s to FY%s. Rows start in FY%s; the years "
+        "before take the first period's rate, and a period's rate holds past its end. 2047 generation of a source <= "
+        "its FY%s generation + build_accel x these additions. Central additions: solar %.0f, onshore wind %.0f, "
+        "offshore wind %.0f, nuclear %.0f, hydro %.0f, bioenergy %.0f, coal %.0f (gross), gas %.0f TWh.",
+        fiscal_label(in.rate_last_year + 1).c_str(), fiscal_label(in.build_target_year).c_str(),
+        fiscal_label(first).c_str(), fiscal_label(in.rate_last_year).c_str(), c[kSolar], c[kWind], c[kOffshore],
+        c[kNuclear], c[kHydro], c[kBio], c[kCoal], c[kGas]));
+    in.notes.push_back(strf(
+        "Build-limit base: FY%s generation by source = the base mix summed over regions (NPP conventional, primary, "
+        "plus CEA renewables, secondary); NPP's national series gives thermal and renewables only as totals. "
+        "Solar, onshore wind and firmed RE (solar and wind with storage) share one cap.",
+        fiscal_label(in.rate_last_year).c_str()));
+  }
+  {
+    // Record annual increase from NPP national generation (primary), consecutive fiscal years.
+    const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_national_generation_fy.csv");
+    enum { kThermal, kHydroG, kNuclearG, kRes, kGroups };
+    static const char* cols[kGroups] = {"thermal_gwh", "hydro_gwh", "nuclear_gwh", "res_gwh"};
+    static const char* names[kGroups] = {"thermal", "hydro", "nuclear", "renewables"};
+    size_t ci[kGroups];
+    for (int g = 0; g < kGroups; ++g) ci[g] = t.col(cols[g]);
+    const size_t cy = t.col("fy_start_year");
+    std::map<int, std::array<double, kGroups>> by_year;
+    for (size_t r = 0; r < t.rows(); ++r) {
+      const double y = t.num(r, cy);
+      if (std::isnan(y)) continue;
+      auto& v = by_year[static_cast<int>(y)];
+      for (int g = 0; g < kGroups; ++g) v[g] = t.num(r, ci[g]) / 1000.0;
     }
-    in.notes.push_back("Build-rate evidence: largest year-on-year generation increase by source, 2010-2025, Ember national.");
+    std::array<double, kGroups> rec{};
+    std::array<int, kGroups> rec_year{};
+    int pairs = 0, last = 0;
+    for (const auto& [y, v] : by_year) {
+      auto prev = by_year.find(y - 1);
+      if (prev == by_year.end()) continue;
+      ++pairs;
+      last = y;
+      for (int g = 0; g < kGroups; ++g) {
+        const double d = v[g] - prev->second[g];
+        if (!std::isnan(d) && d > rec[g]) {
+          rec[g] = d;
+          rec_year[g] = y;
+        }
+      }
+    }
+    if (pairs == 0) throw std::runtime_error("NPP national generation: no consecutive fiscal years");
+    // Thermal and renewables are NPP totals: shared by base-year generation.
+    const auto& b = in.national_last_twh;
+    auto share = [&](std::initializer_list<int> group, double record) {
+      double tot = 0;
+      for (int s : group) tot += b[s];
+      for (int s : group)
+        in.max_annual_increase[s] = tot > 0 ? record * b[s] / tot : record / static_cast<double>(group.size());
+    };
+    share({kCoal, kGas}, rec[kThermal]);
+    share({kSolar, kWind, kBio}, rec[kRes]);
+    in.max_annual_increase[kHydro] = rec[kHydroG];
+    in.max_annual_increase[kNuclear] = rec[kNuclearG];
+    std::string list, check;
+    for (int g = 0; g < kGroups; ++g)
+      list += strf("%s%s +%.1f TWh (FY%s)", g ? ", " : "", names[g], rec[g], fiscal_label(rec_year[g]).c_str());
+    const auto& c = in.published_build_twh[kBuildCentral];
+    const double pub[kGroups] = {c[kCoal] + c[kGas], c[kHydro], c[kNuclear], c[kSolar] + c[kWind] + c[kOffshore] + c[kBio]};
+    for (int g = 0; g < kGroups; ++g)
+      check += strf("%s%s %.1f (%.1fx)", g ? ", " : "", names[g], pub[g] / build_years,
+                    rec[g] > 0 ? pub[g] / build_years / rec[g] : 0.0);
+    std::string fallback;
+    for (int s = 0; s < kTechs; ++s)
+      if (s != kFirmRE && !in.has_published_build[s]) fallback += (fallback.empty() ? "" : ", ") + std::string(tech_key(s));
+    in.notes.push_back(strf(
+        "Record annual increase (primary: NPP national generation, data/raw/npp/npp_national_generation_fy.csv, "
+        "%d pairs of consecutive fiscal years to FY%s): %s. Thermal is shared between coal and gas, renewables "
+        "between solar, wind and bioenergy, by FY%s generation. Used only for a source without published rows "
+        "(%s), as FY%s + years x build_accel x record. Cross-check: the central published additions average, "
+        "TWh a year to %d (x the record): %s.",
+        pairs, fiscal_label(last).c_str(), list.c_str(), fiscal_label(in.rate_last_year).c_str(),
+        fallback.empty() ? "none of the model's sources" : fallback.c_str(), fiscal_label(in.rate_last_year).c_str(),
+        in.build_target_year, check.c_str()));
   }
 
   // 2. Capacity factors (fractions).

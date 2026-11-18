@@ -372,9 +372,16 @@ void App::sidebar() {
   dirty_ |= slider("##hf", &pol_.hydro_frac, 0.2, 1.0, "hydro %.0f%%", 100, nullptr);
   ImGui::TextUnformatted("Corridor capacity (x 2032 plan)");
   dirty_ |= slider("##ts", &pol_.transfer_scale, 0.5, 4.0, "%.1fx", 1, nullptr);
-  ImGui::TextUnformatted("Build-rate acceleration");
-  dirty_ |= slider("##ba", &pol_.build_accel, 1.0, 4.0, "%.1fx record year", 1,
-                   "2047 generation of each source <= 2025 + years x this x the record annual increase.");
+  ImGui::TextUnformatted("Build rate (published limits: case / multiplier)");
+  for (int k = 0; k < kBuildCases; ++k) {
+    if (k) ImGui::SameLine();
+    dirty_ |= ImGui::RadioButton((std::string(build_case_name(k)) + "##bc").c_str(), &pol_.build_case, k);
+    ImGui::SetItemTooltip("Low, central or high published additions per year (data/external/techno_economic/"
+                          "build_limits.csv: CEA NEP 2022-32, NITI Aayog, DAE, MoP).");
+  }
+  dirty_ |= slider("##ba", &pol_.build_accel, 0.5, 2.0, "%.2fx published limit", 1,
+                   "2047 generation of each source <= FY2023-24 + this x the published additions to 2047 "
+                   "(GW per year x CUF x 8.76). Solar, onshore wind and firmed RE share one limit.");
   ImGui::TextUnformatted("Carbon price");
   dirty_ |= slider("##cp", &pol_.carbon_price, 0.0, 100.0, "%.0f USD/t", 1, nullptr);
   if (ImGui::Button("Reset policy")) {
@@ -1083,7 +1090,7 @@ void App::tab_data() {
     ImGui::TableHeadersRow();
     const char* rows[][3] = {
         {"All-India generation by source, FY1946-47 to FY2023-24", "National Power Portal (challenge dataset)",
-         "Primary forecast: history and elasticity"},
+         "Primary forecast: history and elasticity; record annual increase (build-limit fallback and cross-check)"},
         {"State population and real GSDP, 2006-2024", "Renewable India dataset (challenge dataset; capacity columns not used)",
          "Primary forecast: income and population; regional split: state population paths and income convergence"},
         {"States by grid region", "National Power Portal state generation reports (dataset Zone where NPP lists no state)",
@@ -1115,6 +1122,9 @@ void App::tab_data() {
         {"Emission factors", "CEA CO2 Baseline Database v21", "CO2 of each plan"},
         {"Inter-regional corridors", "CEA / NEP Vol II (2032 plan)", "Transfer limits and losses"},
         {"Nuclear pipeline", "DAE / NPCIL", "Nuclear siting key"},
+        {"Build limits by source, GW per year, FY2026-27 to FY2047-48 (low / central / high)",
+         "CEA NEP 2022-32; CEA (Dec 2024); NITI Aayog (2026); DAE; MoP Annual Report 2025-26 (secondary)",
+         "2047 build caps: GW per year x CUF x 8.76, summed from FY2024-25"},
         {"Generation projections 2026-27, 2031-32", "CEA NEP 2022-32", "Benchmark only"},
         {"Land-use intensity of solar and wind", "MNRE (PIB 2023); NREL (Ong et al. 2013; Denholm et al. 2009)",
          "Land back-calculation"},
