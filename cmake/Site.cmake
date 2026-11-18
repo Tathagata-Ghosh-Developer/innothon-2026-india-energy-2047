@@ -16,8 +16,9 @@
 #     inside a block: {{@.c}} is field c of the element, {{@}} the element itself,
 #     {{@i}} its index (from 0) and {{@i|*K}} the index times an integer K.
 #   <!--if a.b-->...<!--else-->...<!--/if-->
-#     the first part if the JSON path a.b exists and is not null, otherwise the part
-#     after <!--else--> (optional). If blocks may be nested and may hold each blocks;
+#     the first part if the JSON path a.b exists and is not null (an empty array, object
+#     or string counts as present), otherwise the part after <!--else--> (optional, at
+#     most one per block). If blocks may be nested and may hold each blocks;
 #     they are resolved first (innermost first), and a path inside an each block cannot
 #     use @. Values in a part not kept are never read, so a page can use a key the
 #     model does not write yet, with a fallback.
@@ -175,6 +176,10 @@ while(TRUE)
     math(EXPR _x "${_x} + 11")
     string(SUBSTRING "${_body}" ${_x} -1 _alt)
     set(_body "${_then}")
+    string(FIND "${_alt}" "<!--else-->" _x)
+    if(NOT _x EQUAL -1)
+      message(FATAL_ERROR "site: ${_tag} has more than one <!--else-->")
+    endif()
   endif()
   string(REPLACE "." ";" _parts "${_path}")
   string(JSON _type ERROR_VARIABLE _err TYPE "${_json}" ${_parts})
@@ -186,13 +191,16 @@ while(TRUE)
   string(SUBSTRING "${_html}" ${_e} -1 _tail)
   set(_html "${_head}${_body}${_tail}")
 endwhile()
-foreach(_stray "<!--if " "<!--else-->")
-  string(FIND "${_html}" "${_stray}" _left)
-  if(NOT _left EQUAL -1)
-    string(SUBSTRING "${_html}" ${_left} 60 _ctx)
-    message(FATAL_ERROR "site: if block without <!--/if--> near: ${_ctx}")
-  endif()
-endforeach()
+string(FIND "${_html}" "<!--if " _left)
+if(NOT _left EQUAL -1)
+  string(SUBSTRING "${_html}" ${_left} 60 _ctx)
+  message(FATAL_ERROR "site: if block without <!--/if--> near: ${_ctx}")
+endif()
+string(FIND "${_html}" "<!--else-->" _left)
+if(NOT _left EQUAL -1)
+  string(SUBSTRING "${_html}" ${_left} 60 _ctx)
+  message(FATAL_ERROR "site: <!--else--> outside an if block near: ${_ctx}")
+endif()
 
 # Expand <!--each ...--> blocks (not nested).
 set(_out "")

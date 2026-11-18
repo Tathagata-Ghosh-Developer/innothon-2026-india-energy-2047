@@ -1,30 +1,52 @@
 # Landing-page template (cmake/Site.cmake): renders small templates from a test summary
 # and compares the output with the expected text: number formatting, then the
-# conditional blocks (a missing key in the part not kept must not stop the build).
+# conditional blocks (a missing key in the part not kept must not stop the build), then
+# the malformed conditional blocks that must stop it.
 # Usage: cmake -DSRC=<repo root> -DWORK=<scratch dir> -P tests/site_format.cmake
 cmake_minimum_required(VERSION 3.26)
 file(MAKE_DIRECTORY "${WORK}")
 file(WRITE "${WORK}/summary.json" [=[
 {"schema": 1, "a": 0.1038, "b": 0.0653, "c": 12.0049, "d": 1234.5, "e": -0.0004, "f": 0.0099, "g": 100.07, "h": 1234567.8, "i": 0.0105,
- "n": null, "o": {"k": "x"}, "arr": [1, 2, 3]}
+ "n": null, "o": {"k": "x"}, "arr": [1, 2, 3], "ea": [], "eo": {}, "es": ""}
 ]=])
 
-# _render(<template text> <expected output>)
-function(_render template want)
+# _run(<template text>): renders it; sets rc, err and got in the caller.
+macro(_run template)
   file(WRITE "${WORK}/template.html" "${template}")
+  file(REMOVE "${WORK}/out.html")
   execute_process(
     COMMAND "${CMAKE_COMMAND}" -DSUMMARY=${WORK}/summary.json -DTEMPLATE=${WORK}/template.html
             -DOUT=${WORK}/out.html -P "${SRC}/cmake/Site.cmake"
     RESULT_VARIABLE rc OUTPUT_QUIET ERROR_VARIABLE err)
+  set(got "")
+  if(EXISTS "${WORK}/out.html")
+    file(READ "${WORK}/out.html" got)
+    string(STRIP "${got}" got)
+  endif()
+endmacro()
+
+# _render(<template text> <expected output>)
+function(_render template want)
+  _run("${template}")
   if(NOT rc EQUAL 0)
     message(FATAL_ERROR "Site.cmake failed: ${err}")
   endif()
-  file(READ "${WORK}/out.html" got)
-  string(STRIP "${got}" got)
   if(NOT got STREQUAL want)
     message(FATAL_ERROR "site template\n  got:  ${got}\n  want: ${want}")
   endif()
   message(STATUS "site template ok: ${got}")
+endfunction()
+
+# _render_fails(<template text> <regex the error must match>)
+function(_render_fails template want)
+  _run("${template}")
+  if(rc EQUAL 0)
+    message(FATAL_ERROR "site template should have failed: ${template}\n  got: ${got}")
+  endif()
+  if(NOT err MATCHES "${want}")
+    message(FATAL_ERROR "site template failed with the wrong error: ${template}\n  error: ${err}\n  want:  ${want}")
+  endif()
+  message(STATUS "site template fails as it should: ${want}")
 endfunction()
 
 _render("{{a|r3}};{{b|r3}};{{c|2}};{{d|0}};{{e|r1}};{{f|r2}};{{g|r1}};{{a|+1}};{{h|0}};{{i|r3}}"
@@ -34,6 +56,16 @@ _render("{{a|r3}};{{b|r3}};{{c|2}};{{d|0}};{{e|r1}};{{f|r2}};{{g|r1}};{{a|+1}};{
 # missing, nested keys, no else part, and each blocks inside a kept part.
 _render("<!--if a-->A{{a|r1}}<!--else-->noA<!--/if-->;<!--if zz.y-->{{zz.y}}<!--else-->noZ<!--/if-->;<!--if n-->N<!--else-->noN<!--/if-->;<!--if o.k-->{{o.k}}<!--/if-->;<!--if o.q-->Q<!--/if-->;<!--if arr--><!--each arr-->{{@}}<!--/each--><!--else-->none<!--/if-->"
         "A0.1;noZ;noN;x;;123")
+# An empty array, object or string counts as present.
+_render("<!--if ea-->A<!--else-->-<!--/if-->;<!--if eo-->O<!--else-->-<!--/if-->;<!--if es-->S<!--else-->-<!--/if-->"
+        "A;O;S")
 # Nested blocks, in either part of the outer block.
 _render("<!--if o-->[<!--if o.k-->k<!--else-->-<!--/if--><!--if o.q-->{{o.q}}<!--else-->q<!--/if-->]<!--else--><!--if a-->{{zz}}<!--/if--><!--/if-->;<!--if zz--><!--if a-->{{zz}}<!--/if--><!--else-->[<!--if a-->a<!--/if-->]<!--/if-->"
         "[kq];[a]")
+
+# Malformed blocks stop the build with a message that says what is wrong.
+_render_fails("<!--if a-->x" "if block without <!--/if-->")
+_render_fails("x<!--/if-->" "<!--/if--> without an opening <!--if")
+_render_fails("<!--if a b-->x<!--/if-->" "malformed block tag")
+_render_fails("x<!--else-->y" "<!--else--> outside an if block")
+_render_fails("<!--if a-->1<!--else-->2<!--else-->3<!--/if-->" "has more than one <!--else-->")
