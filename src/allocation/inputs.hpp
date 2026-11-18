@@ -56,6 +56,25 @@ std::vector<BuildLimitRow> read_build_limits(const std::string& csv_path);
 double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int build_case, int from_year,
                            int to_year);
 
+// CEA station-weighted average emission rates (CO2 Baseline Database, tCO2/MWh net) of the
+// latest period in emission_factors.csv that has a coal and a gas row. Rows of other metrics
+// and fuels are ignored. Throws if the latest station-weighted period lacks coal or gas.
+struct StationEmissionFactors {
+  std::string period;  // fiscal year as written in the file, e.g. "2025-26"
+  double coal = 0, gas = 0;
+  std::string source;  // source_name of the period's coal row (database version), if the file has one
+};
+StationEmissionFactors read_station_emission_factors(const std::string& csv_path);
+
+// Capital recovery factor: rate / (1 - (1 + rate)^-years); 1 / years at rate 0.
+double capital_recovery_factor(double rate, double years);
+
+// CEA-basis levelised cost, Rs/kWh: CRF(wacc, life) x capex / (CUF x 8,760 h) + fixed O&M
+// (fixed_om_pct of capex a year, over the same kWh) + fuel. capex in Rs crore per MW, CUF and
+// wacc as fractions.
+double cea_lcoe_rs_per_kwh(double capex_cr_per_mw, double fixed_om_pct, double life_years, double cuf,
+                           double fuel_rs_per_kwh, double wacc);
+
 struct AllocationInputs {
   // Base year: fiscal year by its start year (2023 = FY2023-24, April to March).
   // base_twh = NPP regional conventional generation (thermal split into coal and gas
@@ -66,8 +85,22 @@ struct AllocationInputs {
   int base_unmatched_states = 0;  // renewable-table states with no grid region (skipped and counted)
   std::vector<std::string> base_source_notes;  // base-mix provenance, each line "Primary: ..." or "Secondary: ..."
   RegionTech potential_twh{};   // generation potential at full resource use, TWh/yr
-  RegionTech cost{};            // USD/MWh in 2047 (regional resource quality applied)
+  // Alternative potentials for the sensitivity cases (PolicySettings::solar_potential_set,
+  // wind_height): NISE 2014 solar technical potential and NIWE 120 m wind potential, each x
+  // the same regional CUF x 8.76 as the defaults (NISE 2025 ground-mounted, NIWE 150 m).
+  std::array<double, kRegions> solar_potential_nise2014_twh{}, wind_120m_potential_twh{};
+  RegionTech cost{};            // USD/MWh in 2047 (regional resource quality applied): IEA basis, the default
+  // CEA cost basis (PolicySettings::cost_basis), USD/MWh with the same regional resource
+  // quality: cea_lcoe_rs_per_kwh on the CEA NEP 2022-32 inputs (cea_costs.csv) with a CERC
+  // pre-tax WACC, CEA/CERC fuel costs and an RBI exchange rate (cea_cost_basis.csv). Sources
+  // with no NEP capex (nuclear, gas) keep their IEA cost (cea_from_iea).
+  RegionTech cost_cea{};
+  std::array<double, kTechs> cea_lcoe_usd_per_mwh{};  // national CEA-basis cost before regional scaling
+  std::array<bool, kTechs> cea_from_iea{};            // true: the CEA basis keeps the IEA cost
+  double cea_wacc = 0;          // pre-tax WACC, fraction
+  double cea_inr_per_usd = 0;   // Rs per USD
   std::array<double, kTechs> emission_t_per_mwh{};
+  std::string emission_period;  // CEA CO2 Baseline Database period of emission_t_per_mwh
   std::array<double, kRegions> nuclear_units{};  // reactor units built or in pipeline
   std::vector<Corridor> corridors;
 

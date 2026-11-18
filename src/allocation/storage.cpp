@@ -611,7 +611,7 @@ StorageLandResult storage_and_land(const StorageInputs& in, const AllocationInpu
     res.pct_region[r] = in.region_area_km2[r] > 0
                             ? 100.0 * (L.solar_km2[r] + L.wind_direct_km2[r]) / in.region_area_km2[r]
                             : 0.0;
-    potential += alloc.potential_twh[r][kSolar];
+    potential += potential_twh(alloc, p, r, kSolar);  // the policy's solar potential set
   }
   res.pct_india = 100.0 * L.total_km2() / in.india_area_km2;
   res.pct_wasteland = in.wasteland_km2 > 0 ? 100.0 * L.total_km2() / in.wasteland_km2 : 0.0;

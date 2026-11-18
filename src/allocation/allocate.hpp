@@ -10,6 +10,11 @@
 
 namespace e47 {
 
+// Cost table the LP uses (PolicySettings::cost_basis).
+enum CostBasis : int { kCostIEA, kCostCEA };  // AllocationInputs::cost (default), ::cost_cea
+// Solar potential set (PolicySettings::solar_potential_set).
+enum SolarPotentialSet : int { kSolarNise2025, kSolarNise2014 };  // ground-mounted 2025 (default), technical 2014
+
 // Policy and planning settings. All shares are shares of 2047 generation.
 struct PolicySettings {
   double nonfossil_min = 0.70;     // minimum non-fossil share of national generation
@@ -41,7 +46,19 @@ struct PolicySettings {
   double unserved_cost = 1000.0;   // USD/MWh penalty that keeps every run feasible
   double co2_cap_mt = -1.0;        // national CO2 cap, Mt per year (<= 0: no cap)
   std::array<double, kTechs> cost_mult{1, 1, 1, 1, 1, 1, 1, 1, 1};
+  // Published-figure sensitivities (outputs/sensitivity_mix.csv); the defaults are the main run.
+  int cost_basis = kCostIEA;                 // kCostIEA: IEA WEO 2025; kCostCEA: CEA NEP inputs (inputs.hpp)
+  int solar_potential_set = kSolarNise2025;  // kSolarNise2025 or kSolarNise2014
+  int wind_height = 150;                     // NIWE potential at 150 m (default) or 120 m
+
+  bool operator==(const PolicySettings&) const = default;
 };
+
+// Cost table of the policy's cost basis, USD/MWh by region and source. Throws on an unknown basis.
+const RegionTech& cost_table(const AllocationInputs& in, const PolicySettings& p);
+// Generation potential (TWh a year) of source s in region r under the policy's solar set and
+// wind height; other sources: AllocationInputs::potential_twh. Throws on an unknown set or height.
+double potential_twh(const AllocationInputs& in, const PolicySettings& p, int r, int s);
 
 struct AllocationResult {
   bool ok = false;
@@ -61,6 +78,7 @@ struct AllocationResult {
 
   double share(int s) const { return total_twh > 0 ? national[s] / total_twh : 0.0; }
   double nonfossil_share() const;
+  double unserved_total() const;  // TWh, summed over regions
 };
 
 // Bounds actually used for each region and source (after policy fractions).
@@ -128,5 +146,21 @@ struct TornadoRow {
 std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicySettings& p,
                                        const std::array<double, kRegions>& requirement, double req_low_scale,
                                        double req_high_scale);
+
+// Sensitivity of the mix to the published figures behind it (outputs/sensitivity_mix.csv).
+// Each case is a copy of `base` with one setting changed; `base` itself is never modified.
+// Cases, in order: base; cost_basis_cea (CEA NEP cost basis); solar_potential_nise2014;
+// wind_120m; build_low and build_high (build_case low and high; with a base already on the
+// high case, build_high equals base). Each case is solved at `requirement` and at
+// `requirement_p90`. Solves run in parallel.
+struct MixSensitivityRow {
+  std::string name, description;
+  PolicySettings policy;
+  AllocationResult plan;      // at the requirement passed (the median)
+  AllocationResult plan_p90;  // the same policy at the P90 requirement
+};
+std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const PolicySettings& base,
+                                               const std::array<double, kRegions>& requirement,
+                                               const std::array<double, kRegions>& requirement_p90);
 
 }  // namespace e47

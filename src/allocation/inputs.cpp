@@ -162,6 +162,41 @@ double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int
   return twh;
 }
 
+StationEmissionFactors read_station_emission_factors(const std::string& path) {
+  const CsvTable t = CsvTable::read(path);
+  const size_t cf = t.col("fuel"), cm = t.col("metric"), cp = t.col("period"), cv = t.col("value");
+  std::map<std::string, std::map<std::string, double>> by_period;  // period -> fuel -> tCO2/MWh
+  std::map<std::string, std::string> source;                       // period -> source_name of its coal row
+  for (size_t r = 0; r < t.rows(); ++r) {
+    if (t.str(r, cm) != "station_weighted_avg_emission_rate") continue;
+    const std::string& fuel = t.str(r, cf);
+    const double v = t.num(r, cv);
+    if ((fuel == "coal" || fuel == "gas") && !std::isnan(v)) by_period[t.str(r, cp)][fuel] = v;
+    if (fuel == "coal" && t.has("source_name")) source[t.str(r, cp)] = t.str(r, t.col("source_name"));
+  }
+  if (by_period.empty()) throw std::runtime_error("no station-weighted coal or gas emission rate in " + path);
+  // Periods are written "2025-26", so the last key is the latest fiscal year.
+  const auto& [period, fuels] = *by_period.rbegin();
+  if (!fuels.count("coal") || !fuels.count("gas"))
+    throw std::runtime_error("emission factors: the latest period " + period + " lacks a coal or a gas row in " + path);
+  return {period, fuels.at("coal"), fuels.at("gas"), source.count(period) ? source.at(period) : std::string()};
+}
+
+double capital_recovery_factor(double rate, double years) {
+  if (years <= 0) throw std::invalid_argument("capital recovery factor: life must be positive");
+  if (std::abs(rate) < 1e-12) return 1.0 / years;
+  return rate / (1.0 - std::pow(1.0 + rate, -years));
+}
+
+double cea_lcoe_rs_per_kwh(double capex_cr_per_mw, double fixed_om_pct, double life_years, double cuf,
+                           double fuel_rs_per_kwh, double wacc) {
+  if (!(cuf > 0 && cuf <= 1)) throw std::invalid_argument("CEA-basis cost: CUF must be a fraction in (0, 1]");
+  const double capex_rs_per_mw = capex_cr_per_mw * 1e7;  // 1 crore = 10^7
+  const double kwh_per_mw = cuf * 8760.0 * 1000.0;       // a year
+  return (capital_recovery_factor(wacc, life_years) + fixed_om_pct / 100.0) * capex_rs_per_mw / kwh_per_mw +
+         fuel_rs_per_kwh;
+}
+
 AllocationInputs load_allocation_inputs(const std::string& root) {
   AllocationInputs in;
   const std::string gen_dir = root + "/data/raw/generation";
@@ -675,8 +710,12 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       if (reg < 0 || std::isnan(v)) continue;
       if (res == "solar" && met == "ground_mounted_potential_nise_2025")
         in.potential_twh[reg][kSolar] += v * cuf_solar[reg] * kHoursTWhPerGW;
+      else if (res == "solar" && met == "technical_potential_nise_2014")
+        in.solar_potential_nise2014_twh[reg] += v * cuf_solar[reg] * kHoursTWhPerGW;
       else if (res == "wind_150m" && met == "potential")
         in.potential_twh[reg][kWind] += v * cuf_wind[reg] * kHoursTWhPerGW;
+      else if (res == "wind_120m" && met == "potential")
+        in.wind_120m_potential_twh[reg] += v * cuf_wind[reg] * kHoursTWhPerGW;
       else if (res == "large_hydro" && met == "identified_capacity_reassessment_2017_23_mw")
         in.potential_twh[reg][kHydro] += v / 1000.0 * cuf_hydro[reg] * kHoursTWhPerGW;
       else if (res == "small_hydro" && met == "potential")
@@ -684,8 +723,21 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       else if ((res == "biomass" && met == "biomass_power_potential") || (res == "bagasse_cogeneration" && met == "potential"))
         in.potential_twh[reg][kBio] += v / 1000.0 * cuf_bio * kHoursTWhPerGW;
     }
-    in.notes.push_back("Solar potential: NISE 2025 ground-mounted (GW) x regional CUF x 8.76.");
-    in.notes.push_back("Wind potential: NIWE 150 m (GW) x regional CUF x 8.76.");
+    double sum_solar = 0, sum_solar14 = 0, sum_wind = 0, sum_wind120 = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      sum_solar += in.potential_twh[r][kSolar];
+      sum_solar14 += in.solar_potential_nise2014_twh[r];
+      sum_wind += in.potential_twh[r][kWind];
+      sum_wind120 += in.wind_120m_potential_twh[r];
+    }
+    if (sum_solar14 <= 0 || sum_wind120 <= 0)
+      throw std::runtime_error("resource potential: no NISE 2014 solar or NIWE 120 m wind rows read");
+    in.notes.push_back(strf("Solar potential: NISE 2025 ground-mounted (GW) x regional CUF x 8.76 = %.0f TWh/yr. "
+                            "Sensitivity (solar_potential_set 1): NISE 2014 technical potential, %.0f TWh/yr.",
+                            sum_solar, sum_solar14));
+    in.notes.push_back(strf("Wind potential: NIWE 150 m (GW) x regional CUF x 8.76 = %.0f TWh/yr. Sensitivity "
+                            "(wind_height 120): NIWE 120 m, %.0f TWh/yr.",
+                            sum_wind, sum_wind120));
     in.notes.push_back("Hydro potential: CEA reassessment 2017-23 identified large hydro plus MNRE small hydro (MW) x observed regional hydro CUF.");
     in.notes.push_back("Bioenergy potential: MNRE biomass and bagasse cogeneration (MW) x CEA biomass availability.");
   }
@@ -756,19 +808,97 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     in.notes.push_back("Hydro and bioenergy: Indian tariff ratio to new-coal tariffs (2025 bids) applied to the 2047 coal cost.");
     in.notes.push_back("Firmed RE: 2047 solar cost plus the current round-the-clock RE premium over plain solar, held constant in real terms.");
     in.notes.push_back("Solar and wind cost scaled by regional CUF relative to the mean regional CUF.");
+
+    // 5b. CEA cost basis (sensitivity): CEA NEP 2022-32 inputs with a CERC pre-tax WACC,
+    //     CEA and CERC fuel costs and an RBI exchange rate. All secondary.
+    struct NepRow {
+      std::string year;
+      double capex = kNaN, om = kNaN, life = kNaN, cuf = kNaN, heat_rate = kNaN;
+    };
+    std::map<std::string, NepRow> nep;  // the latest year_basis row of each source
+    {
+      const CsvTable n = CsvTable::read(root + "/" + "data/external/techno_economic/cea_costs.csv");
+      for (size_t r = 0; r < n.rows(); ++r) {
+        const std::string tech = n.str(r, n.col("tech")), year = n.str(r, n.col("year_basis"));
+        if (nep.count(tech) && nep[tech].year >= year) continue;
+        nep[tech] = {year, n.num(r, n.col("capex_cr_per_mw")), n.num(r, n.col("fixed_om_pct")),
+                     n.num(r, n.col("life_years")), n.num(r, n.col("cuf")), n.num(r, n.col("heat_rate"))};
+      }
+    }
+    std::map<std::string, double> basis;
+    {
+      const CsvTable b = CsvTable::read(root + "/" + "data/external/techno_economic/cea_cost_basis.csv");
+      for (size_t r = 0; r < b.rows(); ++r) basis[b.str(r, b.col("parameter"))] = b.num(r, b.col("value"));
+    }
+    auto param = [&](const char* k) {
+      auto it = basis.find(k);
+      if (it == basis.end() || std::isnan(it->second))
+        throw std::runtime_error(std::string("cea_cost_basis.csv: no value for ") + k);
+      return it->second;
+    };
+    const double debt = param("debt_share") / 100.0, rate = param("interest_rate"), roe = param("return_on_equity_pretax");
+    in.cea_wacc = 0.01 * (debt * rate + (1.0 - debt) * roe);
+    in.cea_inr_per_usd = param("inr_per_usd");
+    const double coal_fuel = param("coal_fuel_cost");
+    auto nep_row = [&](const char* k) -> const NepRow& {
+      auto it = nep.find(k);
+      if (it == nep.end() || std::isnan(it->second.capex) || std::isnan(it->second.om) || std::isnan(it->second.life) ||
+          std::isnan(it->second.cuf))
+        throw std::runtime_error(std::string("cea_costs.csv: incomplete row for ") + k);
+      return it->second;
+    };
+    const NepRow& bio_row = nep_row("bioenergy");
+    if (std::isnan(bio_row.heat_rate)) throw std::runtime_error("cea_costs.csv: no bioenergy heat rate");
+    const double bio_fuel = bio_row.heat_rate / param("biomass_gcv") * param("biomass_fuel_price") / 1000.0;
+    auto usd = [&](const char* k, double fuel) {
+      const NepRow& n = nep_row(k);
+      return cea_lcoe_rs_per_kwh(n.capex, n.om, n.life, n.cuf, fuel, in.cea_wacc) * 1000.0 / in.cea_inr_per_usd;
+    };
+    auto& cc = in.cea_lcoe_usd_per_mwh;
+    cc[kCoal] = usd("coal", coal_fuel);
+    cc[kHydro] = usd("hydro", 0.0);
+    cc[kSolar] = usd("solar", 0.0);
+    cc[kWind] = usd("wind", 0.0);
+    cc[kOffshore] = usd("offshore_wind", 0.0);
+    cc[kBio] = usd("bioenergy", bio_fuel);
+    for (int s : {kGas, kNuclear}) {  // no NEP capex for new gas or nuclear plants
+      cc[s] = c[s];
+      in.cea_from_iea[s] = true;
+    }
+    cc[kFirmRE] = cc[kSolar] + (c[kFirmRE] - c[kSolar]);  // the same round-the-clock premium
+    for (int r = 0; r < kRegions; ++r)
+      for (int s = 0; s < kTechs; ++s) {
+        double v = cc[s];
+        if (s == kSolar) v *= mean_solar / cuf_solar[r];
+        if (s == kWind) v *= mean_wind / cuf_wind[r];
+        in.cost_cea[r][s] = v;
+      }
+    in.notes.push_back(strf(
+        "CEA cost basis (sensitivity, cost_basis 1; all secondary): CRF(pre-tax WACC, life) x capex / (CUF x 8,760) "
+        "+ fixed O&M + fuel, with the CEA NEP 2022-32 capex, O&M, life and CUF (cea_costs.csv, 2021-22 prices; solar "
+        "at its %s capex). Pre-tax WACC %.3f%% = %.0f%% debt at %.2f%% + %.0f%% equity at %.2f%% (CERC RE Tariff "
+        "Regulations 2024 as applied in order 12/SM/2026). Fuel: coal %.2f Rs/kWh (CEA Optimal Generation Capacity "
+        "Mix 2029-30, midpoint of 1.3-3.5, 2021-22 prices); bioenergy %.3f Rs/kWh (NEP heat rate x CERC FY2026-27 "
+        "biomass price / GCV). Rs %.4f per USD (RBI, FY2021-22 average). Coal %.1f, hydro %.1f, solar %.1f, onshore "
+        "wind %.1f, offshore wind %.1f, bioenergy %.1f USD/MWh before regional scaling. The NEP has no capex for new "
+        "nuclear or gas plants, so nuclear and gas keep the IEA cost (%.1f and %.1f); firmed RE = CEA solar + the "
+        "IEA-basis round-the-clock premium. Not converted to 2024 USD, the IEA price year.",
+        nep_row("solar").year.c_str(), 100 * in.cea_wacc, 100 * debt, rate, 100 * (1 - debt), roe, coal_fuel, bio_fuel,
+        in.cea_inr_per_usd, cc[kCoal], cc[kHydro], cc[kSolar], cc[kWind], cc[kOffshore], cc[kBio], cc[kNuclear],
+        cc[kGas]));
   }
 
-  // 6. Emission factors (tCO2/MWh), CEA CO2 Baseline Database.
+  // 6. Emission factors (tCO2/MWh), CEA CO2 Baseline Database: the latest period.
   {
-    const CsvTable t = CsvTable::read(te + "/emission_factors.csv");
-    for (size_t r = 0; r < t.rows(); ++r) {
-      if (t.str(r, t.col("period")) != "2024-25") continue;
-      if (t.str(r, t.col("metric")).rfind("station_weighted_avg", 0) != 0) continue;
-      const std::string f = t.str(r, t.col("fuel"));
-      const double v = t.num(r, t.col("value"));
-      if (f == "coal") in.emission_t_per_mwh[kCoal] = v;
-      if (f == "gas") in.emission_t_per_mwh[kGas] = v;
-    }
+    const StationEmissionFactors ef =
+        read_station_emission_factors(root + "/" + "data/external/techno_economic/emission_factors.csv");
+    in.emission_period = ef.period;
+    in.emission_t_per_mwh[kCoal] = ef.coal;
+    in.emission_t_per_mwh[kGas] = ef.gas;
+    in.notes.push_back(strf("Emission factors (secondary): FY%s station-weighted average per MWh of net generation, "
+                            "coal %.3f, gas %.3f tCO2/MWh, the latest period in "
+                            "data/external/techno_economic/emission_factors.csv (%s).",
+                            ef.period.c_str(), ef.coal, ef.gas, ef.source.c_str()));
   }
 
   // 7. Nuclear reactor units by region (built, under construction, sanctioned, planned).

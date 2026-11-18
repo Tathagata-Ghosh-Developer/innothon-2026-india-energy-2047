@@ -1468,6 +1468,50 @@ int main(int argc, char** argv) {
       }
     }
     {
+      // Sensitivity of the recommended mix to the published figures behind it: each case is a
+      // copy of the Robust preset with one change (cost basis, solar potential set, wind
+      // height, build case), solved at the median requirement and re-solved at the P90.
+      // unserved_median_twh shows where a case cannot meet the median requirement: its shares,
+      // CO2 and cost then describe less generation than the requirement. cost_busd is priced
+      // in the case's own cost basis.
+      PolicySettings robust;
+      for (const auto& pp : policy_presets())
+        if (pp.name == "Robust") pp.apply(robust);
+      ScenarioControls s90 = c;
+      s90.requirement_quantile = 0.9;
+      const std::array<double, kRegions> req = pl.strategy(f, c, robust).requirement;
+      const std::array<double, kRegions> req90 = pl.strategy(f, s90, robust).requirement;
+      const std::vector<MixSensitivityRow> rows = mix_sensitivity(pl.allocation_inputs(), robust, req, req90);
+      CsvWriter w((out / "sensitivity_mix.csv").string());
+      for (const char* h : {"case", "non_fossil_pct", "coal_pct", "co2_mt", "cost_busd", "unserved_p90_twh",
+                            "unserved_median_twh"})
+        w.field(h);
+      w.endrow();
+      std::printf("mix sensitivity (Robust policy copy; median requirement; unmet TWh at the median and at P90):\n");
+      for (const MixSensitivityRow& r : rows) {
+        const AllocationResult& a = r.plan;
+        w.field(r.name);
+        if (a.ok)
+          w.field(100 * a.nonfossil_share(), 4).field(100 * a.share(kCoal), 4).field(a.co2_mt, 6).field(a.cost_busd, 5);
+        else
+          w.field("infeasible").field("infeasible").field("infeasible").field("infeasible");
+        if (r.plan_p90.ok)
+          w.field(r.plan_p90.unserved_total(), 5);
+        else
+          w.field("infeasible");
+        if (a.ok)
+          w.field(a.unserved_total(), 5);
+        else
+          w.field("infeasible");
+        w.endrow();
+        std::printf("  %-26s non-fossil %5.1f%% | coal %5.1f%% | CO2 %6.0f Mt | cost %6.1f bn USD | unmet %6.1f | P90 "
+                    "unmet %6.1f | %s\n",
+                    r.name.c_str(), a.ok ? 100 * a.nonfossil_share() : 0.0, a.ok ? 100 * a.share(kCoal) : 0.0,
+                    a.ok ? a.co2_mt : 0.0, a.ok ? a.cost_busd : 0.0, a.ok ? a.unserved_total() : -1.0,
+                    r.plan_p90.ok ? r.plan_p90.unserved_total() : -1.0, r.description.c_str());
+      }
+    }
+    {
       // Cost-CO2 trade-off of the recommended plan: Robust policy at the median requirement,
       // CO2 capped in 12 steps from the least-cost plan down to the lowest cap that still
       // meets the requirement; the cap's dual is the marginal abatement cost.

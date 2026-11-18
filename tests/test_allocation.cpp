@@ -16,6 +16,7 @@
 #include "core/csv.hpp"
 #include "core/stats.hpp"
 #include "pipeline/pipeline.hpp"
+#include "pipeline/presets.hpp"
 
 using namespace e47;
 
@@ -475,6 +476,240 @@ int default_policy_low_case_feasible(const std::string& root) {
   return check.fails;
 }
 
+// Emission factors come from the latest period of the CEA station-weighted rates in
+// emission_factors.csv (CEA CO2 Baseline Database v22, FY2025-26), whatever the row order.
+int emission_factor_latest_period(const std::string& root, const std::string& tmp_dir, const AllocationInputs& in) {
+  Checker check;
+  std::printf("emission_factor_latest_period\n");
+  // Latest period of the coal and gas station-weighted rows, read here from the file itself.
+  std::string latest;
+  std::map<std::string, std::map<std::string, double>> by_period;  // period -> fuel -> tCO2/MWh
+  {
+    const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/emission_factors.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      if (t.str(i, t.col("metric")) != "station_weighted_avg_emission_rate") continue;
+      const std::string fuel = t.str(i, t.col("fuel")), period = t.str(i, t.col("period"));
+      if (fuel != "coal" && fuel != "gas") continue;
+      by_period[period][fuel] = t.num(i, t.col("value"));
+      latest = std::max(latest, period);
+    }
+  }
+  const auto& want = by_period[latest];
+  std::printf("  latest period %s: coal %.3f, gas %.3f tCO2/MWh; loaded %s: coal %.3f, gas %.3f\n", latest.c_str(),
+              want.count("coal") ? want.at("coal") : kNaN, want.count("gas") ? want.at("gas") : kNaN,
+              in.emission_period.c_str(), in.emission_t_per_mwh[kCoal], in.emission_t_per_mwh[kGas]);
+  check(latest == "2025-26", "latest station-weighted period in the file is 2025-26 (CEA database v22)");
+  check(in.emission_period == latest, "loaded emission factors are from the latest period");
+  check(want.count("coal") && in.emission_t_per_mwh[kCoal] == want.at("coal") && want.at("coal") == 0.971,
+        "coal 0.971 tCO2/MWh (v22, FY2025-26)");
+  check(want.count("gas") && in.emission_t_per_mwh[kGas] == want.at("gas") && want.at("gas") == 0.47,
+        "gas 0.470 tCO2/MWh (v22, FY2025-26)");
+  bool zero = true;
+  for (int s = 0; s < kTechs; ++s)
+    if (!tech_is_fossil(s)) zero &= in.emission_t_per_mwh[s] == 0.0;
+  check(zero, "non-fossil sources emit nothing at the stack");
+  bool note = false;
+  for (const std::string& n : in.notes)
+    note |= n.rfind("Emission factors", 0) == 0 && n.find("2025-26") != std::string::npos &&
+            n.find("Version 22.0") != std::string::npos && n.find("secondary") != std::string::npos;
+  check(note, "provenance note names the period, the database version and the source status");
+
+  // Row order and other metrics do not matter: the latest station-weighted period wins.
+  const std::string path = tmp_dir + "/e47_emission_factors_test.csv";
+  {
+    std::ofstream f(path);
+    f << "fuel,metric,period,value,unit\n"
+         "coal,station_weighted_avg_emission_rate,2023-24,0.90,t\n"
+         "grid,grid_weighted_average_incl_RES,2031-32,0.43,t\n"
+         "coal,station_weighted_avg_emission_rate,2025-26,0.95,t\n"
+         "gas,station_weighted_avg_emission_rate,2024-25,0.40,t\n"
+         "gas,station_weighted_avg_emission_rate,2025-26,0.45,t\n"
+         "lignite,station_weighted_avg_emission_rate,2026-27,1.30,t\n"
+         "coal,station_weighted_avg_emission_rate,2024-25,0.92,t\n"
+         "coal (Indian),fuel_emission_factor_gcv,database v21,90.6,g\n";
+  }
+  const StationEmissionFactors ef = read_station_emission_factors(path);
+  check(ef.period == "2025-26" && ef.coal == 0.95 && ef.gas == 0.45,
+        "shuffled file: 2025-26 coal and gas picked (lignite and grid rows ignored)");
+  {
+    std::ofstream f(path, std::ios::app);
+    f << "coal,station_weighted_avg_emission_rate,2026-27,0.99,t\n";  // a period with coal but no gas
+  }
+  bool threw = false;
+  try {
+    read_station_emission_factors(path);
+  } catch (const std::exception&) {
+    threw = true;
+  }
+  check(threw, "latest period without a gas row: error, not a mix of periods");
+  std::filesystem::remove(path);
+  return check.fails;
+}
+
+// CEA-basis levelised cost: CRF(wacc, life) x capex / (CUF x 8,760) + fixed O&M + fuel, in
+// Rs/kWh, then USD/MWh at the RBI rate. Known cases first, then the loaded table.
+int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
+  Checker check;
+  std::printf("cea_lcoe_formula\n");
+  check(std::abs(capital_recovery_factor(0.10, 1) - 1.1) < 1e-12, "CRF(10%, 1 year) = 1.1");
+  check(std::abs(capital_recovery_factor(0.0, 20) - 0.05) < 1e-12, "CRF(0, 20 years) = 1/20");
+  // 8.76 crore per MW at CUF 1: capital per kWh = 10 x CRF; O&M 1% = 0.1 Rs/kWh; fuel 2.
+  const double a = cea_lcoe_rs_per_kwh(8.76, 1.0, 20, 1.0, 2.0, 0.0);
+  const double b = cea_lcoe_rs_per_kwh(8.76, 1.0, 1, 1.0, 2.0, 0.10);
+  std::printf("  known cases: %.12f (want 2.6), %.12f (want 13.1) Rs/kWh\n", a, b);
+  check(std::abs(a - 2.6) < 1e-9, "8.76 Cr/MW, 1% O&M, 20 y, CUF 1, fuel 2, 0%: 0.5 + 0.1 + 2 = 2.6 Rs/kWh");
+  check(std::abs(b - 13.1) < 1e-9, "8.76 Cr/MW, 1% O&M, 1 y, CUF 1, fuel 2, 10%: 11 + 0.1 + 2 = 13.1 Rs/kWh");
+
+  // Inputs read here from the files themselves.
+  std::map<std::string, double> basis;
+  {
+    const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/cea_cost_basis.csv");
+    for (size_t i = 0; i < t.rows(); ++i) basis[t.str(i, t.col("parameter"))] = t.num(i, t.col("value"));
+  }
+  const double wacc = 0.01 * (basis["debt_share"] * 0.01 * basis["interest_rate"] +
+                              (1.0 - 0.01 * basis["debt_share"]) * basis["return_on_equity_pretax"]);
+  const double inr = basis["inr_per_usd"];
+  std::printf("  pre-tax WACC %.5f (loaded %.5f); Rs per USD %.4f (loaded %.4f)\n", wacc, in.cea_wacc, inr,
+              in.cea_inr_per_usd);
+  check(std::abs(wacc - 0.12585) < 1e-12 && std::abs(in.cea_wacc - wacc) < 1e-12,
+        "pre-tax WACC = 0.70 x 10.71% + 0.30 x 16.96% = 12.585% (CERC)");
+  check(inr == 74.5039 && in.cea_inr_per_usd == inr, "Rs 74.5039 per USD (RBI, FY2021-22 average)");
+  struct Row {
+    double capex, om, life, cuf;
+  };
+  std::map<std::string, Row> nep;  // latest year_basis row of each source
+  {
+    const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/cea_costs.csv");
+    std::map<std::string, std::string> year;
+    for (size_t i = 0; i < t.rows(); ++i) {
+      const std::string tech = t.str(i, t.col("tech")), y = t.str(i, t.col("year_basis"));
+      if (year.count(tech) && year[tech] >= y) continue;
+      year[tech] = y;
+      nep[tech] = {t.num(i, t.col("capex_cr_per_mw")), t.num(i, t.col("fixed_om_pct")), t.num(i, t.col("life_years")),
+                   t.num(i, t.col("cuf"))};
+    }
+  }
+  const Row& c = nep["coal"];
+  const double coal = cea_lcoe_rs_per_kwh(c.capex, c.om, c.life, c.cuf, basis["coal_fuel_cost"], wacc) * 1000.0 / inr;
+  const Row& s = nep["solar"];
+  const double solar = cea_lcoe_rs_per_kwh(s.capex, s.om, s.life, s.cuf, 0.0, wacc) * 1000.0 / inr;
+  std::printf("  coal %.4f USD/MWh (loaded %.4f); solar (Rs %.2f Cr/MW, the 2029-30 row) %.4f (loaded %.4f)\n", coal,
+              in.cea_lcoe_usd_per_mwh[kCoal], s.capex, solar, in.cea_lcoe_usd_per_mwh[kSolar]);
+  check(s.capex == 4.1, "solar uses the latest NEP row (Rs 4.1 Cr/MW, 2029-30)");
+  check(std::abs(in.cea_lcoe_usd_per_mwh[kCoal] - coal) < 1e-9, "coal: NEP capex, O&M, life, CUF + CEA fuel 2.4 Rs/kWh");
+  check(std::abs(in.cea_lcoe_usd_per_mwh[kSolar] - solar) < 1e-9, "solar: NEP capex, O&M, life, CUF, no fuel");
+  const double bio_fuel = 4200.0 / basis["biomass_gcv"] * basis["biomass_fuel_price"] / 1000.0;
+  const Row& o = nep["bioenergy"];
+  const double bio = cea_lcoe_rs_per_kwh(o.capex, o.om, o.life, o.cuf, bio_fuel, wacc) * 1000.0 / inr;
+  check(std::abs(in.cea_lcoe_usd_per_mwh[kBio] - bio) < 1e-9, "bioenergy: fuel = 4200 kcal/kWh / 3100 kcal/kg x CERC price");
+  bool flat = true, solar_scaled = true, kept = true;
+  for (int r = 0; r < kRegions; ++r) {
+    flat &= std::abs(in.cost_cea[r][kCoal] - coal) < 1e-9;
+    // Regional resource quality as in the IEA basis: same CUF scaling, so the ratio is constant.
+    solar_scaled &= std::abs(in.cost_cea[r][kSolar] / in.cost[r][kSolar] - in.cost_cea[0][kSolar] / in.cost[0][kSolar]) < 1e-12;
+    solar_scaled &= std::abs(in.cost_cea[r][kWind] / in.cost[r][kWind] - in.cost_cea[0][kWind] / in.cost[0][kWind]) < 1e-12;
+    kept &= in.cost_cea[r][kNuclear] == in.cost[r][kNuclear] && in.cost_cea[r][kGas] == in.cost[r][kGas];
+  }
+  check(flat, "coal: one CEA-basis cost in every region");
+  check(solar_scaled, "solar and wind: regional CUF scaling as in the IEA basis");
+  check(kept, "nuclear and gas: no NEP capex, so they keep the IEA cost");
+  std::printf("  %-14s %10s %10s\n", "source", "IEA", "CEA");
+  for (int k = 0; k < kTechs; ++k) {
+    double iea = 0, cea = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      iea += in.cost[r][k] / kRegions;
+      cea += in.cost_cea[r][k] / kRegions;
+    }
+    std::printf("  %-14s %10.2f %10.2f   USD/MWh, mean over regions%s\n", tech_key(k), iea, cea,
+                in.cea_from_iea[k] ? " (IEA kept)" : "");
+  }
+  bool note = false;
+  for (const std::string& n : in.notes)
+    note |= n.rfind("CEA cost basis", 0) == 0 && n.find("nuclear and gas keep the IEA") != std::string::npos;
+  check(note, "provenance note flags nuclear and gas kept at IEA cost");
+  return check.fails;
+}
+
+// The sensitivity cases run on copies: the policy passed in, a fresh default policy and the
+// Robust preset are the same before and after; each case changes one setting of the copy.
+int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("sensitivity_from_copy\n");
+  const PolicySettings defaults;
+  check(defaults.cost_basis == kCostIEA && defaults.solar_potential_set == kSolarNise2025 && defaults.wind_height == 150,
+        "defaults: IEA costs, NISE 2025 solar, 150 m wind");
+  PolicySettings robust;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(robust);
+  const PolicySettings robust_before = robust;
+  std::array<double, kRegions> req90 = req;
+  for (double& x : req90) x *= 1.3;
+  const double default_cost_before = solve_least_cost(in, PolicySettings{}, req).cost_busd;
+  const AllocationResult direct = solve_least_cost(in, robust, req);
+
+  const std::vector<MixSensitivityRow> rows = mix_sensitivity(in, robust, req, req90);
+
+  check(robust == robust_before, "policy passed in unchanged");
+  check(PolicySettings{} == defaults, "fresh default policy unchanged");
+  PolicySettings robust_again;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(robust_again);
+  check(robust_again == robust_before, "Robust preset unchanged");
+  check(std::abs(solve_least_cost(in, PolicySettings{}, req).cost_busd - default_cost_before) < 1e-9,
+        "default plan cost unchanged after the cases");
+  const char* names[] = {"base", "cost_basis_cea", "solar_potential_nise2014", "wind_120m", "build_low", "build_high"};
+  bool named = rows.size() == 6;
+  for (size_t i = 0; named && i < rows.size(); ++i) named &= rows[i].name == names[i];
+  check(named, "six cases in order: base, cost_basis_cea, solar_potential_nise2014, wind_120m, build_low, build_high");
+  if (!named) return check.fails;
+  auto with = [&](void (*f)(PolicySettings&)) {
+    PolicySettings p = robust_before;
+    f(p);
+    return p;
+  };
+  check(rows[0].policy == robust_before, "base: the policy as passed");
+  check(rows[1].policy == with([](PolicySettings& p) { p.cost_basis = kCostCEA; }), "cost_basis_cea: cost_basis only");
+  check(rows[2].policy == with([](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }),
+        "solar_potential_nise2014: solar_potential_set only");
+  check(rows[3].policy == with([](PolicySettings& p) { p.wind_height = 120; }), "wind_120m: wind_height only");
+  check(rows[4].policy == with([](PolicySettings& p) { p.build_case = kBuildLow; }), "build_low: build_case low only");
+  check(rows[5].policy == with([](PolicySettings& p) { p.build_case = kBuildHigh; }), "build_high: build_case high only");
+  bool ok = true;
+  for (const MixSensitivityRow& r : rows) {
+    ok &= r.plan.ok && r.plan_p90.ok;
+    std::printf("  %-26s non-fossil %5.1f%%  coal %5.1f%%  CO2 %7.1f Mt  cost %7.2f bn USD  P90 unmet %7.1f TWh\n",
+                r.name.c_str(), 100 * r.plan.nonfossil_share(), 100 * r.plan.share(kCoal), r.plan.co2_mt,
+                r.plan.cost_busd, r.plan_p90.unserved_total());
+  }
+  check(ok, "every case solves at the median and the P90 requirement");
+  check(std::abs(rows[0].plan.cost_busd - direct.cost_busd) < 1e-9 && std::abs(rows[0].plan.co2_mt - direct.co2_mt) < 1e-9,
+        "base row = the policy solved directly");
+  double cea_cost = 0;
+  for (int r = 0; r < kRegions; ++r)
+    for (int s = 0; s < kTechs; ++s) cea_cost += rows[1].plan.gen[r][s] * in.cost_cea[r][s] * 1e-3;
+  check(std::abs(rows[1].plan.cost_busd - cea_cost) < 1e-9 * cea_cost, "cost_basis_cea: plan priced at the CEA-basis costs");
+  const Bounds b2 = make_bounds(in, rows[2].policy, req), b3 = make_bounds(in, rows[3].policy, req);
+  bool solar = true, wind = true;
+  for (int r = 0; r < kRegions; ++r) {
+    solar &= b2.hi[r][kSolar] == std::max(in.base_twh[r][kSolar], robust.solar_land * in.solar_potential_nise2014_twh[r]);
+    wind &= b3.hi[r][kWind] == std::max(in.base_twh[r][kWind], robust.wind_land * in.wind_120m_potential_twh[r]);
+  }
+  check(solar, "solar_potential_nise2014: solar bound from the NISE 2014 potential");
+  check(wind, "wind_120m: wind bound from the NIWE 120 m potential");
+  auto throws = [&](void (*f)(PolicySettings&)) {
+    try {
+      solve_least_cost(in, with(f), req);
+    } catch (const std::invalid_argument&) {
+      return true;
+    }
+    return false;
+  };
+  check(throws([](PolicySettings& p) { p.cost_basis = 2; }) && throws([](PolicySettings& p) { p.wind_height = 100; }) &&
+            throws([](PolicySettings& p) { p.solar_potential_set = 2; }),
+        "unknown cost basis, wind height or solar set: error");
+  return check.fails;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -519,6 +754,9 @@ int main(int argc, char** argv) {
     fails += build_limit_holds_last_period(std::filesystem::temp_directory_path().string(), in, req);
     fails += fleet_floor_from_npp_history(root, in);
     fails += default_policy_low_case_feasible(root);
+    fails += emission_factor_latest_period(root, std::filesystem::temp_directory_path().string(), in);
+    fails += cea_lcoe_formula(root, in);
+    fails += sensitivity_from_copy(in, req);
 
     PolicySettings p;
     Timer t;

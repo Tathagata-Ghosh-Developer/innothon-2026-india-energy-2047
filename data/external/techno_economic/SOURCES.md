@@ -1,7 +1,7 @@
 # Techno-economic parameters: sources and extraction notes
 
 This folder holds the techno-economic inputs for the 2047 generation allocation model.
-All files were downloaded or read on **2026-11-15**, except `build_limits.csv`, `cea_costs.csv` and the CEA v22 rows of `emission_factors.csv`, which were read on **2026-11-18**.
+All files were downloaded or read on **2026-11-15**, except `build_limits.csv`, `cea_costs.csv` and the CEA v22 rows of `emission_factors.csv`, which were read on **2026-11-18**, and `cea_cost_basis.csv`, read on **2026-11-19**.
 Every source in this folder is **secondary**: the project's primary sources are only NPP and the Renewable India dataset (`docs/data_audit.md`).
 Every value traces to a document that was fetched and read; nothing was filled from memory.
 Where a value could not be found, the cell is blank and the gap is listed under "Not found" at the end.
@@ -39,6 +39,7 @@ Capacity factors themselves are ratios of energy to capacity and are provided on
 | `emission_factors.csv` | 49 | CEA CO2 Baseline Database v22 station-weighted fuel rates, v21 grid and fuel factors, NEP projections, lifecycle factors |
 | `build_limits.csv` | 33 | Published annual build limits (GW per year, low, central and high) by source and period, FY2026-27 to FY2047-48, each with the CUF that turns it into energy |
 | `cea_costs.csv` | 10 | CEA NEP 2022-32 cost and performance inputs (capex, fixed O&M, life, CUF, heat rate) for a CEA-based cost check |
+| `cea_cost_basis.csv` | 8 | The inputs the NEP lacks for the CEA cost basis: CERC debt share, interest rate and pre-tax return on equity (pre-tax WACC), CEA coal variable cost, CERC biomass fuel price and GCV, RBI rupee-dollar rate |
 | `existing_fleet_generation.csv` | 45 | Coal retirement list, coal fleet base, under-construction coal and its commissioning schedule, life-extension plan |
 | `transmission.csv` | 61 | Inter-regional transfer capability by corridor (current and planned), regional transmission losses, T&D loss |
 | `nuclear_pipeline.csv` | 25 | Nuclear plants under construction, sanctioned and planned, with state, region and expected commissioning; 100 GW target |
@@ -189,6 +190,7 @@ URL: `https://cea.nic.in/api/cdm-report-version/view-pdf/en/82` (id 82 is versio
 Table 5 (printed page 14, PDF page 19) gives the generation-weighted specific emissions of fossil stations on net generation in FY2025-26: coal 0.971, gas 0.470 and lignite 1.348 tCO2/MWh; diesel and oil are shown as '-'.
 The page was rendered and read to confirm the cells.
 These three rows (`period` = `2025-26`) are the latest; the v21 and v20 rows stay as history.
+The model (`src/allocation/inputs.cpp`, `read_station_emission_factors`) takes the coal and gas rates of the latest `period` of the station-weighted rows, so it uses these v22 values.
 The same guide gives the FY2025-26 grid factors (Table 4, same page): weighted average 0.675, OM 0.963, BM 0.446 and CM 0.705 tCO2/MWh, adjusted for cross-border transfers; these are not added as rows.
 
 **CEA CO2 Baseline Database for the Indian Power Sector, User Guide Version 21.0 (November 2025, data for FY2024-25).**
@@ -493,8 +495,57 @@ Columns: `tech, capex_cr_per_mw, fixed_om_pct, life_years, cuf, fuel_cost_rs_per
   The NEP says its costs are in real terms and that coal cost escalates 1 percent a year in real terms (reply to comment 10.2, PDF page 28).
   CEA's reply to comment 21.22 says the discount rate is "Specified in the final NEP" (PDF page 44), but no discount rate, WACC or fuel price was found in the final document after a search of its full text.
   A CEA-basis levelised cost therefore needs a WACC and a fuel price from another source, labelled as such.
+  These are in `cea_cost_basis.csv` (next section); the blank cells here stay blank.
 * Battery storage is in Annexure 5.1 (O&M 1 percent of capex, life 14 years, capex "detailed at Chapter 13") but is left out, because the model has no battery source.
 * Annexure 8.1 (PDF page 216) has nominal year-by-year costs per MW used only for the fund requirement. They are already in `lcoe.csv` and are not repeated here.
+
+---
+
+## cea_cost_basis.csv
+
+Columns: `parameter, value, low, high, unit, applies_to, year_basis, used, source_name, source_url, source_location, notes`.
+It holds the inputs the CEA NEP 2022-32 lacks, so that the model can price a CEA cost basis next to the IEA WEO 2025 default.
+Every row is a secondary source. `used` = `no` marks a reference value the model does not read.
+
+The model (`src/allocation/inputs.cpp`, section 5b) computes, for each source with an NEP capex,
+
+    cost (Rs/kWh) = CRF(WACC, life) x capex / (CUF x 8,760) + fixed O&M + fuel,   CRF(r, n) = r / (1 - (1 + r)^-n)
+
+with capex, O&M, life and CUF from `cea_costs.csv` (the latest `year_basis` row, so solar uses its 2029-30 capex of Rs 4.1 crore per MW), and converts it to USD/MWh at the rupee-dollar rate below.
+Solar and onshore wind are then scaled by regional CUF in the same way as the IEA costs.
+Nuclear and gas have no NEP capex (Section 5.6.8 of the NEP), so they keep their IEA cost in the CEA basis.
+Firmed RE is the CEA-basis solar cost plus the same round-the-clock premium as in the IEA basis.
+
+**CERC RE Tariff Order for FY 2026-27 (Petition 12/SM/2026, 23.08.2026), applying the CERC RE Tariff Regulations 2024.**
+URL `https://www.cercind.gov.in/2026/orders/12-SM-2026.pdf`; raw copy `raw/lcoe/cerc/2026_orders_12-SM-2026.pdf` (already in the folder, read again on 2026-11-19).
+PDF page numbers equal the printed page numbers.
+
+* Debt share 70 percent: paragraphs 24-25, page 19 (Regulation 13(1), debt-equity ratio 70:30).
+* Interest rate 10.71 percent: paragraphs 28-30, pages 21-22 (Regulation 14(2)(b), average SBI one-year MCLR of 8.71 percent for 15.11.2025 to 14.05.2026 plus 200 basis points).
+* Pre-tax return on equity 16.96 percent: paragraphs 26-27, pages 20-21 (Regulation 16(2), 14 percent post-tax grossed up by the MAT rate of 17.47 percent, for the first 20 years of the tariff period).
+* Pre-tax WACC = 0.70 x 10.71 + 0.30 x 16.96 = **12.585 percent**, our computation. The CEA-basis cost has no tax term, so it uses a pre-tax rate.
+* For reference only (`used` = `no`): the post-tax discount factor CERC uses for levellised tariffs, 9.08 percent (paragraphs 9-11, pages 15-16, Regulation 10(2)).
+* Biomass: fuel price for "Other States" Rs 4,559.01 per tonne for FY2026-27 (paragraph 50, page 28, Regulation 38; state values Rs 4,193.01 to 5,074.84), gross calorific value 3,100 kcal/kg (paragraph 48, page 27, Regulation 37). With the NEP heat rate of 4,200 kcal/kWh (the CERC heat rate for travelling-grate boilers, paragraph 44, is the same), the fuel cost is 4,200 / 3,100 x 4.55901 = 6.177 Rs/kWh, our computation, at FY2026-27 prices.
+* These are the RE tariff regulations. The CERC Tariff Regulations 2024-29 for conventional stations were not fetched for this file. The RE order was already in the repository and states all three WACC parameters and its own arithmetic.
+
+**CEA, Report on Optimal Generation Capacity Mix for 2029-30, Version 2.0 (April 2023).**
+URL `https://jmkresearch.com/wp-content/uploads/2023/05/Report_on_Optimal_Generation_Mix_in_year_2030_1683189805.pdf` (the copy hosted by JMK Research, the same URL `storage_parameters.csv` cites); raw copy `raw/lcoe/cea/Report_on_Optimal_Generation_Mix_in_year_2030_1683189805.pdf` (downloaded 2026-11-19).
+Section 8.2.1.2 A "Cost v/s PLF" and Exhibit 8.6 (printed page 28, PDF page 34): "majority of capacity with utilization of more than 60% have variable cost in the range of 1.3 to 3.5 Rs/kWh", with the footnote "All Prices are at 2021-22 Level".
+The coal fuel cost is our midpoint, **2.4 Rs/kWh**; the range is kept in `low` and `high`.
+The variable cost of a coal station is its fuel (energy) charge.
+The price level matches the NEP capex (2021-22).
+
+**RBI, Handbook of Statistics on the Indian Economy 2025-26 (31 Jul 2026), Table 133** "Exchange Rate of the Indian Rupee vis-a-vis the SDR, US Dollar, Pound Sterling, D.M./Euro and Japanese Yen (Financial Year-Annual Average and end-Year Rates)".
+URL `https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=23958` (read 2026-11-19).
+US dollar, 2021-22 annual average: **Rs 74.5039 per USD**. The 2025-26 average is 88.3071 and is not used.
+The table notes say the rates are RBI reference rates from May 2012, and FBIL began publishing the reference rates on 10 July 2018.
+FY2021-22 is used because the NEP capex and the CEA coal variable cost are at 2021-22 prices.
+The RBI file server refused a scripted download of the table (it returned a bot-check page), so there is no raw copy; the values were read from the table page on the RBI site.
+
+Price-level caveats, also stated in the model's provenance note:
+
+* The CEA basis is in USD at 2021-22 prices and the 2021-22 exchange rate. It is not converted to 2024 USD, the price year of the IEA basis.
+* The biomass fuel price is at FY2026-27 prices and the interest rate uses the 2025-26 MCLR. Neither is deflated to 2021-22.
 
 ---
 
@@ -502,7 +553,7 @@ Columns: `tech, capex_cr_per_mw, fixed_om_pct, life_years, cuf, fuel_cost_rs_per
 
 | Folder under `raw/` | Content |
 |---|---|
-| `lcoe/cea/` | CEA NEP 2022-32 Vol I Generation (Internet Archive copy, and the mirror copy read on 2026-11-18) |
+| `lcoe/cea/` | CEA NEP 2022-32 Vol I Generation (Internet Archive copy, and the mirror copy read on 2026-11-18); CEA Report on Optimal Generation Capacity Mix for 2029-30, Version 2.0 (JMK Research copy, downloaded 2026-11-19) |
 | `cea_slides/` | CEA presentation of 12 Dec 2024 with the year-on-year solar and wind investment limits (CER IIT Kanpur copy) |
 | `lcoe/seci/` | SECI auction result sheets and tender pages |
 | `lcoe/pib/`, `lcoe/nuclear/`, `lcoe/coal/`, `lcoe/gas/`, `lcoe/hydro/`, `lcoe/cerc/`, `lcoe/state_bess/`, `lcoe/iea/`, `lcoe/mop/` | Tariff and cost sources for `lcoe.csv`; `lcoe/cerc/` also holds the CERC order used for normative CUFs; `lcoe/mop/` holds the Ministry of Power Rajya Sabha answers of 27.07.2026 (RS 953) |
@@ -526,7 +577,8 @@ The CEA General Review 2025, the CEA Growth book and the Ember files used for `c
 * The CEA CO2 Baseline Database workbook for v21 (the user guide was used).
 * A TWh figure for the electricity need of the Green Hydrogen Mission.
 * The CEA "Roadmap for achieving 100 GW nuclear by 2047" (October 2025), which returned "page not found" and was blocked in the web archive, so there is no year-wise or state-wise path to 100 GW.
-* A discount rate, WACC or fuel price in the CEA NEP 2022-32, so those columns of `cea_costs.csv` are blank (see that section).
+* A discount rate, WACC or fuel price in the CEA NEP 2022-32, so those columns of `cea_costs.csv` are blank (see that section). The CEA cost basis takes them from CERC, a CEA report and the RBI instead (`cea_cost_basis.csv`).
+* A published coal landed price and GCV for new plants. The CEA coal fuel cost is therefore the variable-cost range of the existing fleet (CEA optimal mix report), not heat rate x landed price / GCV.
 * Explicit annual build limits for any source before 2030 other than the CEA solar and wind limits, and any published rate for coal, gas and biomass after 2031-32. `build_limits.csv` uses the NEP plan rates (block additions divided by 5) where no limit is published, and holds the NEP rates to 2047 for coal, gas and biomass.
 * The CEA CO2 Baseline Database workbook for v22 (the user guide was used).
 * A year-by-year inter-regional capacity plan beyond the NEP Vol II corridor totals for 2026-27 and 2031-32.

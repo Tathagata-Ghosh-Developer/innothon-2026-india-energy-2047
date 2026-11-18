@@ -40,6 +40,28 @@ double AllocationResult::nonfossil_share() const {
   return total_twh > 0 ? 1.0 - f / total_twh : 0.0;
 }
 
+double AllocationResult::unserved_total() const { return std::accumulate(unserved.begin(), unserved.end(), 0.0); }
+
+const RegionTech& cost_table(const AllocationInputs& in, const PolicySettings& p) {
+  if (p.cost_basis == kCostIEA) return in.cost;
+  if (p.cost_basis == kCostCEA) return in.cost_cea;
+  throw std::invalid_argument("cost_basis must be 0 (IEA) or 1 (CEA)");
+}
+
+double potential_twh(const AllocationInputs& in, const PolicySettings& p, int r, int s) {
+  if (s == kSolar) {
+    if (p.solar_potential_set == kSolarNise2025) return in.potential_twh[r][kSolar];
+    if (p.solar_potential_set == kSolarNise2014) return in.solar_potential_nise2014_twh[r];
+    throw std::invalid_argument("solar_potential_set must be 0 (NISE 2025) or 1 (NISE 2014)");
+  }
+  if (s == kWind) {
+    if (p.wind_height == 150) return in.potential_twh[r][kWind];
+    if (p.wind_height == 120) return in.wind_120m_potential_twh[r];
+    throw std::invalid_argument("wind_height must be 150 or 120");
+  }
+  return in.potential_twh[r][s];
+}
+
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req) {
   Bounds b;
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
@@ -47,7 +69,8 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
   for (double u : in.nuclear_units) units += u;
   for (int r = 0; r < kRegions; ++r) {
     const auto& base = in.base_twh[r];
-    const auto& pot = in.potential_twh[r];
+    std::array<double, kTechs> pot{};
+    for (int s = 0; s < kTechs; ++s) pot[s] = potential_twh(in, p, r, s);
     auto& lo = b.lo[r];
     auto& hi = b.hi[r];
     lo[kCoal] = p.coal_floor * base[kCoal];
@@ -123,12 +146,13 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   const int nvar = ubase + kRegions;
   const Bounds b = make_bounds(in, p, req);
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
+  const RegionTech& unit_cost = cost_table(in, p);
 
   std::vector<double> cost(nvar, 0.0), lo(nvar, 0.0), hi(nvar, kHighsInf);
   for (int r = 0; r < kRegions; ++r)
     for (int s = 0; s < kTechs; ++s) {
       const int v = gvar(r, s);
-      cost[v] = in.cost[r][s] * p.cost_mult[s] + p.carbon_price * in.emission_t_per_mwh[s];
+      cost[v] = unit_cost[r][s] * p.cost_mult[s] + p.carbon_price * in.emission_t_per_mwh[s];
       lo[v] = b.lo[r][s];
       hi[v] = b.hi[r][s];
     }
@@ -277,7 +301,7 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
       res.national[s] += g;
       prod += g;
       res.co2_mt += g * in.emission_t_per_mwh[s];
-      res.cost_busd += g * in.cost[r][s] * p.cost_mult[s] * 1e-3;  // TWh x USD/MWh = million USD
+      res.cost_busd += g * unit_cost[r][s] * p.cost_mult[s] * 1e-3;  // TWh x USD/MWh = million USD
     }
     res.unserved[r] = sol.col_value[ubase + r];
     res.net_export[r] = prod - (req[r] - res.unserved[r]);
@@ -430,10 +454,53 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
   return rows;
 }
 
+std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const PolicySettings& base,
+                                               const std::array<double, kRegions>& req,
+                                               const std::array<double, kRegions>& req_p90) {
+  struct Spec {
+    const char* name;
+    const char* description;
+    void (*apply)(PolicySettings&);
+  };
+  static const Spec specs[] = {
+      {"base", "the policy as given", [](PolicySettings&) {}},
+      {"cost_basis_cea", "CEA NEP 2022-32 cost basis (CERC WACC, CEA and CERC fuel, RBI rate); nuclear and gas at IEA",
+       [](PolicySettings& p) { p.cost_basis = kCostCEA; }},
+      {"solar_potential_nise2014", "solar potential: NISE 2014 technical potential instead of NISE 2025 ground-mounted",
+       [](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }},
+      {"wind_120m", "onshore wind potential: NIWE 120 m instead of 150 m", [](PolicySettings& p) { p.wind_height = 120; }},
+      {"build_low", "published build limits: low case", [](PolicySettings& p) { p.build_case = kBuildLow; }},
+      {"build_high", "published build limits: high case", [](PolicySettings& p) { p.build_case = kBuildHigh; }},
+  };
+  constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
+  std::vector<MixSensitivityRow> rows(ns);
+  for (int i = 0; i < ns; ++i) {
+    rows[i].name = specs[i].name;
+    rows[i].description = specs[i].description;
+    rows[i].policy = base;  // a copy; base is never written
+    specs[i].apply(rows[i].policy);
+    // An invalid setting throws here, not inside the parallel region.
+    (void)cost_table(in, rows[i].policy);
+    (void)potential_twh(in, rows[i].policy, 0, kSolar);
+    (void)potential_twh(in, rows[i].policy, 0, kWind);
+    (void)build_caps(in, rows[i].policy);
+  }
+#pragma omp parallel for schedule(dynamic)
+  for (int k = 0; k < 2 * ns; ++k) {
+    MixSensitivityRow& row = rows[k / 2];
+    if (k % 2 == 0)
+      row.plan = solve_least_cost(in, row.policy, req);
+    else
+      row.plan_p90 = solve_least_cost(in, row.policy, req_p90);
+  }
+  return rows;
+}
+
 AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySettings& p,
                                    const std::array<double, kRegions>& req,
                                    const std::array<double, kTechs>& national) {
   Bounds b = make_bounds(in, p, req);
+  const RegionTech& unit_cost = cost_table(in, p);
   AllocationResult res;
   res.requirement = req;
   for (int s = 0; s < kTechs; ++s) {
@@ -475,7 +542,7 @@ AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySetti
     for (int s = 0; s < kTechs; ++s) {
       prod += res.gen[r][s];
       res.co2_mt += res.gen[r][s] * in.emission_t_per_mwh[s];
-      res.cost_busd += res.gen[r][s] * in.cost[r][s] * p.cost_mult[s] * 1e-3;
+      res.cost_busd += res.gen[r][s] * unit_cost[r][s] * p.cost_mult[s] * 1e-3;
     }
     res.net_export[r] = prod - req[r];
     res.total_twh += prod;
