@@ -15,6 +15,12 @@
 #   <!--each-reverse a.b-->...<!--/each-->  the same, last element first
 #     inside a block: {{@.c}} is field c of the element, {{@}} the element itself,
 #     {{@i}} its index (from 0) and {{@i|*K}} the index times an integer K.
+#   <!--if a.b-->...<!--else-->...<!--/if-->
+#     the first part if the JSON path a.b exists and is not null, otherwise the part
+#     after <!--else--> (optional). If blocks may be nested and may hold each blocks;
+#     they are resolved first (innermost first), and a path inside an each block cannot
+#     use @. Values in a part not kept are never read, so a page can use a key the
+#     model does not write yet, with a fallback.
 # Every value is HTML-escaped. A missing key stops the build.
 cmake_minimum_required(VERSION 3.26)
 
@@ -137,6 +143,56 @@ function(_site_eval out expr)
   endif()
   set(${out} "${_v}" PARENT_SCOPE)
 endfunction()
+
+# Resolve <!--if ...--> blocks, innermost first: the first <!--/if--> closes the last
+# <!--if before it, and any <!--else--> between the two belongs to that block.
+while(TRUE)
+  string(FIND "${_html}" "<!--/if-->" _e)
+  if(_e EQUAL -1)
+    break()
+  endif()
+  string(SUBSTRING "${_html}" 0 ${_e} _before)
+  string(FIND "${_before}" "<!--if " _p REVERSE)
+  if(_p EQUAL -1)
+    message(FATAL_ERROR "site: <!--/if--> without an opening <!--if")
+  endif()
+  string(SUBSTRING "${_before}" ${_p} -1 _block)
+  string(FIND "${_block}" "-->" _q)
+  if(_q EQUAL -1)
+    message(FATAL_ERROR "site: malformed if tag near position ${_p}")
+  endif()
+  math(EXPR _q "${_q} + 3")
+  string(SUBSTRING "${_block}" 0 ${_q} _tag)
+  string(SUBSTRING "${_block}" ${_q} -1 _body)
+  if(NOT _tag MATCHES "^<!--if ([A-Za-z0-9_.]+)-->$")
+    message(FATAL_ERROR "site: malformed block tag ${_tag}")
+  endif()
+  set(_path "${CMAKE_MATCH_1}")
+  set(_alt "")
+  string(FIND "${_body}" "<!--else-->" _x)
+  if(NOT _x EQUAL -1)
+    string(SUBSTRING "${_body}" 0 ${_x} _then)
+    math(EXPR _x "${_x} + 11")
+    string(SUBSTRING "${_body}" ${_x} -1 _alt)
+    set(_body "${_then}")
+  endif()
+  string(REPLACE "." ";" _parts "${_path}")
+  string(JSON _type ERROR_VARIABLE _err TYPE "${_json}" ${_parts})
+  if(NOT _err STREQUAL "NOTFOUND" OR _type STREQUAL "NULL")
+    set(_body "${_alt}")
+  endif()
+  string(SUBSTRING "${_html}" 0 ${_p} _head)
+  math(EXPR _e "${_e} + 10")
+  string(SUBSTRING "${_html}" ${_e} -1 _tail)
+  set(_html "${_head}${_body}${_tail}")
+endwhile()
+foreach(_stray "<!--if " "<!--else-->")
+  string(FIND "${_html}" "${_stray}" _left)
+  if(NOT _left EQUAL -1)
+    string(SUBSTRING "${_html}" ${_left} 60 _ctx)
+    message(FATAL_ERROR "site: if block without <!--/if--> near: ${_ctx}")
+  endif()
+endforeach()
 
 # Expand <!--each ...--> blocks (not nested).
 set(_out "")
