@@ -431,7 +431,10 @@ Rules used to fill the table:
 1. Sources in order of preference: CEA NEP 2022-32; the CEA input slides of December 2024; NITI Aayog 2026 Table 3.6; DAE (100 GW of nuclear by 2047); the hydro pipeline reported by the Ministry of Power.
 2. Where a source gives a rate only for some periods, its last stated rate is held to 2047, and the notes say so.
 3. Low and high come from another published source for the same years, or from a published scenario of the same source. Where there is none, they are set equal to central, and the notes say so.
-4. Where a source gives a range (such as 25-32 GW per year), low and high are its ends and central is our midpoint.
+4. CEA publishes its solar and wind investment limits as bands: 25-32 GW per year for solar and 7-10 GW per year for wind.
+   * The upper end (32 and 10) is the published cap on what may be added in a year. It is the central value, and the high value where no higher source applies, to FY2031-32.
+   * The lower end (25 and 7) is the low case, used as a conservative cap, and is held to 2047.
+   * Other ranges that had to give a single value are entered as our midpoints, and the notes say so. These are NITI's wind CUF range and hydro PLF range.
 5. The CUF comes from the same source as the limit where that source gives one. Otherwise the CEA NEP national value is used, or a NEP-implied national value (generation divided by capacity times 8.76) where the NEP gives only regional values.
 6. NITI's periods 2030-40 and 2040-50 are read as fiscal start years 2030-2039 and 2040-2049. In 2030-2031, inside the NEP horizon, the CEA value stays central and NITI enters as the high case.
 
@@ -467,7 +470,7 @@ Printed page 26 (PDF page 30), "Yearwise anticipated commissioning schedule of h
 The table has no 2030-31 column. The page was rendered and read.
 This is the hydro pipeline used in the table; CEA's own monthly status reports on hydro projects were not read.
 
-For a check only (not in the file), the cumulative additions over 2026-2047 implied by the table, in GW for the low, central and high cases, are: solar 550, 1,291 and 1,348; onshore wind 154, 411 and 430; offshore wind 6.3, 25.5 and 26.9; nuclear 28.4, 85.5 and 91.2 (from 8.78 GW, only the high case reaches 100 GW); coal 90.9, 112.1 and 124.5 (gross additions, before retirements); gas 0; bioenergy 11; hydro 25.9, 48.1 and 54.1; pumped storage 74.0, 115.8 and 123.9.
+For a check only (not in the file), the cumulative additions over 2026-2047 implied by the table, in GW for the low, central and high cases, are: solar 550, 1,312 and 1,348; onshore wind 154, 420 and 430; offshore wind 6.3, 25.5 and 26.9; nuclear 28.4, 85.5 and 91.2 (from 8.78 GW, only the high case reaches 100 GW); coal 90.9, 112.1 and 124.5 (gross additions, before retirements); gas 0; bioenergy 11; hydro 25.9, 48.1 and 54.1; pumped storage 74.0, 115.8 and 123.9.
 
 ---
 
