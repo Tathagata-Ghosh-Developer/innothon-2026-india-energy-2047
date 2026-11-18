@@ -248,7 +248,7 @@
   - `solar_potential_nise2014`
   - `wind_120m`
   - `build_low`
-  - `build_high`
+  - `build_central` (R15: the Robust preset already uses the high case)
 
 - [ ] **Step 1:** Write the failing tests:
   - `emission_factor_latest_period`: picks the 2025-26 rows.
