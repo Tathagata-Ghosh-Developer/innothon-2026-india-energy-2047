@@ -62,6 +62,10 @@ class App {
 
   ScenarioControls sc_;
   PolicySettings pol_;
+  // Published new loads of the active pipeline, for the new-loads preset (read once per pipeline).
+  const Pipeline* new_loads_for_ = nullptr;
+  std::vector<NewLoad> new_loads_;
+  std::string new_loads_desc_;
   bool dirty_ = true;
   std::future<Job> job_;
   std::shared_ptr<Job> cur_;

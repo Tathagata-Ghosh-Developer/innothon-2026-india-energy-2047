@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <filesystem>
 #include <map>
 #include <stdexcept>
@@ -734,6 +735,102 @@ PopulationConsistency Pipeline::population_consistency() const {
     pc.rows.push_back(g);
   }
   return pc;
+}
+
+std::vector<NewLoad> read_new_loads(const std::string& csv_path, int base_year, int target_year) {
+  const CsvTable t = CsvTable::read(csv_path);
+  const size_t c_load = t.col("load"), c_year = t.col("year"), c_low = t.col("twh_low"), c_mid = t.col("twh_central"),
+               c_high = t.col("twh_high"), c_basis = t.col("basis"), c_overlaps = t.col("overlaps_history");
+  std::vector<NewLoad> out;
+  for (size_t i = 0; i < t.rows(); ++i) {
+    NewLoad l;
+    l.load = trim(t.str(i, c_load));
+    const std::string where = csv_path + ": " + (l.load.empty() ? "row " + std::to_string(i + 2) : l.load);
+    l.basis = t.str(i, c_basis);
+    l.overlaps = lower(trim(t.str(i, c_overlaps)));
+    if (l.overlaps != "no" && l.overlaps != "partial" && l.overlaps != "yes")
+      throw std::runtime_error(where + ": overlaps_history must be no, partial or yes (got '" + l.overlaps + "')");
+    const double year = t.num(i, c_year);
+    if (!std::isfinite(year) || year != std::floor(year) || year <= base_year)
+      throw std::runtime_error(where + ": published year must be a whole year after the base year " +
+                               std::to_string(base_year));
+    l.year = static_cast<int>(year);
+    l.base_year = base_year;
+    l.target_year = target_year;
+    l.low_published = t.num(i, c_low);
+    l.central_published = t.num(i, c_mid);
+    l.high_published = t.num(i, c_high);
+    if (!(l.low_published >= 0 && l.low_published <= l.central_published && l.central_published <= l.high_published &&
+          std::isfinite(l.high_published)))
+      throw std::runtime_error(where + ": TWh values must be finite with 0 <= low <= central <= high");
+    // Linear growth from near zero in the base year to the published value.
+    l.scale = static_cast<double>(target_year - base_year) / (l.year - base_year);
+    l.low = l.low_published * l.scale;
+    l.central = l.central_published * l.scale;
+    l.high = l.high_published * l.scale;
+    out.push_back(std::move(l));
+  }
+  return out;
+}
+
+NewLoadTotals new_loads_total(const std::vector<NewLoad>& loads, bool include_overlapping) {
+  NewLoadTotals s;
+  for (const NewLoad& l : loads) {
+    if (!include_overlapping && l.overlaps != "no") continue;
+    s.low += l.low;
+    s.central += l.central;
+    s.high += l.high;
+    ++s.n;
+  }
+  return s;
+}
+
+void apply_new_loads(ScenarioControls& c, const std::vector<NewLoad>& loads) {
+  const NewLoadTotals s = new_loads_total(loads);
+  c.addon_lo = s.low;
+  c.addon_hi = s.high;
+}
+
+std::string new_loads_description(const std::vector<NewLoad>& loads) {
+  const auto name = [](std::string s) {
+    std::replace(s.begin(), s.end(), '_', ' ');
+    return s;
+  };
+  std::string added, other;
+  int year = 0;  // published year shared by the added loads; -1 if they differ
+  for (const NewLoad& l : loads) {
+    std::string& list = l.overlaps == "no" ? added : other;
+    list += (list.empty() ? "" : ", ") + name(l.load);
+    if (l.overlaps == "no") year = (year == 0 || year == l.year) ? l.year : -1;
+  }
+  const NewLoadTotals s = new_loads_total(loads);
+  char b[512];
+  std::string d = "Outside the headline; published estimates, secondary sources. ";
+  if (s.n == 0) {
+    d += "No published load is absent from the historical series, so the add-on is zero.";
+  } else {
+    const NewLoad& l0 = *std::find_if(loads.begin(), loads.end(), [](const NewLoad& l) { return l.overlaps == "no"; });
+    std::snprintf(b, sizeof b,
+                  "Adds the loads absent from the historical series (%s): %.0f-%.0f TWh in %d, if supplied from the "
+                  "grid (off-grid or captive supply would be outside NPP utility generation). ",
+                  added.c_str(), s.low, s.high, l0.target_year);
+    d += b;
+    if (year > 0)
+      std::snprintf(b, sizeof b, "Published %d values x (%d-%d)/(%d-%d) = %.3f", year, l0.target_year, l0.base_year,
+                    year, l0.base_year, l0.scale);
+    else
+      std::snprintf(b, sizeof b, "Published values x (%d-%d)/(year-%d)", l0.target_year, l0.base_year, l0.base_year);
+    d += b;
+    d += ": linear growth from near zero in the base year. ";
+    d += "End-use electricity, not grossed up for losses.";
+  }
+  if (!other.empty())
+    d += " Not added (the income elasticity already carries them in part or in full): " + other + ".";
+  return d;
+}
+
+std::vector<NewLoad> Pipeline::new_loads() const {
+  return read_new_loads((fs::path(root_) / "data/external/new_loads.csv").string(), drv_.base_year, kTargetYear);
 }
 
 StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const {

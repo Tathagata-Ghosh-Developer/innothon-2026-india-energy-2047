@@ -261,6 +261,30 @@ void App::sidebar() {
       }
       ImGui::SetItemTooltip("%s", presets[i].description.c_str());
     }
+    // Base plus the published new loads absent from the historical series: the add-on
+    // comes from data/external/new_loads.csv, so it is read from the loaded pipeline.
+    if (new_loads_for_ != pl_) {
+      new_loads_for_ = pl_;
+      try {
+        new_loads_ = pl_->new_loads();
+        new_loads_desc_ = new_loads_description(new_loads_);
+      } catch (const std::exception& e) {
+        new_loads_.clear();
+        new_loads_desc_ = std::string("Not available: ") + e.what();
+      }
+    }
+    ImGui::BeginDisabled(new_loads_.empty());
+    if (ImGui::Button(kNewLoadsPresetName)) {
+      const uint64_t draws = sc_.draws;
+      const bool gpu = sc_.use_gpu;
+      sc_ = ScenarioControls{};
+      sc_.draws = draws;
+      sc_.use_gpu = gpu;
+      apply_new_loads(sc_, new_loads_);
+      dirty_ = true;
+    }
+    ImGui::EndDisabled();
+    ImGui::SetItemTooltip("%s", new_loads_desc_.c_str());
   }
   const DriverData& d = pl_->drivers();
   double g0 = (sc_.g_start >= 0 ? sc_.g_start : d.g_hist_mean) + sc_.g_start_shift;
@@ -281,8 +305,8 @@ void App::sidebar() {
   ImGui::TextUnformatted("Population band (x UN low-high)");
   dirty_ |= slider("##pop", &sc_.pop_band_scale, 0.0, 2.0, "%.2fx", 1, "Width of the population uncertainty relative to UN WPP 2024 low/high variants.");
   ImGui::TextUnformatted("New loads in 2047 (TWh, low-high)");
-  dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 600.0, "low %.0f", 1, "Green hydrogen, data centres and other new loads not in the historical relationship.");
-  dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 800.0, "high %.0f", 1, nullptr);
+  dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 1000.0, "low %.0f", 1, "Green hydrogen, data centres and other new loads not in the historical relationship.");
+  dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 1500.0, "high %.0f", 1, nullptr);
   if (india) {
     ImGui::TextUnformatted("Elasticity decline with income");
     dirty_ |= slider("##edec", &sc_.elasticity_decline, 0.0, 0.3, "%.2f per ln income", 1,

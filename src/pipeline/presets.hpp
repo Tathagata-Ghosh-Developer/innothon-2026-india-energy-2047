@@ -43,6 +43,12 @@ inline const std::vector<ScenarioPreset>& scenario_presets() {
   return v;
 }
 
+// Scenario preset built from data rather than fixed values: the Base scenario plus the
+// published new loads absent from the historical series (Pipeline::new_loads,
+// apply_new_loads; description from new_loads_description). It needs a loaded pipeline,
+// so it is not in scenario_presets(); it stays outside the headline forecast.
+inline constexpr const char* kNewLoadsPresetName = "New loads (published, outside headline)";
+
 inline const std::vector<PolicyPreset>& policy_presets() {
   static const std::vector<PolicyPreset> v = {
       {"Base", "Default settings (docs/assumptions_and_uncertainty.md).", [](PolicySettings&) {}},
