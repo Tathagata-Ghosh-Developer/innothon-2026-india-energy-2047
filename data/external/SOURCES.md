@@ -17,6 +17,7 @@ All CSVs are UTF-8, comma-separated, with a header row. Each has a `source_url` 
 | `nuclear_sites.csv` | 40 | Operating units, units under construction, sanctioned projects and in-principle sites, by state |
 | `policy_targets.csv` | 147 | National targets (500 GW, net zero 2070, NDC 2022, 100 GW nuclear) and NEP 2022-32 demand, capacity and generation benchmarks |
 | `nep2023_state_demand.csv` | 135 | NEP 2022-32 / 20th EPS state-wise energy requirement (MU) and peak demand (MW) for 2021-22, 2026-27, 2031-32 |
+| `new_loads.csv` | 5 | Secondary. Published 2050 electricity estimates (low, central, high TWh) for electric vehicles, green hydrogen, data centres, space cooling and electric cooking, for a separate scenario outside the headline |
 
 The helper and extraction scripts were kept outside the repository and are not committed. The prose below is the record of each extraction step (table, page, filters, unit conversions), detailed enough to repeat by hand or in any language.
 
@@ -423,6 +424,64 @@ Columns: `state, state_as_reported, grid_region, row_type, fiscal_year, energy_r
 
 ---
 
+## 10. new_loads.csv (secondary; a separate scenario, never in the headline)
+
+Columns: `load, year, twh_low, twh_central, twh_high, basis, overlaps_history, source_name, source_url, source_location, notes`. Five rows, one per load.
+
+**Purpose.** The midpoint panel asked which factors besides income drive the 2047 requirement. This file records published estimates of electricity for loads that the historical generation trend may not capture. It is read only as a labelled scenario outside the headline. Every source here is **secondary**; none is NPP or the Renewable India dataset.
+
+**Conventions**
+- **Units and measure.** `twh_low`, `twh_central` and `twh_high` are TWh per year in `year`. They are end-use electricity for that load, as the sources state it. They are not grossed up for T&D losses or auxiliary use, so they are not on the project's generation basis. `basis` says where a source states generation instead (NITI's CPS hydrogen figure).
+- **Totals, not increments.** Each value is the load's total in that year. For loads already present today, `notes` gives the source's base-year level where it is printed.
+- **Year.** Every row is 2050, and `basis` says so. No source gives a 2047 value across the range for any load, and nothing was interpolated to 2047. The two 2047 figures found are kept in `notes` for context: Climate Policy Initiative's FY2047 electric-vehicle upper bound (1,070 TWh) and the NITI Overview's data-centre figure labelled 2047 (394 TWh).
+- **Low, central and high.** Low is the lowest published figure for that year and scope, and high is the highest. Central is the median when there are three figures. With two figures, central is the Indian government study (NITI Aayog) where one exists, otherwise the source's baseline scenario. No value was invented or averaged.
+- **Several sources in one row.** In `source_name`, `source_url` and `source_location`, parts are separated by ` | ` in the same order. Each part of `source_name` and `source_location` is tagged with the role it supplies (`[low]`, `[central]`, `[high]`).
+- **`overlaps_history`.** `no` means the load is absent from the historical generation series. `partial` means it is already in the series and part of its growth sits inside the income elasticity. `yes` is not used. Each row's `notes` justifies its flag.
+- **Hydrogen units.** All three hydrogen values are published in TWh, so no Mt-to-TWh conversion was made. As a check, the implied electricity per kilogram is recorded in `notes`: 54 to 59 kWh/kg for NITI and 45 kWh/kg for TERI.
+
+**Sources** (raw copies in `raw/new_loads/`; PDFs and HTML are not committed)
+
+| source | publisher and date | URL | raw file | used for |
+|---|---|---|---|---|
+| Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-%20An-Overview-Vol1.pdf | `NITI_2026_Scenarios_Viksit_Bharat_Net_Zero_Overview_Vol1.pdf` | green hydrogen low and high; context |
+| Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Power.pdf | `NITI_2026_Sectoral_Insights_Power_Vol7.pdf` | data centres low and central; context |
+| Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Buildings.pdf | `NITI_2026_Sectoral_Insights_Buildings_Vol5.pdf` | data-centre derivation; cooling context |
+| Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Transport (Vol. 3) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Transport.pdf | `NITI_2026_Sectoral_Insights_Transport_Vol3.pdf` | transport context |
+| India's Electricity Transition Pathways to 2050: Scenarios and Insights (Rodrigues et al.) | TERI, Feb 2024 (the report's suggested citation says 2023) | https://teriin.org/sites/default/files/2024-02/Power_Sector_2050_0.pdf | `TERI_2024_Power_Sector_2050.pdf` | EV central and high; hydrogen central; cooling low and central; electric cooking |
+| The Future of Cooling: Opportunities for energy-efficient air conditioning | IEA, May 2018 | https://iea.blob.core.windows.net/assets/0bb45525-277f-4c9c-8d0c-9c0cb5e7d525/The_Future_of_Cooling.pdf | `IEA_2018_The_Future_of_Cooling.pdf` | cooling high |
+| India Transition Factbook 2026 | BloombergNEF, 13 Oct 2026 | https://assets.bbhub.io/professional/sites/44/BNEF-India-Transition-Factbook-2026.pdf | `BNEF_India_Transition_Factbook_2026.pdf` | data centres high; context |
+| What Is Fuelling India's Road Transport Sector? Projecting District-Level Energy Demand | CEEW, June 2025 | https://www.ceew.in/sites/default/files/how-will-fuel-demand-grow-with-changing-fuel-mix-in-different-vehicle-segments.pdf | `CEEW_2025_Road_Transport_Energy_Demand.pdf` | EV low |
+| Driving Jobs, Economic Growth, and Climate Action: The Role of Clean Mobility in India | Climate Policy Initiative, March 2026 | https://www.climatepolicyinitiative.org/wp-content/uploads/2026/03/Economic-Implications_Report.pdf | `CPI_2026_Clean_Mobility_Economic_Implications.pdf` | EV context (FY2047) |
+| India data centre capacity to reach 12 GW by 2030 (press release) | Wood Mackenzie, 27 July 2026 | https://www.woodmac.com/press-releases/india-data-centre-capacity-to-reach-12-gw-by-2030/ | `WoodMackenzie_press_release_2026-07-27.html` | data-centre context (2040) |
+
+**Values (TWh in 2050)**
+
+| load | low | central | high | overlaps_history | where |
+|---|---|---|---|---|---|
+| electric_vehicles | 420 (CEEW main projection) | 456 (TERI Baseline) | 773 (TERI Low Carbon) | partial | CEEW p. 41 and Figure 23, p. 42; TERI Table 13, p. 40 |
+| green_hydrogen | 470 (NITI CPS) | 896 (TERI Low Carbon, 20 Mt) | 1,392 (NITI NZS) | no | NITI Overview p. 55; TERI p. 41 |
+| data_centres | 400 (NITI) | 400 (NITI) | 636 (BNEF ETS) | partial | NITI Power p. 41; BNEF p. 35 |
+| space_cooling | 582 (TERI Low carbon, residential) | 784 (TERI Baseline, residential) | 1,350 (IEA Baseline, all buildings) | partial | TERI Table 9, p. 28; IEA p. 61 and Figure 3.6 |
+| electric_cooking | 132 (TERI Baseline) | 132 (TERI Baseline) | 152 (TERI Low Carbon) | partial | TERI p. 28 |
+
+Page numbers are printed pages, with PDF pages in the CSV's `source_location`.
+
+**Extraction and checks**
+- Text was read from each PDF with `pdftotext -layout`, and every value was located by its printed and PDF page.
+- TERI Table 9 prints its row labels out of line in the extracted text. Baseline is 784 TWh and Low carbon 582 TWh, confirmed by the printed residential totals (1,483 and 1,239 TWh) and cooling shares (53% and 47%) on the same page.
+- TERI Table 13: road plus rail equals the printed transport total in both scenarios (456 + 72 = 528; 773 + 72 = 845 TWh).
+- NITI data centres: 45 GW of average load times 8,760 hours is 394 TWh, which the Power volume rounds to about 400 TWh.
+- Read but not used: the LBNL CLEAN-India paper (2023) shows its load split only in a figure; the NITI Aayog and RMI hydrogen report (2022) gives hydrogen in Mt, not electricity; TERI's room-AC study (2022) gives 2047 room-AC electricity only in figures; Barbar et al. (Scientific Data, 2021) publishes its cooling and EV results as a dataset, not in the text.
+
+**Caveats**
+- **Consumption, not generation.** To compare with the generation forecast, each value needs grossing up for T&D losses and auxiliary use. This is not done here.
+- **Captive and off-grid supply.** TERI assumes hydrogen electrolysers run on off-grid renewables and leaves that electricity out of grid demand (p. 41). Data-centre operators also use onsite captive and offsite group-captive plants (BNEF, p. 34). Such supply would not appear in NPP utility generation, which is the only generation the organisers' ruling allows (D12).
+- **Double counting.** For `partial` loads the totals include today's level and trend growth that the income elasticity already carries. Adding a `partial` total on top of the headline counts that part twice.
+- **Scope.** The space-cooling low and central are residential only, while the high covers all buildings and dates from 2018. The EV row is road transport only. NITI's transport figure (about 550 TWh in 2050) includes rail and metro and is kept only as context.
+- **Inconsistencies inside NITI.** The Overview dates the 45 GW (394 TWh) data-centre load to 2047 (p. 97), while the Buildings and Power volumes date it to 2050. The Buildings executive summary (p. xxii) prints residential cooling of 129 TWh (2020) and 915 and 604 TWh (2070), while its chapter (p. 51) prints 123, 834 and 596 TWh. The CSV uses the 2050 dating and the chapter values.
+
+---
+
 ## Coverage and gaps (all files)
 
 - **Population:**
@@ -444,4 +503,5 @@ Columns: `state, state_as_reported, grid_region, row_type, fiscal_year, energy_r
   - Wind power density is blank for Arunachal Pradesh, J&K and Ladakh.
   - GHI and wind density are derived from global gridded products (NASA POWER, Global Wind Atlas), not from an official Indian state table, which was not found.
 - **Nuclear** (section 7): reactor types for the in-principle sites are not stated in the sources.
+- **New loads** (section 10): no source gives a 2047 value across the range, so every row is 2050. Data centres rest on two sources and electric cooking on one.
 - **Census 2011 direct tables:** censusindia.gov.in timed out. Census 2011 values are taken as reproduced in the Technical Group report (population and urban share), and areas are taken from ISFR 2023.
