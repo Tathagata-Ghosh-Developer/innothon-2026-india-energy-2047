@@ -144,6 +144,23 @@ struct ForecastResult {
   std::vector<double> central[3];
 };
 
+// Growth of the central path (central[0] of forecast(), no add-on) from the base
+// year to target_year, split by driver. All parts are log points:
+//   total        = ln(gen_target_twh / gen_base_twh)
+//                = population + income + urbanisation + model_error
+//   population   = ln(population in target_year / base-year population)
+//   income       = beta dx - delta/2 dx^2 (dx: change of ln income per person; the
+//                  elasticity decline delta belongs to income)
+//   urbanisation = gamma_mean (du - kappa dx) (du: change of the urban share)
+//   model_error  = E[residual in target_year] - base-year residual (AR(1) decay)
+// India core only: the cross-country core fills total and population and leaves
+// income, urbanisation and model_error NaN.
+struct GrowthDecomposition {
+  int base_year = 0, target_year = 0;
+  double total = kNaN, population = kNaN, income = kNaN, urbanisation = kNaN, model_error = kNaN;
+  double gen_base_twh = kNaN, gen_target_twh = kNaN;
+};
+
 struct StrategyResult {
   std::array<double, kRegions> requirement{};
   AllocationResult least_cost;
@@ -191,6 +208,9 @@ class Pipeline {
 
   McInputs build_inputs(const ScenarioControls& c) const;
   ForecastResult forecast(const ScenarioControls& c) const;
+  // Splits the central path's growth from the base year to target_year (a projection
+  // year) by driver; uses the same driver paths and parameters as forecast(c).central[0].
+  GrowthDecomposition decompose_central(const ScenarioControls& c, int target_year) const;
   StrategyResult strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const;
 
   // Growth of the challenge dataset's populations against the model's population

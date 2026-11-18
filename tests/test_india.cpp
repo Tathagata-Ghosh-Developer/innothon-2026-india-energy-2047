@@ -5,6 +5,8 @@
 //     fitting, must fall inside the model's 90 percent band.
 //  3. Elasticity controls: a higher income elasticity gives a higher 2047 median,
 //     and each estimation window on its own gives a usable forecast.
+//  4. Growth decomposition: population, income, urbanisation and model error add
+//     up to the log growth of the central path from the base year to 2047.
 // Usage: test_india <repo_root>
 #include <cmath>
 #include <cstdio>
@@ -138,6 +140,48 @@ void elasticity_shift_monotone(const std::string& root) {
   check(std::abs(slot4_mean(2) - half_mean(h1, bb.size())) < 1e-5, "beta_window 2 uses the S3 replicates only");
 }
 
+void decomposition_adds_up(const std::string& root) {
+  std::printf("growth decomposition of the central path\n");
+  const Pipeline pl(root, CoreModel::kIndia);
+  for (const double decline : {0.0, 0.2}) {
+    ScenarioControls c;
+    c.draws = 1u << 12;
+    c.use_gpu = false;
+    c.elasticity_decline = decline;
+    const ForecastResult f = pl.forecast(c);
+    const int target = f.years.back();
+    const GrowthDecomposition d = pl.decompose_central(c, target);
+    const double sum = d.population + d.income + d.urbanisation + d.model_error;
+    const double total_path = std::log(f.central[0].back() / d.gen_base_twh);
+    std::printf("    decline %.1f, FY%d %.1f -> FY%d %.1f TWh: total %.4f = population %.4f + income %.4f + "
+                "urbanisation %.4f + model error %.4f\n",
+                decline, d.base_year, d.gen_base_twh, d.target_year, d.gen_target_twh, d.total, d.population, d.income,
+                d.urbanisation, d.model_error);
+    char what[96];
+    std::snprintf(what, sizeof what, "decline %.1f: parts add up to the total (1e-9)", decline);
+    check(std::abs(sum - d.total) < 1e-9, what);
+    std::snprintf(what, sizeof what, "decline %.1f: total = ln(central %d / base) of forecast() (1e-6)", decline, target);
+    check(std::abs(total_path - d.total) < 1e-6, what);
+    std::snprintf(what, sizeof what, "decline %.1f: population > 0 and income > 0", decline);
+    check(d.population > 0 && d.income > 0, what);
+    std::snprintf(what, sizeof what, "decline %.1f: base and target years", decline);
+    check(d.base_year == pl.drivers().base_year && d.target_year == target, what);
+  }
+
+  // The decomposition is India-core only: the cross-country core (few replicates, it
+  // only needs the central path) fills the total and population, the rest stays NaN.
+  const Pipeline cc(root, CoreModel::kCrossCountry, 20);
+  ScenarioControls c;
+  c.draws = 1u << 12;
+  c.use_gpu = false;
+  const ForecastResult f = cc.forecast(c);
+  const GrowthDecomposition d = cc.decompose_central(c, f.years.back());
+  check(std::abs(std::log(f.central[0].back() / d.gen_base_twh) - d.total) < 1e-6 && d.population > 0,
+        "cross-country core: total and population filled");
+  check(std::isnan(d.income) && std::isnan(d.urbanisation) && std::isnan(d.model_error),
+        "cross-country core: income, urbanisation and model error NaN");
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -146,6 +190,7 @@ int main(int argc, char** argv) {
     stale_rows_are_ignored(fs::temp_directory_path() / "e47_test_india");
     holdout_inside_band(root);
     elasticity_shift_monotone(root);
+    decomposition_adds_up(root);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;
   } catch (const std::exception& e) {

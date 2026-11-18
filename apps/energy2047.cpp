@@ -901,6 +901,57 @@ int main(int argc, char** argv) {
                   fy_label(h.year).c_str());
     }
     write_forecast(out, pl, f);
+
+    // Growth decomposition of the central path to 2047: is income the only driver?
+    // Parts in log points (they add up to the total) and as a share of the total.
+    {
+      const GrowthDecomposition d = pl.decompose_central(c, f.years[last]);
+      const std::string from = fy_label(d.base_year), to = fy_label(d.target_year);
+      auto text = [](const char* fmt, auto... v) {
+        char b[256];
+        std::snprintf(b, sizeof b, fmt, v...);
+        return std::string(b);
+      };
+      const struct {
+        const char* name;
+        std::string desc;
+        double v;
+      } parts[] = {
+          {"population", text("ln(population %s / %s): base-year population growing as UN WPP 2024 medium",
+                              to.c_str(), from.c_str()),
+           d.population},
+          {"income",
+           text("beta %.3f x change of ln GSDP per person, less delta/2 x its square (elasticity decline delta %.2f)",
+                fi.beta, std::max(0.0, c.elasticity_decline)),
+           d.income},
+          {"urbanisation",
+           text("gamma %.2f x (change of urban share - kappa %.3f x change of ln GSDP per person): urbanisation beyond "
+                "the path income implies",
+                fit.gamma_mean, fi.kappa),
+           d.urbanisation},
+          {"model_error",
+           text("expected residual in %s minus the base-year residual %+.3f (AR(1), rho %.2f)", to.c_str(),
+                fi.resid.back(), fi.resid_rho),
+           d.model_error},
+          {"total",
+           text("ln(central path %s / %s) = ln(%.0f / %.0f TWh); medium drivers, mean growth, full-sample "
+                "parameters, no add-on",
+                to.c_str(), from.c_str(), d.gen_target_twh, d.gen_base_twh),
+           d.total},
+      };
+      CsvWriter w((out / "growth_decomposition_2047.csv").string());
+      w.field("part").field("description").field("log_points").field("share_of_total_pct");
+      w.endrow();
+      for (const auto& p : parts) {
+        w.field(p.name).field(p.desc).field(p.v, 6).field(std::round(10000 * p.v / d.total) / 100);  // 2 decimals
+        w.endrow();
+      }
+      std::printf("growth of the central path %s -> %s (%.0f -> %.0f TWh, %.3f log points):", from.c_str(), to.c_str(),
+                  d.gen_base_twh, d.gen_target_twh, d.total);
+      for (const auto& p : parts)
+        if (std::string(p.name) != "total") std::printf(" %s %+.3f (%.1f%%)", p.name, p.v, 100 * p.v / d.total);
+      std::printf("\n");
+    }
     SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
 
     // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes

@@ -65,6 +65,67 @@ void growth_stats(const std::vector<double>& g, double& m, double& sd, double& r
   rho = den > 0 ? num / den : 0.0;
 }
 
+// Central path of the fitted core in every projection year: medium drivers, mean
+// growth, full-sample parameters, no add-on. model 0 or 1 is the core's first or
+// second model (India: with or without the excess-urbanisation term; cross-country:
+// FE-Quad or FE-Gompertz). Pipeline::forecast and Pipeline::decompose_central both
+// read the path from here, so the reported path and its decomposition cannot diverge.
+//
+// The path is scaled from the base-year population pop_base and generation
+// twh_base = pop_base / 1e9 x exp(ln_e0), so in every year
+//   ln(twh / twh_base) = ln(pop / pop_base) + income + urbanisation + model_error.
+// The cross-country core leaves the last three parts NaN.
+struct CentralPath {
+  double pop_base = 0, twh_base = 0;
+  std::vector<double> pop, twh;                           // [t] persons, TWh
+  std::vector<double> income, urbanisation, model_error;  // [t] log points from the base year
+};
+
+CentralPath central_path(const Fitted& fit, const McInputs& in, const std::vector<int>& years,
+                         const ScenarioControls& c, int model) {
+  const HistoryPoint& h = fit.history.back();
+  const size_t n = years.size();
+  CentralPath p;
+  p.pop_base = h.pop;
+  p.pop.resize(n);
+  p.twh.resize(n);
+  p.income.assign(n, kNaN);
+  p.urbanisation.assign(n, kNaN);
+  p.model_error.assign(n, kNaN);
+  for (size_t t = 0; t < n; ++t) p.pop[t] = in.pop_med[t] * 1e6;
+  if (fit.core == CoreModel::kIndia) {
+    const IndiaFit& fi = fit.india_fit;
+    const double gamma = model == 0 ? fit.gamma_mean : 0.0;
+    const double delta = std::max(0.0, c.elasticity_decline);
+    const double e0 = std::exp(in.ln_e0);
+    p.twh_base = p.pop_base / 1e9 * e0;
+    const double x0 = std::log(h.gdp_pc / 10.0);
+    double x = x0;
+    for (size_t t = 0; t < n; ++t) {
+      x += in.g_mean[t];
+      const double dx = x - x0, du = in.urb_med[t] - h.urban;
+      const double decline = -0.5 * delta * dx * dx;  // elasticity falling by delta per unit of x
+      // The income and urban terms of india_delta_ln_e, one at a time; the decline is income.
+      p.income[t] = india_delta_ln_e(fi.beta, 0.0, fi.kappa, dx, du) + decline;
+      p.urbanisation[t] = india_delta_ln_e(0.0, gamma, fi.kappa, dx, du);
+      // Expected path of the AR(1) residual relative to the base year.
+      p.model_error[t] = fi.resid.back() * (std::pow(fi.resid_rho, static_cast<double>(t + 1)) - 1.0);
+      p.twh[t] = p.pop[t] / 1e9 * e0 * std::exp(p.income[t] + p.urbanisation[t] + p.model_error[t]);
+    }
+    return p;
+  }
+  const DesignRow r0 = design_row(h.gen_twh * 1e9 / h.pop, h.gdp_pc, h.urban, h.year);
+  p.twh_base = p.pop_base / 1e9 * std::exp(r0.ln_e);
+  double ln_y = std::log(h.gdp_pc);
+  for (size_t t = 0; t < n; ++t) {
+    ln_y += in.g_mean[t];
+    const DesignRow r1 = design_row(1.0, std::exp(ln_y), in.urb_med[t], years[t]);
+    const double d = model == 0 ? delta_ln_e(fit.quad, r0, r1) : delta_ln_e(fit.gomp, r0, r1);
+    p.twh[t] = p.pop[t] / 1e9 * std::exp(r0.ln_e + d);
+  }
+  return p;
+}
+
 }  // namespace
 
 Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std::move(root)) {
@@ -498,38 +559,31 @@ ForecastResult Pipeline::forecast(const ScenarioControls& c) const {
     }
   }
   // Central paths: medium drivers, mean growth, full-sample parameters.
-  const HistoryPoint& h = fit_.history.back();
-  for (int m = 0; m < 3; ++m) f.central[m].resize(f.years.size());
-  if (fit_.core == CoreModel::kIndia) {
-    const IndiaFit& fi = fit_.india_fit;
-    const double delta = std::max(0.0, c.elasticity_decline);
-    const double x0 = std::log(h.gdp_pc / 10.0);
-    double x = x0;
-    for (size_t t = 0; t < f.years.size(); ++t) {
-      x += f.inputs.g_mean[t];
-      const double pop = f.inputs.pop_med[t] * 1e6;
-      const double dx = x - x0, du = f.inputs.urb_med[t] - h.urban;
-      const double decline = -0.5 * delta * dx * dx;  // elasticity falling by delta per unit of x
-      // Expected path of the AR(1) residual relative to the base year.
-      const double resid = fi.resid.back() * (std::pow(fi.resid_rho, static_cast<double>(t + 1)) - 1.0);
-      const double scale = pop / 1e9 * std::exp(f.inputs.ln_e0);
-      f.central[0][t] = scale * std::exp(india_delta_ln_e(fi.beta, fit_.gamma_mean, fi.kappa, dx, du) + decline + resid);
-      f.central[1][t] = scale * std::exp(india_delta_ln_e(fi.beta, 0.0, fi.kappa, dx, du) + decline + resid);
-      f.central[2][t] = std::exp(damped_forecast(fit_.damped, static_cast<int>(t) + 1));
-    }
-    return f;
-  }
-  const DesignRow r0 = design_row(h.gen_twh * 1e9 / h.pop, h.gdp_pc, h.urban, h.year);
-  double ln_y = std::log(h.gdp_pc);
-  for (size_t t = 0; t < f.years.size(); ++t) {
-    ln_y += f.inputs.g_mean[t];
-    const double pop = f.inputs.pop_med[t] * 1e6;
-    const DesignRow r1 = design_row(1.0, std::exp(ln_y), f.inputs.urb_med[t], f.years[t]);
-    f.central[0][t] = pop / 1e9 * std::exp(r0.ln_e + delta_ln_e(fit_.quad, r0, r1));
-    f.central[1][t] = pop / 1e9 * std::exp(r0.ln_e + delta_ln_e(fit_.gomp, r0, r1));
+  for (int m = 0; m < 2; ++m) f.central[m] = central_path(fit_, f.inputs, f.years, c, m).twh;
+  f.central[2].resize(f.years.size());
+  for (size_t t = 0; t < f.years.size(); ++t)
     f.central[2][t] = std::exp(damped_forecast(fit_.damped, static_cast<int>(t) + 1));
-  }
   return f;
+}
+
+GrowthDecomposition Pipeline::decompose_central(const ScenarioControls& c, int target_year) const {
+  const auto it = std::find(drv_.years.begin(), drv_.years.end(), target_year);
+  if (it == drv_.years.end())
+    throw std::invalid_argument("decompose_central: " + std::to_string(target_year) + " is not a projection year");
+  const size_t t = static_cast<size_t>(it - drv_.years.begin());
+  // build_inputs gives the same driver paths as forecast(c); the Monte Carlo is not needed.
+  const CentralPath p = central_path(fit_, build_inputs(c), drv_.years, c, 0);
+  GrowthDecomposition d;
+  d.base_year = drv_.base_year;
+  d.target_year = target_year;
+  d.gen_base_twh = p.twh_base;
+  d.gen_target_twh = p.twh[t];
+  d.total = std::log(p.twh[t] / p.twh_base);
+  d.population = std::log(p.pop[t] / p.pop_base);
+  d.income = p.income[t];
+  d.urbanisation = p.urbanisation[t];
+  d.model_error = p.model_error[t];
+  return d;
 }
 
 PopulationConsistency Pipeline::population_consistency() const {
