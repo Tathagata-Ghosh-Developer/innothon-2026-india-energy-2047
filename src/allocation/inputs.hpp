@@ -31,8 +31,14 @@ struct Corridor {
 using RegionTech = std::array<std::array<double, kTechs>, kRegions>;
 
 struct AllocationInputs {
-  int base_year = 2024;
+  // Base year: fiscal year by its start year (2023 = FY2023-24, April to March).
+  // base_twh = NPP regional conventional generation (thermal split into coal and gas
+  // with CEA regional shares) + CEA renewable generation by state (base_res_twh).
+  int base_year = 2023;
   RegionTech base_twh{};        // generation in base year (utilities), TWh
+  RegionTech base_res_twh{};    // part of base_twh from CEA renewables by state (solar, wind, small hydro, bioenergy)
+  int base_unmatched_states = 0;  // renewable-table states with no grid region (skipped and counted)
+  std::vector<std::string> base_source_notes;  // base-mix provenance, each line "Primary: ..." or "Secondary: ..."
   RegionTech potential_twh{};   // generation potential at full resource use, TWh/yr
   RegionTech cost{};            // USD/MWh in 2047 (regional resource quality applied)
   std::array<double, kTechs> emission_t_per_mwh{};

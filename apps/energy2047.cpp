@@ -52,7 +52,7 @@ void write_forecast(const fs::path& out, const Pipeline& pl, const ForecastResul
 void write_strategy(const fs::path& out, const AllocationInputs& in, const StrategyResult& st) {
   CsvWriter w((out / "strategy_2047.csv").string());
   w.field("method").field("region").field("source").field("generation_twh").field("share_of_region").field(
-      "base_2024_twh");
+      "base_fy2023_24_twh");
   w.endrow();
   for (int m = 0; m < 2; ++m) {
     const AllocationResult& a = m == 0 ? st.least_cost : st.score;
@@ -1307,6 +1307,19 @@ int main(int argc, char** argv) {
       site.cross_country_year = r.years[l2];
     }
 
+    {
+      const AllocationInputs& ai = pl.allocation_inputs();
+      double total = 0, res = 0, coal = 0;
+      for (int r = 0; r < kRegions; ++r)
+        for (int s = 0; s < kTechs; ++s) {
+          total += ai.base_twh[r][s];
+          res += ai.base_res_twh[r][s];
+          if (s == kCoal) coal += ai.base_twh[r][s];
+        }
+      std::printf("base mix FY%d-%02d: %.0f TWh = NPP conventional %.0f (primary) + CEA renewables %.0f (secondary); "
+                  "coal %.0f TWh; renewable-table states without a region: %d\n",
+                  ai.base_year, (ai.base_year + 1) % 100, total, total - res, res, coal, ai.base_unmatched_states);
+    }
     const PolicySettings p;
     const StrategyResult st = pl.strategy(f, c, p);
     const AllocationResult& lc = st.least_cost;

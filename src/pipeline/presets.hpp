@@ -53,7 +53,7 @@ inline const std::vector<PolicyPreset>& policy_presets() {
   static const std::vector<PolicyPreset> v = {
       {"Base", "Default settings (docs/assumptions_and_uncertainty.md).", [](PolicySettings&) {}},
       {"Low carbon",
-       "80% non-fossil, coal floor 35% of 2024, carbon price 50 USD/t, 30% usable solar and wind land, corridors 3x the "
+       "80% non-fossil, coal floor 35% of FY2023-24 coal, carbon price 50 USD/t, 30% usable solar and wind land, corridors 3x the "
        "2032 plan, nuclear up to 15%.",
        [](PolicySettings& p) {
          p.nonfossil_min = 0.80;

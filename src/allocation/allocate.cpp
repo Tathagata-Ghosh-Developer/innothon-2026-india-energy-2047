@@ -335,7 +335,7 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
   };
   static const Spec specs[] = {
       {"Non-fossil minimum share", 0.60, 0.85, [](PolicySettings& p, double v) { p.nonfossil_min = v; }, "%.0f%%"},
-      {"Coal floor (x 2024 coal)", 0.40, 0.80, [](PolicySettings& p, double v) { p.coal_floor = v; }, "%.2f"},
+      {"Coal floor (x FY2023-24 coal)", 0.40, 0.80, [](PolicySettings& p, double v) { p.coal_floor = v; }, "%.2f"},
       {"National firm share", 0.35, 0.55, [](PolicySettings& p, double v) { p.firm_national = v; }, "%.0f%%"},
       {"Regional firm share", 0.15, 0.35, [](PolicySettings& p, double v) { p.firm_regional = v; }, "%.0f%%"},
       {"Usable solar land", 0.15, 0.35, [](PolicySettings& p, double v) { p.solar_land = v; }, "%.0f%%"},

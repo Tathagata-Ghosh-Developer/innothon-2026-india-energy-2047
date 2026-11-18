@@ -26,7 +26,6 @@ set(E47_WEB_DATA_CROSS_COUNTRY
 set(E47_WEB_DATA_ASSEMBLED
   # src/allocation/inputs.cpp
   data/raw/generation/state/state_region_map.csv
-  data/raw/generation/region/ember_region_generation_cy.csv
   data/raw/generation/national/ember_national_generation_cy.csv
   data/external/resource_potential.csv
   data/external/techno_economic/capacity_factors.csv

@@ -1,6 +1,9 @@
 #include "inputs.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <cstdarg>
+#include <cstdio>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -65,6 +68,21 @@ double mean_of(const std::vector<double>& v) {
   return s / static_cast<double>(v.size());
 }
 
+std::string strf(const char* f, ...) {
+  va_list a, b;
+  va_start(a, f);
+  va_copy(b, a);
+  const int n = std::vsnprintf(nullptr, 0, f, a);
+  va_end(a);
+  std::string s(static_cast<size_t>(std::max(n, 0)), '\0');
+  if (n > 0) std::vsnprintf(s.data(), s.size() + 1, f, b);
+  va_end(b);
+  return s;
+}
+
+// Fiscal year as written in the source files: start year 2023 -> "2023-24".
+std::string fiscal_label(int start) { return strf("%d-%02d", start, (start + 1) % 100); }
+
 }  // namespace
 
 const char* tech_key(int s) {
@@ -90,22 +108,258 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
   const std::string te = ext + "/techno_economic";
   const auto state_reg = load_state_regions(gen_dir + "/state/state_region_map.csv");
 
-  // 1. Base-year generation by region and source (Ember, utilities).
+  // 1. Base-year generation by region and source, FY2023-24 (in.base_year is the start year).
+  //    Conventional stations: NPP (primary). Their thermal total is split into coal and gas
+  //    with CEA General Review regional shares (secondary). Renewables: CEA General Review
+  //    by state and type (secondary), each state in the grid region NPP reports it under.
   {
-    const CsvTable t = CsvTable::read(gen_dir + "/region/ember_region_generation_cy.csv");
-    const size_t cy = t.col("year"), cr = t.col("region"), cs = t.col("source"), cg = t.col("generation_gwh"),
-                 csub = t.col("is_subtotal");
-    const std::map<std::string, int> src = {{"coal", kCoal},   {"lignite", kCoal}, {"gas", kGas},
-                                            {"nuclear", kNuclear}, {"hydro", kHydro}, {"solar", kSolar},
-                                            {"wind", kWind},   {"biomass", kBio}};
-    for (size_t r = 0; r < t.rows(); ++r) {
-      if (static_cast<int>(t.num(r, cy)) != in.base_year || t.str(r, csub) == "True") continue;
-      const int reg = region_index(t.str(r, cr));
-      auto it = src.find(t.str(r, cs));
-      if (reg < 0 || it == src.end()) continue;
-      in.base_twh[reg][it->second] += t.num(r, cg) / 1000.0;
+    const std::string fy = fiscal_label(in.base_year);
+    auto at = [&](const char* rel) { return root + "/" + rel; };
+    auto& src_notes = in.base_source_notes;
+
+    // 1a. NPP regional generation (CEA 18-column reports, Sub-report 2): thermal, nuclear,
+    //     large hydro. The All-India and region "total" rows are subtotals; Bhutan import is
+    //     electricity generated in Bhutan, so it is not generation in India.
+    std::array<double, kRegions> thermal{};
+    double bhutan = 0, conv_total = 0;
+    {
+      const CsvTable t = CsvTable::read(at("data/raw/npp/npp_region_generation_fy.csv"));
+      const size_t cfy = t.col("fiscal_year"), cr = t.col("region"), cs = t.col("source"), cg = t.col("generation_gwh"),
+                   csub = t.col("is_subtotal"), cpart = t.col("partial");
+      std::set<std::string> seen;
+      for (size_t r = 0; r < t.rows(); ++r) {
+        if (t.str(r, cfy) != fy || t.str(r, cpart) == "True" || t.str(r, csub) == "True") continue;
+        const std::string& name = t.str(r, cr);
+        const std::string& src = t.str(r, cs);
+        const double twh = t.num(r, cg) / 1000.0;
+        if (std::isnan(twh)) continue;
+        if (src == "bhutan_import") {
+          bhutan += twh;
+          continue;
+        }
+        const int reg = region_index(name);
+        if (reg < 0) continue;
+        if (!seen.insert(name + "|" + src).second)
+          throw std::runtime_error("NPP region file: two " + fy + " rows for " + name + " " + src);
+        if (src == "thermal") thermal[reg] += twh;
+        else if (src == "nuclear") in.base_twh[reg][kNuclear] += twh;
+        else if (src == "hydro") in.base_twh[reg][kHydro] += twh;
+        else continue;
+        conv_total += twh;
+      }
+      for (int r = 0; r < kRegions; ++r)
+        if (thermal[r] <= 0)
+          throw std::runtime_error("no NPP " + fy + " thermal generation for " + std::string(region_name(r)));
     }
-    in.notes.push_back("Base generation: Ember India state data aggregated to regions, CY2024, utilities only.");
+    src_notes.push_back(strf(
+        "Primary: NPP (CEA 18-column reports, Sub-report 2), FY%s thermal, nuclear and hydro (stations above 25 MW) "
+        "generation by grid region, %.1f TWh (data/raw/npp/npp_region_generation_fy.csv). Bhutan import (%.1f TWh) is "
+        "left out: it is generated in Bhutan. The All-India rows are subtotals and are not added.",
+        fy.c_str(), conv_total, bhutan));
+
+    // 1b. NPP state file (Sub-report 16, station sums by state): the grid region of each
+    //     state (the map of the regional split, src/regional/states.cpp) and NPP's own
+    //     coal / gas split of thermal (fallback and cross-check).
+    std::map<std::string, int> npp_region;
+    std::array<double, kRegions> npp_coal{}, npp_thermal{};
+    {
+      const CsvTable t = CsvTable::read(at("data/raw/npp/npp_state_generation_fy.csv"));
+      const size_t cfy = t.col("fiscal_year"), cr = t.col("region"), cst = t.col("state"), cs = t.col("source"),
+                   cg = t.col("generation_gwh"), cpart = t.col("partial");
+      for (size_t r = 0; r < t.rows(); ++r) {
+        const int reg = region_index(t.str(r, cr));
+        const std::string st = normalize_state(t.str(r, cst));
+        if (reg < 0 || st.empty()) continue;
+        auto [it, added] = npp_region.emplace(st, reg);
+        if (!added && it->second != reg) throw std::runtime_error("NPP state file puts " + st + " in two grid regions");
+        if (t.str(r, cfy) != fy || t.str(r, cpart) == "True") continue;
+        const std::string& src = t.str(r, cs);
+        const double twh = t.num(r, cg) / 1000.0;
+        if (std::isnan(twh)) continue;
+        if (src == "coal_lignite") npp_coal[reg] += twh;
+        if (src == "coal_lignite" || src == "gas" || src == "diesel") npp_thermal[reg] += twh;
+      }
+    }
+
+    // 1c. Coal and gas shares of thermal by region (CEA General Review, Table 4.4), applied
+    //     to NPP thermal. Oil and diesel go with gas: both are non-coal fossil generation.
+    {
+      const CsvTable t = CsvTable::read(at("data/raw/generation/region/cea_region_generation_fy.csv"));
+      const size_t cfy = t.col("fiscal_year"), cr = t.col("region"), ct = t.col("row_type"), cs = t.col("source"),
+                   cg = t.col("generation_gwh");
+      std::array<double, kRegions> coal{}, other{};
+      double oil = 0;
+      for (size_t r = 0; r < t.rows(); ++r) {
+        if (t.str(r, cfy) != fy || t.str(r, ct) != "region_total") continue;
+        const int reg = region_index(t.str(r, cr));
+        const std::string& src = t.str(r, cs);
+        const double gwh = t.num(r, cg);
+        if (reg < 0 || std::isnan(gwh)) continue;
+        if (src == "coal") coal[reg] += gwh;
+        if (src == "gas" || src == "oil_diesel") other[reg] += gwh;
+        if (src == "oil_diesel") oil += gwh / 1000.0;
+      }
+      double nat_coal = 0, nat_thermal = 0, coal_total = 0, gas_total = 0, worst = 0;
+      for (int r = 0; r < kRegions; ++r) {
+        nat_coal += npp_coal[r];
+        nat_thermal += npp_thermal[r];
+      }
+      std::string fallback;
+      for (int r = 0; r < kRegions; ++r) {
+        double share;
+        if (coal[r] + other[r] > 0) {
+          share = coal[r] / (coal[r] + other[r]);
+        } else if (nat_thermal > 0) {
+          share = nat_coal / nat_thermal;
+          fallback += (fallback.empty() ? "" : ", ") + std::string(region_name(r));
+        } else {
+          throw std::runtime_error("no coal and gas split of " + fy + " thermal generation for " +
+                                   std::string(region_name(r)));
+        }
+        in.base_twh[r][kCoal] = thermal[r] * share;
+        in.base_twh[r][kGas] = thermal[r] * (1.0 - share);
+        coal_total += in.base_twh[r][kCoal];
+        gas_total += in.base_twh[r][kGas];
+        if (npp_thermal[r] > 0) worst = std::max(worst, std::abs(in.base_twh[r][kCoal] - npp_coal[r]));
+      }
+      src_notes.push_back(strf(
+          "Secondary: CEA General Review 2025, Table 4.4 (data/raw/generation/region/cea_region_generation_fy.csv): "
+          "coal and gas shares of FY%s thermal generation by region, applied to NPP thermal: coal %.1f TWh, gas %.1f "
+          "TWh. Oil and diesel (%.1f TWh) are counted with gas.",
+          fy.c_str(), coal_total, gas_total, oil));
+      if (!fallback.empty())
+        src_notes.push_back(strf("Primary: no CEA split for %s; NPP's national coal share of thermal (%.3f, Sub-report "
+                                 "16 station sums) used there instead.",
+                                 fallback.c_str(), nat_coal / nat_thermal));
+      if (nat_thermal > 0)
+        src_notes.push_back(strf("Primary: cross-check only: NPP station sums by state (Sub-report 16, "
+                                 "data/raw/npp/npp_state_generation_fy.csv) put coal within %.2f TWh of this split in "
+                                 "every region.",
+                                 worst));
+    }
+
+    // 1d. Renewables by state and type (CEA General Review, Table 4.7). Solar and wind;
+    //     small hydro (25 MW and below) joins hydro; biomass, bagasse and waste to energy
+    //     ("other") are bioenergy. A state NPP does not list takes the CEA General Review
+    //     grouping; a state with neither is skipped and counted, never guessed.
+    {
+      const CsvTable t = CsvTable::read(at("data/raw/generation/state/cea_state_res_by_type_fy.csv"));
+      const size_t cfy = t.col("fiscal_year"), ct = t.col("row_type"), cst = t.col("state"), cs = t.col("source"),
+                   cg = t.col("generation_gwh"), csub = t.col("is_subtotal");
+      const std::map<std::string, int> type = {
+          {"solar", kSolar}, {"wind", kWind}, {"hydro_small", kHydro}, {"biomass", kBio}, {"other", kBio}};
+      std::set<std::string> by_cea, unmatched;
+      double cea_twh = 0, skipped_twh = 0, waste = 0;
+      std::array<double, kTechs> by_type{};
+      for (size_t r = 0; r < t.rows(); ++r) {
+        if (t.str(r, cfy) != fy || t.str(r, ct) != "state" || t.str(r, csub) == "True") continue;
+        auto k = type.find(t.str(r, cs));
+        const double twh = t.num(r, cg) / 1000.0;
+        if (k == type.end() || std::isnan(twh)) continue;
+        const std::string& st = t.str(r, cst);
+        int reg = -1;
+        if (auto n = npp_region.find(normalize_state(st)); n != npp_region.end()) {
+          reg = n->second;
+        } else if ((reg = state_region(state_reg, st)) >= 0) {
+          by_cea.insert(st);
+          cea_twh += twh;
+        }
+        if (reg < 0) {
+          unmatched.insert(st);
+          skipped_twh += twh;
+          continue;
+        }
+        in.base_res_twh[reg][k->second] += twh;
+        by_type[k->second] += twh;
+        if (k->first == "other") waste += twh;
+      }
+      in.base_unmatched_states = static_cast<int>(unmatched.size());
+      double res_total = 0;
+      for (int r = 0; r < kRegions; ++r)
+        for (int s = 0; s < kTechs; ++s) {
+          in.base_twh[r][s] += in.base_res_twh[r][s];
+          res_total += in.base_res_twh[r][s];
+        }
+      if (res_total <= 0) throw std::runtime_error("no CEA renewable generation by state for " + fy);
+      src_notes.push_back(strf(
+          "Secondary: CEA General Review 2025, Table 4.7 (data/raw/generation/state/cea_state_res_by_type_fy.csv): "
+          "FY%s renewable generation by state and type, %.1f TWh: solar %.1f, wind %.1f, small hydro %.1f (added to "
+          "hydro), biomass and bagasse %.1f plus waste to energy %.1f (bioenergy). Central-sector plants count in "
+          "their host state.",
+          fy.c_str(), res_total, by_type[kSolar], by_type[kWind], by_type[kHydro], by_type[kBio] - waste, waste));
+      {
+        // NPP's own renewable figure: one all-India total (dashboard chart), no region or type split.
+        const CsvTable n = CsvTable::read(at("data/raw/npp/npp_national_generation_fy.csv"));
+        double npp_res = kNaN;
+        for (size_t r = 0; r < n.rows(); ++r)
+          if (n.str(r, n.col("fiscal_year")) == fy) npp_res = n.num(r, n.col("res_gwh")) / 1000.0;
+        if (!std::isnan(npp_res))
+          src_notes.push_back(strf("Primary: cross-check only: NPP's all-India renewable total for FY%s (dashboard "
+                                   "chart, data/raw/npp/npp_national_generation_fy.csv) is %.1f TWh, %.1f TWh below "
+                                   "CEA's; NPP gives no region or type split, so CEA's is used.",
+                                   fy.c_str(), npp_res, res_total - npp_res));
+      }
+      src_notes.push_back(
+          "Primary: grid region of each renewable-table state from the NPP state file "
+          "(data/raw/npp/npp_state_generation_fy.csv), the map of the regional split.");
+      std::string list;
+      for (const std::string& s : by_cea) list += (list.empty() ? "" : ", ") + s;
+      if (!by_cea.empty())
+        src_notes.push_back(strf("Secondary: %s (no NPP stations; %.2f TWh) take the CEA General Review grouping "
+                                 "(data/raw/generation/state/state_region_map.csv).",
+                                 list.c_str(), cea_twh));
+      list.clear();
+      for (const std::string& s : unmatched) list += (list.empty() ? "" : ", ") + s;
+      std::string skipped = strf("Secondary: renewable-table states with no grid region, skipped: %d", in.base_unmatched_states);
+      if (!unmatched.empty()) skipped += strf(" (%s; %.2f TWh)", list.c_str(), skipped_twh);
+      src_notes.push_back(skipped + ".");
+    }
+
+    // 1e. Cross-check only: Ember regional data (secondary), same fiscal year and the
+    //     calendar year in which it ends.
+    {
+      double base_total = 0;
+      std::array<double, kRegions> base_r{};
+      for (int r = 0; r < kRegions; ++r)
+        for (int s = 0; s < kTechs; ++s) {
+          base_r[r] += in.base_twh[r][s];
+          base_total += in.base_twh[r][s];
+        }
+      // Ember total generation (every source) by region for one period.
+      auto ember = [&](const char* rel, const char* key, const std::string& value) {
+        std::array<double, kRegions> reg{};
+        const CsvTable t = CsvTable::read(at(rel));
+        const size_t ck = t.col(key), cr = t.col("region"), cg = t.col("generation_gwh"), csub = t.col("is_subtotal");
+        for (size_t r = 0; r < t.rows(); ++r) {
+          if (t.str(r, ck) != value || t.str(r, csub) == "True") continue;
+          const int k = region_index(t.str(r, cr));
+          const double twh = t.num(r, cg) / 1000.0;
+          if (k >= 0 && !std::isnan(twh)) reg[k] += twh;
+        }
+        return reg;
+      };
+      const auto fy_r = ember("data/raw/generation/region/ember_region_generation_fy.csv", "fiscal_year", fy);
+      const auto cy_r = ember("data/raw/generation/region/ember_region_generation_cy.csv", "year",
+                              std::to_string(in.base_year + 1));
+      double ember_fy = 0, ember_cy = 0;
+      for (int r = 0; r < kRegions; ++r) {
+        ember_fy += fy_r[r];
+        ember_cy += cy_r[r];
+      }
+      std::string by_region;
+      for (int r = 0; r < kRegions; ++r)
+        by_region += strf("%s%s %+.1f%%", r ? ", " : "", region_name(r),
+                          fy_r[r] > 0 ? 100.0 * (base_r[r] / fy_r[r] - 1.0) : 0.0);
+      src_notes.push_back(strf("Secondary: cross-check only, not used: Ember India state data aggregated to regions, "
+                               "utilities. FY%s %.1f TWh against %.1f TWh here (%+.1f%%; by region %s); CY%d %.1f TWh.",
+                               fy.c_str(), ember_fy, base_total,
+                               ember_fy > 0 ? 100.0 * (base_total / ember_fy - 1.0) : 0.0, by_region.c_str(),
+                               in.base_year + 1, ember_cy));
+    }
+    in.notes.push_back("Base generation FY" + fy +
+                       ": NPP regional conventional generation (primary), thermal split into coal and gas with CEA "
+                       "regional shares (secondary), plus CEA renewable generation by state (secondary); see the "
+                       "base-mix provenance lines.");
   }
 
   // 1b. National generation history: build-rate evidence for 2047 upper bounds.

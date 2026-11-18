@@ -357,7 +357,7 @@ void App::sidebar() {
   }
   ImGui::TextUnformatted("Minimum non-fossil share");
   dirty_ |= slider("##nf", &pol_.nonfossil_min, 0.4, 0.95, "%.0f%%", 100, "Share of 2047 generation from non-fossil sources.");
-  ImGui::TextUnformatted("Coal floor / cap (x 2024 coal)");
+  ImGui::TextUnformatted("Coal floor / cap (x FY2023-24 coal)");
   dirty_ |= slider("##cf", &pol_.coal_floor, 0.0, 1.0, "floor %.2f", 1, "Existing young coal fleet still generating in 2047.");
   dirty_ |= slider("##cc", &pol_.coal_cap, 0.5, 1.5, "cap %.2f", 1, "No coal generation beyond the existing and under-construction fleet.");
   ImGui::TextUnformatted("Firm generation: national / regional");
@@ -519,7 +519,7 @@ void App::tab_regions() {
     ImPlot::EndPlot();
   }
   ImGui::SameLine();
-  // Requirement share 2047 vs generation share 2024.
+  // Requirement share 2047 vs generation share in the base year (FY2023-24).
   {
     double req_total = 0, gen_total = 0;
     double req_share[kRegions], gen_share[kRegions];
@@ -543,14 +543,14 @@ void App::tab_regions() {
       ImPlot::SetupAxes(nullptr, "%", 0, ImPlotAxisFlags_AutoFit);
       ImPlot::SetupAxisTicks(ImAxis_X1, ticks, kRegions, short_names);
       ImPlot::SetupLegend(ImPlotLocation_NorthEast);
-      static const char* items[2] = {"Generation 2024", "Requirement 2047"};
+      static const char* items[2] = {"Generation FY2023-24", "Requirement 2047"};
       ImPlot::PlotBarGroups(items, vals.data(), 2, kRegions, 0.7);
       ImPlot::EndPlot();
     }
   }
   if (ImGui::BeginTable("regtable", 8, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchProp)) {
     for (const char* hname : {"Region", "2047 P5", "2047 P50", "2047 P95", "Planned requirement", "Share 2047",
-                              "Generation 2024", "Growth"})
+                              "Generation FY2023-24", "Growth"})
       ImGui::TableSetupColumn(hname);
     ImGui::TableHeadersRow();
     double tot = 0;
@@ -613,7 +613,7 @@ void App::tab_mix() {
   const float ph = ImGui::GetContentRegionAvail().y * 0.48f;
   std::vector<const char*> labels(kTechs);
   for (int k = 0; k < kTechs; ++k) labels[k] = tech_label(k);
-  // Stacked bars: national 2024, national 2047, then five regions in 2047.
+  // Stacked bars: national FY2023-24 (base year), national 2047, then five regions in 2047.
   constexpr int groups = 2 + kRegions;
   std::vector<double> vals(static_cast<size_t>(kTechs) * groups, 0.0);
   for (int k = 0; k < kTechs; ++k) {
@@ -624,7 +624,7 @@ void App::tab_mix() {
     vals[k * groups + 1] = a.national[k];
   }
   if (ImPlot::BeginPlot("Generation by source (TWh)", ImVec2(ImGui::GetContentRegionAvail().x * 0.62f, ph))) {
-    static const char* glabels[groups] = {"India 2024", "India 2047", "North", "West", "South", "East", "NE"};
+    static const char* glabels[groups] = {"India 2023-24", "India 2047", "North", "West", "South", "East", "NE"};
     const double ticks[groups] = {0, 1, 2, 3, 4, 5, 6};
     ImPlot::SetupAxes(nullptr, "TWh", 0, ImPlotAxisFlags_AutoFit);
     ImPlot::SetupAxisTicks(ImAxis_X1, ticks, groups, glabels);
@@ -1097,7 +1097,11 @@ void App::tab_data() {
          "Independent check used for justification, not for estimation"},
         {"GDP per capita PPP, population, urban share", "World Bank WDI",
          "Independent check used for justification, not for estimation"},
-        {"India regional and state generation by source", "Ember India; CEA General Review", "2024 base mix, existing fleets"},
+        {"Region conventional generation by source, FY2023-24", "National Power Portal (CEA 18-column reports)",
+         "Base mix and existing fleets: thermal, nuclear, hydro"},
+        {"Region coal / gas split; state renewable generation by type, FY2023-24",
+         "CEA General Review 2025, Tables 4.4 and 4.7 (secondary)", "Base mix: coal and gas shares of thermal; renewables"},
+        {"India regional generation by source", "Ember India (secondary)", "Cross-check of the base mix only"},
         {"Population projections 2026-2047", "UN WPP 2024 (medium, low, high)",
          "National population paths; India-level growth on which the state paths are built"},
         {"State population projections 2011-2036", "Technical Group on Population Projections (2020)",
@@ -1126,7 +1130,7 @@ void App::tab_data() {
     ImGui::EndTable();
   }
   ImGui::Spacing();
-  ImGui::Text("Allocation inputs by region (base 2024 TWh / usable potential TWh / cost USD per MWh):");
+  ImGui::Text("Allocation inputs by region (base FY2023-24 TWh / usable potential TWh / cost USD per MWh):");
   if (ImGui::BeginTable("ainputs", kTechs + 1, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchProp)) {
     ImGui::TableSetupColumn("Region");
     for (int k = 0; k < kTechs; ++k) ImGui::TableSetupColumn(tech_label(k));
@@ -1145,6 +1149,7 @@ void App::tab_data() {
   ImGui::Spacing();
   ImGui::Text("Derivation notes:");
   for (const auto& n : alloc.notes) ImGui::BulletText("%s", n.c_str());
+  for (const auto& n : alloc.base_source_notes) ImGui::BulletText("%s", n.c_str());
   ImGui::BulletText("GDP per capita growth %d-%d: mean %.2f%%, s.d. %.2f%%; income convergence %.3f/yr (s.e. %.3f).",
                     d.g_hist_from, d.g_hist_to, 100 * d.g_hist_mean, 100 * d.g_hist_sd,
                     pl_->fitted().convergence.lambda, pl_->fitted().convergence.lambda_se);
