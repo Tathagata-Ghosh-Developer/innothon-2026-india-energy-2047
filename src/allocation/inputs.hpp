@@ -72,9 +72,23 @@ struct AllocationInputs {
   std::vector<Corridor> corridors;
 
   // National build limits for 2047 (allocate.cpp, build_caps). Each source's 2047 generation
-  // is at most its national base-year generation plus what the published limits let it add.
+  // is at most its starting level, max(existing-fleet floor, national base-year generation),
+  // plus what the published limits let it add.
   int rate_last_year = 2023;                         // base year, FY2023-24 (fiscal start year)
   std::array<double, kTechs> national_last_twh{};    // base_twh summed over regions, TWh
+  // Existing-fleet floor (primary, energy only; no installed capacity): the highest annual NPP
+  // generation of each conventional source over the complete fiscal years fleet_first_year to
+  // fleet_last_year (FY2018-19 to FY2025-26; a year with a partial row is left out). Nuclear
+  // and hydro: NPP regional generation summed over the five regions (Bhutan import and the
+  // All-India subtotal left out). Coal (coal and lignite) and gas (with diesel, as in the base
+  // mix): NPP station sums by state. NPP hydro is stations above 25 MW, so the hydro floor adds
+  // the base small hydro (CEA) to match the scope of the model's hydro. 0 for renewables, which
+  // start from the FY2023-24 base. Without it, a source with no published additions (gas) would
+  // be held at its FY2023-24 output however much its existing fleet generated before.
+  int fleet_first_year = 2018, fleet_last_year = 2025;
+  std::array<double, kTechs> fleet_floor_twh{};
+  std::array<int, kTechs> fleet_floor_year{};        // fiscal start year of the NPP maximum (0: no floor)
+  double fleet_floor_small_hydro_twh = 0;            // base small hydro inside fleet_floor_twh[kHydro]
   // Published limits (build_limits.csv, secondary): rows by source, and the TWh each source
   // can add from rate_last_year to build_target_year, by case [low, central, high][source].
   std::vector<BuildLimitRow> build_limits;

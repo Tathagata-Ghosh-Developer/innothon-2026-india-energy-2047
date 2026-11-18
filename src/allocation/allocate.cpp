@@ -104,8 +104,12 @@ std::vector<BuildCap> build_caps(const AllocationInputs& in, const PolicySetting
         add = years * in.max_annual_increase[s];
         c.published = false;
       }
+      // Existing fleets start from their best NPP year if it beats FY2023-24 (fleet_floor_twh
+      // is 0 for renewables); the cap is never below this starting level.
+      const double start = std::max(in.national_last_twh[s], in.fleet_floor_twh[s]);
       c.base_twh += in.national_last_twh[s];
-      c.cap_twh += in.national_last_twh[s] + std::max(0.0, p.build_accel * add);  // never below base
+      c.start_twh += start;
+      c.cap_twh += start + std::max(0.0, p.build_accel * add);
     }
     caps.push_back(std::move(c));
   }
@@ -177,8 +181,9 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
       rb.set(gas, v, (s == kGas ? 1.0 : 0.0) - p.gas_max);
       if (s == kNuclear) rb.set(nuclear, v, 1.0);
     }
-  // National build limits: FY2023-24 generation + build_accel x the published additions to
-  // 2047 (build_caps). Firmed RE is solar and wind with storage, so it shares their cap.
+  // National build limits: max(existing-fleet floor, FY2023-24 generation) + build_accel x the
+  // published additions to 2047 (build_caps). Firmed RE is solar and wind with storage, so it
+  // shares their cap.
   const std::vector<BuildCap> caps = build_caps(in, p);
   std::vector<int> cap_rows;
   for (const BuildCap& c : caps) {

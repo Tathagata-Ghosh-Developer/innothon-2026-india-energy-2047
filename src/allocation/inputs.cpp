@@ -463,7 +463,8 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         "(data/external/techno_economic/build_limits.csv: CEA NEP 2022-32, CEA Dec 2024, NITI Aayog 2026, DAE, MoP), "
         "each year's GW x the row's CUF x 8.76, summed over build years FY%s to FY%s. Rows start in FY%s; the years "
         "before take the first period's rate, and a period's rate holds past its end. 2047 generation of a source <= "
-        "its FY%s generation + build_accel x these additions. Central additions: solar %.0f, onshore wind %.0f, "
+        "max(its existing-fleet floor, its FY%s generation) + build_accel x these additions. Central additions: "
+        "solar %.0f, onshore wind %.0f, "
         "offshore wind %.0f, nuclear %.0f, hydro %.0f, bioenergy %.0f, coal %.0f (gross), gas %.0f TWh.",
         fiscal_label(in.rate_last_year + 1).c_str(), fiscal_label(in.build_target_year).c_str(),
         fiscal_label(first).c_str(), fiscal_label(in.rate_last_year).c_str(), c[kSolar], c[kWind], c[kOffshore],
@@ -471,8 +472,90 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     in.notes.push_back(strf(
         "Build-limit base: FY%s generation by source = the base mix summed over regions (NPP conventional, primary, "
         "plus CEA renewables, secondary); NPP's national series gives thermal and renewables only as totals. "
-        "Solar, onshore wind and firmed RE (solar and wind with storage) share one cap.",
-        fiscal_label(in.rate_last_year).c_str()));
+        "Coal, gas, nuclear and hydro start from their existing-fleet floor where it is higher; renewables start "
+        "from FY%s. Solar, onshore wind and firmed RE (solar and wind with storage) share one cap.",
+        fiscal_label(in.rate_last_year).c_str(), fiscal_label(in.rate_last_year).c_str()));
+  }
+  {
+    // Existing-fleet floors (primary, energy only): the highest annual NPP generation of each
+    // conventional fleet over the complete fiscal years fleet_first_year .. fleet_last_year. The
+    // cap of a source with few or no published additions (gas: none) then starts from what its
+    // existing fleet has generated, not from its FY2023-24 output alone.
+    std::map<int, std::array<double, kTechs>> region_years, state_years;
+    std::set<int> region_partial, state_partial;  // a year with a partial row is not complete
+    auto in_window = [&](double y) { return !std::isnan(y) && y >= in.fleet_first_year && y <= in.fleet_last_year; };
+    {
+      // Nuclear and hydro: NPP regional generation (Sub-report 2) over the five regions; the
+      // All-India rows are subtotals and Bhutan import is generated in Bhutan.
+      const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_region_generation_fy.csv");
+      const size_t cy = t.col("fy_start_year"), cr = t.col("region"), cs = t.col("source"), cg = t.col("generation_gwh"),
+                   csub = t.col("is_subtotal"), cpart = t.col("partial");
+      for (size_t r = 0; r < t.rows(); ++r) {
+        const double y = t.num(r, cy);
+        const std::string& src = t.str(r, cs);
+        const int k = src == "nuclear" ? kNuclear : src == "hydro" ? kHydro : -1;
+        if (!in_window(y) || k < 0 || t.str(r, csub) == "True" || region_index(t.str(r, cr)) < 0) continue;
+        if (t.str(r, cpart) == "True") {
+          region_partial.insert(static_cast<int>(y));
+          continue;
+        }
+        const double twh = t.num(r, cg) / 1000.0;
+        if (!std::isnan(twh)) region_years[static_cast<int>(y)][k] += twh;
+      }
+    }
+    {
+      // Coal and gas: NPP station sums by state (Sub-report 16); diesel with gas, as in the base mix.
+      const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_state_generation_fy.csv");
+      const size_t cy = t.col("fy_start_year"), cr = t.col("region"), cst = t.col("state"), cs = t.col("source"),
+                   cg = t.col("generation_gwh"), csub = t.col("is_subtotal"), cpart = t.col("partial");
+      for (size_t r = 0; r < t.rows(); ++r) {
+        const double y = t.num(r, cy);
+        const std::string& src = t.str(r, cs);
+        const int k = src == "coal_lignite" ? kCoal : src == "gas" || src == "diesel" ? kGas : -1;
+        if (!in_window(y) || k < 0 || t.str(r, csub) == "True" || region_index(t.str(r, cr)) < 0 ||
+            normalize_state(t.str(r, cst)).empty())
+          continue;
+        if (t.str(r, cpart) == "True") {
+          state_partial.insert(static_cast<int>(y));
+          continue;
+        }
+        const double twh = t.num(r, cg) / 1000.0;
+        if (!std::isnan(twh)) state_years[static_cast<int>(y)][k] += twh;
+      }
+    }
+    auto take_max = [&](const std::map<int, std::array<double, kTechs>>& years, const std::set<int>& partial, int s) {
+      for (const auto& [y, v] : years)
+        if (!partial.count(y) && v[s] > in.fleet_floor_twh[s]) {
+          in.fleet_floor_twh[s] = v[s];
+          in.fleet_floor_year[s] = y;
+        }
+      if (in.fleet_floor_year[s] == 0)
+        throw std::runtime_error(std::string("no complete NPP fiscal year for the existing-fleet floor of ") + tech_key(s));
+    };
+    take_max(state_years, state_partial, kCoal);
+    take_max(state_years, state_partial, kGas);
+    take_max(region_years, region_partial, kNuclear);
+    take_max(region_years, region_partial, kHydro);
+    const double npp_hydro = in.fleet_floor_twh[kHydro];
+    for (int r = 0; r < kRegions; ++r) in.fleet_floor_small_hydro_twh += in.base_res_twh[r][kHydro];
+    in.fleet_floor_twh[kHydro] += in.fleet_floor_small_hydro_twh;
+    const auto& f = in.fleet_floor_twh;
+    const auto& fy = in.fleet_floor_year;
+    in.notes.push_back(strf(
+        "Existing-fleet floor (primary: NPP, energy only, no installed capacity): the highest annual generation of "
+        "each conventional fleet over the complete fiscal years FY%s to FY%s (partial years left out). Coal and "
+        "lignite %.1f TWh (FY%s) and gas %.1f TWh (FY%s; diesel stations counted with gas, as in the base mix): NPP "
+        "station sums by state (Sub-report 16, data/raw/npp/npp_state_generation_fy.csv). Nuclear %.1f TWh (FY%s) "
+        "and hydro %.1f TWh (FY%s): NPP regional generation summed over the five regions, Bhutan import and the "
+        "All-India subtotal left out (Sub-report 2, data/raw/npp/npp_region_generation_fy.csv). NPP hydro covers "
+        "stations above 25 MW only, so the hydro floor adds the FY%s small hydro of the base (%.1f TWh; CEA, "
+        "secondary): %.1f TWh. The 2047 cap of coal, gas, nuclear and hydro = max(floor, FY%s generation) + "
+        "build_accel x the published additions; renewables start from FY%s.",
+        fiscal_label(in.fleet_first_year).c_str(), fiscal_label(in.fleet_last_year).c_str(), f[kCoal],
+        fiscal_label(fy[kCoal]).c_str(), f[kGas], fiscal_label(fy[kGas]).c_str(), f[kNuclear],
+        fiscal_label(fy[kNuclear]).c_str(), npp_hydro, fiscal_label(fy[kHydro]).c_str(),
+        fiscal_label(in.base_year).c_str(), in.fleet_floor_small_hydro_twh, f[kHydro],
+        fiscal_label(in.rate_last_year).c_str(), fiscal_label(in.rate_last_year).c_str()));
   }
   {
     // Record annual increase from NPP national generation (primary), consecutive fiscal years.

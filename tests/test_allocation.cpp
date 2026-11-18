@@ -3,16 +3,19 @@
 // score allocation for a test requirement (4,500 TWh split by base-year regional
 // shares), and verifies balances and policy constraints.
 // Usage: test_allocation <repo_root>
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <numeric>
 #include <string>
 
 #include "allocation/allocate.hpp"
 #include "core/csv.hpp"
 #include "core/stats.hpp"
+#include "pipeline/pipeline.hpp"
 
 using namespace e47;
 
@@ -226,7 +229,8 @@ int build_limit_binds(const AllocationInputs& in0, const std::array<double, kReg
 }
 
 // A published limit of 0, or one below base (a negative limit, or a multiplier of 0),
-// still allows base-year generation: cap = max(base, base + accel x limit).
+// still allows base-year generation: cap = max(start, start + accel x limit), where the start
+// is max(existing-fleet floor, FY2023-24) and so never below base (renewables: the base).
 int build_limit_below_base_feasible(const AllocationInputs& in0, const std::array<double, kRegions>& req) {
   Checker check;
   std::printf("build_limit_below_base_feasible\n");
@@ -235,30 +239,32 @@ int build_limit_below_base_feasible(const AllocationInputs& in0, const std::arra
   p.nonfossil_min = 0;
   p.firm_national = 0;
   p.firm_regional = 0;
+  auto start_of = [&](int s) { return std::max(in0.national_last_twh[s], in0.fleet_floor_twh[s]); };
   for (double limit : {0.0, -500.0}) {
     AllocationInputs in = in0;
     for (auto& v : in.published_build_twh) v.fill(limit);
     const std::vector<BuildCap> caps = build_caps(in, p);
-    bool at_base = !caps.empty();
-    for (const BuildCap& c : caps) at_base &= std::abs(c.cap_twh - c.base_twh) < 1e-9;
+    bool at_start = !caps.empty();
+    for (const BuildCap& c : caps)
+      at_start &= std::abs(c.cap_twh - c.start_twh) < 1e-9 && c.start_twh >= c.base_twh;
     char what[96];
-    std::snprintf(what, sizeof what, "limit %.0f TWh: every cap equals its base", limit);
-    check(at_base, what);
+    std::snprintf(what, sizeof what, "limit %.0f TWh: every cap equals its start (>= its base)", limit);
+    check(at_start, what);
     const AllocationResult a = solve_least_cost(in, p, req);
     std::snprintf(what, sizeof what, "limit %.0f TWh: LP feasible (%s)", limit, a.status.c_str());
     check(a.ok, what);
     if (!a.ok) continue;
     for (int s : {kSolar, kWind, kNuclear, kHydro}) {
-      std::snprintf(what, sizeof what, "limit %.0f TWh: %s at its base %.2f TWh", limit, tech_key(s),
-                    in.national_last_twh[s]);
-      check(std::abs(a.national[s] - in.national_last_twh[s]) < 1e-6 * std::max(1.0, in.national_last_twh[s]), what);
+      std::snprintf(what, sizeof what, "limit %.0f TWh: %s at its start %.2f TWh (base %.2f)", limit, tech_key(s),
+                    start_of(s), in.national_last_twh[s]);
+      check(std::abs(a.national[s] - start_of(s)) < 1e-6 * std::max(1.0, start_of(s)), what);
     }
   }
   PolicySettings z = p;
   z.build_accel = 0;
-  bool at_base = true;
-  for (const BuildCap& c : build_caps(in0, z)) at_base &= std::abs(c.cap_twh - c.base_twh) < 1e-9;
-  check(at_base, "build_accel 0: every cap equals its base");
+  bool at_start = true;
+  for (const BuildCap& c : build_caps(in0, z)) at_start &= std::abs(c.cap_twh - c.start_twh) < 1e-9;
+  check(at_start, "build_accel 0: every cap equals its start");
   check(solve_least_cost(in0, z, req).ok, "build_accel 0: LP feasible");
   // Default policy, solar limit 0: still feasible, solar at or above its base.
   AllocationInputs in = in0;
@@ -316,6 +322,159 @@ int build_limit_holds_last_period(const std::string& tmp_dir, const AllocationIn
   return check.fails;
 }
 
+// Existing fleets are not frozen at their FY2023-24 output: the cap of each conventional
+// source starts from its highest NPP year over the complete fiscal years FY2018-19 to
+// FY2025-26 (primary), or from FY2023-24 if that is higher. Hydro and nuclear: NPP regional
+// generation (Sub-report 2) summed over the five regions. Coal and gas: NPP station sums by
+// state (Sub-report 16); gas with diesel, as in the base mix. NPP hydro is stations above
+// 25 MW, so the hydro floor adds the base small hydro (CEA). Renewables keep the FY2023-24
+// base. The NPP maxima are computed here from the CSV files, not taken from the loader.
+int fleet_floor_from_npp_history(const std::string& root, const AllocationInputs& in) {
+  Checker check;
+  std::printf("fleet_floor_from_npp_history\n");
+  constexpr int kFirst = 2018, kLast = 2025;  // FY2018-19 .. FY2025-26; FY2026-27 is partial
+  std::map<int, std::array<double, kTechs>> by_year;
+  double gas_only_max = 0;
+  {
+    const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_region_generation_fy.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      const int y = static_cast<int>(t.num(i, t.col("fy_start_year")));
+      const std::string s = t.str(i, t.col("source"));
+      const int k = s == "hydro" ? kHydro : s == "nuclear" ? kNuclear : -1;
+      // All India (subtotal) and Bhutan import are not one of the five regions.
+      if (y < kFirst || y > kLast || k < 0 || region_of(t.str(i, t.col("region"))) < 0 ||
+          t.str(i, t.col("partial")) == "True")
+        continue;
+      by_year[y][k] += t.num(i, t.col("generation_gwh")) / 1000.0;
+    }
+  }
+  {
+    std::map<int, double> gas_only;
+    const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_state_generation_fy.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      const int y = static_cast<int>(t.num(i, t.col("fy_start_year")));
+      const std::string s = t.str(i, t.col("source"));
+      const int k = s == "coal_lignite" ? kCoal : s == "gas" || s == "diesel" ? kGas : -1;
+      const double v = t.num(i, t.col("generation_gwh"));
+      if (y < kFirst || y > kLast || k < 0 || region_of(t.str(i, t.col("region"))) < 0 ||
+          t.str(i, t.col("partial")) == "True" || std::isnan(v))
+        continue;
+      by_year[y][k] += v / 1000.0;
+      if (s == "gas") gas_only[y] += v / 1000.0;
+    }
+    for (const auto& [y, v] : gas_only) gas_only_max = std::max(gas_only_max, v);
+  }
+  check(static_cast<int>(by_year.size()) == kLast - kFirst + 1, "eight complete NPP fiscal years, FY2018-19 to FY2025-26");
+  std::array<double, kTechs> npp_max{};
+  std::array<int, kTechs> npp_year{};
+  for (const auto& [y, v] : by_year)
+    for (int s : {kCoal, kGas, kNuclear, kHydro})
+      if (v[s] > npp_max[s]) npp_max[s] = v[s], npp_year[s] = y;
+  double small_hydro = 0;
+  for (int r = 0; r < kRegions; ++r) small_hydro += in.base_res_twh[r][kHydro];
+  std::array<double, kTechs> floor = npp_max;
+  floor[kHydro] += small_hydro;  // NPP hydro is stations above 25 MW; small hydro is in the base
+  for (int s : {kCoal, kGas, kNuclear, kHydro})
+    std::printf("  %-8s NPP max %8.2f TWh (FY%d-%02d)%s, FY2023-24 base %8.2f TWh\n", tech_key(s), npp_max[s],
+                npp_year[s], (npp_year[s] + 1) % 100,
+                s == kHydro ? (" + small hydro " + std::to_string(small_hydro)).c_str() : "", in.national_last_twh[s]);
+  std::printf("  gas alone (no diesel) NPP max %.2f TWh\n", gas_only_max);
+
+  // build_accel 0: each cap is its starting level, max(fleet floor, FY2023-24).
+  PolicySettings z;
+  z.build_accel = 0;
+  const std::vector<BuildCap> caps0 = build_caps(in, z);
+  for (int s : {kCoal, kGas, kNuclear, kHydro}) {
+    const BuildCap* c = cap_with(caps0, s);
+    const double want = std::max(floor[s], in.national_last_twh[s]);
+    char what[128];
+    std::snprintf(what, sizeof what, "build_accel 0: %s cap %.2f = max(NPP fleet floor, FY2023-24) %.2f TWh", tech_key(s),
+                  c ? c->cap_twh : 0.0, want);
+    check(c && std::abs(c->cap_twh - want) < 1e-6 * want, what);
+  }
+  for (int s : {kSolar, kOffshore, kBio}) {
+    const BuildCap* c = cap_with(caps0, s);
+    double base = 0;
+    if (c)
+      for (int t : c->techs) base += in.national_last_twh[t];
+    check(c && std::abs(c->cap_twh - base) < 1e-9 * std::max(1.0, base),
+          std::string("build_accel 0: ") + (c ? c->name : tech_key(s)) + " cap = FY2023-24 base (renewables keep it)");
+  }
+  // Default policy (central case, 1x): the gas cap (no published gas additions) is at least
+  // the NPP max gas year; the hydro cap is at least the NPP max hydro year + base small hydro.
+  const PolicySettings d;
+  const std::vector<BuildCap> caps = build_caps(in, d);
+  const BuildCap* gas = cap_with(caps, kGas);
+  const BuildCap* hydro = cap_with(caps, kHydro);
+  std::printf("  default policy: gas cap %.2f TWh, hydro cap %.2f TWh\n", gas ? gas->cap_twh : 0.0,
+              hydro ? hydro->cap_twh : 0.0);
+  check(gas && gas->cap_twh >= npp_max[kGas] - 1e-9 && npp_max[kGas] >= gas_only_max,
+        "gas cap >= NPP max gas year (station sums, with diesel as in the base)");
+  check(hydro && hydro->cap_twh >= npp_max[kHydro] + small_hydro - 1e-9,
+        "hydro cap >= NPP max hydro year + base small hydro");
+  check(hydro && std::abs(hydro->cap_twh - (floor[kHydro] + in.published_build_twh[d.build_case][kHydro])) <
+                     1e-6 * hydro->cap_twh,
+        "hydro cap = fleet floor + 1 x central published additions");
+  // Provenance: one primary note naming each floor and its year.
+  bool note = false;
+  for (const std::string& n : in.notes) {
+    if (n.rfind("Existing-fleet floor", 0) != 0) continue;
+    std::printf("    %s\n", n.c_str());
+    bool all = n.find("primary") != std::string::npos && n.find("small hydro") != std::string::npos;
+    for (int s : {kCoal, kGas, kNuclear, kHydro}) {
+      char fy[16];
+      std::snprintf(fy, sizeof fy, "FY%d-%02d", npp_year[s], (npp_year[s] + 1) % 100);
+      all &= n.find(fy) != std::string::npos;
+    }
+    note = all;
+  }
+  check(note, "provenance note: each floor with its NPP year, labelled primary, small hydro scope stated");
+  return check.fails;
+}
+
+// The lowest build multiplier the dashboard offers (0.75x) on the low case stays feasible
+// under the default policy at the default median requirement. The non-fossil row is hard
+// (unmet requirement cannot relax it): with the coal floor at 0.6 it needs about 1,813 TWh of
+// non-fossil generation, more than the low case allows at 0.5x.
+int default_policy_low_case_feasible(const std::string& root) {
+  Checker check;
+  std::printf("default_policy_low_case_feasible\n");
+  const Pipeline pl(root, CoreModel::kIndia);
+  ScenarioControls c;  // default scenario; plans for the median (requirement_quantile 0.5)
+  c.draws = 1u << 18;  // CPU; the median is within Monte Carlo noise of the default draws
+  c.use_gpu = false;
+  const ForecastResult f = pl.forecast(c);
+  PolicySettings p;
+  p.build_case = kBuildLow;
+  p.build_accel = 0.75;
+  const StrategyResult s = pl.strategy(f, c, p);
+  double req = 0, unmet = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    req += s.requirement[r];
+    unmet += s.least_cost.unserved[r];
+  }
+  const AllocationResult& a = s.least_cost;
+  std::printf("  median requirement %.1f TWh; low case 0.75x: %s, non-fossil %.1f%%, unmet %.1f TWh\n", req,
+              a.status.c_str(), a.ok ? 100 * a.nonfossil_share() : 0.0, a.ok ? unmet : 0.0);
+  check(c.requirement_quantile == 0.5 && req > 0, "default scenario, median requirement");
+  check(a.ok, "default policy, low case, 0.75x published: LP feasible");
+  // For the record (not checked): the old slider minimum, and the lowest feasible multiplier.
+  PolicySettings q = p;
+  q.build_accel = 0.5;
+  const AllocationInputs& in = pl.allocation_inputs();
+  const bool half_ok = solve_least_cost(in, q, s.requirement).ok;
+  std::printf("  low case 0.50x (old slider minimum): %s\n", half_ok ? "feasible" : "infeasible");
+  if (!half_ok && a.ok) {
+    double lo = 0.5, hi = 0.75;
+    while (hi - lo > 1e-4) {
+      q.build_accel = 0.5 * (lo + hi);
+      (solve_least_cost(in, q, s.requirement).ok ? hi : lo) = q.build_accel;
+    }
+    std::printf("  low case: lowest feasible multiplier %.4fx\n", hi);
+  }
+  return check.fails;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -358,6 +517,8 @@ int main(int argc, char** argv) {
     fails += build_limit_binds(in, req);
     fails += build_limit_below_base_feasible(in, req);
     fails += build_limit_holds_last_period(std::filesystem::temp_directory_path().string(), in, req);
+    fails += fleet_floor_from_npp_history(root, in);
+    fails += default_policy_low_case_feasible(root);
 
     PolicySettings p;
     Timer t;

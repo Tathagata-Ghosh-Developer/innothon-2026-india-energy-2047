@@ -28,9 +28,13 @@ struct PolicySettings {
   double transfer_scale = 2.0;     // 2047 corridor capability / 2032 plan
   double transfer_util = 0.60;     // average corridor utilisation over the year
   double carbon_price = 0.0;       // USD per tCO2
-  // National build limits (build_caps): 2047 generation of each source group <= its FY2023-24
-  // generation + build_accel x the published additions to 2047 in case build_case
-  // (build_limits.csv, GW per year x CUF x 8.76). Solar, onshore wind and firmed RE share one cap.
+  // National build limits (build_caps): 2047 generation of each source group <= max(existing-
+  // fleet floor, FY2023-24 generation) + build_accel x the published additions to 2047 in case
+  // build_case (build_limits.csv, GW per year x CUF x 8.76). Solar, onshore wind and firmed RE
+  // share one cap. The non-fossil minimum is a hard row (unserved energy cannot relax it), so
+  // a low case with a small multiplier can make the LP infeasible: the default policy on the
+  // low case is feasible from 0.75x, the dashboard's lowest setting
+  // (test_allocation, default_policy_low_case_feasible).
   int build_case = kBuildCentral;  // kBuildLow, kBuildCentral or kBuildHigh
   double build_accel = 1.0;        // multiplier on the published additions
   int target_year = 2047;
@@ -66,17 +70,21 @@ struct Bounds {
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req);
 
 // National build limit on one group of sources: one LP row, sum of the group's generation
-// over regions <= cap_twh. Each source in `evidence` adds its FY2023-24 generation plus
-// max(0, build_accel x its published additions to target_year for build_case); a source
+// over regions <= cap_twh. Each source in `evidence` adds its starting level, max(existing-
+// fleet floor, FY2023-24 generation) (AllocationInputs::fleet_floor_twh: the best NPP year
+// FY2018-19 to FY2025-26 for coal, gas, nuclear and hydro; renewables start from FY2023-24),
+// plus max(0, build_accel x its published additions to target_year for build_case); a source
 // without published rows uses the record fallback instead (years x build_accel x its record
-// annual increase). The cap is never below the group's base, so the LP stays feasible.
-// Groups: solar + onshore wind + firmed RE (solar and wind with storage, on the solar and
-// wind limits), offshore wind, nuclear, hydro, bioenergy, gas, coal (the national coal
-// ceiling, coal_cap x base coal, applies as well).
+// annual increase). The cap is never below the group's start, so never below its FY2023-24
+// base, and base-year generation always fits within the caps. Groups: solar + onshore
+// wind + firmed RE (solar and wind with storage, on the solar and wind limits), offshore
+// wind, nuclear, hydro, bioenergy, gas, coal (the national coal ceiling, coal_cap x base
+// coal, applies as well).
 struct BuildCap {
   std::string name;
   std::vector<int> techs;     // sources the row sums
   double base_twh = 0;        // national FY2023-24 generation of the evidence sources
+  double start_twh = 0;       // sum of max(existing-fleet floor, FY2023-24) over the evidence sources
   double cap_twh = 0;
   bool published = true;      // false: a source of the group used the record fallback
 };

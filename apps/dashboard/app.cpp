@@ -379,9 +379,12 @@ void App::sidebar() {
     ImGui::SetItemTooltip("Low, central or high published additions per year (data/external/techno_economic/"
                           "build_limits.csv: CEA NEP 2022-32, NITI Aayog, DAE, MoP).");
   }
-  dirty_ |= slider("##ba", &pol_.build_accel, 0.5, 2.0, "%.2fx published limit", 1,
-                   "2047 generation of each source <= FY2023-24 + this x the published additions to 2047 "
-                   "(GW per year x CUF x 8.76). Solar, onshore wind and firmed RE share one limit.");
+  // Lowest setting 0.75x: below about 0.71x the low case cannot reach the default 70% non-fossil
+  // minimum next to the coal floor, and that row is hard (test default_policy_low_case_feasible).
+  dirty_ |= slider("##ba", &pol_.build_accel, 0.75, 2.0, "%.2fx published limit", 1,
+                   "2047 generation of each source <= max(existing-fleet floor, FY2023-24) + this x the published "
+                   "additions to 2047 (GW per year x CUF x 8.76). The floor of coal, gas, nuclear and hydro is their "
+                   "best NPP year FY2018-19 to FY2025-26. Solar, onshore wind and firmed RE share one limit.");
   ImGui::TextUnformatted("Carbon price");
   dirty_ |= slider("##cp", &pol_.carbon_price, 0.0, 100.0, "%.0f USD/t", 1, nullptr);
   if (ImGui::Button("Reset policy")) {
@@ -600,8 +603,22 @@ void App::tab_mix() {
   ImGui::SameLine();
   ImGui::RadioButton("Resource-score allocation", &mix_method_, 1);
   const AllocationResult& a = mix_method_ == 0 ? s.least_cost : s.score;
+  if (!s.least_cost.ok) {
+    // No plan meets every hard constraint: say so instead of showing an earlier plan or zeros.
+    // The score allocation shares the LP's national totals, so it has none either.
+    if (font_big_) ImGui::PushFont(font_big_);
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Infeasible under these settings");
+    if (font_big_) ImGui::PopFont();
+    ImGui::TextWrapped("No 2047 generation mix meets every constraint at once, so no mix, cost or CO2 is shown "
+                       "(solver status: %s).",
+                       s.least_cost.status.c_str());
+    help("Unmet requirement can relax only the regional balances; the non-fossil minimum, the coal floor, the firm "
+         "generation floors and the build limits are hard. Raise the build-rate case or multiplier or the nuclear "
+         "maximum, or lower the non-fossil minimum, the coal floor or the firm shares.");
+    return;
+  }
   if (!a.ok) {
-    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Optimisation status: %s", a.status.c_str());
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Resource-score allocation not available: %s", a.status.c_str());
     return;
   }
   double unserved = 0;
@@ -1074,6 +1091,10 @@ void App::tab_sensitivity() {
           " ms. * = one setting cannot be met together with the other constraints (infeasible).")
              .c_str());
     ImGui::EndGroup();
+  } else if (!s.least_cost.ok) {
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1),
+                       "Policy sensitivity not shown: the least-cost plan is infeasible under these settings (%s).",
+                       s.least_cost.status.c_str());
   }
 }
 
@@ -1096,7 +1117,8 @@ void App::tab_data() {
         {"States by grid region", "National Power Portal state generation reports (dataset Zone where NPP lists no state)",
          "Regional split: state-to-region mapping"},
         {"Region / state conventional generation, monthly, Jul-2018 to Sep-2026", "National Power Portal (CEA 18-column reports)",
-         "Holdout check FY2024-26; regional supply today"},
+         "Holdout check FY2024-26; regional supply today; existing-fleet floors of the 2047 build caps (best year "
+         "FY2018-19 to FY2025-26 of coal, gas, nuclear, hydro)"},
         {"Hourly generation by source, Sep-2025 to Nov-2026", "National Power Portal (Merit India real-time)",
          "Solar and wind profiles, storage sizing"},
         {"Urbanisation coefficient", "Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004", "Literature prior"},
