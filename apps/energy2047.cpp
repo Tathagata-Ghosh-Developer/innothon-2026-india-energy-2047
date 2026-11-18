@@ -16,6 +16,7 @@
 
 #include "core/csv.hpp"
 #include "core/stats.hpp"
+#include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
 #include "pipeline/presets.hpp"
 
@@ -370,6 +371,131 @@ void write_population_consistency(const fs::path& out, const Pipeline& pl) {
               hi_s.c_str());
   std::printf("  grid regions: NPP state file; dataset zone where NPP lists no state (Central -> Western)\n");
   for (const std::string& n : drv.region_notes) std::printf("    %s\n", n.c_str());
+}
+
+std::string fy_label(int y);  // "FY2023-24"; defined below
+
+// outputs/state_panel_check.csv: what a state-level regression would give (a diagnostic,
+// never used by the forecast). ln(NPP state generation per person) on ln(dataset GSDP
+// per person) with state fixed effects, FY2018-19..FY2023-24, and the spread of state
+// generation per person against the national figure. Sections: data (sources), fit,
+// spread (summary), state (one row per matched state), note (what was left out).
+void write_state_panel_check(const fs::path& out, const fs::path& root, const Pipeline& pl) {
+  const StatePanelData d = state_panel_data(root.string());
+  const PanelFit f = fe_slope(d.obs);
+  const IndiaFit& fi = pl.fitted().india_fit;
+  const std::string window = fy_label(d.first_year) + ".." + fy_label(d.last_year);
+  std::string skipped;
+  for (const std::string& s : d.skipped) skipped += (skipped.empty() ? "" : ", ") + s;
+  const StateSpread* lo = nullptr;
+  const StateSpread* hi = nullptr;
+  std::string none;  // matched states with no generation in the window
+  for (const StateSpread& s : d.spread) {
+    if (!(s.ratio_to_national > 0)) {
+      none += (none.empty() ? "" : ", ") + s.state;
+      continue;
+    }
+    if (!lo || s.ratio_to_national < lo->ratio_to_national) lo = &s;
+    if (!hi || s.ratio_to_national > hi->ratio_to_national) hi = &s;
+  }
+
+  CsvWriter w((out / "state_panel_check.csv").string());
+  w.field("section").field("name").field("grid_region").field("years").field("gen_kwh_per_person");
+  w.field("ratio_to_national").field("value").field("note");
+  w.endrow();
+  const auto row = [&](const char* section, const std::string& name, double value, const std::string& note) {
+    w.field(section).field(name).field("").field("").field("").field("").field(value, 6).field(note);
+    w.endrow();
+  };
+  row("data", "generation", kNaN,
+      "NPP state file (data/raw/npp/npp_state_generation_fy.csv): conventional stations only (CEA 18-column reports: "
+      "coal and lignite, gas, diesel, nuclear, hydro), no renewables. Generation is recorded in the state where the "
+      "plant stands, not where the power is used. Sources summed per state and year; subtotal and partial-year rows "
+      "left out");
+  row("data", "population_and_gsdp", kNaN,
+      "challenge dataset (data/raw/competition/renewable_energy_dataset.csv), years " + window +
+          "; a GSDP equal to the year before is a placeholder and that state-year is left out; the 2024 GSDP is not "
+          "used; names matched with normalize_state only");
+  row("fit", "slope", f.slope,
+      "within (state fixed effects) OLS of ln(generation per person) on ln(GSDP per person), " + window +
+          ". Diagnostic only, never used by the forecast");
+  row("fit", "se", f.se, "conventional OLS s.e., n_obs - n_states - 1 degrees of freedom, not clustered by state");
+  row("fit", "n_obs", f.n_obs, "state-years in the regression");
+  row("fit", "n_states", f.n_states, "states with at least one state-year in the regression");
+  row("fit", "n_skipped", f.n_skipped,
+      skipped.empty() ? std::string("no unmatched names")
+                      : skipped + ": in the NPP state file, not in the challenge dataset; skipped, generation not "
+                                  "assigned to any other state");
+  row("fit", "left_out_zero_generation", d.n_zero_generation, "matched state-years with no generation in the NPP file");
+  row("fit", "left_out_stale_gsdp", d.n_stale, "matched state-years with GSDP equal to the year before");
+  row("fit", "left_out_no_data", d.n_no_data, "matched state-years with no dataset population or GSDP");
+  row("fit", "india_beta", fi.beta,
+      "the elasticity the forecast uses: national, NPP all-India generation (all sources) per person on GSDP per "
+      "person, " + fy_label(fi.first) + ".." + fy_label(fi.last));
+  row("spread", "national_gen_kwh_per_person", d.national_gen_pc_kwh,
+      "all NPP state rows (matched or not) over the dataset's total population, " + window +
+          " totals; same conventional-only basis as the states");
+  if (lo) row("spread", "ratio_min", lo->ratio_to_national, lo->state + " (states with generation)");
+  if (hi) row("spread", "ratio_max", hi->ratio_to_national, hi->state);
+  row("spread", "sd_ln_ratio", d.sd_ln_ratio, "s.d. across states of ln(state / national), states with generation");
+  row("spread", "states_without_generation", kNaN, none.empty() ? std::string("none") : none);
+  row("spread", "between_share_ln_gen", d.between_share_ln_gen,
+      "share of the variance of ln(generation per person) in the regression sample that lies between states "
+      "(absorbed by the state effects)");
+  row("spread", "between_share_ln_income", d.between_share_ln_income,
+      "the same for ln(GSDP per person)");
+  for (const StateSpread& s : d.spread) {
+    w.field("state").field(s.state).field(s.region).field(s.n_years).field(s.gen_pc_kwh, 6);
+    w.field(s.ratio_to_national, 6).field("");
+    w.field(s.ratio_to_national > 0 ? std::string("") : std::string("no generation in the window: not in the regression"));
+    w.endrow();
+  }
+  for (const std::string& n : d.notes) row("note", "", kNaN, n);
+
+  std::printf("state panel check (diagnostic, not used): within slope %.3f (s.e. %.3f), %d state-years, %d states, "
+              "%d skipped%s%s%s; national beta %.3f\n",
+              f.slope, f.se, f.n_obs, f.n_states, f.n_skipped, skipped.empty() ? "" : " (", skipped.c_str(),
+              skipped.empty() ? "" : ")", fi.beta);
+  if (lo && hi)
+    std::printf("  state generation per person %s: %.2fx (%s) to %.2fx (%s) the national %.0f kWh, s.d. of ln ratio "
+                "%.2f; %.0f%% of the variance of ln generation per person is between states\n",
+                window.c_str(), lo->ratio_to_national, lo->state.c_str(), hi->ratio_to_national, hi->state.c_str(),
+                d.national_gen_pc_kwh, d.sd_ln_ratio, 100 * d.between_share_ln_gen);
+}
+
+// outputs/state_income_2047.csv: the regional split state by state (Pipeline::state_table),
+// with the Monte Carlo's regional medians for comparison on the console.
+void write_state_table(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const ScenarioControls& c) {
+  const DriverData& drv = pl.drivers();
+  const size_t last = f.years.size() - 1;
+  const int target = f.years[last];
+  const std::vector<StateRow> rows = pl.state_table(c, target);
+  const double lambda = pl.fitted().convergence.lambda;
+  const std::string b = std::to_string(drv.state_pop_year), t = std::to_string(target);
+  CsvWriter w((out / ("state_income_" + t + ".csv")).string());
+  w.field("state").field("grid_region").field("region_from").field("pop_share_pct_" + b).field("ln_rel_income_" + b);
+  w.field("rel_income_" + b).field("convergence_lambda_per_year").field("ln_rel_income_" + t).field("rel_income_" + t);
+  w.field("per_person_index_" + t).field("pop_share_pct_" + t).field("requirement_share_pct_" + t);
+  w.endrow();
+  std::map<std::string, double> by_region;
+  for (size_t k = 0; k < rows.size(); ++k) {
+    const StateRow& r = rows[k];
+    w.field(r.state).field(r.region).field(r.region_from).field(100 * r.pop_share_base, 6);
+    w.field(r.ln_rel_income_base, 6).field(std::exp(r.ln_rel_income_base), 6).field(lambda, 6);
+    w.field(r.ln_rel_income_target, 6).field(std::exp(r.ln_rel_income_target), 6).field(r.per_person_index_target, 6);
+    w.field(100 * drv.state_pop_share[k][last], 6).field(100 * r.requirement_share_target, 6);
+    w.endrow();
+    by_region[r.region] += r.requirement_share_target;
+  }
+  double med_sum = 0;
+  for (int r = 0; r < kRegions; ++r) med_sum += f.quant.q[1 + r][last][3];
+  std::printf("state table %s (%zu states, convergence lambda %.4f/yr): regional share, state table | Monte Carlo "
+              "medians:",
+              t.c_str(), rows.size(), lambda);
+  for (int r = 0; r < kRegions; ++r)
+    std::printf(" %s %.1f%% | %.1f%%", region_name(r), 100 * by_region[region_name(r)],
+                100 * f.quant.q[1 + r][last][3] / med_sum);
+  std::printf("\n");
 }
 
 // Minimal JSON writer. Numbers are written in fixed notation (never exponents) so the
@@ -841,6 +967,7 @@ int main(int argc, char** argv) {
                 drv.states.size(), drv.state_pop_year, drv.base_year, drv.wpp_med.front() / 1e6,
                 drv.wpp_med.back() / 1e6, drv.wup_base, drv.wup.back());
     write_population_consistency(out, pl);
+    write_state_panel_check(out, root, pl);
 
     ScenarioControls c;
     if (argc > 2) c.draws = std::stoull(argv[2]);
@@ -952,6 +1079,8 @@ int main(int argc, char** argv) {
         if (std::string(p.name) != "total") std::printf(" %s %+.3f (%.1f%%)", p.name, p.v, 100 * p.v / d.total);
       std::printf("\n");
     }
+    // The national elasticity applied state by state: the regional split made visible.
+    write_state_table(out, pl, f, c);
     SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
 
     // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes

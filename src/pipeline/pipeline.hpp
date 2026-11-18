@@ -161,6 +161,27 @@ struct GrowthDecomposition {
   double gen_base_twh = kNaN, gen_target_twh = kNaN;
 };
 
+// One state of the regional split in target_year (Pipeline::state_table). "base" is the
+// challenge dataset's last year (2024), the year the state paths and relative incomes
+// start from. The elasticity is national; the kernel (mc.hpp, simulate_draw) applies it
+// to each state's own income:
+//   y_s = y exp(ln_rel_income_base x decay),  decay = exp(-lambda (target_year - 2024)),
+//   weight_s = population share_s x exp(state_log_index(y_s)),
+// and sums the weights by grid region. The table evaluates this on the central path
+// (mean income growth, no shocks) with the mean convergence speed lambda and the point
+// estimates of the elasticity.
+struct StateRow {
+  std::string state, region, region_from;  // normalised name; grid region; "NPP" or "dataset zone"
+  double pop_share_base = 0;               // share of the states' population, 2024
+  double ln_rel_income_base = 0;           // ln(state GSDP per person / national), 2024
+  double ln_rel_income_target = 0;         // the same after convergence, target_year
+  // Generation per person relative to a person at the national income in target_year:
+  // exp(state_log_index(y_s) - state_log_index(y)). 1 = the national figure.
+  double per_person_index_target = 0;
+  // Share of the national requirement: population share x index, normalised to sum to 1.
+  double requirement_share_target = 0;
+};
+
 struct StrategyResult {
   std::array<double, kRegions> requirement{};
   AllocationResult least_cost;
@@ -211,6 +232,13 @@ class Pipeline {
   // Splits the central path's growth from the base year to target_year (a projection
   // year) by driver; uses the same driver paths and parameters as forecast(c).central[0].
   GrowthDecomposition decompose_central(const ScenarioControls& c, int target_year) const;
+  // The regional split state by state in target_year (a projection year), one row per
+  // state in drivers().states order. Central income path of build_inputs(c), mean
+  // convergence speed, and the elasticity point estimates of the model with the
+  // largest weight (the damped trend splits with slot 0, as in the kernel). India core:
+  // the S1-window fit (S3 when beta_window is 2) plus beta_shift, gamma at its prior
+  // mean, and the elasticity decline, packed as boot_for packs a replicate.
+  std::vector<StateRow> state_table(const ScenarioControls& c, int target_year) const;
   StrategyResult strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const;
 
   // Growth of the challenge dataset's populations against the model's population

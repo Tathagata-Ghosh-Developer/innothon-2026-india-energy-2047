@@ -6,16 +6,23 @@
 //  2. State population shares sum to 1 in every projection year.
 //  3. In the first projection year the shares equal the dataset's last-year shares.
 //  4. The national forecast does not depend on the regional split.
+//  5. The state panel check (a diagnostic, never used by the forecast): the within
+//     estimator recovers a known slope, and names it cannot match are skipped and counted.
+//  6. The state table: one row per state, shares sum to 1, and its regional sums agree
+//     with the Monte Carlo's regional medians.
 // Usage: test_regions <repo_root>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
+#include <fstream>
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
 
 #include "core/csv.hpp"
+#include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
 #include "regional/convergence.hpp"
 
@@ -179,11 +186,157 @@ void population_consistent(const Pipeline& pl) {
   check(n_states == pl.drivers().states.size(), "a finite growth row for every state in the split");
 }
 
+// Synthetic panel: 5 states x 6 years, ln generation per person = a_s + 0.8 ln income
+// per person. The state effects a_s fall as income rises across states, so a pooled
+// regression without state effects is far from 0.8; the within estimator is exact.
+constexpr double kTrueSlope = 0.8;
+double synth_x(int s, int y) { return 3.0 + 0.4 * s + 0.06 * (y - 2018) + 0.02 * ((3 * s + 2 * (y - 2018)) % 5); }
+double synth_a(int s) { return 1.0 - 1.2 * s; }
+
+std::vector<PanelObs> synthetic_panel() {
+  std::vector<PanelObs> v;
+  for (int s = 0; s < 5; ++s)
+    for (int y = 2018; y <= 2023; ++y)
+      v.push_back({"state " + std::to_string(s), y, synth_a(s) + kTrueSlope * synth_x(s, y), synth_x(s, y)});
+  return v;
+}
+
+void fe_slope_recovers_known() {
+  std::printf("fe_slope_recovers_known\n");
+  const std::vector<PanelObs> v = synthetic_panel();
+  const PanelFit f = fe_slope(v);
+  double mx = 0, my = 0, sxy = 0, sxx = 0;  // pooled OLS, no state effects
+  for (const PanelObs& o : v) mx += o.ln_income_pc / v.size(), my += o.ln_gen_pc / v.size();
+  for (const PanelObs& o : v) sxy += (o.ln_income_pc - mx) * (o.ln_gen_pc - my), sxx += (o.ln_income_pc - mx) * (o.ln_income_pc - mx);
+  std::printf("    within slope %.12f (s.e. %.2e), pooled slope without state effects %.3f\n", f.slope, f.se, sxy / sxx);
+  check(std::abs(f.slope - kTrueSlope) < 1e-9, "within slope recovers 0.8 (1e-9)");
+  check(f.n_obs == 30 && f.n_states == 5 && f.n_skipped == 0, "30 observations, 5 states, none skipped");
+  check(std::abs(sxy / sxx - kTrueSlope) > 0.5, "pooled slope without state effects is far from 0.8");
+}
+
+void write_text(const fs::path& p, const std::string& text) {
+  fs::create_directories(p.parent_path());
+  std::ofstream(p, std::ios::binary) << text;
+}
+
+std::string num17(double v) {
+  char b[40];
+  std::snprintf(b, sizeof b, "%.17g", v);
+  return b;
+}
+
+void fe_slope_skips_unmatched(const fs::path& tmp) {
+  std::printf("fe_slope_skips_unmatched\n");
+  // In memory: a name the caller could not match carries NaN values.
+  {
+    std::vector<PanelObs> v = synthetic_panel();
+    for (int y = 2018; y <= 2023; ++y) v.push_back({"atlantis", y, kNaN, kNaN});
+    const PanelFit f = fe_slope(v);
+    check(f.n_skipped == 1, "one unknown name: n_skipped == 1");
+    check(f.n_obs == 30 && f.n_states == 5 && std::abs(f.slope - kTrueSlope) < 1e-9,
+          "the unknown name changes neither the sample nor the slope");
+  }
+  // Through the file reader: a synthetic repository. The NPP state file spells names
+  // differently from the dataset (case, '&', spaces), splits generation by source, and
+  // has rows that must be left out: a partial year, a subtotal, an All India row, years
+  // outside FY2018-19..FY2023-24, a state with no generation (Zeta), and one name the
+  // dataset does not have (Atlantis). The dataset repeats Epsilon's 2021 GSDP (stale
+  // year, dropped) and has a state with no generation rows (Chandi).
+  fs::remove_all(tmp);
+  const char* data_name[] = {"Alpha Pradesh", "Beta Nadu", "Gamma Bengal", "Delta And Islands", "Epsilon"};
+  const char* npp_name[] = {"Alpha Pradesh", "BETA NADU", "Gamma  Bengal", "Delta & Islands", "Epsilon"};
+  const char* npp_region[] = {"Northern", "Southern", "Eastern", "Eastern", "Western"};
+  const auto pop = [](int s, int y) { return 1e6 * (s + 1) * (1.0 + 0.012 * (y - 2016)); };
+  std::string data = "State,Year,Zone,Population,GSDP (crore INR)\n";
+  for (int s = 0; s < 5; ++s)
+    for (int y = 2016; y <= 2024; ++y) {
+      const int gy = (s == 4 && y == 2021) ? 2020 : y;  // Epsilon 2021 repeats its 2020 GSDP
+      const double gsdp = std::exp(synth_x(s, gy)) * 1e3 * pop(s, gy) / 1e7;  // thousand INR per person -> crore INR
+      data += std::string(data_name[s]) + "," + std::to_string(y) + ",North," + num17(pop(s, y)) + "," + num17(gsdp) + "\n";
+    }
+  for (int y = 2016; y <= 2024; ++y) {
+    data += "Zeta," + std::to_string(y) + ",West,2000000,5000\n";
+    data += "Chandi," + std::to_string(y) + ",North,1000000,4000\n";
+  }
+  write_text(tmp / "data/raw/competition/renewable_energy_dataset.csv", data);
+
+  std::string npp = "fiscal_year,fy_start_year,region,state,source,generation_gwh,is_subtotal,partial,period,origin,source_id\n";
+  const auto row = [&](int y, const std::string& region, const std::string& state, const std::string& source, double gwh,
+                       bool subtotal, bool partial) {
+    npp += std::to_string(y) + "-" + std::to_string((y + 1) % 100) + "," + std::to_string(y) + "," + region + "," + state +
+           "," + source + "," + num17(gwh) + "," + (subtotal ? "True" : "False") + "," + (partial ? "True" : "False") +
+           ",Apr-Mar,cumulative_actual,synthetic\n";
+  };
+  for (int s = 0; s < 5; ++s)
+    for (int y = 2017; y <= 2024; ++y) {
+      const bool in = y >= 2018 && y <= 2023;
+      // GWh from ln(kWh per person) = a_s + 0.8 x; outside the window a value that would break the fit.
+      const double gwh = in ? std::exp(synth_a(s) + kTrueSlope * synth_x(s, y)) * pop(s, y) / 1e6 : 1e6;
+      row(y, npp_region[s], npp_name[s], "coal_lignite", 0.3 * gwh, false, false);
+      row(y, npp_region[s], npp_name[s], "hydro", 0.7 * gwh, false, false);
+    }
+  row(2023, "Northern", "Alpha Pradesh", "coal_lignite", 99999, false, true);  // partial: left out
+  row(2020, "Southern", "Beta Nadu", "total", 88888, true, false);             // subtotal: left out
+  row(2021, "All India", "All India", "hydro", 77777, false, false);            // not a state
+  for (int y = 2018; y <= 2023; ++y) {
+    row(y, "Western", "Zeta", "gas", 0.0, false, false);         // matched, no generation
+    row(y, "Northern", "Atlantis", "hydro", 500.0, false, false);  // not in the dataset
+  }
+  write_text(tmp / "data/raw/npp/npp_state_generation_fy.csv", npp);
+
+  const StatePanelData d = state_panel_data(tmp.string());
+  const PanelFit g = state_panel_check(tmp.string());
+  std::string names;
+  for (const std::string& s : d.skipped) names += (names.empty() ? "" : ", ") + s;
+  std::printf("    files: slope %.12f, n_obs %d, n_states %d, n_skipped %d (%s), stale %d, zero generation %d\n", g.slope,
+              g.n_obs, g.n_states, g.n_skipped, names.c_str(), d.n_stale, d.n_zero_generation);
+  check(g.n_skipped == 1 && d.skipped == std::vector<std::string>{"atlantis"}, "files: n_skipped == 1 (atlantis)");
+  check(g.n_states == 5 && g.n_obs == 29, "files: 5 states, 29 state-years (Epsilon's stale 2021 dropped)");
+  check(std::abs(g.slope - kTrueSlope) < 1e-9, "files: within slope recovers 0.8 (1e-9)");
+  check(d.n_stale == 1 && d.n_zero_generation == 6, "files: 1 stale GSDP year and 6 zero-generation years dropped");
+  const auto zeta = std::find_if(d.spread.begin(), d.spread.end(), [](const StateSpread& r) { return r.state == "zeta"; });
+  check(zeta != d.spread.end() && zeta->gen_pc_kwh == 0.0, "files: Zeta is matched, with zero generation per person");
+}
+
+// State table: the kernel's regional split made visible, one row per state.
+void state_table_shares_sum(const Pipeline& pl) {
+  std::printf("state_table_shares_sum\n");
+  ScenarioControls c;
+  c.draws = 1u << 16;
+  c.use_gpu = false;
+  const std::vector<StateRow> rows = pl.state_table(c, 2047);
+  double sum = 0;
+  std::map<std::string, double> by_region;
+  for (const StateRow& r : rows) {
+    sum += r.requirement_share_target;
+    by_region[r.region] += r.requirement_share_target;
+  }
+  check(rows.size() == 34, "34 rows, one per state (" + std::to_string(rows.size()) + ")");
+  check(std::abs(sum - 1.0) < 1e-9, "2047 requirement shares sum to 1 (1e-9)");
+
+  // Regional medians of the Monte Carlo, as shares of their sum (as Pipeline::strategy).
+  const ForecastResult f = pl.forecast(c);
+  const size_t t = f.years.size() - 1;
+  double med[kRegions], med_sum = 0;
+  for (int r = 0; r < kRegions; ++r) med_sum += med[r] = f.quant.q[1 + r][t][3];
+  double worst = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    const double table = by_region[region_name(r)], mc = med[r] / med_sum;
+    std::printf("    %-14s state table %.4f | Monte Carlo medians %.4f\n", region_name(r), table, mc);
+    worst = std::max(worst, std::abs(table - mc));
+  }
+  char what[96];
+  std::snprintf(what, sizeof what, "regional sums match the regional medians' shares within 0.02 (worst %.4f)", worst);
+  check(worst < 0.02, what);
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
   try {
     const fs::path root = argc > 1 ? fs::path(argv[1]) : fs::current_path();
+    fe_slope_recovers_known();
+    fe_slope_skips_unmatched(fs::temp_directory_path() / "e47_test_state_panel");
     const Dataset d = read_dataset(root);
     const std::map<std::string, int> want = expected_regions(root, d);
     const Pipeline pl(root.string(), CoreModel::kIndia);
@@ -191,6 +344,7 @@ int main(int argc, char** argv) {
     shares(pl, d);
     national_unchanged(pl);
     population_consistent(pl);
+    state_table_shares_sum(pl);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;
   } catch (const std::exception& e) {

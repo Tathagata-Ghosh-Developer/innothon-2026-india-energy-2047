@@ -54,6 +54,21 @@ double interp(const std::map<int, double>& m, int year) {
   return lo->second + w * (hi->second - lo->second);
 }
 
+// One India-core parameter set in the Monte Carlo layout (stride kBootStride). Slot 0:
+// beta with the excess-urbanisation term gamma; slot 1: gamma = 0. An elasticity
+// decline delta keeps the base-year elasticity at beta:
+//   elasticity(x) = beta - delta (x - x0)  =>  b2 = -delta / 2, b1 = beta + delta x0.
+void pack_india(float* p, double beta, double gamma, double kappa, double delta, double x0) {
+  p[0] = static_cast<float>(beta - gamma * kappa + delta * x0);
+  p[1] = static_cast<float>(-0.5 * delta);
+  p[2] = static_cast<float>(gamma);
+  p[3] = 0.0f;
+  p[4] = static_cast<float>(beta + delta * x0);
+  p[5] = static_cast<float>(-0.5 * delta);
+  p[6] = 0.0f;
+  p[7] = 0.0f;
+}
+
 void growth_stats(const std::vector<double>& g, double& m, double& sd, double& rho) {
   m = mean(g);
   sd = stdev(g);
@@ -439,9 +454,8 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
 
 std::vector<float> Pipeline::boot_for(const ScenarioControls& c) const {
   if (fit_.core == CoreModel::kCrossCountry) return fit_.boot;
-  // India-only core. Slot 0: beta with the excess-urbanisation prior; slot 1: gamma = 0.
-  // An optional elasticity decline delta keeps the base-year elasticity at beta:
-  //   elasticity(x) = beta - delta (x - x0)  =>  b2 = -delta / 2, b1 = beta + delta x0.
+  // India-only core, one replicate per slot of the array (pack_india: slot 0 with the
+  // excess-urbanisation prior, slot 1 with gamma = 0, optional elasticity decline).
   // beta_shift is added to beta in every replicate. beta_window 1 or 2 fills every slot
   // with that window's half of the mixture (S1 first, then S3), each replicate of the
   // half repeated equally, so the array keeps its size and the draw count is unchanged.
@@ -454,18 +468,9 @@ std::vector<float> Pipeline::boot_for(const ScenarioControls& c) const {
   const double delta = std::max(0.0, c.elasticity_decline);
   std::vector<float> out(n * kBootStride);
   for (size_t k = 0; k < n; ++k) {
-    float* p = out.data() + k * kBootStride;
     const size_t j = from + k * len / n;
-    const double beta = fit_.india_beta_boot[j] + c.beta_shift, gamma = fit_.india_gamma[j],
-                 kappa = fit_.india_kappa_boot[j];
-    p[0] = static_cast<float>(beta - gamma * kappa + delta * x0);
-    p[1] = static_cast<float>(-0.5 * delta);
-    p[2] = static_cast<float>(gamma);
-    p[3] = 0.0f;
-    p[4] = static_cast<float>(beta + delta * x0);
-    p[5] = static_cast<float>(-0.5 * delta);
-    p[6] = 0.0f;
-    p[7] = 0.0f;
+    pack_india(out.data() + k * kBootStride, fit_.india_beta_boot[j] + c.beta_shift, fit_.india_gamma[j],
+               fit_.india_kappa_boot[j], delta, x0);
   }
   return out;
 }
@@ -584,6 +589,62 @@ GrowthDecomposition Pipeline::decompose_central(const ScenarioControls& c, int t
   d.urbanisation = p.urbanisation[t];
   d.model_error = p.model_error[t];
   return d;
+}
+
+std::vector<StateRow> Pipeline::state_table(const ScenarioControls& c, int target_year) const {
+  const auto it = std::find(drv_.years.begin(), drv_.years.end(), target_year);
+  if (it == drv_.years.end())
+    throw std::invalid_argument("state_table: " + std::to_string(target_year) + " is not a projection year");
+  const int t = static_cast<int>(it - drv_.years.begin());
+  const McInputs in = build_inputs(c);  // same driver paths, weights and state inputs as forecast(c)
+
+  // Model with the largest weight; the damped trend has no income response, so the
+  // kernel splits its draws with slot 0, and so does the table.
+  int model = kFeQuad;
+  for (int m = 1; m < 3; ++m)
+    if (in.w_model[m] > in.w_model[model]) model = m;
+  if (model == kDamped) model = kFeQuad;
+
+  // Point estimates in the Monte Carlo parameter layout.
+  float p[kBootStride] = {};
+  if (fit_.core == CoreModel::kIndia) {
+    const IndiaFit& fi = c.beta_window == 2 ? fit_.india_fit_full : fit_.india_fit;
+    pack_india(p, fi.beta + c.beta_shift, fit_.gamma_mean, fi.kappa, std::max(0.0, c.elasticity_decline),
+               std::log(fit_.history.back().gdp_pc / 10.0));
+  } else {
+    const double v[kBootStride] = {fit_.quad.b1, fit_.quad.b2, fit_.quad.g, fit_.quad.d,
+                                   fit_.gomp.a,  fit_.gomp.b,  fit_.gomp.c, fit_.gomp.d};
+    for (int k = 0; k < kBootStride; ++k) p[k] = static_cast<float>(v[k]);
+  }
+
+  // Central income path (mean growth, no shocks) and the kernel's convergence decay;
+  // t + 1 + rel_income_lag = target_year - kRelIncomeYear.
+  double ln_y = std::log(static_cast<double>(in.y0));
+  for (int k = 0; k <= t; ++k) ln_y += in.g_mean[k];
+  const double y = std::exp(ln_y);
+  const double decay = std::exp(-fit_.convergence.lambda * (t + 1 + static_cast<double>(in.rel_income_lag)));
+  const double index_national = state_log_index<double>(model, p, y, in.quad_only);
+
+  const size_t ns = drv_.states.size();
+  double pop_total = 0;
+  for (size_t k = 0; k < ns; ++k) pop_total += drv_.state_pop_data[k].at(drv_.state_pop_year);
+  std::vector<StateRow> rows(ns);
+  double total = 0;
+  for (size_t k = 0; k < ns; ++k) {
+    StateRow& r = rows[k];
+    r.state = drv_.states[k];
+    r.region = region_name(drv_.state_region[k]);
+    r.region_from = drv_.state_region_from[k];
+    r.pop_share_base = drv_.state_pop_data[k].at(drv_.state_pop_year) / pop_total;
+    r.ln_rel_income_base = drv_.state_ln_rel_income[k];
+    r.ln_rel_income_target = r.ln_rel_income_base * decay;
+    const double ys = y * std::exp(r.ln_rel_income_target);
+    r.per_person_index_target = std::exp(state_log_index<double>(model, p, ys, in.quad_only) - index_national);
+    r.requirement_share_target = drv_.state_pop_share[k][static_cast<size_t>(t)] * r.per_person_index_target;
+    total += r.requirement_share_target;
+  }
+  for (StateRow& r : rows) r.requirement_share_target /= total;
+  return rows;
 }
 
 PopulationConsistency Pipeline::population_consistency() const {
