@@ -150,8 +150,8 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
 // Sensitivity of the mix to the published figures behind it (outputs/sensitivity_mix.csv).
 // Each case is a copy of `base` with one setting changed; `base` itself is never modified.
 // Cases, in order: base; cost_basis_cea (CEA NEP cost basis); solar_potential_nise2014;
-// wind_120m; build_low and build_high (build_case low and high; with a base already on the
-// high case, build_high equals base). Each case is solved at `requirement` and at
+// wind_120m; build_low and build_central (build_case low and central; the Robust preset,
+// the usual base, is already on the high case). Each case is solved at `requirement` and at
 // `requirement_p90`. Solves run in parallel.
 struct MixSensitivityRow {
   std::string name, description;

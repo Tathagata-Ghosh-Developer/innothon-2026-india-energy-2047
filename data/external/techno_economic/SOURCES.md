@@ -546,6 +546,7 @@ Price-level caveats, also stated in the model's provenance note:
 
 * The CEA basis is in USD at 2021-22 prices and the 2021-22 exchange rate. It is not converted to 2024 USD, the price year of the IEA basis.
 * The biomass fuel price is at FY2026-27 prices and the interest rate uses the 2025-26 MCLR. Neither is deflated to 2021-22.
+* The CERC interest rate and return on equity are nominal, while the NEP capex is in real 2021-22 terms. The capital recovery factor at the nominal pre-tax WACC therefore gives a level nominal annuity (as a tariff does), which overstates a real levelised cost against the IEA basis. The effect is largest for capital-heavy sources (solar, wind, hydro) and is one reason CEA-basis solar is far above IEA. No inflation figure is applied, because none is sourced here.
 
 ---
 

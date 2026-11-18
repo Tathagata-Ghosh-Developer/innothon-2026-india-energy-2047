@@ -518,22 +518,34 @@ int emission_factor_latest_period(const std::string& root, const std::string& tm
   const std::string path = tmp_dir + "/e47_emission_factors_test.csv";
   {
     std::ofstream f(path);
-    f << "fuel,metric,period,value,unit\n"
-         "coal,station_weighted_avg_emission_rate,2023-24,0.90,t\n"
-         "grid,grid_weighted_average_incl_RES,2031-32,0.43,t\n"
-         "coal,station_weighted_avg_emission_rate,2025-26,0.95,t\n"
-         "gas,station_weighted_avg_emission_rate,2024-25,0.40,t\n"
-         "gas,station_weighted_avg_emission_rate,2025-26,0.45,t\n"
-         "lignite,station_weighted_avg_emission_rate,2026-27,1.30,t\n"
-         "coal,station_weighted_avg_emission_rate,2024-25,0.92,t\n"
-         "coal (Indian),fuel_emission_factor_gcv,database v21,90.6,g\n";
+    f << "fuel,metric,period,value,unit,basis\n"
+         "coal,station_weighted_avg_emission_rate,2023-24,0.90,t,actual\n"
+         "grid,grid_weighted_average_incl_RES,2031-32,0.43,t,projection\n"
+         "coal,station_weighted_avg_emission_rate,2025-26,0.95,t,actual\n"
+         "gas,station_weighted_avg_emission_rate,2024-25,0.40,t,actual\n"
+         "gas,station_weighted_avg_emission_rate,2025-26,0.45,t,actual\n"
+         "lignite,station_weighted_avg_emission_rate,2026-27,1.30,t,actual\n"
+         "coal,station_weighted_avg_emission_rate,2024-25,0.92,t,actual\n"
+         "coal (Indian),fuel_emission_factor_gcv,database v21,90.6,g,assumption\n";
   }
   const StationEmissionFactors ef = read_station_emission_factors(path);
   check(ef.period == "2025-26" && ef.coal == 0.95 && ef.gas == 0.45,
         "shuffled file: 2025-26 coal and gas picked (lignite and grid rows ignored)");
   {
+    // Later rows that are not reported values for a fiscal year: a projection, and a period
+    // that is not a fiscal year. Both have coal and gas, and both must be ignored.
     std::ofstream f(path, std::ios::app);
-    f << "coal,station_weighted_avg_emission_rate,2026-27,0.99,t\n";  // a period with coal but no gas
+    f << "coal,station_weighted_avg_emission_rate,2031-32,0.80,t,projection\n"
+         "gas,station_weighted_avg_emission_rate,2031-32,0.40,t,projection\n"
+         "coal,station_weighted_avg_emission_rate,database v23,0.70,t,actual\n"
+         "gas,station_weighted_avg_emission_rate,database v23,0.30,t,actual\n";
+  }
+  const StationEmissionFactors ep = read_station_emission_factors(path);
+  check(ep.period == "2025-26" && ep.coal == 0.95 && ep.gas == 0.45,
+        "projected 2031-32 rows and a non-fiscal-year period ignored: still 2025-26");
+  {
+    std::ofstream f(path, std::ios::app);
+    f << "coal,station_weighted_avg_emission_rate,2026-27,0.99,t,actual\n";  // a period with coal but no gas
   }
   bool threw = false;
   try {
@@ -542,6 +554,19 @@ int emission_factor_latest_period(const std::string& root, const std::string& tm
     threw = true;
   }
   check(threw, "latest period without a gas row: error, not a mix of periods");
+  {
+    std::ofstream f(path);  // no basis column: actual and projected rows cannot be told apart
+    f << "fuel,metric,period,value,unit\n"
+         "coal,station_weighted_avg_emission_rate,2025-26,0.95,t\n"
+         "gas,station_weighted_avg_emission_rate,2025-26,0.45,t\n";
+  }
+  threw = false;
+  try {
+    read_station_emission_factors(path);
+  } catch (const std::exception&) {
+    threw = true;
+  }
+  check(threw, "file without a basis column: error");
   std::filesystem::remove(path);
   return check.fails;
 }
@@ -623,10 +648,14 @@ int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
     std::printf("  %-14s %10.2f %10.2f   USD/MWh, mean over regions%s\n", tech_key(k), iea, cea,
                 in.cea_from_iea[k] ? " (IEA kept)" : "");
   }
-  bool note = false;
-  for (const std::string& n : in.notes)
-    note |= n.rfind("CEA cost basis", 0) == 0 && n.find("nuclear and gas keep the IEA") != std::string::npos;
+  bool note = false, nominal = false;
+  for (const std::string& n : in.notes) {
+    if (n.rfind("CEA cost basis", 0) != 0) continue;
+    note |= n.find("nuclear and gas keep the IEA") != std::string::npos;
+    nominal |= n.find("level nominal annuity") != std::string::npos && n.find("real 2021-22") != std::string::npos;
+  }
   check(note, "provenance note flags nuclear and gas kept at IEA cost");
+  check(nominal, "provenance note discloses nominal CERC rates on real NEP capex");
   return check.fails;
 }
 
@@ -657,10 +686,10 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
   check(robust_again == robust_before, "Robust preset unchanged");
   check(std::abs(solve_least_cost(in, PolicySettings{}, req).cost_busd - default_cost_before) < 1e-9,
         "default plan cost unchanged after the cases");
-  const char* names[] = {"base", "cost_basis_cea", "solar_potential_nise2014", "wind_120m", "build_low", "build_high"};
+  const char* names[] = {"base", "cost_basis_cea", "solar_potential_nise2014", "wind_120m", "build_low", "build_central"};
   bool named = rows.size() == 6;
   for (size_t i = 0; named && i < rows.size(); ++i) named &= rows[i].name == names[i];
-  check(named, "six cases in order: base, cost_basis_cea, solar_potential_nise2014, wind_120m, build_low, build_high");
+  check(named, "six cases in order: base, cost_basis_cea, solar_potential_nise2014, wind_120m, build_low, build_central");
   if (!named) return check.fails;
   auto with = [&](void (*f)(PolicySettings&)) {
     PolicySettings p = robust_before;
@@ -673,7 +702,10 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
         "solar_potential_nise2014: solar_potential_set only");
   check(rows[3].policy == with([](PolicySettings& p) { p.wind_height = 120; }), "wind_120m: wind_height only");
   check(rows[4].policy == with([](PolicySettings& p) { p.build_case = kBuildLow; }), "build_low: build_case low only");
-  check(rows[5].policy == with([](PolicySettings& p) { p.build_case = kBuildHigh; }), "build_high: build_case high only");
+  check(rows[5].policy == with([](PolicySettings& p) { p.build_case = kBuildCentral; }),
+        "build_central: build_case central only");
+  check(robust_before.build_case == kBuildHigh && !(rows[5].policy == rows[0].policy),
+        "Robust is on the high case, so build_central differs from base");
   bool ok = true;
   for (const MixSensitivityRow& r : rows) {
     ok &= r.plan.ok && r.plan_p90.ok;

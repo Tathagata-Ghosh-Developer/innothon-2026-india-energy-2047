@@ -57,8 +57,9 @@ double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int
                            int to_year);
 
 // CEA station-weighted average emission rates (CO2 Baseline Database, tCO2/MWh net) of the
-// latest period in emission_factors.csv that has a coal and a gas row. Rows of other metrics
-// and fuels are ignored. Throws if the latest station-weighted period lacks coal or gas.
+// latest period in emission_factors.csv. Only rows with basis "actual" and a fiscal-year
+// period ("2025-26") count, so a projected row is never used. Rows of other metrics and fuels
+// are ignored. Throws if the file has no basis column, or the latest such period lacks coal or gas.
 struct StationEmissionFactors {
   std::string period;  // fiscal year as written in the file, e.g. "2025-26"
   double coal = 0, gas = 0;

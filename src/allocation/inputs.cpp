@@ -1,6 +1,7 @@
 #include "inputs.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
@@ -164,17 +165,29 @@ double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int
 
 StationEmissionFactors read_station_emission_factors(const std::string& path) {
   const CsvTable t = CsvTable::read(path);
-  const size_t cf = t.col("fuel"), cm = t.col("metric"), cp = t.col("period"), cv = t.col("value");
+  if (!t.has("basis")) throw std::runtime_error("emission factors: no basis column in " + path);
+  const size_t cf = t.col("fuel"), cm = t.col("metric"), cp = t.col("period"), cv = t.col("value"), cb = t.col("basis");
+  // A fiscal year as CEA writes it: four digits, a hyphen, two digits ("2025-26").
+  auto fiscal_year = [](const std::string& s) {
+    if (s.size() != 7 || s[4] != '-') return false;
+    for (size_t i = 0; i < s.size(); ++i)
+      if (i != 4 && !std::isdigit(static_cast<unsigned char>(s[i]))) return false;
+    return true;
+  };
   std::map<std::string, std::map<std::string, double>> by_period;  // period -> fuel -> tCO2/MWh
   std::map<std::string, std::string> source;                       // period -> source_name of its coal row
   for (size_t r = 0; r < t.rows(); ++r) {
-    if (t.str(r, cm) != "station_weighted_avg_emission_rate") continue;
+    // Only reported values for a fiscal year: a projected row must never become the factor.
+    if (t.str(r, cm) != "station_weighted_avg_emission_rate" || t.str(r, cb) != "actual" ||
+        !fiscal_year(t.str(r, cp)))
+      continue;
     const std::string& fuel = t.str(r, cf);
     const double v = t.num(r, cv);
     if ((fuel == "coal" || fuel == "gas") && !std::isnan(v)) by_period[t.str(r, cp)][fuel] = v;
     if (fuel == "coal" && t.has("source_name")) source[t.str(r, cp)] = t.str(r, t.col("source_name"));
   }
-  if (by_period.empty()) throw std::runtime_error("no station-weighted coal or gas emission rate in " + path);
+  if (by_period.empty())
+    throw std::runtime_error("no actual station-weighted coal or gas emission rate for a fiscal year in " + path);
   // Periods are written "2025-26", so the last key is the latest fiscal year.
   const auto& [period, fuels] = *by_period.rbegin();
   if (!fuels.count("coal") || !fuels.count("gas"))
@@ -837,6 +850,8 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       return it->second;
     };
     const double debt = param("debt_share") / 100.0, rate = param("interest_rate"), roe = param("return_on_equity_pretax");
+    // The CERC rates are nominal, the NEP capex real (2021-22 prices): the CRF below is a level
+    // nominal annuity, as in a tariff, which overstates a real levelised cost (stated in the note).
     in.cea_wacc = 0.01 * (debt * rate + (1.0 - debt) * roe);
     in.cea_inr_per_usd = param("inr_per_usd");
     const double coal_fuel = param("coal_fuel_cost");
@@ -882,7 +897,10 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         "biomass price / GCV). Rs %.4f per USD (RBI, FY2021-22 average). Coal %.1f, hydro %.1f, solar %.1f, onshore "
         "wind %.1f, offshore wind %.1f, bioenergy %.1f USD/MWh before regional scaling. The NEP has no capex for new "
         "nuclear or gas plants, so nuclear and gas keep the IEA cost (%.1f and %.1f); firmed RE = CEA solar + the "
-        "IEA-basis round-the-clock premium. Not converted to 2024 USD, the IEA price year.",
+        "IEA-basis round-the-clock premium. Not converted to 2024 USD, the IEA price year. The CERC interest rate and "
+        "return on equity are nominal while the NEP capex is in real 2021-22 terms, so the CRF gives a level nominal "
+        "annuity (as a tariff does); this overstates a real levelised cost against the IEA basis, most for the "
+        "capital-heavy sources (solar, wind, hydro), and is one reason CEA-basis solar is far above IEA.",
         nep_row("solar").year.c_str(), 100 * in.cea_wacc, 100 * debt, rate, 100 * (1 - debt), roe, coal_fuel, bio_fuel,
         in.cea_inr_per_usd, cc[kCoal], cc[kHydro], cc[kSolar], cc[kWind], cc[kOffshore], cc[kBio], cc[kNuclear],
         cc[kGas]));

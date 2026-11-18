@@ -470,7 +470,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
        [](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }},
       {"wind_120m", "onshore wind potential: NIWE 120 m instead of 150 m", [](PolicySettings& p) { p.wind_height = 120; }},
       {"build_low", "published build limits: low case", [](PolicySettings& p) { p.build_case = kBuildLow; }},
-      {"build_high", "published build limits: high case", [](PolicySettings& p) { p.build_case = kBuildHigh; }},
+      {"build_central", "published build limits: central case", [](PolicySettings& p) { p.build_case = kBuildCentral; }},
   };
   constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
   std::vector<MixSensitivityRow> rows(ns);
