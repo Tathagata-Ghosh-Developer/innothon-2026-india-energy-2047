@@ -1,7 +1,8 @@
 # Techno-economic parameters: sources and extraction notes
 
 This folder holds the techno-economic inputs for the 2047 generation allocation model.
-All files were downloaded or read on **2026-11-15**.
+All files were downloaded or read on **2026-11-15**, except `build_limits.csv`, `cea_costs.csv` and the CEA v22 rows of `emission_factors.csv`, which were read on **2026-11-18**.
+Every source in this folder is **secondary**: the project's primary sources are only NPP and the Renewable India dataset (`docs/data_audit.md`).
 Every value traces to a document that was fetched and read; nothing was filled from memory.
 Where a value could not be found, the cell is blank and the gap is listed under "Not found" at the end.
 
@@ -15,6 +16,7 @@ Each such conversion is explicit, in the form
 
 and the capacity factor used is named in the row (for example the two `implied_generation_twh_*` columns of `existing_fleet_generation.csv`).
 Rows that are capacity-based are marked as such (`basis` column of `policy_targets.csv` and `offshore_wind.csv`, notes elsewhere).
+`build_limits.csv` is capacity-based by design (GW added per year); each row carries the CUF that turns it into a limit on generation.
 Capacity factors themselves are ratios of energy to capacity and are provided only for this conversion.
 
 ## Conventions
@@ -34,7 +36,9 @@ Capacity factors themselves are ratios of energy to capacity and are provided on
 |---|---|---|
 | `capacity_factors.csv` | 358 | CUF and PLF by source, region, state and unit, from CEA, DAE, CERC, PIB and IEA, plus observed CUF derived from Ember (CEA and MNRE based) |
 | `lcoe.csv` | 119 | Discovered tariffs, regulated tariffs, capital costs and cost projections |
-| `emission_factors.csv` | 46 | CEA CO2 Baseline Database v21 grid and fuel factors, NEP projections, lifecycle factors |
+| `emission_factors.csv` | 49 | CEA CO2 Baseline Database v22 station-weighted fuel rates, v21 grid and fuel factors, NEP projections, lifecycle factors |
+| `build_limits.csv` | 33 | Published annual build limits (GW per year, low, central and high) by source and period, FY2026-27 to FY2047-48, each with the CUF that turns it into energy |
+| `cea_costs.csv` | 10 | CEA NEP 2022-32 cost and performance inputs (capex, fixed O&M, life, CUF, heat rate) for a CEA-based cost check |
 | `existing_fleet_generation.csv` | 45 | Coal retirement list, coal fleet base, under-construction coal and its commissioning schedule, life-extension plan |
 | `transmission.csv` | 61 | Inter-regional transfer capability by corridor (current and planned), regional transmission losses, T&D loss |
 | `nuclear_pipeline.csv` | 25 | Nuclear plants under construction, sanctioned and planned, with state, region and expected commissioning; 100 GW target |
@@ -179,6 +183,13 @@ The values were not converted to rupees.
 ## emission_factors.csv
 
 Columns: `fuel, metric, period, value, unit, geography, basis, source_name, source_url, source_location, notes`.
+
+**CEA CO2 Baseline Database for the Indian Power Sector, User Guide Version 22.0 (August 2026, data for FY2025-26).** Secondary source.
+URL: `https://cea.nic.in/api/cdm-report-version/view-pdf/en/82` (id 82 is version 22.0, checked from the cover page; read on 2026-11-18).
+Table 5 (printed page 14, PDF page 19) gives the generation-weighted specific emissions of fossil stations on net generation in FY2025-26: coal 0.971, gas 0.470 and lignite 1.348 tCO2/MWh; diesel and oil are shown as '-'.
+The page was rendered and read to confirm the cells.
+These three rows (`period` = `2025-26`) are the latest; the v21 and v20 rows stay as history.
+The same guide gives the FY2025-26 grid factors (Table 4, same page): weighted average 0.675, OM 0.963, BM 0.446 and CM 0.705 tCO2/MWh, adjusted for cross-border transfers; these are not added as rows.
 
 **CEA CO2 Baseline Database for the Indian Power Sector, User Guide Version 21.0 (November 2025, data for FY2024-25).**
 The current CEA site serves the guides from `https://cea.nic.in/api/cdm-report-version/view-pdf/en/<id>`; id 78 is version 21.0 and id 76 is version 20.0 (checked from each cover page).
@@ -403,14 +414,96 @@ The code reads only rows with `verified = yes`; every row was checked against th
 
 ---
 
+## build_limits.csv
+
+Columns: `tech, period_start, period_end, gw_per_year_low, gw_per_year_central, gw_per_year_high, cuf, source_name, source_url, source_location, notes`.
+
+* `tech` is one of `solar`, `wind` (onshore), `offshore_wind`, `nuclear`, `hydro` (large plus small, as in the model), `bioenergy`, `gas`, `coal` (includes lignite) and `pumped_storage`.
+* `period_start` and `period_end` are fiscal start years, both inclusive (2026 = FY2026-27, 2047 = FY2047-48). For each tech the periods cover 2026 to 2047 with no gap or overlap.
+* `gw_per_year_low`, `_central` and `_high` are the most capacity that may be added each year of the period, in GW per year.
+  Capacity enters only as a limit on generation: GW per year x `cuf` x 8.76 = TWh per year of added generation.
+* `cuf` is a fraction (0.22 = 22 percent). It is blank for pumped storage, which stores energy and is a net consumer.
+* `source_name`, `source_url` and `source_location` name the source of the central value.
+  `notes` give the source of the low and high values (with URL and page), every computation, and the source of the CUF.
+
+Rules used to fill the table:
+
+1. Sources in order of preference: CEA NEP 2022-32; the CEA input slides of December 2024; NITI Aayog 2026 Table 3.6; DAE (100 GW of nuclear by 2047); the hydro pipeline reported by the Ministry of Power.
+2. Where a source gives a rate only for some periods, its last stated rate is held to 2047, and the notes say so.
+3. Low and high come from another published source for the same years, or from a published scenario of the same source. Where there is none, they are set equal to central, and the notes say so.
+4. Where a source gives a range (such as 25-32 GW per year), low and high are its ends and central is our midpoint.
+5. The CUF comes from the same source as the limit where that source gives one. Otherwise the CEA NEP national value is used, or a NEP-implied national value (generation divided by capacity times 8.76) where the NEP gives only regional values.
+6. NITI's periods 2030-40 and 2040-50 are read as fiscal start years 2030-2039 and 2040-2049. In 2030-2031, inside the NEP horizon, the CEA value stays central and NITI enters as the high case.
+
+**CEA, National Electricity Plan 2022-32, Vol I Generation (May 2023).** Status: secondary.
+The CEA URL `https://cea.nic.in/wp-content/uploads/irp/2023/05/NEP_2022_32_FINAL_GAZETTE-1.pdf` returned 404 on 2026-11-18.
+The gazette copy at `https://cpr-prod-cclw-document-admin-store.s3.eu-west-1.amazonaws.com/NEP_2022_32_FINAL_GAZETTE_English.pdf` (a document store of the Climate Change Laws of the World database) was read instead, and that mirror is the `source_url`.
+Its text layer matches the Internet Archive copy of the CEA URL in `raw/lcoe/cea/` page for page; only the dates on the cover differ (gazette dated 18.05.2023 against 31.05.2023).
+Used: Table 5.9a (capacity addition by source in 2022-27 and 2027-32, PDF page 140); Table 5.9b (regional additions, including 1,500 MW of offshore wind in SR, PDF page 141); Tables 5.10a-b (installed capacity in each scenario, PDF pages 143-144); Section 5.8.5 and Conclusions item 8 (scenario ranges, PDF pages 145 and 152); Section 5.6.8 (no gas investment options, PDF page 136); Tables 5.11, 5.12 and 5.14 (generation and coal PLF, PDF pages 147, 148 and 152); Annexure 5.1 (CUF and availability, PDF page 154); and the reply to comment 21.21 (22 percent all-India solar CUF, PDF page 44).
+The tables were rendered and read to confirm the cells.
+The NEP gives planned additions per five-year block, not annual limits, so an annual rate is the block addition divided by 5.
+
+**CEA presentation "Policy Framework Challenges to RE integration - Role of Flexibility and Storage" (12 December 2024).** Status: secondary.
+URL: `https://cer.iitk.ac.in/assets/downloads/CBP/presentation/Day2/PFC_12_12_2024.pdf` (hosted by CER IIT Kanpur for a capacity-building programme; the slides carry the CEA name).
+Slide 8, "Broad Inputs (2/3)", in verbatim: "Year on year investment limits for different technologies: 25-32 GW per year for Solar; 7-10 GW per year for Wind".
+Slides 7-9 list the inputs of the NEP study and slide 11 starts the "Final NEP results", so the limits are applied over the NEP horizon, to FY2031-32.
+The NEP's own solar addition in 2027-32 (179 GW, or 35.8 GW per year) is above the 32 GW per year limit, and neither document explains the difference.
+
+**NITI Aayog, "Scenarios Towards Viksit Bharat and Net Zero - Sectoral Insights: Power" (Vol. 7, February 2026).** Status: secondary.
+URL: `https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Power.pdf` (same size as the local copy in `raw/niti_viksit_netzero/`).
+Table 3.6, "Technology expansion constraints (maximum annually)" (printed page 36, PDF page 66), in GW per year: for 2030-40, solar 50, hydro 2, onshore wind 15, offshore wind 1, pumped hydro 6, battery 40; for 2040-50, 90, 2.5, 30, 2, 6 and 60.
+The page was rendered and read.
+CUF statements: solar CUF "can reach up to 25% by 2070" and new wind "CUFs in the range of 25-30%" (PDF page 65); large hydro PLF "ranged between 32%-40%" over the past five years (PDF page 66).
+The report says it is not a statement of policy.
+
+**DAE, Lok Sabha Unstarred Question 497, answered 03.12.2025.** Status: secondary.
+URL: `https://cdnbbsr.s3waas.gov.in/s35b8e4fd39d9786228649a8a8bec4e008/uploads/2026/03/202603041745220852.pdf` (local copy in `raw/dae_parliament/`).
+Answer (b) to (d): capacity "set to increase from 8780 MW (excluding RAPS-1) to 22380 MW (excluding RAPS-1) by 2031-32", and the Nuclear Energy Mission "to reach a nuclear power capacity of 100000 MW (100 GW) by 2047".
+No year-wise path to 100 GW was found, so the 2032-2047 rate is a straight line: (100,000 - 22,380) MW / 16 years = 4.85 GW per year.
+
+**Ministry of Power, Annual Report 2025-26 (May 2026).** Status: secondary.
+URL: `https://www.powermin.gov.in/static/uploads/2026/05/df68bc7bf21a7e46d1b01529930c137d.pdf` (local copy in `raw/mop/`).
+Printed page 26 (PDF page 30), "Yearwise anticipated commissioning schedule of hydro projects presently under construction": hydro electric projects 1,460, 3,044, 2,331.5, 1,940, 1,018 and 3,180 MW in 2025-26, 2026-27, 2027-28, 2028-29, 2029-30 and 2031-32; pumped storage 250, 2,920, 1,600, 4,850 and 2,000 MW in 2025-26 to 2029-30.
+The table has no 2030-31 column. The page was rendered and read.
+This is the hydro pipeline used in the table; CEA's own monthly status reports on hydro projects were not read.
+
+For a check only (not in the file), the cumulative additions over 2026-2047 implied by the table, in GW for the low, central and high cases, are: solar 550, 1,291 and 1,348; onshore wind 154, 411 and 430; offshore wind 6.3, 25.5 and 26.9; nuclear 28.4, 85.5 and 91.2 (from 8.78 GW, only the high case reaches 100 GW); coal 90.9, 112.1 and 124.5 (gross additions, before retirements); gas 0; bioenergy 11; hydro 25.9, 48.1 and 54.1; pumped storage 74.0, 115.8 and 123.9.
+
+---
+
+## cea_costs.csv
+
+Columns: `tech, capex_cr_per_mw, fixed_om_pct, life_years, cuf, fuel_cost_rs_per_kwh, heat_rate, wacc_pct, year_basis, source_name, source_url, source_location`.
+
+* Every value is from the CEA NEP 2022-32 (status: secondary; same mirror as above), Annexure 5.1 (PDF pages 154-156) and Chapter 5.
+  The costs are at the 2021-22 price level: "All the Capex figures are on actual basis at the cost level of 2021-22 i.e., inflation is not considered while calculating capex" (Annexure 5.1, PDF page 156).
+* Units: `capex_cr_per_mw` in Rs crore per MW; `fixed_om_pct` is fixed O&M per year as a percentage of capex; `life_years` is the annexure's "Amortization/Life time" column; `cuf` is a fraction; `heat_rate` is in MCal/MWh (equal to kcal/kWh) at maximum loading; `fuel_cost_rs_per_kwh` in Rs per kWh; `wacc_pct` in percent.
+* `year_basis` is the year a value applies. Solar has a 2021-22 row (Rs 4.5 crore per MW) and a 2029-30 row (Rs 4.1 crore per MW), both at 2021-22 prices, from the annexure footnote.
+* Coal fixed O&M is printed as Rs 19.54 lakh per MW; 2.34 percent is our conversion (0.1954 / 8.34).
+* Ranges printed in the annexure are entered as our midpoints, and `source_location` says so: hydro capex 6-20 (13), pumped storage capex 3-8 (5.5), candidate coal heat rate 2060-2125 (2092.5) and existing gas heat rate 2000-2900 (2450).
+* CUF: solar 22 percent (reply to comment 21.21); coal 58.7 percent (Table 5.14, 2031-32); nuclear 68 percent and biomass 60 percent (Annexure 5.1 availability); onshore wind, hydro and gas are NEP-implied ratios of generation to capacity (Tables 5.7, 5.8, 5.11 and 5.12); offshore wind is the mean of the two regional values (WR 36.47, SR 57.49). The same values are used in `build_limits.csv`.
+* Blank cells mean the NEP gives no value:
+  * nuclear and gas capex, O&M and life, because the NEP has no candidate plants of either kind (Section 5.6.8);
+  * fuel cost for every source;
+  * WACC or discount rate for every source.
+
+  The NEP says its costs are in real terms and that coal cost escalates 1 percent a year in real terms (reply to comment 10.2, PDF page 28).
+  CEA's reply to comment 21.22 says the discount rate is "Specified in the final NEP" (PDF page 44), but no discount rate, WACC or fuel price was found in the final document after a search of its full text.
+  A CEA-basis levelised cost therefore needs a WACC and a fuel price from another source, labelled as such.
+* Battery storage is in Annexure 5.1 (O&M 1 percent of capex, life 14 years, capex "detailed at Chapter 13") but is left out, because the model has no battery source.
+* Annexure 8.1 (PDF page 216) has nominal year-by-year costs per MW used only for the fund requirement. They are already in `lcoe.csv` and are not repeated here.
+
+---
+
 ## Raw files
 
 | Folder under `raw/` | Content |
 |---|---|
-| `lcoe/cea/` | CEA NEP 2022-32 Vol I Generation (Internet Archive copy) |
+| `lcoe/cea/` | CEA NEP 2022-32 Vol I Generation (Internet Archive copy, and the mirror copy read on 2026-11-18) |
+| `cea_slides/` | CEA presentation of 12 Dec 2024 with the year-on-year solar and wind investment limits (CER IIT Kanpur copy) |
 | `lcoe/seci/` | SECI auction result sheets and tender pages |
 | `lcoe/pib/`, `lcoe/nuclear/`, `lcoe/coal/`, `lcoe/gas/`, `lcoe/hydro/`, `lcoe/cerc/`, `lcoe/state_bess/`, `lcoe/iea/`, `lcoe/mop/` | Tariff and cost sources for `lcoe.csv`; `lcoe/cerc/` also holds the CERC order used for normative CUFs; `lcoe/mop/` holds the Ministry of Power Rajya Sabha answers of 27.07.2026 (RS 953) |
-| `cea_co2/` | CEA CO2 Baseline Database user guides v20 and v21 |
+| `cea_co2/` | CEA CO2 Baseline Database user guides v20, v21 and v22 |
 | `cea_transmission/` | CEA NEP Vol II Transmission and the CEA transmission growth summary of September 2025 (both Internet Archive copies) |
 | `dae_annual_report/` | DAE Annual Report 2024-25 |
 | `dae_parliament/` | DAE Parliament answers 2024-2026 |
@@ -430,4 +523,7 @@ The CEA General Review 2025, the CEA Growth book and the Ember files used for `c
 * The CEA CO2 Baseline Database workbook for v21 (the user guide was used).
 * A TWh figure for the electricity need of the Green Hydrogen Mission.
 * The CEA "Roadmap for achieving 100 GW nuclear by 2047" (October 2025), which returned "page not found" and was blocked in the web archive, so there is no year-wise or state-wise path to 100 GW.
+* A discount rate, WACC or fuel price in the CEA NEP 2022-32, so those columns of `cea_costs.csv` are blank (see that section).
+* Explicit annual build limits for any source before 2030 other than the CEA solar and wind limits, and any published rate for coal, gas and biomass after 2031-32. `build_limits.csv` uses the NEP plan rates (block additions divided by 5) where no limit is published, and holds the NEP rates to 2047 for coal, gas and biomass.
+* The CEA CO2 Baseline Database workbook for v22 (the user guide was used).
 * A year-by-year inter-regional capacity plan beyond the NEP Vol II corridor totals for 2026-27 and 2031-32.
