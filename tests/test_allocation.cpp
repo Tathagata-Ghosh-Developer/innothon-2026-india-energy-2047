@@ -45,6 +45,21 @@ int base_mix_matches_npp(const std::string& root, const AllocationInputs& in) {
       if (r >= 0 && s == "thermal") npp_thermal[r] = t.num(i, t.col("generation_gwh")) / 1000.0;
     }
   }
+  // NPP station sums by state (Sub-report 16): coal share of thermal by region, where thermal
+  // is coal and lignite + gas + diesel stations.
+  std::array<double, kRegions> st_coal{}, st_thermal{};
+  {
+    const CsvTable t = CsvTable::read(root + "/data/raw/npp/npp_state_generation_fy.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      if (t.str(i, t.col("fiscal_year")) != "2023-24" || t.str(i, t.col("partial")) == "True") continue;
+      const int r = region_of(t.str(i, t.col("region")));
+      const std::string s = t.str(i, t.col("source"));
+      const double v = t.num(i, t.col("generation_gwh"));
+      if (r < 0 || std::isnan(v)) continue;
+      if (s == "coal_lignite") st_coal[r] += v;
+      if (s == "coal_lignite" || s == "gas" || s == "diesel") st_thermal[r] += v;
+    }
+  }
   // CEA renewable generation by region and type (region rows of the same table).
   RegionTech cea{};
   {
@@ -68,6 +83,11 @@ int base_mix_matches_npp(const std::string& root, const AllocationInputs& in) {
           std::string(region_name(r)) + ": conventional within 0.5% of NPP FY2023-24");
     check(npp_thermal[r] > 0 && std::abs((b[kCoal] + b[kGas]) / npp_thermal[r] - 1.0) < 0.005,
           std::string(region_name(r)) + ": coal + gas within 0.5% of NPP FY2023-24 thermal");
+    const double want = st_thermal[r] > 0 ? st_coal[r] / st_thermal[r] : kNaN;
+    const double got = b[kCoal] + b[kGas] > 0 ? b[kCoal] / (b[kCoal] + b[kGas]) : kNaN;
+    std::printf("  %-14s coal share of thermal %.6f, NPP station sums %.6f\n", region_name(r), got, want);
+    check(std::abs(got - want) < 1e-6,
+          std::string(region_name(r)) + ": coal share = NPP station sums (Sub-report 16) within 1e-6");
   }
   for (int r = 0; r < kRegions; ++r)
     for (int k : {kSolar, kWind, kHydro, kBio}) {
