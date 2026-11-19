@@ -151,8 +151,9 @@ void App::launch() {
     j.forecast = pl->forecast(c);
     j.strategy = pl->strategy(j.forecast, c, p);
     // Evidence tables (data tab). The decomposition and the state table belong to the India
-    // core; the mix sensitivity re-solves the current policy at the planned requirement and at
-    // the P90 (the national P90 split by the regional medians, as Pipeline::strategy does).
+    // core. The P90 requirement (the national P90 split by the regional medians, as
+    // Pipeline::strategy does) is kept for the mix sensitivity, which data_mix() runs only
+    // while its view is open.
     const int last = static_cast<int>(j.forecast.years.size()) - 1;
     j.india = pl->core() == CoreModel::kIndia;
     try {
@@ -166,7 +167,8 @@ void App::launch() {
       j.requirement_p90 = j.strategy.requirement;
       for (double& x : j.requirement_p90) x *= planned > 0 ? p90 / planned : 0.0;
       j.bounds = make_bounds(pl->allocation_inputs(), p, j.strategy.requirement);
-      j.mix = mix_sensitivity(pl->allocation_inputs(), p, j.strategy.requirement, j.requirement_p90);
+      for (int s = 0; s < kTechs; ++s)
+        j.national_hi[s] = national_upper_bound_twh(pl->allocation_inputs(), p, j.strategy.requirement, s);
     } catch (const std::exception& e) {
       j.evidence_error = e.what();
     }
@@ -1516,17 +1518,34 @@ void App::data_mix() {
 
   // 1. Mix sensitivity to the published figures.
   heading(font_head_, "How the published figures move the mix: one change at a time");
-  char b[512];
+  char b[1024];
   std::snprintf(b, sizeof b,
                 "Each case is the current policy with one published figure changed, solved at the planned requirement "
                 "(P%.0f, %s TWh) and at P90 (%s TWh). Costs are in each case's own basis. A case that leaves the "
                 "requirement unmet describes less generation, so its CO2 and cost are not comparable.",
                 100 * sc_.requirement_quantile, with_commas(planned).c_str(), with_commas(p90).c_str());
   help(b);
-  if (!j.mix.empty() &&
+  // Solved only while this view is open, on a worker thread, and again only when the policy or
+  // the requirement changes (CachedTask): the other views never wait for these 12 solves.
+  const MixSensitivityKey key{&alloc, s.policy, s.requirement, j.requirement_p90};
+  using MixState = CachedTask<MixSensitivityKey, MixEvidence>::State;
+  const MixState ms = mix_.request(key, [key] {
+    Timer t;
+    MixEvidence e;
+    e.rows = mix_sensitivity(*key.inputs, key.policy, key.requirement, key.requirement_p90);
+    e.ms = t.ms();
+    return e;
+  });
+  if (ms == MixState::kRunning)
+    help("Solving the cases (two least-cost plans each, at the planned requirement and at P90)...");
+  else if (ms == MixState::kFailed)
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Mix sensitivity not available: %s", mix_.error().c_str());
+  const std::vector<MixSensitivityRow> no_rows;
+  const std::vector<MixSensitivityRow>& mix_rows = ms == MixState::kReady ? mix_.value().rows : no_rows;
+  if (!mix_rows.empty() &&
       begin_table("mixsens", {"Case", "Non-fossil", "Coal", "CO2 (Mt)", "Cost (bn USD/yr)", "Unmet, planned (TWh)",
                               "Unmet at P90 (TWh)", "What changes"})) {
-    for (const MixSensitivityRow& m : j.mix) {
+    for (const MixSensitivityRow& m : mix_rows) {
       const AllocationResult& a = m.plan;
       ImGui::TableNextRow();
       cell_text(m.name);
@@ -1546,6 +1565,9 @@ void App::data_mix() {
       cell_text(m.description);
     }
     ImGui::EndTable();
+    help((std::to_string(2 * mix_rows.size()) + " least-cost plans solved in " + with_commas(mix_.value().ms, 0) +
+          " ms when this view opened or its inputs last changed.")
+             .c_str());
   }
 
   // 2. Committed builds and the gas kept for peaking.
@@ -1554,7 +1576,9 @@ void App::data_mix() {
                 "Floor = %s generation + committed MW x CUF x 8.76: nuclear units under construction, sanctioned or "
                 "commissioned after %s (CUF %.2f); large hydro under construction (CUF %.2f). Committed TWh are cut "
                 "to the national build cap and each region's upper bound. Gas: national minimum %.1f TWh (%.0f%% of "
-                "the %.1f TWh fleet floor, %s), each region within its %s share of the gas cap.",
+                "the %.1f TWh fleet floor, %s), each region within its %s share of the gas cap. India's upper bound "
+                "is the national limit: the build cap (nuclear: also the share limit) or the sum of the regional "
+                "bounds, whichever is lower.",
                 fy(alloc.base_year).c_str(), fy(alloc.base_year).c_str(), alloc.committed_nuclear_cuf,
                 alloc.committed_hydro_cuf, gas_min_twh(alloc, s.policy), 100 * s.policy.gas_min_twh_share,
                 alloc.fleet_floor_twh[kGas], fy(alloc.fleet_floor_year[kGas]).c_str(), fy(alloc.base_year).c_str());
@@ -1583,7 +1607,18 @@ void App::data_mix() {
           ImGui::TextColored(kRegionColor[r], "%s", region_name(r));
         cell("%.1f", v[0]);
         cell("%.0f", v[1]);
-        for (size_t k = 2; k < v.size(); ++k) cell("%.1f", v[k]);
+        for (size_t k = 2; k < v.size(); ++k) {
+          // India: the national upper bound, not the sum of the regional ones (nuclear's regional
+          // bounds add up to more than its national limits allow).
+          if (total && k == 5) {
+            if (std::isfinite(j.national_hi[t]))
+              cell("%.1f", j.national_hi[t]);
+            else
+              cell_text("-");
+          } else {
+            cell("%.1f", v[k]);
+          }
+        }
       }
     }
     ImGui::EndTable();

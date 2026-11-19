@@ -104,6 +104,16 @@ struct Bounds {
 };
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req);
 
+// National upper bound on the generation of source s, TWh: the lowest of
+//   the sum of its regional bounds (make_bounds hi; for firmed RE, which has no bound of its
+//   own, the sum of the regional solar and wind bounds it shares),
+//   the national build cap of its group (build_caps; solar, onshore wind and firmed RE share one),
+//   for nuclear, nuclear_max x the total requirement, and for coal, coal_cap x base-year coal.
+// The gas_max share limits gas as a share of total generation, which the LP chooses, so it is
+// not a TWh bound and is left out. +infinity if nothing bounds s. Throws on an unknown source.
+double national_upper_bound_twh(const AllocationInputs& in, const PolicySettings& p,
+                                const std::array<double, kRegions>& req, int s);
+
 // National build limit on one group of sources: one LP row, sum of the group's generation
 // over regions <= cap_twh. Each source in `evidence` adds its starting level, max(existing-
 // fleet floor, FY2023-24 generation) (AllocationInputs::fleet_floor_twh: the best NPP year
@@ -179,6 +189,15 @@ struct MixSensitivityRow {
 std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const PolicySettings& base,
                                                const std::array<double, kRegions>& requirement,
                                                const std::array<double, kRegions>& requirement_p90);
+// Everything one mix_sensitivity call reads, to cache its rows (CachedTask in core/cached_task.hpp):
+// the dashboard runs the 12 solves only while its mix evidence view is open, and again only when
+// one of these changes. `inputs` is compared by address: a pipeline's inputs never change.
+struct MixSensitivityKey {
+  const AllocationInputs* inputs = nullptr;
+  PolicySettings policy;
+  std::array<double, kRegions> requirement{}, requirement_p90{};
+  bool operator==(const MixSensitivityKey&) const = default;
+};
 
 // One plan by the six energy sources of the official challenge page (the landing page's
 // regional map; site_summary.json plan.vectors), in its order: coal, solar, wind (onshore +

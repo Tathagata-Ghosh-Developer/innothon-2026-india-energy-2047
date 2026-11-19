@@ -4,16 +4,20 @@
 // shares), and verifies balances and policy constraints.
 // Usage: test_allocation <repo_root>
 #include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include <map>
 #include <numeric>
+#include <stdexcept>
 #include <string>
 
 #include "allocation/allocate.hpp"
+#include "core/cached_task.hpp"
 #include "core/csv.hpp"
 #include "core/stats.hpp"
 #include "pipeline/pipeline.hpp"
@@ -1179,6 +1183,139 @@ int robust_low_requirement_limit(const AllocationInputs& in, const std::array<do
   return check.fails;
 }
 
+// National upper bound by source (the India row of the dashboard's committed-builds table): the
+// lowest of the summed regional bounds, the group's build cap, nuclear's share limit and the coal
+// ceiling. Nuclear's regional bounds add up to more than its national limits allow, so the
+// national bound is not their sum.
+int national_upper_bound(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("national_upper_bound\n");
+  const PolicySettings robust = robust_preset();
+  const Bounds b = make_bounds(in, robust, req);
+  const std::vector<BuildCap> caps = build_caps(in, robust);
+  double total = 0, base_coal = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    total += req[r];
+    base_coal += in.base_twh[r][kCoal];
+  }
+  const AllocationResult a = solve_least_cost(in, robust, req);
+  check(a.ok, "Robust plan solved");
+  bool match = true, within = true, finite = true;
+  std::array<double, kTechs> sum{}, ub{};
+  for (int s = 0; s < kTechs; ++s) {
+    ub[s] = national_upper_bound_twh(in, robust, req, s);
+    for (int r = 0; r < kRegions; ++r) sum[s] += s == kFirmRE ? b.hi[r][kSolar] + b.hi[r][kWind] : b.hi[r][s];
+    const BuildCap* c = cap_with(caps, s);
+    double want = std::min(sum[s], c ? c->cap_twh : sum[s]);
+    if (s == kNuclear) want = std::min(want, robust.nuclear_max * total);
+    if (s == kCoal) want = std::min(want, robust.coal_cap * base_coal);
+    std::printf("  %-10s national bound %8.1f TWh (regional bounds %8.1f, build cap %8.1f), Robust plan %8.1f\n",
+                tech_key(s), ub[s], sum[s], c ? c->cap_twh : -1.0, a.national[s]);
+    match &= std::abs(ub[s] - want) < 1e-9 * std::max(1.0, want);
+    within &= a.national[s] <= ub[s] + 1e-6 * std::max(1.0, ub[s]);
+    finite &= std::isfinite(ub[s]);
+  }
+  check(match, "each source: lowest of regional bounds, build cap, nuclear share and coal ceiling");
+  check(within, "Robust plan: every source within its national bound");
+  check(finite, "every source has a finite bound (firmed RE: the solar and wind bounds it shares)");
+  check(ub[kNuclear] < sum[kNuclear] - 1.0, "nuclear: national bound below the sum of the regional bounds");
+  check(std::abs(ub[kGas] - cap_with(caps, kGas)->cap_twh) < 1e-9 && std::abs(sum[kGas] - ub[kGas]) < 1e-6,
+        "gas: the national gas cap, which the regional gas bounds add up to");
+  int threw = 0;
+  for (int s : {-1, static_cast<int>(kTechs)}) {
+    try {
+      national_upper_bound_twh(in, robust, req, s);
+    } catch (const std::invalid_argument&) {
+      ++threw;
+    }
+  }
+  check(threw == 2, "unknown source: error");
+  return check.fails;
+}
+
+// The dashboard's mix sensitivity cache (CachedTask keyed by MixSensitivityKey): nothing runs until
+// the view asks, the cached rows equal a direct call, the same inputs never solve again, a changed
+// input runs again, a run for an older key finishes before the next starts, and a failure is cached.
+int mix_sensitivity_cached(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("mix_sensitivity_cached\n");
+  using Rows = std::vector<MixSensitivityRow>;
+  using Task = CachedTask<MixSensitivityKey, Rows>;
+  std::array<double, kRegions> req90 = req;
+  for (double& x : req90) x *= 1.3;
+  const MixSensitivityKey k1{&in, robust_preset(), req, req90};
+  MixSensitivityKey k2 = k1, k3 = k1, k4 = k1, k5 = k1;
+  k2.policy.carbon_price = 25;
+  k3.requirement_p90[0] += 1;
+  k4.requirement[4] += 1;
+  k5.inputs = nullptr;
+  check(k1 == MixSensitivityKey{&in, robust_preset(), req, req90} && !(k1 == k2) && !(k1 == k3) && !(k1 == k4) &&
+            !(k1 == k5),
+        "key: equal inputs are equal; a changed policy, requirement, P90 or inputs is not");
+
+  std::atomic<int> calls = 0;
+  auto solve = [&calls](const MixSensitivityKey& k) {
+    return [&calls, k] {
+      ++calls;
+      return mix_sensitivity(*k.inputs, k.policy, k.requirement, k.requirement_p90);
+    };
+  };
+  Task task;
+  check(task.runs() == 0 && !task.busy(), "nothing runs until asked");
+  check(task.request(k1, solve(k1)) == Task::State::kRunning && task.runs() == 1, "first request: one run starts");
+  task.wait();
+  check(task.request(k1, solve(k1)) == Task::State::kReady, "same key after the run: ready");
+  const Rows direct = mix_sensitivity(in, k1.policy, req, req90);
+  bool same = task.value().size() == direct.size() && !direct.empty();
+  for (size_t i = 0; same && i < direct.size(); ++i) {
+    const MixSensitivityRow &c = task.value()[i], &d = direct[i];
+    same = c.name == d.name && c.policy == d.policy && c.plan.ok == d.plan.ok && c.plan.cost_busd == d.plan.cost_busd &&
+           c.plan.co2_mt == d.plan.co2_mt && c.plan_p90.unserved_total() == d.plan_p90.unserved_total();
+  }
+  check(same, "cached rows = a direct mix_sensitivity call");
+  for (int i = 0; i < 3; ++i) task.request(k1, solve(k1));
+  check(task.runs() == 1 && calls == 1, "same inputs three more times: no new solves");
+
+  // A changed input runs again. The run is held at a gate so the test sees it running.
+  std::promise<void> gate;
+  const std::shared_future<void> open = gate.get_future().share();
+  auto held = [&calls, open] {
+    open.wait();
+    ++calls;
+    return Rows{};
+  };
+  check(task.request(k2, held) == Task::State::kRunning && task.runs() == 2 && task.busy(),
+        "changed policy: a new run starts");
+  check(task.request(k1, solve(k1)) == Task::State::kReady && task.value().size() == direct.size(),
+        "while it runs, the rows already held for the old key stay available");
+  check(task.request(k3, solve(k3)) == Task::State::kRunning && task.runs() == 2,
+        "a third key while one runs: no second run (the running one cannot be stopped)");
+  gate.set_value();
+  task.wait();
+  check(task.request(k2, held) == Task::State::kReady && task.value().empty() && task.runs() == 2,
+        "the held run finishes and is kept for its own key");
+  auto quick = [&calls] {
+    ++calls;
+    return Rows{};
+  };
+  check(task.request(k3, quick) == Task::State::kRunning && task.runs() == 3, "then the third key runs");
+  task.wait();
+  check(task.request(k3, quick) == Task::State::kReady && !task.busy() && calls == 3, "third key ready; three runs in all");
+
+  CachedTask<int, int> f;
+  auto boom = []() -> int { throw std::runtime_error("no solution"); };
+  f.request(1, boom);
+  f.wait();
+  check(f.request(1, boom) == CachedTask<int, int>::State::kFailed && f.error() == "no solution" && f.runs() == 1,
+        "a failure is reported and cached for its key");
+  f.request(2, [] { return 7; });
+  f.wait();
+  check(f.request(2, [] { return 7; }) == CachedTask<int, int>::State::kReady && f.value() == 7 && f.error().empty() &&
+            f.runs() == 2,
+        "a new key after a failure runs and clears the error");
+  return check.fails;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -1232,6 +1369,8 @@ int main(int argc, char** argv) {
     fails += presets_feasible(in, req);
     fails += plan_vectors_add_up(in, req);
     fails += robust_low_requirement_limit(in, req);
+    fails += national_upper_bound(in, req);
+    fails += mix_sensitivity_cached(in, req);
 
     PolicySettings p;
     Timer t;

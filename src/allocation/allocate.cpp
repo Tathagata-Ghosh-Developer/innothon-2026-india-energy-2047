@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <limits>
 #include <numeric>
 #include <stdexcept>
 #include <string>
@@ -131,6 +132,27 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
     hi[kFirmRE] = kHighsInf;  // limited by the shared solar and wind resource row
   }
   return b;
+}
+
+double national_upper_bound_twh(const AllocationInputs& in, const PolicySettings& p,
+                                const std::array<double, kRegions>& req, int s) {
+  if (s < 0 || s >= kTechs) throw std::invalid_argument("national_upper_bound_twh: unknown source");
+  constexpr double inf = std::numeric_limits<double>::infinity();
+  const Bounds b = make_bounds(in, p, req);
+  double ub = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    const double hi = s == kFirmRE ? b.hi[r][kSolar] + b.hi[r][kWind] : b.hi[r][s];
+    ub = hi >= kHighsInf ? inf : ub + hi;
+    if (ub == inf) break;
+  }
+  ub = std::min(ub, cap_of(build_caps(in, p), s));
+  if (s == kNuclear) ub = std::min(ub, p.nuclear_max * std::accumulate(req.begin(), req.end(), 0.0));
+  if (s == kCoal) {
+    double base_coal = 0;
+    for (int r = 0; r < kRegions; ++r) base_coal += in.base_twh[r][kCoal];
+    ub = std::min(ub, p.coal_cap * base_coal);
+  }
+  return ub >= kHighsInf ? inf : ub;
 }
 
 std::vector<BuildCap> build_caps(const AllocationInputs& in, const PolicySettings& p) {

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "core/cached_task.hpp"
 #include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
 #include "pipeline/presets.hpp"
@@ -21,7 +22,7 @@ class App {
   explicit App(std::filesystem::path root);
   ~App();
   void frame();
-  bool ready() const { return pl_ && cur_ && !busy_ && !dirty_; }
+  bool ready() const { return pl_ && cur_ && !busy_ && !dirty_ && !mix_.busy(); }
   void force_tab(int t) { force_tab_ = t; }
   static constexpr int kTabCount = 6;
   static const char* tab_slug(int t);
@@ -44,11 +45,17 @@ class App {
     bool india = false;
     GrowthDecomposition growth;             // central path to the target year, by driver
     std::vector<StateRow> states;           // the regional split state by state, target year
-    std::vector<MixSensitivityRow> mix;     // the current policy with one published figure changed
     std::array<double, kRegions> requirement_p90{};
     Bounds bounds;                          // committed nuclear and hydro floors, gas bounds
+    std::array<double, kTechs> national_hi{};  // national upper bound by source (national_upper_bound_twh)
     std::string evidence_error;             // why a table above is missing
     double total_ms = 0;
+  };
+  // The mix sensitivity (12 LP solves): computed only while the mix evidence view is open, on a
+  // worker thread, and again only when the inputs change.
+  struct MixEvidence {
+    std::vector<MixSensitivityRow> rows;  // the current policy with one published figure changed
+    double ms = 0;
   };
 
   void poll();
@@ -86,6 +93,7 @@ class App {
   std::future<Job> job_;
   std::shared_ptr<Job> cur_;
   bool busy_ = false;
+  CachedTask<MixSensitivityKey, MixEvidence> mix_;  // reads a pipeline's inputs: declared after pls_
 
   int draws_log2_ = kDefaultDrawsLog2;
   int mix_method_ = 0;     // 0 = least cost, 1 = resource score
