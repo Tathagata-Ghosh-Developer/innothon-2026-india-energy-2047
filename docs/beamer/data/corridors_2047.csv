@@ -1,8 +1,8 @@
 corridor,from,to,flow_twh,capability_twh,loss
-WR-NR,Western,Northern,64.6065,642.493,0.03135
-NER-NR,Northern,North-Eastern,12.5773,31.536,0.0352
+WR-NR,Western,Northern,66.3733,642.493,0.03135
+NER-NR,Northern,North-Eastern,11.8248,31.536,0.0352
 ER-NR,Eastern,Northern,0,299.907,0.03695
 ER-WR,Western,Eastern,239.568,239.568,0.0368
-ER-SR,Southern,Eastern,16.2763,126.459,0.0385
+ER-SR,Southern,Eastern,23.2359,126.459,0.0385
 WR-SR,Western,Southern,0,383.898,0.0329
 ER-NER,Eastern,North-Eastern,0,37.3176,0.04065

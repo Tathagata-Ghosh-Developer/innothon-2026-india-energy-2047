@@ -1,0 +1,7 @@
+case,non_fossil_pct,coal_pct,co2_mt,cost_busd,unserved_p90_twh,unserved_median_twh
+base,79.54,19.38,911.682,177.51,632.86,0
+cost_basis_cea,75,23.92,1118.32,250.29,632.86,0
+solar_potential_nise2014,75,23.45,772.041,181.26,3114.3,1417.7
+wind_120m,75,23.92,1118.05,183.72,1044.4,0
+build_low,75,23.38,738.548,152.71,3252.3,1555.2
+build_central,79.4,19.52,918.302,177.52,702.61,0

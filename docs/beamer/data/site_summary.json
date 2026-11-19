@@ -1,0 +1,1309 @@
+{
+  "schema": 1,
+  "about": "Numbers shown on the landing page (web/landing.html), written by energy2047 from the same results as the CSV files in this folder. Energy generated in TWh; fiscal years labelled by their start year.",
+  "core": "India-only (NPP + organiser data)",
+  "scenarios": 4194304,
+  "years": {
+    "base": 2023,
+    "base_label": "FY2023-24",
+    "target": 2047,
+    "target_label": "FY2047-48"
+  },
+  "national": {
+    "base_twh": 1698.030,
+    "p05": 3217.449,
+    "p10": 3496.757,
+    "p25": 4018.388,
+    "p50": 4703.009,
+    "p75": 5521.205,
+    "p90": 6400.141,
+    "p95": 7002.303,
+    "mean": 4853.856,
+    "multiple_of_base": 2.7697,
+    "growth_pct_per_year": 4.336,
+    "increase_twh": 3004.979,
+    "cross_country_p50_twh": 4527.941,
+    "cross_country_year": 2047,
+    "chart": {
+      "x0": 2006,
+      "span": 41,
+      "ymax": 7500,
+      "ticks": [
+        0,
+        2500,
+        5000,
+        7500
+      ]
+    },
+    "history": [
+      {
+        "year": 2006,
+        "label": "FY2006-07",
+        "twh": 670.654
+      },
+      {
+        "year": 2007,
+        "label": "FY2007-08",
+        "twh": 723.116
+      },
+      {
+        "year": 2008,
+        "label": "FY2008-09",
+        "twh": 741.167
+      },
+      {
+        "year": 2009,
+        "label": "FY2009-10",
+        "twh": 799.850
+      },
+      {
+        "year": 2010,
+        "label": "FY2010-11",
+        "twh": 844.748
+      },
+      {
+        "year": 2011,
+        "label": "FY2011-12",
+        "twh": 922.451
+      },
+      {
+        "year": 2012,
+        "label": "FY2012-13",
+        "twh": 954.640
+      },
+      {
+        "year": 2013,
+        "label": "FY2013-14",
+        "twh": 1014.229
+      },
+      {
+        "year": 2014,
+        "label": "FY2014-15",
+        "twh": 1094.429
+      },
+      {
+        "year": 2015,
+        "label": "FY2015-16",
+        "twh": 1166.142
+      },
+      {
+        "year": 2016,
+        "label": "FY2016-17",
+        "twh": 1232.066
+      },
+      {
+        "year": 2017,
+        "label": "FY2017-18",
+        "twh": 1295.044
+      },
+      {
+        "year": 2018,
+        "label": "FY2018-19",
+        "twh": 1342.942
+      },
+      {
+        "year": 2019,
+        "label": "FY2019-20",
+        "twh": 1350.063
+      },
+      {
+        "year": 2020,
+        "label": "FY2020-21",
+        "twh": 1337.761
+      },
+      {
+        "year": 2021,
+        "label": "FY2021-22",
+        "twh": 1442.234
+      },
+      {
+        "year": 2022,
+        "label": "FY2022-23",
+        "twh": 1586.659
+      },
+      {
+        "year": 2023,
+        "label": "FY2023-24",
+        "twh": 1698.030
+      }
+    ],
+    "forecast": [
+      {
+        "year": 2024,
+        "p10": 1652.131,
+        "p50": 1726.619,
+        "p90": 1804.689
+      },
+      {
+        "year": 2025,
+        "p10": 1687.618,
+        "p50": 1785.775,
+        "p90": 1890.677
+      },
+      {
+        "year": 2026,
+        "p10": 1741.258,
+        "p50": 1863.653,
+        "p90": 1996.989
+      },
+      {
+        "year": 2027,
+        "p10": 1803.480,
+        "p50": 1953.081,
+        "p90": 2119.067
+      },
+      {
+        "year": 2028,
+        "p10": 1871.276,
+        "p50": 2050.708,
+        "p90": 2253.324
+      },
+      {
+        "year": 2029,
+        "p10": 1943.232,
+        "p50": 2155.240,
+        "p90": 2398.449
+      },
+      {
+        "year": 2030,
+        "p10": 2018.885,
+        "p50": 2265.785,
+        "p90": 2553.213
+      },
+      {
+        "year": 2031,
+        "p10": 2097.905,
+        "p50": 2381.993,
+        "p90": 2717.265
+      },
+      {
+        "year": 2032,
+        "p10": 2178.499,
+        "p50": 2502.173,
+        "p90": 2888.703
+      },
+      {
+        "year": 2033,
+        "p10": 2261.084,
+        "p50": 2625.828,
+        "p90": 3067.765
+      },
+      {
+        "year": 2034,
+        "p10": 2344.756,
+        "p50": 2753.342,
+        "p90": 3254.657
+      },
+      {
+        "year": 2035,
+        "p10": 2429.535,
+        "p50": 2884.427,
+        "p90": 3449.054
+      },
+      {
+        "year": 2036,
+        "p10": 2516.131,
+        "p50": 3019.835,
+        "p90": 3652.451
+      },
+      {
+        "year": 2037,
+        "p10": 2603.385,
+        "p50": 3158.946,
+        "p90": 3862.913
+      },
+      {
+        "year": 2038,
+        "p10": 2691.981,
+        "p50": 3300.768,
+        "p90": 4081.362
+      },
+      {
+        "year": 2039,
+        "p10": 2780.885,
+        "p50": 3445.942,
+        "p90": 4307.664
+      },
+      {
+        "year": 2040,
+        "p10": 2870.461,
+        "p50": 3593.813,
+        "p90": 4542.289
+      },
+      {
+        "year": 2041,
+        "p10": 2960.393,
+        "p50": 3744.831,
+        "p90": 4784.832
+      },
+      {
+        "year": 2042,
+        "p10": 3050.512,
+        "p50": 3898.802,
+        "p90": 5034.518
+      },
+      {
+        "year": 2043,
+        "p10": 3140.720,
+        "p50": 4055.162,
+        "p90": 5292.502
+      },
+      {
+        "year": 2044,
+        "p10": 3229.840,
+        "p50": 4213.872,
+        "p90": 5557.954
+      },
+      {
+        "year": 2045,
+        "p10": 3319.691,
+        "p50": 4375.007,
+        "p90": 5831.525
+      },
+      {
+        "year": 2046,
+        "p10": 3408.280,
+        "p50": 4538.005,
+        "p90": 6110.989
+      },
+      {
+        "year": 2047,
+        "p10": 3496.757,
+        "p50": 4703.009,
+        "p90": 6400.141
+      }
+    ],
+    "milestones": [
+      {
+        "year": 2030,
+        "label": "FY2030-31",
+        "p10": 2018.885,
+        "p50": 2265.785,
+        "p90": 2553.213
+      },
+      {
+        "year": 2035,
+        "label": "FY2035-36",
+        "p10": 2429.535,
+        "p50": 2884.427,
+        "p90": 3449.054
+      },
+      {
+        "year": 2040,
+        "label": "FY2040-41",
+        "p10": 2870.461,
+        "p50": 3593.813,
+        "p90": 4542.289
+      },
+      {
+        "year": 2047,
+        "label": "FY2047-48",
+        "p10": 3496.757,
+        "p50": 4703.009,
+        "p90": 6400.141
+      }
+    ]
+  },
+  "elasticity": {
+    "beta": 0.828,
+    "from": "FY2011-12",
+    "to": "FY2023-24"
+  },
+  "holdout": [
+    {
+      "year": 2024,
+      "label": "FY2024-25",
+      "estimate_twh": 1785.439,
+      "model_p05": 1631.587,
+      "model_p50": 1726.619,
+      "model_p95": 1827.440,
+      "error_pct": -3.294,
+      "in_range": "inside"
+    },
+    {
+      "year": 2025,
+      "label": "FY2025-26",
+      "estimate_twh": 1776.279,
+      "model_p05": 1660.910,
+      "model_p50": 1785.775,
+      "model_p95": 1921.698,
+      "error_pct": 0.535,
+      "in_range": "inside"
+    }
+  ],
+  "holdout_range_note": "Both years fall inside the model's 90% range.",
+  "sensitivity": {
+    "base_p50_twh": 4703.009,
+    "scale_pct": 31.176,
+    "drivers": [
+      {
+        "key": "growth_plus_1_5",
+        "label": "Income growth 1.5 points higher",
+        "p50_twh": 6169.239,
+        "change_pct": 31.176
+      },
+      {
+        "key": "growth_minus_1_5",
+        "label": "Income growth 1.5 points lower",
+        "p50_twh": 3587.559,
+        "change_pct": -23.718
+      },
+      {
+        "key": "elasticity_decline_0_2",
+        "label": "Demand rises less as incomes rise",
+        "p50_twh": 4197.491,
+        "change_pct": -10.749
+      },
+      {
+        "key": "urban_plus_5",
+        "label": "Urban share 5 points above UN path",
+        "p50_twh": 4953.979,
+        "change_pct": 5.336
+      },
+      {
+        "key": "no_urban_term",
+        "label": "No urbanisation effect",
+        "p50_twh": 4453.184,
+        "change_pct": -5.312
+      },
+      {
+        "key": "pop_band_x2",
+        "label": "Population range twice as wide",
+        "p50_twh": 4694.137,
+        "change_pct": -0.189
+      }
+    ],
+    "base": {
+      "description": "India elasticity with the excess-urbanisation prior",
+      "p50_twh": 4703.009,
+      "change_pct": 0.000
+    },
+    "no_urban_term": {
+      "description": "gamma = 0: no urbanisation effect beyond income (UN population path still used)",
+      "p50_twh": 4453.184,
+      "change_pct": -5.312
+    },
+    "damped_trend": {
+      "description": "benchmark without drivers",
+      "p50_twh": 3603.767,
+      "change_pct": -23.373
+    },
+    "elasticity_decline_0_2": {
+      "description": "elasticity falls 0.2 per unit of ln income",
+      "p50_twh": 4197.491,
+      "change_pct": -10.749
+    },
+    "growth_plus_1_5": {
+      "description": "income growth 1.5 points above history",
+      "p50_twh": 6169.239,
+      "change_pct": 31.176
+    },
+    "growth_minus_1_5": {
+      "description": "income growth 1.5 points below history",
+      "p50_twh": 3587.559,
+      "change_pct": -23.718
+    },
+    "urban_plus_5": {
+      "description": "urban share 5 points above the UN path by 2047",
+      "p50_twh": 4953.979,
+      "change_pct": 5.336
+    },
+    "pop_band_x2": {
+      "description": "population uncertainty doubled",
+      "p50_twh": 4694.137,
+      "change_pct": -0.189
+    },
+    "beta_minus_1se": {
+      "description": "income elasticity lower by one OLS standard error (0.063) in every replicate",
+      "p50_twh": 4399.836,
+      "change_pct": -6.446
+    },
+    "beta_plus_1se": {
+      "description": "income elasticity higher by one OLS standard error (0.063) in every replicate",
+      "p50_twh": 5027.027,
+      "change_pct": 6.890
+    },
+    "beta_window_s1": {
+      "description": "elasticity from the FY2011-12 onward window only (one price base)",
+      "p50_twh": 4582.986,
+      "change_pct": -2.552
+    },
+    "beta_window_s3": {
+      "description": "elasticity from the FY2006-07 onward window only (spliced price bases)",
+      "p50_twh": 4828.580,
+      "change_pct": 2.670
+    },
+    "beta_first_difference": {
+      "description": "elasticity recentred on the first-difference estimate (shift -0.065 in every replicate)",
+      "p50_twh": 4391.985,
+      "change_pct": -6.613
+    },
+    "new_loads_published": {
+      "description": "outside the headline: published new loads absent from the historical series (green_hydrogen), add-on 418-1237 TWh in 2047 (published values x 0.8889, linear from the base year); end-use electricity, not grossed up for losses; if supplied from the grid; loads that partly overlap the income elasticity not added (secondary sources)",
+      "p50_twh": 5536.993,
+      "change_pct": 17.733
+    }
+  },
+  "growth_decomposition": {
+    "from_label": "FY2023-24",
+    "to_label": "FY2047-48",
+    "base_twh": 1698.030,
+    "central_twh": 4600.446,
+    "total_log_points": 0.9967,
+    "population_pct": 14.80,
+    "income_pct": 87.46,
+    "urbanisation_pct": 4.80,
+    "model_error_pct": -7.06,
+    "note": "Shares of the log growth of the central path (medium drivers, mean income growth), not of the median; model error is the fading of the high base-year residual."
+  },
+  "state_panel": {
+    "from_label": "FY2018-19",
+    "to_label": "FY2023-24",
+    "slope": 0.434,
+    "se": 0.242,
+    "n_obs": 188,
+    "n_states": 32,
+    "n_skipped": 1,
+    "skipped": "Ladakh",
+    "national_beta": 0.828,
+    "national_kwh_per_person": 979.172,
+    "ratio_min": 0.083,
+    "ratio_min_state": "Nagaland",
+    "ratio_max": 15.877,
+    "ratio_max_state": "Sikkim",
+    "sd_ln_ratio": 1.138,
+    "between_share_pct": 97.1,
+    "note": "Diagnostic only, never used: ln(NPP state generation per person) on ln(GSDP per person) with state fixed effects. NPP records generation where the plant stands (conventional stations only), so a state's figure measures where plants are, not its demand."
+  },
+  "new_loads": {
+    "added": "green hydrogen",
+    "not_added": "electric vehicles, data centres, space cooling, electric cooking",
+    "n_added": 1,
+    "n_loads": 5,
+    "published_year": 2050,
+    "scale": 0.8889,
+    "addon_low_twh": 417.778,
+    "addon_central_twh": 796.444,
+    "addon_high_twh": 1237.333,
+    "all_low_twh": 1781.333,
+    "all_high_twh": 3824.889,
+    "p50_twh": 5536.993,
+    "change_pct": 17.733,
+    "note": "Outside the headline. End-use electricity, not grossed up for losses, if supplied from the grid; loads the income elasticity already carries in part are reported, never added (all-loads total is a reference only)."
+  },
+  "sensitivity_mix": {
+    "policy": "Robust",
+    "base": {
+      "description": "the policy as given",
+      "status": "optimal",
+      "nonfossil_pct": 79.542,
+      "coal_pct": 19.376,
+      "co2_mt": 911.682,
+      "cost_busd": 177.508,
+      "unmet_median_twh": 0.000,
+      "unmet_p90_twh": 632.858
+    },
+    "cost_basis_cea": {
+      "description": "CEA NEP 2022-32 cost basis (CERC WACC, CEA and CERC fuel, RBI rate); nuclear and gas at IEA",
+      "status": "optimal",
+      "nonfossil_pct": 75.000,
+      "coal_pct": 23.916,
+      "co2_mt": 1118.316,
+      "cost_busd": 250.293,
+      "unmet_median_twh": 0.000,
+      "unmet_p90_twh": 632.858
+    },
+    "solar_potential_nise2014": {
+      "description": "solar potential: NISE 2014 technical potential instead of NISE 2025 ground-mounted",
+      "status": "optimal",
+      "nonfossil_pct": 75.000,
+      "coal_pct": 23.446,
+      "co2_mt": 772.041,
+      "cost_busd": 181.259,
+      "unmet_median_twh": 1417.656,
+      "unmet_p90_twh": 3114.343
+    },
+    "wind_120m": {
+      "description": "onshore wind potential: NIWE 120 m instead of 150 m",
+      "status": "optimal",
+      "nonfossil_pct": 75.000,
+      "coal_pct": 23.916,
+      "co2_mt": 1118.054,
+      "cost_busd": 183.716,
+      "unmet_median_twh": 0.000,
+      "unmet_p90_twh": 1044.406
+    },
+    "build_low": {
+      "description": "published build limits: low case",
+      "status": "optimal",
+      "nonfossil_pct": 75.000,
+      "coal_pct": 23.378,
+      "co2_mt": 738.548,
+      "cost_busd": 152.708,
+      "unmet_median_twh": 1555.187,
+      "unmet_p90_twh": 3252.319
+    },
+    "build_central": {
+      "description": "published build limits: central case",
+      "status": "optimal",
+      "nonfossil_pct": 79.396,
+      "coal_pct": 19.521,
+      "co2_mt": 918.302,
+      "cost_busd": 177.522,
+      "unmet_median_twh": 0.000,
+      "unmet_p90_twh": 702.613
+    }
+  },
+  "regions": {
+    "today_year": 2025,
+    "today_label": "FY2025-26",
+    "state_count": 34,
+    "today_total_twh": 1529.525,
+    "scale_pct": 36.033,
+    "list": [
+      {
+        "name": "Northern",
+        "p10_twh": 1045.029,
+        "p50_twh": 1405.050,
+        "p90_twh": 1909.409,
+        "share_2047_pct": 29.898,
+        "today_twh": 380.143,
+        "share_today_pct": 24.854,
+        "gap_points": 5.044
+      },
+      {
+        "name": "Western",
+        "p10_twh": 908.860,
+        "p50_twh": 1225.794,
+        "p90_twh": 1674.937,
+        "share_2047_pct": 26.083,
+        "today_twh": 551.140,
+        "share_today_pct": 36.033,
+        "gap_points": -9.950
+      },
+      {
+        "name": "Southern",
+        "p10_twh": 784.713,
+        "p50_twh": 1068.372,
+        "p90_twh": 1476.946,
+        "share_2047_pct": 22.734,
+        "today_twh": 307.815,
+        "share_today_pct": 20.125,
+        "gap_points": 2.609
+      },
+      {
+        "name": "Eastern",
+        "p10_twh": 617.039,
+        "p50_twh": 839.561,
+        "p90_twh": 1146.174,
+        "share_2047_pct": 17.865,
+        "today_twh": 270.005,
+        "share_today_pct": 17.653,
+        "gap_points": 0.212
+      },
+      {
+        "name": "North-Eastern",
+        "p10_twh": 119.375,
+        "p50_twh": 160.746,
+        "p90_twh": 218.478,
+        "share_2047_pct": 3.420,
+        "today_twh": 20.422,
+        "share_today_pct": 1.335,
+        "gap_points": 2.085
+      }
+    ]
+  },
+  "plan": {
+    "policy": "Robust",
+    "requirement_twh": 4703.009,
+    "settings": {
+      "nonfossil_min_pct": 75.000,
+      "solar_land_pct": 35.000,
+      "wind_land_pct": 30.000,
+      "transfer_scale": 3.000,
+      "build_accel": 1.000,
+      "build_case": "high",
+      "nuclear_max_pct": 15.000
+    },
+    "nonfossil_pct": 79.542,
+    "co2_mt": 911.682,
+    "cost_busd": 177.508,
+    "unmet_twh": 0.000,
+    "generation_twh": 4718.205,
+    "scale_pct": 50.658,
+    "mix": [
+      {
+        "key": "solar",
+        "label": "Solar",
+        "note": "ground-mounted, rooftop and agri-PV",
+        "twh": 2390.161,
+        "share_pct": 50.658
+      },
+      {
+        "key": "coal",
+        "label": "Coal",
+        "note": "",
+        "twh": 914.190,
+        "share_pct": 19.376
+      },
+      {
+        "key": "firmed",
+        "label": "Firmed renewables",
+        "note": "solar and wind backed by storage, sold round the clock",
+        "twh": 671.890,
+        "share_pct": 14.240
+      },
+      {
+        "key": "hydro",
+        "label": "Hydro",
+        "note": "",
+        "twh": 346.084,
+        "share_pct": 7.335
+      },
+      {
+        "key": "wind",
+        "label": "Wind",
+        "note": "onshore and offshore",
+        "twh": 211.690,
+        "share_pct": 4.487
+      },
+      {
+        "key": "nuclear",
+        "label": "Nuclear",
+        "note": "",
+        "twh": 133.120,
+        "share_pct": 2.821
+      },
+      {
+        "key": "gasbio",
+        "label": "Gas and bioenergy",
+        "note": "",
+        "twh": 51.070,
+        "share_pct": 1.082
+      }
+    ],
+    "vectors": {
+      "coal": {
+        "label": "Coal",
+        "twh": 914.190,
+        "share_pct": 19.376,
+        "lead": "Eastern",
+        "lead_twh": 374.491,
+        "lead_share_pct": 40.964,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 153.857,
+            "share_pct": 16.830,
+            "radius": 0.6410
+          },
+          {
+            "name": "Western",
+            "twh": 260.295,
+            "share_pct": 28.473,
+            "radius": 0.8337
+          },
+          {
+            "name": "Southern",
+            "twh": 123.018,
+            "share_pct": 13.457,
+            "radius": 0.5731
+          },
+          {
+            "name": "Eastern",
+            "twh": 374.491,
+            "share_pct": 40.964,
+            "radius": 1.0000
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 2.529,
+            "share_pct": 0.277,
+            "radius": 0.0822
+          }
+        ]
+      },
+      "solar": {
+        "label": "Solar",
+        "twh": 2390.161,
+        "share_pct": 50.658,
+        "lead": "Western",
+        "lead_twh": 850.991,
+        "lead_share_pct": 35.604,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 706.010,
+            "share_pct": 29.538,
+            "radius": 0.9108
+          },
+          {
+            "name": "Western",
+            "twh": 850.991,
+            "share_pct": 35.604,
+            "radius": 1.0000
+          },
+          {
+            "name": "Southern",
+            "twh": 640.821,
+            "share_pct": 26.811,
+            "radius": 0.8678
+          },
+          {
+            "name": "Eastern",
+            "twh": 163.785,
+            "share_pct": 6.852,
+            "radius": 0.4387
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 28.553,
+            "share_pct": 1.195,
+            "radius": 0.1832
+          }
+        ]
+      },
+      "wind": {
+        "label": "Wind",
+        "twh": 211.690,
+        "share_pct": 4.487,
+        "lead": "Western",
+        "lead_twh": 110.409,
+        "lead_share_pct": 52.156,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 8.391,
+            "share_pct": 3.964,
+            "radius": 0.2757
+          },
+          {
+            "name": "Western",
+            "twh": 110.409,
+            "share_pct": 52.156,
+            "radius": 1.0000
+          },
+          {
+            "name": "Southern",
+            "twh": 92.891,
+            "share_pct": 43.881,
+            "radius": 0.9172
+          },
+          {
+            "name": "Eastern",
+            "twh": 0.000,
+            "share_pct": 0.000,
+            "radius": 0.0000
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 0.000,
+            "share_pct": 0.000,
+            "radius": 0.0000
+          }
+        ]
+      },
+      "gas": {
+        "label": "Natural gas",
+        "twh": 51.070,
+        "share_pct": 1.082,
+        "lead": "Western",
+        "lead_twh": 19.586,
+        "lead_share_pct": 38.351,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 11.708,
+            "share_pct": 22.925,
+            "radius": 0.7732
+          },
+          {
+            "name": "Western",
+            "twh": 19.586,
+            "share_pct": 38.351,
+            "radius": 1.0000
+          },
+          {
+            "name": "Southern",
+            "twh": 3.561,
+            "share_pct": 6.972,
+            "radius": 0.4264
+          },
+          {
+            "name": "Eastern",
+            "twh": 0.541,
+            "share_pct": 1.059,
+            "radius": 0.1662
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 15.675,
+            "share_pct": 30.693,
+            "radius": 0.8946
+          }
+        ]
+      },
+      "hydro": {
+        "label": "Hydro",
+        "twh": 346.084,
+        "share_pct": 7.335,
+        "lead": "Northern",
+        "lead_twh": 146.712,
+        "lead_share_pct": 42.392,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 146.712,
+            "share_pct": 42.392,
+            "radius": 1.0000
+          },
+          {
+            "name": "Western",
+            "twh": 18.309,
+            "share_pct": 5.290,
+            "radius": 0.3533
+          },
+          {
+            "name": "Southern",
+            "twh": 33.555,
+            "share_pct": 9.696,
+            "radius": 0.4782
+          },
+          {
+            "name": "Eastern",
+            "twh": 27.909,
+            "share_pct": 8.064,
+            "radius": 0.4362
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 119.599,
+            "share_pct": 34.558,
+            "radius": 0.9029
+          }
+        ]
+      },
+      "nuclear": {
+        "label": "Nuclear",
+        "twh": 133.120,
+        "share_pct": 2.821,
+        "lead": "Southern",
+        "lead_twh": 57.459,
+        "lead_share_pct": 43.163,
+        "regions": [
+          {
+            "name": "Northern",
+            "twh": 51.632,
+            "share_pct": 38.786,
+            "radius": 0.9479
+          },
+          {
+            "name": "Western",
+            "twh": 24.029,
+            "share_pct": 18.050,
+            "radius": 0.6467
+          },
+          {
+            "name": "Southern",
+            "twh": 57.459,
+            "share_pct": 43.163,
+            "radius": 1.0000
+          },
+          {
+            "name": "Eastern",
+            "twh": 0.000,
+            "share_pct": 0.000,
+            "radius": 0.0000
+          },
+          {
+            "name": "North-Eastern",
+            "twh": 0.000,
+            "share_pct": 0.000,
+            "radius": 0.0000
+          }
+        ]
+      }
+    },
+    "vectors_other": {
+      "label": "Firmed renewables and bioenergy",
+      "twh": 671.890,
+      "share_pct": 14.240,
+      "note": "Not among the six sources: solar and wind sold round the clock with storage, and bioenergy. With them the six shares add up to 100% of the plan."
+    },
+    "committed": {
+      "nuclear_mw": 14300.0,
+      "nuclear_cuf": 0.68,
+      "nuclear_committed_twh": 85.182,
+      "nuclear_floor_twh": 133.120,
+      "nuclear_cut_twh": 0.000,
+      "nuclear_twh": 133.120,
+      "hydro_mw": 13023.5,
+      "hydro_cuf": 0.36,
+      "hydro_committed_twh": 41.071,
+      "hydro_floor_twh": 184.610,
+      "hydro_cut_twh": 0.000,
+      "hydro_twh": 346.084,
+      "gas_min_share_pct": 100.000,
+      "gas_fleet_floor_twh": 51.070,
+      "gas_fleet_floor_label": "FY2020-21",
+      "gas_min_twh": 51.070,
+      "gas_twh": 51.070
+    },
+    "regions": [
+      {
+        "name": "Northern",
+        "requirement_twh": 1406.092,
+        "generation_twh": 1253.055,
+        "net_export_twh": -153.037
+      },
+      {
+        "name": "Western",
+        "requirement_twh": 1226.703,
+        "generation_twh": 1525.402,
+        "net_export_twh": 298.699
+      },
+      {
+        "name": "Southern",
+        "requirement_twh": 1069.165,
+        "generation_twh": 1194.432,
+        "net_export_twh": 125.268
+      },
+      {
+        "name": "Eastern",
+        "requirement_twh": 840.184,
+        "generation_twh": 578.483,
+        "net_export_twh": -261.701
+      },
+      {
+        "name": "North-Eastern",
+        "requirement_twh": 160.866,
+        "generation_twh": 166.834,
+        "net_export_twh": 5.968
+      }
+    ],
+    "flow_scale_twh": 152.046,
+    "corridors": [
+      {
+        "name": "WR-NR",
+        "from": "Western",
+        "to": "Northern",
+        "link": "10",
+        "pair": "01",
+        "twh": 152.046,
+        "capability_twh": 963.740,
+        "used_pct": 15.777
+      },
+      {
+        "name": "NER-NR",
+        "from": "North-Eastern",
+        "to": "Northern",
+        "link": "40",
+        "pair": "04",
+        "twh": 5.968,
+        "capability_twh": 47.304,
+        "used_pct": 12.617
+      },
+      {
+        "name": "ER-NR",
+        "from": "Eastern",
+        "to": "Northern",
+        "link": "30",
+        "pair": "03",
+        "twh": 0.000,
+        "capability_twh": 449.861,
+        "used_pct": 0.000
+      },
+      {
+        "name": "ER-WR",
+        "from": "Western",
+        "to": "Eastern",
+        "link": "13",
+        "pair": "13",
+        "twh": 146.653,
+        "capability_twh": 359.353,
+        "used_pct": 40.810
+      },
+      {
+        "name": "ER-SR",
+        "from": "Southern",
+        "to": "Eastern",
+        "link": "23",
+        "pair": "23",
+        "twh": 125.268,
+        "capability_twh": 189.689,
+        "used_pct": 66.038
+      },
+      {
+        "name": "WR-SR",
+        "from": "Western",
+        "to": "Southern",
+        "link": "12",
+        "pair": "12",
+        "twh": 0.000,
+        "capability_twh": 575.847,
+        "used_pct": 0.000
+      },
+      {
+        "name": "ER-NER",
+        "from": "Eastern",
+        "to": "North-Eastern",
+        "link": "34",
+        "pair": "34",
+        "twh": 0.000,
+        "capability_twh": 55.976,
+        "used_pct": 0.000
+      }
+    ],
+    "flows": [
+      {
+        "name": "WR-NR",
+        "from": "Western",
+        "to": "Northern",
+        "link": "10",
+        "pair": "01",
+        "twh": 152.046,
+        "capability_twh": 963.740,
+        "used_pct": 15.777
+      },
+      {
+        "name": "NER-NR",
+        "from": "North-Eastern",
+        "to": "Northern",
+        "link": "40",
+        "pair": "04",
+        "twh": 5.968,
+        "capability_twh": 47.304,
+        "used_pct": 12.617
+      },
+      {
+        "name": "ER-WR",
+        "from": "Western",
+        "to": "Eastern",
+        "link": "13",
+        "pair": "13",
+        "twh": 146.653,
+        "capability_twh": 359.353,
+        "used_pct": 40.810
+      },
+      {
+        "name": "ER-SR",
+        "from": "Southern",
+        "to": "Eastern",
+        "link": "23",
+        "pair": "23",
+        "twh": 125.268,
+        "capability_twh": 189.689,
+        "used_pct": 66.038
+      }
+    ],
+    "base_policy": {
+      "nonfossil_pct": 70.000,
+      "co2_mt": 1373.543,
+      "cost_busd": 215.294,
+      "unmet_twh": 0.000
+    },
+    "p90": {
+      "requirement_twh": 6400.141,
+      "robust_unmet_twh": 632.858,
+      "levers_solar_land_pct": 45.000,
+      "levers_build_accel": 1.000,
+      "levers_build_case": "high",
+      "levers_unmet_twh": 0.000
+    },
+    "tradeoff": {
+      "co2_first_mt": 911.682,
+      "co2_last_mt": 652.656,
+      "cut_mt": 259.026,
+      "cut_pct": 28.412,
+      "extra_busd": 0.460,
+      "extra_pct": 0.259,
+      "max_mac_usd_per_t": 4.045,
+      "coal_last_pct": 13.713,
+      "nonfossil_last_pct": 85.205,
+      "coal_floor_pct": 50.000,
+      "xmax": 300.000,
+      "ymax": 0.600,
+      "xticks": [
+        {
+          "v": 0.000,
+          "pct": 0.000
+        },
+        {
+          "v": 100.000,
+          "pct": 33.333
+        },
+        {
+          "v": 200.000,
+          "pct": 66.667
+        },
+        {
+          "v": 300.000,
+          "pct": 100.000
+        }
+      ],
+      "yticks": [
+        {
+          "v": 0.000,
+          "pct": 0.000
+        },
+        {
+          "v": 0.200,
+          "pct": 33.333
+        },
+        {
+          "v": 0.400,
+          "pct": 66.667
+        },
+        {
+          "v": 0.600,
+          "pct": 100.000
+        }
+      ],
+      "points": [
+        {
+          "co2_mt": 911.682,
+          "cost_busd": 177.508,
+          "avoided_mt": 0.000,
+          "extra_busd": 0.0000,
+          "mac_usd_per_t": 0.000,
+          "nonfossil_pct": 79.542,
+          "coal_pct": 19.376
+        },
+        {
+          "co2_mt": 890.096,
+          "cost_busd": 177.524,
+          "avoided_mt": 21.585,
+          "extra_busd": 0.0162,
+          "mac_usd_per_t": 1.030,
+          "nonfossil_pct": 80.013,
+          "coal_pct": 18.905
+        },
+        {
+          "co2_mt": 868.511,
+          "cost_busd": 177.546,
+          "avoided_mt": 43.171,
+          "extra_busd": 0.0384,
+          "mac_usd_per_t": 1.030,
+          "nonfossil_pct": 80.484,
+          "coal_pct": 18.434
+        },
+        {
+          "co2_mt": 846.926,
+          "cost_busd": 177.568,
+          "avoided_mt": 64.756,
+          "extra_busd": 0.0606,
+          "mac_usd_per_t": 1.030,
+          "nonfossil_pct": 80.955,
+          "coal_pct": 17.963
+        },
+        {
+          "co2_mt": 825.340,
+          "cost_busd": 177.596,
+          "avoided_mt": 86.342,
+          "extra_busd": 0.0885,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 81.426,
+          "coal_pct": 17.491
+        },
+        {
+          "co2_mt": 803.755,
+          "cost_busd": 177.626,
+          "avoided_mt": 107.927,
+          "extra_busd": 0.1187,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 81.898,
+          "coal_pct": 17.020
+        },
+        {
+          "co2_mt": 782.169,
+          "cost_busd": 177.656,
+          "avoided_mt": 129.513,
+          "extra_busd": 0.1488,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 82.370,
+          "coal_pct": 16.548
+        },
+        {
+          "co2_mt": 760.584,
+          "cost_busd": 177.687,
+          "avoided_mt": 151.098,
+          "extra_busd": 0.1790,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 82.841,
+          "coal_pct": 16.076
+        },
+        {
+          "co2_mt": 738.998,
+          "cost_busd": 177.717,
+          "avoided_mt": 172.684,
+          "extra_busd": 0.2091,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 83.313,
+          "coal_pct": 15.605
+        },
+        {
+          "co2_mt": 717.413,
+          "cost_busd": 177.747,
+          "avoided_mt": 194.269,
+          "extra_busd": 0.2393,
+          "mac_usd_per_t": 1.397,
+          "nonfossil_pct": 83.784,
+          "coal_pct": 15.133
+        },
+        {
+          "co2_mt": 695.827,
+          "cost_busd": 177.816,
+          "avoided_mt": 215.855,
+          "extra_busd": 0.3087,
+          "mac_usd_per_t": 4.045,
+          "nonfossil_pct": 84.258,
+          "coal_pct": 14.660
+        },
+        {
+          "co2_mt": 674.242,
+          "cost_busd": 177.892,
+          "avoided_mt": 237.440,
+          "extra_busd": 0.3845,
+          "mac_usd_per_t": 4.045,
+          "nonfossil_pct": 84.732,
+          "coal_pct": 14.186
+        },
+        {
+          "co2_mt": 652.656,
+          "cost_busd": 177.968,
+          "avoided_mt": 259.026,
+          "extra_busd": 0.4603,
+          "mac_usd_per_t": 4.045,
+          "nonfossil_pct": 85.205,
+          "coal_pct": 13.713
+        }
+      ]
+    }
+  },
+  "storage": {
+    "power_gw": 447.606,
+    "energy_gwh": 3044.377,
+    "duration_h": 6.801,
+    "curtailed_pct": 3.223,
+    "shortfall_after_twh": 226.250,
+    "shortfall_after_pct": 4.811,
+    "losses_twh": 135.946,
+    "cea_2029_power_gw": 60.630,
+    "cea_2029_energy_gwh": 336.400,
+    "energy_multiple_of_cea": 9.050,
+    "gas_hours": 2698,
+    "gas_twh": 51.070,
+    "gas_peak_gw": 21.361,
+    "gas_evening_twh": 25.034,
+    "gas_evening_pct": 49.019
+  },
+  "land": {
+    "solar_wind_km2": 19989.712,
+    "share_india_pct": 0.608,
+    "share_wasteland_pct": 3.585,
+    "solar_share_of_potential_pct": 35.000,
+    "wind_project_area_km2": 120459.096,
+    "p90_levers_km2": 25401.781,
+    "p90_levers_share_india_pct": 0.773
+  }
+}
