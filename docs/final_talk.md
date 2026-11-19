@@ -201,7 +201,7 @@ The dashboard is built with Dear ImGui and ImPlot. The same code compiles to Web
 
 - **Click:** Alt+Tab to the browser, app tab.
 - **Point at:** the "2047 requirement (median)" card; then the "90% range" card; then the fan chart; then the diamonds.
-- **Say:** "This is the dashboard, live in the browser. The first card is the twenty forty-seven median, about 4,700 terawatt-hours. The browser runs 65,536 futures on one thread, not 4.2 million on a GPU, so the last digits can differ from the slides. Next is the 90 percent range, about 3,200 to 7,000, and the diamonds are CEA's plan projections of gross generation."
+- **Say:** "This is the dashboard, live in the browser. The first card is the twenty forty-seven median, about 4,700 terawatt-hours. The browser runs 65,536 futures on its CPU threads, not 4.2 million on a GPU, so the last digits can differ from the slides. Next is the 90 percent range, about 3,200 to 7,000, and the diamonds are CEA's plan projections of gross generation."
 
 ### Step 2. High growth, then back to Base (0:50, 14:00 to 14:50)
 

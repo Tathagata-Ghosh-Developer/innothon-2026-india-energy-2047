@@ -229,7 +229,7 @@ Next: act on the organisers' reply on published figures; an hourly capacity-expa
 | "committed builds" (under construction or sanctioned) | "planned capacity" | They are floors in TWh, not a capacity forecast. |
 | "firmed solar and wind with storage" | "a seventh source" | It is solar and wind sold round the clock. |
 | CEA gross generation (NEP 2,666; 2026 review 3,596) | comparing with the Electric Power Survey's energy requirement | Those figures are consumption-side. |
-| "the GPU kernel time; timings vary with load" | "the browser runs on the GPU" | The browser runs the CPU path on one thread. |
+| "the GPU kernel time; timings vary with load" | "the browser runs on the GPU" | The browser runs the CPU path on its CPU threads (8 in our test), not the GPU. |
 | "the repository is private; access on request" | "the code is public" | The repository is private. |
 | Current numbers (79.5 percent, 912 Mt, 178 bn USD, 633 TWh) | Midpoint numbers (78.3 percent, 993 Mt, 176 bn USD, 638 TWh) | The mix changed after the midpoint (D13). |
 | "captive plants are excluded, as the organisers ruled" | adding captive generation to any number | The ruling allows NPP generation only. |
