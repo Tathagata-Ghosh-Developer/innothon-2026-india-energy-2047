@@ -395,9 +395,11 @@ The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and 
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| CPU, 1 thread | 19.7 s |
-| CPU, 16 threads | 2.11 s |
-| GPU, RTX 3070 Ti Laptop | 8.9 ms |
+| CPU, 1 thread | 19.85 s |
+| CPU, 16 threads | 4.15 s |
+| GPU, RTX 3070 Ti Laptop | 7.75 ms |
+
+From `outputs/timings.csv` (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
 
 ## 6. Regional generation strategy for 2047
 

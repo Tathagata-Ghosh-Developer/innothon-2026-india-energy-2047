@@ -102,5 +102,5 @@ The full list, with short answers, is [midpoint_qa.md](midpoint_qa.md).
     At the Low growth scenario's 5th percentile (2,332 TWh) the Robust policy has no feasible plan, because the coal floor (647 TWh) and the gas kept for peaking (51 TWh) exceed its fossil allowance there; the dashboard explains this and names the levers. Every policy is feasible at the Base scenario's 5th percentile and at every median.
 13. **Why use a GPU?**
     The uncertainty analysis is millions of independent scenarios.
-    The GPU runs 4 million in about 35 ms, so the dashboard recomputes live as the jury changes assumptions.
+    The GPU runs a million in 7.75 ms, against 4.15 s on 16 CPU threads (`outputs/timings.csv`; timings vary by run and machine load), so the dashboard recomputes live as the jury changes assumptions.
     The CPU and WebAssembly paths give the same results, checked by the parity test.

@@ -405,7 +405,7 @@ How the Robust numbers moved, step by step (median requirement):
 
 The Base policy's non-fossil minimum (70 percent) binds throughout, so its mix hardly moves. Its P90 shortfall falls by 66 TWh, mostly because the conventional caps now start from the best NPP year (Task 8, R11).
 Hydro is now limited in every Base and High growth plan by its usable potential (70 percent of identified potential, 346 TWh), not by the published hydro additions.
-The Low growth plans need less hydro (5.4 to 6.5 percent of generation, `outputs/presets.csv`): about 185 TWh in the Low carbon and Robust plans, which is the committed floor (184.6 TWh), about 190 TWh in the Base plan and about 220 TWh in the Energy security plan.
+The Low growth plans need less hydro: 5.4 to 6.5 percent of generation (`outputs/presets.csv`).
 
 Mix sensitivity of the recommended plan (`outputs/sensitivity_mix.csv`):
 

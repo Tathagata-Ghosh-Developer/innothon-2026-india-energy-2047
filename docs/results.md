@@ -91,8 +91,11 @@ The cross-country median lies inside the India-only range, 4 percent below the I
 The difference is the elasticity: across 153 countries the elasticity at India's income is 0.44 to 0.57, falling with income; India's own data show 0.78 to 0.87 with no decline yet.
 Setting an elasticity decline of 0.2 per unit of ln income in the India model gives 4,197 TWh (section 4), which brings the two methods together.
 
-**CEA plan.** The CEA National Electricity Plan projects gross generation of 2,666 TWh for FY2031-32.
-Our median for FY2031-32 is 2,382 TWh (P75 2,551, P90 2,717).
+**CEA benchmarks (generation only).**
+
+- The CEA National Electricity Plan 2022-32 projects gross generation of 2,666 TWh for FY2031-32. Our median for FY2031-32 is 2,382 TWh, 11 percent lower; CEA's figure lies between our P75 (2,551) and P90 (2,717).
+- CEA's 2026 review gives about 3,596 BU of gross generation for 2035-36 (press reports; the document is not public). Our median for FY2035-36 is 2,884 TWh, 19.8 percent lower; CEA's figure is close to our P95 (3,634).
+- CEA's energy requirement projections (the Electric Power Surveys, for example 2,474 BU for FY2031-32) are consumption-side and ex-bus, so they are context only and never a benchmark for generation.
 
 The registration-form figure of 6,000 TWh was a pre-data estimate; it lies between our P75 (5,521) and P90 (6,400).
 
@@ -507,9 +510,9 @@ More usable solar land (35 percent) is also the largest cost saving, 215 to 179 
 
 | Run | 1,048,576 scenarios | Scenarios per second |
 | --- | --- | --- |
-| CPU, 1 thread | 19.7 s | 53,000 |
-| CPU, 16 threads (OpenMP) | 2.11 s | 497,000 |
-| GPU, RTX 3070 Ti Laptop (CUDA) | 8.9 ms | 118 million |
+| CPU, 1 thread | 19.85 s | 53,000 |
+| CPU, 16 threads (OpenMP) | 4.15 s | 253,000 |
+| GPU, RTX 3070 Ti Laptop (CUDA) | 7.75 ms | 135 million |
 
-These were measured on 19 November 2026 (`outputs/timings.csv`; the single-thread time is scaled from a 1/16 run); timings vary with background load from run to run.
-The India-only core fits in under 0.2 s at start-up (2,000 block-bootstrap replicates in a few milliseconds); 4.2 million scenarios take about 35 ms on the GPU.
+These are from `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
+The India-only core fits in under 0.2 s at start-up (2,000 block-bootstrap replicates in a few milliseconds); the default 4.2 million scenarios are four times the table's count.

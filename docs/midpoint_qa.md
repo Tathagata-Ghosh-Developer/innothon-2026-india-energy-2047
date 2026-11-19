@@ -105,23 +105,27 @@ We report published estimates for five new loads (`outputs/new_loads_2047.csv`).
 
 *If pressed:* our P90, 6,400 TWh, is 1,697 TWh above the median, and the plan is tested against it.
 
+We compare only generation with generation. CEA's energy requirement figures (the Electric Power Surveys) are consumption-side and measured ex-bus, so they appear below only as context, labelled, and are never used as a benchmark.
+
 **11a. How does your forecast compare with CEA's?**
-Against CEA's 20th Electric Power Survey our median is close:
+The like-for-like benchmark is the CEA National Electricity Plan 2022-32, which projects gross generation of 2,666 TWh for FY2031-32 ([results.md](results.md), section 1.4).
+Our median for FY2031-32 is 2,382 TWh, 11% lower; CEA's figure lies between our P75 (2,551) and P90 (2,717), inside our range.
 
-- 2,382 TWh in FY2031-32 against 2,474 (−4%);
-- 3,020 in FY2036-37 against 3,096 (−2%);
-- 3,745 in FY2041-42 against 3,776 (−1%).
-
-CEA has published no 2047 figure. Our 4,703 TWh is inside the 4,100 to 4,800 TWh band that comes from extending CEA's own growth.
-
-**11b. CEA's 2026 review gives about 3,365 BU for 2035-36. You are about 20% lower. Why?**
-Our median for FY2035-36 is 2,884 TWh. CEA's 3,596 BU of gross generation sits at our 95th percentile (3,634), so it is inside our range, at the high end.
-
-- CEA's surveys have run high before: the 18th survey forecast 1,905 BU for 2021-22 against an actual 1,376 (38% high), and the 19th was 12 to 14% high by 2020-22.
 - Our scope is NPP utility generation, without captive plants.
-- Our path is calibrated on actual NPP generation up to FY2025-26.
+- Our path is estimated on NPP generation to FY2023-24 and checked on the FY2024-25 and FY2025-26 holdout (errors −3.3% and +0.5%).
 
-*If pressed:* the 2026 review figures come from press reports; the CEA document itself is not public yet.
+CEA has published no 2047 figure.
+
+*Context only, not a benchmark:* the 20th Electric Power Survey projects an energy requirement (consumption-side) of 2,474 BU for FY2031-32; it is not comparable with generation.
+
+**11b. CEA's 2026 review gives about 3,596 BU of gross generation for 2035-36. You are about 20% lower. Why?**
+Our median for FY2035-36 is 2,884 TWh, 19.8% below CEA's 3,596 BU of gross generation. That figure sits at our 95th percentile (3,634), so it is inside our range, at the high end.
+
+- CEA's projections have run high before: its 18th demand survey forecast an energy requirement (consumption-side) of 1,905 BU for 2021-22 against an actual 1,376 (38% high), and the 19th was 12 to 14% high by 2020-22.
+- Our scope is NPP utility generation, without captive plants.
+- Our path is checked on actual NPP generation up to FY2025-26 (the holdout).
+
+*If pressed:* the 2026 review figures come from press reports; the CEA document itself is not public yet. The about 3,365 BU quoted in the same reports is CEA's energy requirement, a consumption-side figure, so we do not compare our generation with it.
 
 **11c. Your 5th percentile (3,217 TWh) is below every published 2047 figure. Is that credible?**
 Published studies report central cases, not tails. Our 5th percentile is the slow-growth future: income per person growing 1.5 points a year slower than the central path gives about 24% less. We show it so the plan is tested against both ends, not because we expect it.
@@ -168,7 +172,7 @@ Yes, one we state openly: at the Low growth scenario's 5th percentile (2,332 TWh
 ## Engine and next steps (Speaker 5)
 
 **18. Why do you need a GPU?**
-The uncertainty is millions of independent futures. The GPU runs a million in about 9 ms (8.9 ms in the latest run), against 2.1 s on 16 CPU threads. So the dashboard recomputes live when someone changes an assumption. CPU and GPU results agree within 0.2%, checked by an automated parity test.
+The uncertainty is millions of independent futures. The GPU runs a million in 7.75 ms, against 4.15 s on 16 CPU threads (`outputs/timings.csv`; timings vary by run and machine load). So the dashboard recomputes live when someone changes an assumption. CPU and GPU results agree within 0.2%, checked by an automated parity test.
 
 **19. What would you do next?**
 
