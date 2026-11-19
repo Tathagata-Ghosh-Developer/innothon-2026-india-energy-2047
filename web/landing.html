@@ -1418,7 +1418,7 @@
       <details class="faq__item">
         <summary class="faq__q"><span class="faq__no" aria-hidden="true">04</span><span class="faq__text">How does the elasticity affect the result, and at what level was it estimated?</span><svg class="icon faq__chev" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></summary>
         <div class="faq__a">
-          <p>For India as a whole: NPP generation per person against income per person, {{elasticity.from}} to {{elasticity.to}}, gives <span class="num">{{elasticity.beta|2}}</span>, so each 1% more income per person has come with about {{elasticity.beta|2}}% more generation per person. It is then applied to each state's own income.</p>
+          <p>For India as a whole: NPP generation per person against income per person, {{elasticity.from}} to {{elasticity.to}}, gives <span class="num">{{elasticity.beta|2}}</span>, so each 1% more income per person has come with about {{elasticity.beta|2}}% more generation per person. The regional split applies the same national income response to each state's own income.</p>
           <ul>
             <li>One standard error lower or higher: <span class="num">{{sensitivity.beta_minus_1se.change_pct|+1}}%</span> or <span class="num">{{sensitivity.beta_plus_1se.change_pct|+1}}%</span> in {{years.target_label}}.</li>
             <li>An elasticity that falls as incomes rise: <span class="num">{{sensitivity.elasticity_decline_0_2.change_pct|+0}}%</span>; the first-difference estimate: <span class="num">{{sensitivity.beta_first_difference.change_pct|+1}}%</span>.</li>

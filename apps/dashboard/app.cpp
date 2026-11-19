@@ -1362,12 +1362,12 @@ void App::data_requirement() {
     }
   }
 
-  // 2. The national elasticity applied state by state.
+  // 2. The national income response applied state by state.
   if (j.india && !j.states.empty()) {
     const DriverData& d = pl_->drivers();
     const ForecastResult& f = j.forecast;
     const size_t last = f.years.size() - 1;
-    heading(font_head_, "State-wise: the national elasticity applied to each state's own income");
+    heading(font_head_, "State-wise: the national income response applied to each state's own income");
     char b[256];
     std::snprintf(b, sizeof b,
                   "%zu states and union territories of the Renewable India dataset; income relative to India from GSDP "
