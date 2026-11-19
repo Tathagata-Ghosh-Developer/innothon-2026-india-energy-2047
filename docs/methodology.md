@@ -21,9 +21,14 @@ Monte Carlo ensemble (CPU OpenMP or GPU CUDA): national + 5 regions, FY2024-25..
    |
    v
 2047 regional requirement (planning quantile), split by state population (challenge dataset) and income convergence
+   |                                     Part 1 above: the two challenge datasets only
+   |                                     Part 2 below: published figures as limits and prices (secondary, labelled)
+   v
+FY2023-24 regional base mix (NPP conventional + CEA renewables)  +  published build limits, committed builds,
+potentials, costs and emission factors
    |
    v
-least-cost LP (HiGHS)  +  resource-score allocation  +  policy sensitivity sweep  +  cost-CO2 trade-off
+least-cost LP (HiGHS)  +  resource-score allocation  +  policy and mix sensitivities  +  cost-CO2 trade-off
    |
    v
 dashboard (Dear ImGui + ImPlot, native and WebAssembly) and output tables
@@ -47,8 +52,15 @@ The primary forecast labels each fiscal year by its start year: 2023 is FY2023-2
 
 **Rule.**
 At the kickoff (13 Nov 2026) the organisers said that the core analysis of the 2047 energy prediction must use only the two challenge datasets: the National Power Portal and the Renewable India dataset.
-Public literature may inform growth rates and constraints.
-Their written ruling of 16 November 2026 ([decisions.md](decisions.md), D12) adds:
+For the growth rates and constraints of each energy source, publicly available literature may be used.
+The work is therefore in two parts:
+
+- **Part 1, the 2047 requirement** (national and regional, sections 2 to 5): estimated from the two challenge datasets only.
+- **Part 2, the 2047 generation mix** (section 6): published figures set its limits and prices (build limits, committed builds, resource potentials, costs and emission factors), each labelled secondary. None of them enters Part 1.
+
+**Source hierarchy.** NPP (<https://npp.gov.in/landing-home>) and the Renewable India dataset (<https://github.com/chrisjaimyantony/renewable-india-dataset>) are the primary sources; every other source is secondary and labelled ([data_audit.md](data_audit.md)).
+
+The organisers' written ruling of 16 November 2026 ([decisions.md](decisions.md), D12) adds:
 
 | # | Ruling | How it is applied |
 | --- | --- | --- |
@@ -57,7 +69,7 @@ Their written ruling of 16 November 2026 ([decisions.md](decisions.md), D12) add
 | 3 | No captive generation; NPP generation only; no external data for estimation | The captive layer is removed (section 2.7) |
 | 4 | The cross-country model may be used for justification only, not estimation | Section 3 |
 | 5 | The regional split must use the challenge dataset | State populations from the challenge dataset, grid regions from NPP (section 4) |
-| 6 | Resource potentials may be used for justification only, not estimation | They never enter the forecast; they bound the supply plan (section 6), a use the team has asked the organisers to confirm |
+| 6 | Resource potentials may be used for justification only, not estimation | They never enter the forecast; they bound the supply plan (section 6). Asked whether potentials, costs and emission factors may act as limits and prices in the mix, the organisers replied "Use insights from this data source"; a clarification has been requested and no reply has come yet |
 
 The primary forecast follows these rules; section 3 describes a cross-country model that is kept only as an independent check.
 
@@ -69,7 +81,7 @@ The primary forecast follows these rules; section 3 describes a cross-country mo
 | --- | --- | --- | --- |
 | All-India generation by source (GWh) | NPP dashboard (`dashBoard/get_generation_chart_list`) | FY1946-47 to FY2023-24; annual from FY2006-07 | Generation history |
 | State population and GSDP | Renewable India dataset (organiser) | 2006 to 2024, 32 to 34 states | Population and real income per person; state population paths and relative income of the regional split |
-| Region and state conventional generation, monthly | NPP, CEA 18-column reports (Sub-reports 2 and 16) | Jul-2018 to Sep-2026 | Holdout check, regional supply today, grid region of each state |
+| Region and state conventional generation, monthly | NPP, CEA 18-column reports (Sub-reports 2 and 16) | Jul-2018 to Sep-2026 | Holdout check, regional supply today, grid region of each state, state panel check (section 4); in Part 2, the regional base mix and the existing-fleet floors (section 6.1) |
 | Hourly generation by source | NPP, Merit India real-time data | Sep-2025 to Nov-2026 | Solar and wind profiles |
 | Urban share | UN World Urbanization Prospects 2018 (driver) | 1950 to 2050 | National urbanisation path |
 | Population projection | UN WPP 2024 medium, low and high for India (driver) | to 2047 | National population paths; India-level growth on which the state paths are built |
@@ -188,6 +200,49 @@ Captive plants inside industries are outside the NPP series, so they are not in 
 Until 16 November 2026 the outputs reported a captive layer beside the forecast, from CEA's General Review.
 The organisers' ruling ("Use energy production ... from the NPP dataset. Do not use any external data for estimation") rules that out, so the layer has been removed from the code, the outputs and the dashboard ([decisions.md](decisions.md), D12).
 
+### 2.8 What drives the total: growth decomposition and elasticity sensitivities
+
+Income is the main driver of the 2047 requirement, but not the only one.
+`outputs/growth_decomposition_2047.csv` splits the log growth of the central path from FY2023-24 to FY2047-48 into its parts, using the projection equation of section 2.3 plus population and the model-error term of section 2.5:
+
+ln(G2047 / G2023) = ln(P2047 / P2023) + beta dx + gamma (du - kappa dx) + (r2047 - r2023)
+
+| Part | Log points | Share |
+| --- | --- | --- |
+| Population (UN WPP 2024 medium) | 0.148 | 14.8% |
+| Income (beta 0.828 x the change in ln GSDP per person) | 0.872 | 87.5% |
+| Urbanisation beyond the income path (gamma 1.0) | 0.048 | 4.8% |
+| Model error (the base-year residual +0.070 fading) | -0.070 | -7.1% |
+| Total, ln(4,600 / 1,698 TWh) | 0.997 | 100% |
+
+The parts add up exactly (test `decomposition_adds_up` in `tests/test_india.cpp`).
+The decomposition is of the central path (4,600 TWh: medium drivers, mean growth, point estimates), not of the Monte Carlo median (4,703 TWh), and it ignores the `beta_shift` and `beta_window` controls below.
+
+The elasticity is estimated for India as a whole.
+Its uncertainty is already in the bootstrap (section 2.4); five sensitivity rows in `outputs/sensitivity_2047.csv` show its effect directly, each run on a copy of the default controls:
+
+| Row | Control | FY2047-48 median |
+| --- | --- | --- |
+| `beta_minus_1se`, `beta_plus_1se` | `beta_shift` = -0.063 or +0.063 (one OLS s.e.) in every replicate | 4,400 or 5,027 TWh (-6.4 or +6.9%) |
+| `beta_window_s1` | `beta_window` = 1: only the FY2011-12 window's replicates | 4,583 TWh (-2.6%) |
+| `beta_window_s3` | `beta_window` = 2: only the FY2006-07 window's replicates | 4,829 TWh (+2.7%) |
+| `beta_first_difference` | `beta_shift` = -0.065, recentring on the first-difference estimate | 4,392 TWh (-6.6%) |
+
+Test `elasticity_shift_monotone` checks that the median rises with the shift.
+On the central path ln income per person rises by 1.05, so each 0.01 of elasticity moves the FY2047-48 figure by about 1 percent.
+
+### 2.9 New loads (a separate scenario, outside the headline)
+
+Loads that are absent from the historical generation series cannot be learned by the elasticity.
+`data/external/new_loads.csv` (secondary) holds published 2050 estimates for five loads: electric vehicles, green hydrogen, data centres, space cooling and electric cooking.
+`outputs/new_loads_2047.csv` reports each of them:
+
+- Values are scaled to 2047 linearly from the base year: 24/27 = 0.889 of the 2050 value.
+- They are end-use electricity, not generation, and are not grossed up for losses.
+- Only a load the file marks as absent from the history (green hydrogen: 418 to 1,237 TWh in 2047) is added, and only in the scenario `new_loads_published`. It is drawn uniformly between its low and high values in each Monte Carlo draw and ramped linearly from the base year, and it is labelled "if supplied from the grid": electrolysers on captive or off-grid renewables would be outside NPP utility generation.
+- Loads that partly overlap the history (electric vehicles, data centres, cooling, cooking) are reported, never added, because the income elasticity already carries part of them (test `new_loads_excludes_overlap`).
+- The scenario's median is 5,537 TWh (+17.7 percent). It is never the headline.
+
 ## 3. Independent check: cross-country panel
 
 This model uses data outside the two challenge datasets, so it is not the core forecast.
@@ -237,6 +292,7 @@ The regions add up exactly to the national total.
 The model-error term of the national core (section 2.5) is common to every state, so it scales the national total and leaves the shares unchanged.
 The split has no state urbanisation term, because the challenge dataset has no state urban share.
 Urbanisation acts only through the national total (section 2.3), which the split divides but does not change.
+The income-linked part of the urbanisation term (-gamma kappa dx) stays in f, so across states generation per person rises with relative income at beta - gamma kappa: 0.828 - 1.0 x 0.092 = 0.736 on the central path (`outputs/state_income_2047.csv`).
 
 **Grid regions.** Each state is placed in the grid region under which NPP reports its generation (`data/raw/npp/npp_state_generation_fy.csv`).
 A state that NPP does not list takes the region of its Zone in the challenge dataset; Central (Madhya Pradesh, Chhattisgarh) maps to Western.
@@ -292,6 +348,18 @@ A common price level cancels in the ratio, so the 2011 price-base change does no
 NPP regional generation shows where plants are, not where power is used, because the Eastern and Western regions export.
 The model never fits regional generation; it compares the 2047 regional requirement with today's regional shares of NPP conventional generation and reports the transfer gap (results, section 2).
 
+**State table.** `outputs/state_income_2047.csv` shows the split state by state on the central path (mean income growth, no shocks, the mean convergence speed and the point estimates; `Pipeline::state_table`).
+For each of the 34 states it gives the grid region, the 2024 population share, relative income in 2024 and 2047, generation per person relative to a person at India's income, the 2047 population share and the 2047 share of the requirement.
+It uses the kernel's own index function (`state_log_index` in `src/forecast/mc.hpp`), so its regional sums agree with the Monte Carlo regional medians within 0.3 points (test `state_table_shares_sum`).
+
+**State panel check (diagnostic only).**
+`outputs/state_panel_check.csv` regresses ln(NPP state generation per person) on ln(dataset GSDP per person) with state fixed effects over FY2018-19 to FY2023-24 (`src/forecast/state_panel.cpp`).
+It is never used by the forecast; it shows why the elasticity is estimated nationally:
+
+- NPP state generation (CEA 18-column Sub-report 16) covers conventional stations only and is recorded where the plant stands. State generation per person runs from 0.08 (Nagaland) to 15.9 times (Sikkim) the national 979 kWh, and 97 percent of its variance lies between states.
+- The within slope is 0.434 (s.e. 0.242; 188 state-years, 32 states). The standard error is conventional, not clustered by state.
+- Ladakh (in the NPP file, not in the dataset) is skipped, not merged into another state; Goa has no NPP generation. Tests `fe_slope_recovers_known` and `fe_slope_skips_unmatched` check the estimator on synthetic data with a known slope.
+
 ## 5. Monte Carlo ensemble
 
 Each draw is one consistent future (primary core):
@@ -305,7 +373,7 @@ Each draw is one consistent future (primary core):
 | Elasticity and gamma | One of 2,000 block-bootstrap replicates, gamma from its prior (truncated normal) |
 | Model error (India core) | AR(1) residual of ln(kWh per person): starts at the FY2023-24 residual (+0.070), persistence 0.51, innovation s.d. 0.032 (section 2.5) |
 | Income convergence speed | Normal(0.021, 0.011) |
-| New loads | Uniform between dashboard limits (0 by default), ramped to 2047 |
+| New loads | Uniform between dashboard limits (0 by default), ramped to 2047; the scenario `new_loads_published` uses the published green hydrogen range, 418 to 1,237 TWh (section 2.9) |
 
 Random numbers come from the Philox 4x32-10 counter-based generator, keyed by draw index.
 A draw therefore has identical inputs on the CPU and the GPU.
@@ -327,46 +395,79 @@ The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and 
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| CPU, 1 thread | 20.0 s |
-| CPU, 16 threads | 2.21 s |
-| GPU, RTX 3070 Ti Laptop | 7.7 ms |
+| CPU, 1 thread | 19.7 s |
+| CPU, 16 threads | 2.11 s |
+| GPU, RTX 3070 Ti Laptop | 8.9 ms |
 
 ## 6. Regional generation strategy for 2047
+
+This is Part 2. Following the kickoff guidance, published figures set the growth rates and constraints of each energy source; every one of them is labelled secondary, and none enters the 2047 requirement.
+Asked whether published potentials, costs and emission factors may serve as limits and prices inside the mix optimisation, the organisers replied "Use insights from this data source". That answer is not explicit; a clarification has been requested and no reply has come yet ([decisions.md](decisions.md), D12 and D13).
+If the organisers rule that published figures may only justify the mix, Part 1 does not change; only the way the mix is chosen does.
 
 The 2047 requirement is taken at a planning quantile (the median by default) and split by the regional medians.
 Two allocation methods then meet it.
 
 ### 6.1 Least-cost linear program (HiGHS)
 
+**Base mix, FY2023-24.** Every limit starts from the regional generation of FY2023-24, the base year of the forecast (`AllocationInputs`, `src/allocation/inputs.cpp`; test `base_mix_matches_npp`). It is 1,734.4 TWh in total:
+
+- **Primary:** NPP regional conventional generation (CEA 18-column Sub-report 2), 1,508.5 TWh: thermal, nuclear and hydro (stations above 25 MW) by grid region. The Bhutan import (4.7 TWh) is left out because it is generated in Bhutan.
+- **Primary:** each region's thermal generation is split into coal (1,294.9 TWh) and gas (31.7 TWh, with diesel) by NPP's own station sums by state (Sub-report 16). CEA General Review Table 4.4 is a cross-check only (within 0.65 TWh of coal in every region).
+- **Secondary:** CEA General Review 2025 Table 4.7, state renewable generation by type, 225.8 TWh (solar 116.0, wind 83.4, small hydro 9.5 added to hydro, bioenergy 17.0), each state placed in its NPP grid region. NPP has no renewable generation by region or state, so CEA fills that gap only.
+- The total is 36 TWh above NPP's national 1,698 TWh because CEA's renewables are 36.3 TWh above NPP's renewable total; NPP gives no regional or type split.
+- Ember state data (the midpoint's CY2024 base, 1,801.2 TWh, secondary) is a cross-check only: 1,734.1 TWh for FY2023-24.
+
 **Variables:** generation of each source in each region, and the flow in each direction on each of the 7 inter-regional corridors.
 
 | Constraint | Detail |
 | --- | --- |
 | Regional balance | Production + imports after losses - exports = requirement (with a costly unserved-energy slack) |
-| Resource limits | Solar, wind, offshore wind, hydro and bioenergy at most their usable generation potential |
+| Resource limits | Solar, wind, offshore wind, hydro and bioenergy at most their usable generation potential (usable fractions: solar and onshore wind 25 percent, offshore 50 percent, hydro 70 percent of identified potential, bioenergy 50 percent) |
 | Shared resource | Solar, onshore wind and firmed RE share each region's solar plus wind limit |
-| Existing fleets | Lower bounds at 2024 generation for nuclear, hydro, solar and wind; coal at least 60 percent of its 2024 level |
-| Coal ceiling | National coal at most 110 percent of 2024; regional coal at most 150 percent |
+| Existing fleets | Lower bounds at FY2023-24 generation for nuclear, hydro, solar and wind; coal at least 60 percent of its FY2023-24 level in each region |
+| Committed builds | Nuclear and large hydro under construction or sanctioned raise the nuclear and hydro lower bounds, in every policy |
+| Coal ceiling | National coal at most 110 percent of FY2023-24; regional coal at most 150 percent |
+| Gas | Each region at most the national gas cap x its FY2023-24 share of gas; a national gas minimum (the gas kept for peaking) in the Robust policy |
 | Firm generation | At least 45 percent nationally and 25 percent in each region |
 | Policy shares | Non-fossil share at least 70 percent; gas at most 5 percent; nuclear at most 10 percent of the requirement, sited by reactor units in the pipeline |
-| Build rates | Each source's 2047 generation at most its 2025 level plus 22 years x 2 x its record annual increase |
+| Build limits | Each source group's 2047 generation at most its starting level plus `build_accel` x the published additions to 2047 (below) |
 | Corridors | Flow at most 2 x the 2032 plan x 60 percent utilisation; losses of 3.1 to 4.2 percent |
 | CO2 cap (optional) | National CO2 at most a cap in Mt per year; off by default (section 6.5) |
 
-Resource potentials, costs and emission factors come from published sources, not from the challenge datasets.
-The organisers ruled on 16 November 2026 that resource potentials are for justification, not estimation: they never enter the forecast or the regional split, and here they only bound the supply plan.
-Asked whether potentials, costs and emission factors may serve as limits and prices inside the mix optimisation, the organisers replied "Use insights from this data source". That answer is not explicit, and a clarification has been requested ([decisions.md](decisions.md), D12).
+**Published build limits** (`data/external/techno_economic/build_limits.csv`, secondary; `build_caps` in `src/allocation/allocate.cpp`).
+
+- Additions in GW a year, by source and period, in low, central and high cases, from CEA NEP 2022-32, the CEA input slides (Dec 2024), NITI Aayog (2026), the DAE nuclear target and the MoP Annual Report hydro schedule. Each is converted to TWh with its stated capacity factor (GW x CUF x 8.76) and summed from FY2024-25 to FY2047-48.
+- A year after a period's end keeps that period's rate; FY2024-25 and FY2025-26, which have no rows, take the first period's rate.
+- The starting level of each source is the larger of its FY2023-24 generation and the existing fleet's best NPP year from FY2018-19 to FY2025-26 (generation only). These fleet floors are coal 1,331.9 TWh (FY2024-25), gas 51.1 TWh (FY2020-21), nuclear 56.7 TWh (FY2024-25) and hydro 176.7 TWh (FY2025-26, plus small hydro).
+- Groups: solar, onshore wind and firmed RE share one cap; offshore wind, nuclear, hydro, bioenergy, gas and coal each have their own. Gas has no published additions, so its cap is the fleet floor.
+- The default is the central case at 1.0 times; the Robust policy uses the high case at 1.0 times; the dashboard multiplier runs from 0.75 to 2.0 times. NPP's national record increases remain a fallback for a source without rows (none today) and a cross-check.
+- Published coal additions are gross of retirements; the 110 percent coal ceiling binds before them.
+
+**Committed builds** (secondary; `outputs/committed_builds_2047.csv`).
+
+- Nuclear: 14,300 MW under construction or sanctioned, plus RAPP-7 (commissioned in FY2025-26), from `data/external/techno_economic/nuclear_pipeline.csv`. At CUF 0.68 (CEA NEP) they add 85.2 TWh, so the national floor is 133.1 TWh (Northern 51.6, Western 24.0, Southern 57.5).
+- Large hydro: 13,023.5 MW under construction (CEA status, `resource_potential.csv`). At CUF 0.36, the lowest published value, they add 41.1 TWh, so the floor is 184.6 TWh.
+- The floors apply in every policy, because committed capacity is exogenous to an expansion plan. They are first fitted inside the national build cap and the nuclear share limit, and capped at each region's bound; nothing is cut at the default or Robust settings. They ignore commissioning dates.
+
+**Gas kept for peaking.** `gas_min_twh_share` (default 0) sets a national gas minimum as a share of the gas fleet floor (51.07 TWh, FY2020-21). The Robust policy keeps all of it (share 1.0), for peaking and as a bridge for variable renewables. The regional gas bounds above site it by the FY2023-24 gas shares: Western 38 percent, North-Eastern 31 percent, Northern 23 percent.
 
 **Objective:** minimise generation cost plus carbon price times emissions.
 
 **Costs:**
 
-| Source | 2047 cost basis |
+| Source | 2047 cost basis (default: IEA) |
 | --- | --- |
 | Coal, gas, nuclear, solar, onshore and offshore wind | IEA WEO 2025 India LCOE projections interpolated to 2047 |
 | Solar and wind (regional) | Scaled by the regional capacity factor |
 | Hydro and bioenergy | Their tariff ratio to recent new-coal bids |
 | Firmed RE | Solar plus today's round-the-clock premium over plain solar |
+
+A second cost basis, CEA, is used only as a sensitivity (section 6.6).
+It computes a levelised cost from CEA NEP 2022-32 capital costs, O&M, lives and capacity factors, CEA and CERC fuel costs, the pre-tax WACC of the CERC RE tariff order (12.585 percent) and an RBI exchange rate (`data/external/techno_economic/cea_costs.csv`, `cea_cost_basis.csv`; all secondary). Nuclear and gas keep their IEA cost, because the NEP gives no capital cost for them.
+Caveat: the CERC interest rate and return on equity are nominal while the NEP capital costs are in real 2021-22 terms, so the basis gives a level nominal annuity, as a tariff does. This overstates a real levelised cost against the IEA basis, most for capital-heavy sources (solar, wind, hydro). The CEA cost level is therefore not comparable with the IEA basis; it shows only the direction of the mix.
+
+**Emission factors:** CEA CO2 Baseline Database v22.0 (FY2025-26), station-weighted: coal 0.971 and gas 0.470 tCO2/MWh (secondary). The loader takes the latest actual period in `emission_factors.csv`; the earlier versions stay in the file as history.
 
 Every solution is checked against the constraint rows independently of the solver.
 The dual value of each regional balance gives a marginal cost of supply per region.
@@ -378,7 +479,7 @@ The national total of each source is shared across regions in proportion to a sc
 | Sources | Score |
 | --- | --- |
 | Solar, wind, offshore wind, hydro, bioenergy | Usable generation potential |
-| Coal, gas | 2024 generation (existing fleet) |
+| Coal, gas | FY2023-24 generation (existing fleet) |
 | Nuclear | Reactor units |
 
 Every score can be checked by hand.
@@ -386,8 +487,8 @@ Comparing it with the least-cost plan shows where transmission limits and costs 
 
 ### 6.3 Policy sensitivity
 
-Fourteen settings (policy shares, land use, corridors, build rates, carbon price, costs and the requirement quantile) are each moved to a low and a high value.
-The 28 resulting least-cost problems are solved in parallel with OpenMP.
+Fifteen settings (policy shares, coal floor, land use, corridors, the build-limit multiplier, the gas kept for peaking, carbon price, costs and the requirement quantile) are each moved to a low and a high value (`outputs/tornado.csv`).
+The 30 resulting least-cost problems are solved in parallel with OpenMP, each on a copy of the policy settings.
 
 ### 6.4 Storage and land back-calculation
 
@@ -431,7 +532,7 @@ For one store and a shortfall objective, using it greedily is optimal, because s
 | Energy, daily cycle | Each complete day is a cyclic 24-hour sequence; the smallest store that leaves no more shortfall than an unlimited one; the design value is the largest over the 332 days |
 | Energy, multi-day | The days in calendar order with carry-over between them; the store grows beyond the daily size while each extra GWh still serves at least 52 GWh of shortfall a year (about one cycle a week); larger stores would be seasonal storage |
 
-The run also reports the hours and energy of shortfall before storage, curtailed solar and wind, storage losses and cycles.
+The run also reports the hours and energy of shortfall before storage, curtailed solar and wind, storage losses and cycles, and for gas its running hours, its highest hourly output and its energy between 18:00 and 24:00 IST.
 It also reports the shortfall left after storage, which is extra generation the plan needs hour by hour.
 The days are sized in parallel with OpenMP; per-day results are summed in a fixed order, so results do not depend on the thread count.
 Both views of a plan are sized in about 90 ms, so the dashboard recomputes storage with every strategy update.
@@ -472,3 +573,19 @@ The trade-off curve is an epsilon-constraint sweep of that cap (`pareto_cost_co2
 
 The command-line run sweeps the recommended plan (Robust policy, median requirement) and writes `outputs/pareto_2047.csv` (results, section 3.5).
 `tests/test_pareto.cpp` checks a slack and a binding cap, compares the dual with the finite-difference slope of the curve and checks that the frontier is monotone.
+
+### 6.6 Mix sensitivities: other published figures
+
+`mix_sensitivity` in `src/allocation/allocate.cpp` re-solves the recommended plan (Robust policy) with one published input changed at a time, each on a copy of the policy (test `sensitivity_from_copy`).
+Each case is solved at the median and at the P90 requirement; `outputs/sensitivity_mix.csv` records the unmet energy at both, so that a case which cannot meet the median does not look cleaner or cheaper than it is.
+
+| Case | Change |
+| --- | --- |
+| `cost_basis_cea` | CEA cost basis instead of IEA (section 6.1); its cost is in its own basis |
+| `solar_potential_nise2014` | NISE 2014 technical solar potential instead of NISE 2025 ground-mounted |
+| `wind_120m` | NIWE onshore wind potential at 120 m instead of 150 m |
+| `build_low`, `build_central` | Published build limits, low or central case, instead of the high case |
+
+**Known limit: low requirements.** The coal floor and the gas kept for peaking are fixed in TWh, while the non-fossil minimum is a share of generation.
+Below about (coal floor + gas minimum) / (1 - non-fossil minimum) of generation the LP has no feasible plan: about 2,794 TWh for the Robust policy, (647 + 51) / 0.25 (test `robust_low_requirement_limit` finds 2,780 TWh by bisection).
+The Low growth scenario's P05 requirement (2,332 TWh) is below it, so `outputs/presets.csv` reports that case as infeasible; the dashboard explains the state and names the levers (the coal floor, the gas kept for peaking and the non-fossil minimum).
