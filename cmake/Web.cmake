@@ -28,6 +28,7 @@ set(E47_WEB_DATA_ASSEMBLED
   data/raw/generation/state/state_region_map.csv
   data/raw/generation/national/ember_national_generation_cy.csv
   data/external/resource_potential.csv
+  data/external/techno_economic/build_limits.csv
   data/external/techno_economic/capacity_factors.csv
   data/external/techno_economic/offshore_wind.csv
   data/external/techno_economic/lcoe.csv
@@ -43,7 +44,11 @@ foreach(_f IN LISTS _e47_sources)
   string(REGEX MATCHALL "\"[^\"\n]*\\.csv\"" _lits "${_text}")
   foreach(_l IN LISTS _lits)
     string(REPLACE "\"" "" _l "${_l}")
-    if(_l MATCHES "^data/")
+    if(_l MATCHES " ")
+      continue()  # a message that names a file, not a path
+    endif()
+    if(_l MATCHES "^/?data/")  # root + "/data/..." is a full path too
+      string(REGEX REPLACE "^/" "" _l "${_l}")
       list(APPEND _e47_full "${_l}")
     else()
       list(APPEND _e47_partial "${_l}")
@@ -59,8 +64,8 @@ endif()
 list(REMOVE_DUPLICATES E47_WEB_DATA)
 list(SORT E47_WEB_DATA)
 
-# A path piece in the code that matches no packaged file is probably a new input:
-# add the full path to E47_WEB_DATA_ASSEMBLED above.
+# A path piece in the code that matches no packaged file is probably a new input that the
+# browser could not open: configure stops until its full path is in E47_WEB_DATA_ASSEMBLED.
 list(REMOVE_DUPLICATES _e47_partial)
 foreach(_p IN LISTS _e47_partial)
   set(_hit FALSE)
@@ -77,7 +82,7 @@ foreach(_p IN LISTS _e47_partial)
     endif()
   endforeach()
   if(NOT _hit)
-    message(WARNING "web: \"${_p}\" in src/ matches no packaged data file; add it to E47_WEB_DATA_ASSEMBLED in cmake/Web.cmake")
+    message(FATAL_ERROR "web: \"${_p}\" in src/ matches no packaged data file; add it to E47_WEB_DATA_ASSEMBLED in cmake/Web.cmake")
   endif()
 endforeach()
 
