@@ -133,7 +133,7 @@ Published studies report central cases, not tails. Our 5th percentile is the slo
 ## Regions and the mix (Speaker 4)
 
 **12. What role does gas play?**
-Peaking and a bridge for renewables. The Robust plan keeps the existing gas fleet at its best NPP year, 51 TWh (1.1% of 2047 generation), each region within its FY2023-24 share: the West has the most (20 TWh), then the North-East and the North. In the hourly check it runs 2,698 hours a year, at most 21 GW, and 49% of its energy falls between 18:00 and 24:00 IST.
+Peaking and a bridge for renewables. The Robust plan keeps the existing gas fleet at its best NPP year, 51 TWh (1.1% of 2047 generation). The optimiser does not site it: the minimum equals the gas cap, so each region is held at its FY2023-24 share of the fleet floor. The West has the most (20 TWh), then the North-East and the North. The North-East has 16 TWh (31%) because that is its FY2023-24 share of gas generation: the Assam and Tripura gas fields. In the hourly check it runs 2,698 hours a year, at most 21 GW, and 49% of its energy falls between 18:00 and 24:00 IST.
 
 *If pressed:* published plans add no new gas, so we do not build more; at IEA's 2047 costs, gas energy is dearer than coal or renewables.
 

@@ -97,7 +97,7 @@ The region map is a schematic of the five grid regions (node positions only sugg
 | LP solver | HiGHS v1.11.0, multithreaded | HiGHS v1.11.0, single thread (`HIGHS_NO_DEFAULT_THREADS`) |
 | Data | read from `<repo>/data` | packaged into `index.data` (LZ4) and mounted at `/data` |
 | Font | Segoe UI | Roboto (from the Dear ImGui sources) |
-| Screenshots (`--shot`) | yes | no |
+| Screenshots (`--shot`) | yes: `docs/img/1_*.png` to `6_*.png` (one per tab) and the data tab's evidence views `6b_data_requirement_evidence.png`, `6c_data_mix_evidence.png` | no |
 
 `E47_WEB` is defined for all project code in the web build and selects smaller defaults (`kDefaultDrawsLog2`, `kDefaultBootstrapReplicates` in `src/pipeline/pipeline.hpp`).
 
@@ -113,7 +113,7 @@ The cross-country inputs are 16 MB of CSV (6.4 MB of the 7 MB package) and are r
 With `E47_WEB_CROSS_COUNTRY=OFF` the package is 0.6 MB, but that core then fails in the browser.
 
 When a new input file is opened with a path built from pieces, add its full path to `E47_WEB_DATA_ASSEMBLED`.
-Configure warns about any `.csv` path piece in `src/` that matches no packaged file, and about packaged paths that do not exist.
+Configure stops with an error on any `.csv` path piece in `src/` that matches no packaged file, and warns about packaged paths that do not exist (they are left out).
 
 ### Test locally
 

@@ -267,7 +267,8 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
       if (s == kNuclear) rb.set(nuclear, v, 1.0);
     }
   // Gas kept for peaking and as a bridge (gas_min_twh_share): national gas at least a share of the
-  // existing fleet's best NPP year, sited by the LP within the regional gas bounds.
+  // existing fleet's best NPP year, within the regional gas bounds. At share 1 the minimum equals
+  // the gas cap, so every region sits at its bound (its FY2023-24 share of the fleet floor).
   if (gas_min > 0) {
     const int row = rb.add(gas_min, kHighsInf);
     for (int r = 0; r < kRegions; ++r) rb.set(row, gvar(r, kGas), 1.0);

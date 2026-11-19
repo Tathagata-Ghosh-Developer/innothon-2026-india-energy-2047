@@ -38,13 +38,13 @@ The regional split uses only the challenge data: the population and GSDP of 34 s
 
 Two plans for 2047 (median requirement), built from the FY2023-24 regional mix (NPP conventional generation plus CEA renewables) within published build limits:
 
-| Plan | Solar | Firmed RE | Coal | Wind (on- and offshore) | Hydro | Nuclear | Gas and bioenergy | Non-fossil | CO2 | Cost | Unmet at median | Unmet at P90 |
+| Plan | Solar | Firmed RE | Coal | Wind (on- and offshore) | Hydro | Nuclear | Gas and bioenergy | Non-fossil | CO2 | Cost at median | Unmet at median | Unmet at P90 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Least cost, base policy | 36.2% | 0% | 30.0% | 15.9% | 7.3% | 10.0% | 0.6% | 70.0% | 1,374 Mt | 215 bn USD/yr | 0 TWh | 1,463 TWh |
 | **Robust policy (recommended)** | 50.7% | 14.2% | 19.4% | 4.5% | 7.3% | 2.8% | 1.1% | **79.5%** | **912 Mt** | **178 bn USD/yr** | **0 TWh** | **633 TWh** |
 
 - Firmed RE means solar and wind backed by storage, sold round the clock.
-- The Robust plan opens more land for solar (rooftop and agri-PV), triples inter-regional corridors, builds at the published high-case limits, builds storage-firmed renewables and keeps the existing gas fleet (51 TWh, its best NPP year) for peaking; both plans meet the median, and the Robust plan is cheaper (by 38 bn USD a year) and cleaner (by 462 Mt of CO2) and leaves less than half the base policy's shortfall at P90.
+- The Robust plan opens more land for solar (rooftop and agri-PV), triples inter-regional corridors, builds at the published high-case limits, builds storage-firmed renewables and keeps the existing gas fleet (51 TWh, its best NPP year) for peaking; both plans meet the median, where the Robust plan is cheaper (by 38 bn USD a year) and cleaner (by 462 Mt of CO2). At P90 it leaves less than half the base policy's shortfall (633 against 1,463 TWh) and costs more, 253 against 236 bn USD a year, because it generates more.
 - Nuclear and hydro in every plan include the committed builds (14,300 MW of nuclear and 13,023.5 MW of large hydro under construction or sanctioned).
 - Meeting the P90 requirement (6,400 TWh) additionally needs about 45 percent of the solar potential usable; land, not money or build rate, is the binding constraint (building at twice the published high-case limits without more land still leaves 219 TWh unmet).
 - Deeper CO2 cuts are cheap: a CO2 cap takes the Robust plan from 912 to 653 Mt a year (-28%) for 0.46 bn USD/yr more (marginal cost at most 4.0 USD/t), until the coal fleet floor binds.
@@ -67,9 +67,9 @@ See [docs/data_audit.md](docs/data_audit.md).
 
 Generation per person (NPP) is modelled from real income per person (organiser GSDP and population).
 The income elasticity is the only parameter estimated; a moving-block bootstrap over two estimation windows carries its uncertainty.
-Urbanisation enters only where it runs ahead of income, with a coefficient taken from published studies (the two-dataset-only run is reported beside it).
+Urbanisation enters only where it runs ahead of income, with a coefficient taken from published studies (the run without it, gamma = 0, is reported beside it).
 Model error is carried as a persistent (AR(1)) residual that starts at the FY2023-24 residual and reverts to the fitted relation.
-A Monte Carlo ensemble of 4 million scenarios runs on the GPU (7.75 ms per million scenarios in `outputs/timings.csv`; timings vary by run and machine load); it combines UN population and urbanisation projections, uncertain income growth, the bootstrap elasticities, the model error and state income convergence, and produces national and regional requirements to 2047.
+A Monte Carlo ensemble of 4 million scenarios runs on the GPU (7.75 ms for 1,048,576 scenarios, about 7.4 ms per million, in `outputs/timings.csv`; timings vary by run and machine load); it combines UN population and urbanisation projections, uncertain income growth, the bootstrap elasticities, the model error and state income convergence, and produces national and regional requirements to 2047.
 The national total is split across the five grid regions by the population and income of 34 states and union territories in the challenge dataset; `outputs/population_consistency.csv` shows that the population paths are consistent with the dataset's own growth, and `outputs/state_income_2047.csv` shows the split state by state.
 A least-cost linear program (HiGHS) then sites 2047 generation by region and source, starting from the FY2023-24 regional mix (NPP conventional generation by region, primary; CEA renewables by state, secondary, because NPP has none by region).
 It works within resource potentials, existing-fleet and committed-build floors, published build limits, firm-generation floors, policy shares and inter-regional corridor limits; an optional CO2 cap traces the cost-CO2 trade-off, and `outputs/sensitivity_mix.csv` re-solves the recommended plan with other published costs, potentials and build cases.

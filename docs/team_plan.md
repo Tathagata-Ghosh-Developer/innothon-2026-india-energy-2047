@@ -93,7 +93,7 @@ The full list, with short answers, is [midpoint_qa.md](midpoint_qa.md).
    In the Robust plan the West exports 299 TWh and the South 125 TWh; the East imports 262 TWh and the North 153 TWh.
 10. **What is the binding constraint?**
     Land for solar and wind, not money or build rate.
-    Both the base and the Robust policy meet the median; the Robust policy costs 38 bn USD a year less and emits 462 Mt less CO2 (177.5 bn USD, 912 Mt).
+    Both the base and the Robust policy meet the median; there the Robust policy costs 38 bn USD a year less and emits 462 Mt less CO2 (177.5 bn USD, 912 Mt). At P90 it leaves 633 TWh unmet instead of 1,463 and costs 253 against 236 bn USD a year.
     The P90 (6,400 TWh) needs about 45 percent of the solar potential usable (rooftop, agri-PV); at the published high-case build limits that is enough, while building at twice those limits without more land still leaves 219 TWh unmet.
 11. **Can CO2 fall further without losing adequacy?**
     Yes, cheaply: a CO2 cap takes the Robust plan from 912 to 653 Mt a year (28 percent less) for 0.46 bn USD a year more; the marginal abatement cost stays at or below 4.0 USD per tonne, as nuclear replaces coal.

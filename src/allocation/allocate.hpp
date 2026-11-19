@@ -52,9 +52,11 @@ struct PolicySettings {
   int wind_height = 150;                     // NIWE potential at 150 m (default) or 120 m
   // Gas kept for peaking and as a bridge for variable renewables (gas_min_twh): national gas
   // generation >= this share (0 to 1) of the existing gas fleet's best NPP year
-  // (AllocationInputs::fleet_floor_twh, diesel counted with gas as in the base mix). The LP sites
-  // it within the regional gas bounds (make_bounds), which follow the FY2023-24 gas shares. A
-  // gas_max too low to hold it makes the LP infeasible.
+  // (AllocationInputs::fleet_floor_twh, diesel counted with gas as in the base mix). Each region's
+  // gas is bounded by its FY2023-24 share of the national gas cap (make_bounds). With no published
+  // gas additions the cap is the fleet floor, so at share 1 (the Robust preset) the minimum equals
+  // the cap and every region is held at its FY2023-24 share of the fleet floor; the LP chooses gas
+  // sites only below share 1. A gas_max too low to hold it makes the LP infeasible.
   double gas_min_twh_share = 0.0;
 
   bool operator==(const PolicySettings&) const = default;

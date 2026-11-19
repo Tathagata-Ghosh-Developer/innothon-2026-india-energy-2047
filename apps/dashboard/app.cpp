@@ -338,7 +338,7 @@ void App::sidebar() {
   ImGui::TextUnformatted("Population band (x UN low-high)");
   dirty_ |= slider("##pop", &sc_.pop_band_scale, 0.0, 2.0, "%.2fx", 1, "Width of the population uncertainty relative to UN WPP 2024 low/high variants.");
   ImGui::TextUnformatted("New loads in 2047 (TWh, low-high)");
-  dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 1000.0, "low %.0f", 1, "Green hydrogen, data centres and other new loads not in the historical relationship.");
+  dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 1000.0, "low %.0f", 1, "Loads absent from the historical series, such as green hydrogen electrolysis; end-use TWh, outside the headline.");
   dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 1500.0, "high %.0f", 1, nullptr);
   if (india) {
     ImGui::TextUnformatted("Elasticity decline with income");
@@ -402,8 +402,9 @@ void App::sidebar() {
   ImGui::TextUnformatted("Gas kept for peaking (share of fleet floor)");
   dirty_ |= slider("##gk", &pol_.gas_min_twh_share, 0.0, 1.0, "%.0f%%", 100,
                    "National gas generation >= this share of the existing gas fleet's best NPP year (FY2018-19 to "
-                   "FY2025-26), kept for peaking and as a bridge for renewables; each region's gas within its "
-                   "FY2023-24 share of the gas cap.");
+                   "FY2025-26), kept for peaking and as a bridge for renewables. No gas additions are published, so "
+                   "the gas cap is the fleet floor and each region's gas is at most its FY2023-24 share of it; at "
+                   "100% every region is held at that share, below 100% the optimiser chooses where.");
   ImGui::TextUnformatted("Usable resource (solar / wind / hydro)");
   dirty_ |= slider("##sl", &pol_.solar_land, 0.05, 0.6, "solar %.0f%%", 100, "Fraction of solar generation potential usable by 2047.");
   dirty_ |= slider("##wl", &pol_.wind_land, 0.05, 0.6, "wind %.0f%%", 100, nullptr);
@@ -1576,7 +1577,8 @@ void App::data_mix() {
                 "Floor = %s generation + committed MW x CUF x 8.76: nuclear units under construction, sanctioned or "
                 "commissioned after %s (CUF %.2f); large hydro under construction (CUF %.2f). Committed TWh are cut "
                 "to the national build cap and each region's upper bound. Gas: national minimum %.1f TWh (%.0f%% of "
-                "the %.1f TWh fleet floor, %s), each region within its %s share of the gas cap. India's upper bound "
+                "the %.1f TWh fleet floor, %s), each region at most its %s share of the gas cap (held there when the "
+                "minimum equals the cap). India's upper bound "
                 "is the national limit: the build cap (nuclear: also the share limit) or the sum of the regional "
                 "bounds, whichever is lower.",
                 fy(alloc.base_year).c_str(), fy(alloc.base_year).c_str(), alloc.committed_nuclear_cuf,

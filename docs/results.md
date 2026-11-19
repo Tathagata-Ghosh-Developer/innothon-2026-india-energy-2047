@@ -43,7 +43,7 @@ Central paths in FY2047-48 (medium drivers, mean growth, point estimates, expect
 | Model | FY2047-48 (TWh) | Role |
 | --- | --- | --- |
 | India elasticity with the urbanisation prior | 4,600 | Forecast (weight 1) |
-| India elasticity, no urban term (two datasets only) | 4,386 | Ablation |
+| India elasticity, no urban term (gamma = 0; UN population path still used) | 4,386 | Ablation |
 | Damped trend on NPP generation (no drivers) | 3,604 | Benchmark |
 
 ### 1.1 Estimation
@@ -100,6 +100,8 @@ Setting an elasticity decline of 0.2 per unit of ln income in the India model gi
 The registration-form figure of 6,000 TWh was a pre-data estimate; it lies between our P75 (5,521) and P90 (6,400).
 
 ### 1.5 What drives the total
+
+![Requirement evidence](img/6b_data_requirement_evidence.png)
 
 Income is the largest driver of the 2047 requirement, but not the only one.
 `outputs/growth_decomposition_2047.csv` splits the growth of the central path, 1,698 TWh in FY2023-24 to 4,600 TWh in FY2047-48 (0.997 log points), into its parts ([methodology.md](methodology.md), section 2.8):
@@ -276,7 +278,8 @@ Each region uses its strengths, as published resources and today's fleet suggest
 - **North-Eastern:** Arunachal hydro (120 TWh) and Assam and Tripura gas (16 TWh); it exports 6 TWh.
 
 Non-fossil 79.5 percent; CO2 912 Mt; about 177.5 billion USD a year; **no unmet energy at the median**.
-It is cheaper (by 38 billion USD a year) and cleaner (by 462 Mt of CO2) than the base policy, and it leaves 633 TWh unmet at P90 instead of 1,463 TWh.
+At the median it is cheaper (by 38 billion USD a year) and cleaner (by 462 Mt of CO2) than the base policy.
+At P90 it leaves 633 TWh unmet instead of 1,463 TWh, and it costs more there, about 253 billion USD a year against 236, because it generates more.
 It needs 35 percent of the solar potential usable (including rooftop and agri-PV), 30 percent of the wind potential, corridors three times the 2032 plan and build rates at the published high-case limits; its coal floor is 50 percent of FY2023-24 coal, and it keeps the existing gas fleet at its best NPP year (51 TWh) for peaking.
 Nuclear is at its committed floor in every region (133 TWh); hydro is at its usable potential (346 TWh).
 
@@ -299,7 +302,7 @@ Usable solar land (rooftop, agri-PV, canal-top and floating solar) does: 45 perc
 
 Each scenario preset is crossed with each policy preset ([assumptions_and_uncertainty.md](assumptions_and_uncertainty.md), section 6; full table in `outputs/presets.csv`).
 
-| Scenario | Policy | 2047 median (TWh) | Non-fossil | Coal | CO2 (Mt) | Cost (bn USD) | Unmet at median (TWh) | Unmet at P90 (TWh) |
+| Scenario | Policy | 2047 median (TWh) | Non-fossil | Coal | CO2 (Mt) | Cost at median (bn USD) | Unmet at median (TWh) | Unmet at P90 (TWh) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Base | Base | 4,703 | 70.0% | 30.0% | 1,374 | 215 | 0 | 1,463 |
 | Base | Low carbon | 4,703 | 81.7% | 18.1% | 832 | 193 | 0 | 1,486 |
@@ -446,9 +449,11 @@ The committed nuclear (85 TWh) and the gas kept for peaking (51 TWh) push coal o
 
 ### 3.8 Mix sensitivity of the recommended plan
 
+![Mix evidence](img/6c_data_mix_evidence.png)
+
 `outputs/sensitivity_mix.csv` re-solves the Robust plan with one published input changed at a time ([methodology.md](methodology.md), section 6.6):
 
-| Case | Non-fossil | Coal | CO2 (Mt) | Cost (bn USD/yr) | Unmet at median (TWh) | Unmet at P90 (TWh) |
+| Case | Non-fossil | Coal | CO2 (Mt) | Cost at median (bn USD/yr) | Unmet at median (TWh) | Unmet at P90 (TWh) |
 | --- | --- | --- | --- | --- | --- | --- |
 | Robust as given | 79.5% | 19.4% | 912 | 177.5 | 0 | 633 |
 | CEA cost basis (cost in its own basis) | 75.0% | 23.9% | 1,118 | 250.3 | 0 | 633 |
@@ -474,7 +479,7 @@ The committed nuclear (85 TWh) and the gas kept for peaking (51 TWh) push coal o
 | Income growth 1.5 points below history | 2,455 | 3,588 | 5,286 | -24% |
 | Elasticity falls 0.2 per unit of ln income | 3,089 | 4,197 | 5,643 | -11% |
 | Urban share 5 points above the UN path | 3,360 | 4,954 | 7,402 | +5% |
-| No urban term (two datasets only) | 2,950 | 4,453 | 6,871 | -5% |
+| No urban term (gamma = 0; UN population path still used) | 2,950 | 4,453 | 6,871 | -5% |
 | Population uncertainty doubled | 3,148 | 4,694 | 7,104 | 0% |
 | Damped trend (no drivers) | 2,807 | 3,604 | 4,627 | -23% |
 | Elasticity one OLS s.e. lower (-0.063) | 3,094 | 4,400 | 6,379 | -6.4% |

@@ -46,7 +46,7 @@ How each driver moves the FY2047-48 median (`outputs/sensitivity_2047.csv`; base
 | Income growth 1.5 points a year below history | 3,588 | -23.7% |
 | Elasticity falls 0.2 per unit of ln income | 4,197 | -10.7% |
 | Urban share 5 points above the UN path by 2047 | 4,954 | +5.3% |
-| No urbanisation term (gamma = 0, the two datasets only) | 4,453 | -5.3% |
+| No urbanisation term (gamma = 0: no urbanisation effect beyond income; UN population path still used) | 4,453 | -5.3% |
 | Population uncertainty doubled | 4,694 | -0.2% |
 | Damped trend without drivers (benchmark) | 3,604 | -23.4% |
 
