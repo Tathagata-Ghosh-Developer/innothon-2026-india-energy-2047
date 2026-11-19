@@ -180,4 +180,29 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
                                                const std::array<double, kRegions>& requirement,
                                                const std::array<double, kRegions>& requirement_p90);
 
+// One plan by the six energy sources of the official challenge page (the landing page's
+// regional map; site_summary.json plan.vectors), in its order: coal, solar, wind (onshore +
+// offshore), gas, hydro, nuclear. Firmed renewables (solar and wind sold round the clock with
+// storage) and bioenergy are not among the six: PlanVectors::other_twh holds them, so the six
+// shares plus other_share_pct make 100% of the plan.
+//   twh       = the source's generation summed over the regions
+//   share_pct = 100 x twh / AllocationResult::total_twh
+//   region_share_pct[r] = 100 x region_twh[r] / twh (0 when twh is 0)
+//   radius[r] = sqrt(region_twh[r] / the largest region's TWh), in [0, 1] (0 when twh is 0):
+//               the radius of a circle whose area is proportional to the region's TWh
+//   lead      = the region with the most TWh, or -1 when twh < lead_min_twh
+struct SourceVector {
+  const char* key = "";
+  const char* label = "";
+  std::vector<int> techs;
+  double twh = 0, share_pct = 0;
+  int lead = -1;
+  std::array<double, kRegions> region_twh{}, region_share_pct{}, radius{};
+};
+struct PlanVectors {
+  std::array<SourceVector, 6> sources;
+  double other_twh = 0, other_share_pct = 0;  // firmed renewables and bioenergy
+};
+PlanVectors plan_vectors(const AllocationResult& a, double lead_min_twh = 0.5);
+
 }  // namespace e47

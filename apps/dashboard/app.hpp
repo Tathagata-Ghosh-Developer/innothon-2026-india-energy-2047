@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
 #include "pipeline/presets.hpp"
 
@@ -24,6 +25,10 @@ class App {
   void force_tab(int t) { force_tab_ = t; }
   static constexpr int kTabCount = 6;
   static const char* tab_slug(int t);
+  // Screenshots (--shot): every tab, then the data tab's requirement and mix evidence views.
+  static constexpr int kShotCount = kTabCount + 2;
+  static const char* shot_slug(int k);
+  void force_shot(int k);
   void set_fonts(ImFont* body, ImFont* heading, ImFont* big) {
     font_body_ = body;
     font_head_ = heading;
@@ -35,6 +40,14 @@ class App {
     int core = 0;
     ForecastResult forecast;
     StrategyResult strategy;
+    // Evidence tables of the data tab, for the same settings (India-only core for the first two).
+    bool india = false;
+    GrowthDecomposition growth;             // central path to the target year, by driver
+    std::vector<StateRow> states;           // the regional split state by state, target year
+    std::vector<MixSensitivityRow> mix;     // the current policy with one published figure changed
+    std::array<double, kRegions> requirement_p90{};
+    Bounds bounds;                          // committed nuclear and hydro floors, gas bounds
+    std::string evidence_error;             // why a table above is missing
     double total_ms = 0;
   };
 
@@ -49,6 +62,9 @@ class App {
   void tab_models();
   void tab_sensitivity();
   void tab_data();
+  void data_sources();
+  void data_requirement();
+  void data_mix();
   void stat_card(const char* label, const std::string& value, const char* note, float width);
 
   std::filesystem::path root_;
@@ -77,6 +93,12 @@ class App {
   bool show_nep_ = true;
   int region_view_ = 0;
   int force_tab_ = -1;
+  int force_data_view_ = -1;  // data tab: 0 sources and notes, 1 requirement evidence, 2 mix evidence
+  // State panel check (a diagnostic on the two NPP and dataset files), read once.
+  bool panel_read_ = false;
+  StatePanelData panel_;
+  PanelFit panel_fit_;
+  std::string panel_error_;
   ImFont* font_body_ = nullptr;
   ImFont* font_head_ = nullptr;
   ImFont* font_big_ = nullptr;

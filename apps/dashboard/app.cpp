@@ -3,6 +3,7 @@
 #include <implot.h>
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <numeric>
@@ -61,6 +62,16 @@ const char* App::tab_slug(int t) {
   static const char* s[kTabCount] = {"1_national_forecast", "2_regional_requirement", "3_generation_mix_2047",
                                      "4_models_backtest",   "5_uncertainty_sensitivity", "6_data_assumptions"};
   return s[t];
+}
+
+const char* App::shot_slug(int k) {
+  if (k < kTabCount) return tab_slug(k);
+  return k == kTabCount ? "6b_data_requirement_evidence" : "6c_data_mix_evidence";
+}
+
+void App::force_shot(int k) {
+  force_tab_ = std::min(k, kTabCount - 1);
+  if (k >= kTabCount - 1) force_data_view_ = k - (kTabCount - 1);  // 0 sources, 1 requirement, 2 mix
 }
 
 App::App(std::filesystem::path root) : root_(std::move(root)) {
@@ -139,6 +150,26 @@ void App::launch() {
     j.core = core;
     j.forecast = pl->forecast(c);
     j.strategy = pl->strategy(j.forecast, c, p);
+    // Evidence tables (data tab). The decomposition and the state table belong to the India
+    // core; the mix sensitivity re-solves the current policy at the planned requirement and at
+    // the P90 (the national P90 split by the regional medians, as Pipeline::strategy does).
+    const int last = static_cast<int>(j.forecast.years.size()) - 1;
+    j.india = pl->core() == CoreModel::kIndia;
+    try {
+      if (j.india) {
+        j.growth = pl->decompose_central(c, j.forecast.years[last]);
+        j.states = pl->state_table(c, j.forecast.years[last]);
+      }
+      double planned = 0;
+      for (double x : j.strategy.requirement) planned += x;
+      const double p90 = j.forecast.mc.quantile(j.forecast.inputs, 0, last, 0.9);
+      j.requirement_p90 = j.strategy.requirement;
+      for (double& x : j.requirement_p90) x *= planned > 0 ? p90 / planned : 0.0;
+      j.bounds = make_bounds(pl->allocation_inputs(), p, j.strategy.requirement);
+      j.mix = mix_sensitivity(pl->allocation_inputs(), p, j.strategy.requirement, j.requirement_p90);
+    } catch (const std::exception& e) {
+      j.evidence_error = e.what();
+    }
     j.total_ms = t.ms();
     return j;
   });
@@ -617,9 +648,12 @@ void App::tab_mix() {
     ImGui::TextWrapped("No 2047 generation mix meets every constraint at once, so no mix, cost or CO2 is shown "
                        "(solver status: %s).",
                        s.least_cost.status.c_str());
-    help("Unmet requirement can relax only the regional balances; the non-fossil minimum, the coal floor, the firm "
-         "generation floors and the build limits are hard. Raise the build-rate case or multiplier or the nuclear "
-         "maximum, or lower the non-fossil minimum, the coal floor or the firm shares.");
+    help("Unmet requirement can relax only the regional balances; the non-fossil minimum, the coal floor, the gas "
+         "kept for peaking, the firm generation floors and the build limits are hard. Raise the build-rate case or "
+         "multiplier or the nuclear maximum, or lower the non-fossil minimum, the coal floor or the firm shares, or "
+         "lower 'Gas kept for peaking' / raise the maximum gas share. At a low requirement (for example the Low "
+         "growth P05) the coal floor and the gas kept for peaking, both fixed in TWh, can exceed the fossil share "
+         "the non-fossil minimum allows.");
     return;
   }
   if (!a.ok) {
@@ -633,7 +667,10 @@ void App::tab_mix() {
   std::snprintf(buf, sizeof buf, "%.1f%%", 100 * a.nonfossil_share());
   stat_card("Non-fossil share 2047", buf, "Of national generation", w);
   ImGui::SameLine();
-  stat_card("CO2 from generation", with_commas(a.co2_mt) + " Mt", "CEA emission factors (coal 0.969, gas 0.452 t/MWh)", w);
+  char ef[128];
+  std::snprintf(ef, sizeof ef, "CEA FY%s: coal %.3f, gas %.3f t/MWh", alloc.emission_period.c_str(),
+                alloc.emission_t_per_mwh[kCoal], alloc.emission_t_per_mwh[kGas]);
+  stat_card("CO2 from generation", with_commas(a.co2_mt) + " Mt", ef, w);
   ImGui::SameLine();
   stat_card("Generation cost", with_commas(a.cost_busd) + " bn USD/yr", "2047 levelised costs (IEA WEO 2025 basis)", w);
   ImGui::SameLine();
@@ -1104,6 +1141,31 @@ void App::tab_sensitivity() {
 }
 
 void App::tab_data() {
+  // Three views: the sources and derivation notes, then the tables behind the midpoint panel's
+  // questions on the requirement (drivers, states, new loads) and on the mix (published figures,
+  // committed builds), computed for the current settings.
+  if (ImGui::BeginTabBar("datatabs")) {
+    static const char* names[3] = {"Sources and notes", "Requirement evidence", "Mix evidence"};
+    for (int v = 0; v < 3; ++v) {
+      const ImGuiTabItemFlags fl = force_data_view_ == v ? ImGuiTabItemFlags_SetSelected : 0;
+      if (ImGui::BeginTabItem(names[v], nullptr, fl)) {
+        ImGui::BeginChild("dataview");
+        if (v == 0)
+          data_sources();
+        else if (v == 1)
+          data_requirement();
+        else
+          data_mix();
+        ImGui::EndChild();
+        ImGui::EndTabItem();
+      }
+    }
+    force_data_view_ = -1;
+    ImGui::EndTabBar();
+  }
+}
+
+void App::data_sources() {
   const AllocationInputs& alloc = pl_->allocation_inputs();
   const DriverData& d = pl_->drivers();
   ImGui::TextWrapped(
@@ -1123,7 +1185,8 @@ void App::tab_data() {
          "Regional split: state-to-region mapping"},
         {"Region / state conventional generation, monthly, Jul-2018 to Sep-2026", "National Power Portal (CEA 18-column reports)",
          "Holdout check FY2024-26; regional supply today; existing-fleet floors of the 2047 build caps (best year "
-         "FY2018-19 to FY2025-26 of coal, gas, nuclear, hydro)"},
+         "FY2018-19 to FY2025-26 of coal, gas, nuclear, hydro); state panel check FY2018-19 to FY2023-24 "
+         "(diagnostic, not used)"},
         {"Hourly generation by source, Sep-2025 to Nov-2026", "National Power Portal (Merit India real-time)",
          "Solar and wind profiles, storage sizing"},
         {"Urbanisation coefficient", "Liddle 2013; Shahbaz et al. 2016; Holtedahl & Joutz 2004", "Literature prior"},
@@ -1143,12 +1206,21 @@ void App::tab_data() {
         {"State population projections 2011-2036", "Technical Group on Population Projections (2020)",
          "Reference column in the population consistency table only; not used"},
         {"Urban share projections", "UN WUP 2018", "National urbanisation path"},
-        {"Solar, wind, hydro, bioenergy potential", "NISE, NIWE, CEA reassessment, MNRE", "Upper bounds on generation"},
+        {"Solar, wind, hydro, bioenergy potential", "NISE 2025, NIWE 150 m, CEA reassessment, MNRE",
+         "Upper bounds on generation; NISE 2014 and NIWE 120 m as mix sensitivities"},
         {"Capacity factors", "CEA NEP 2022-32; Ember observed", "Potential to generation conversion"},
         {"Costs 2047", "IEA WEO 2025; SECI auctions; CERC", "Least-cost optimisation"},
-        {"Emission factors", "CEA CO2 Baseline Database v21", "CO2 of each plan"},
+        {"CEA cost basis", "CEA NEP 2022-32 capital costs; CERC RE tariff order 2026 (WACC); CEA and CERC fuel; RBI rate "
+         "(secondary)", "Mix sensitivity only (cost_basis_cea)"},
+        {"Emission factors", "CEA CO2 Baseline Database v22 (FY2025-26; v21 kept as history)", "CO2 of each plan"},
         {"Inter-regional corridors", "CEA / NEP Vol II (2032 plan)", "Transfer limits and losses"},
-        {"Nuclear pipeline", "DAE / NPCIL", "Nuclear siting key"},
+        {"Nuclear pipeline", "DAE / NPCIL",
+         "Nuclear siting key; committed floors (units under construction or sanctioned x CUF x 8.76)"},
+        {"Large hydro under construction", "CEA hydro status (resource_potential.csv)",
+         "Committed hydro floors (MW x CUF x 8.76)"},
+        {"New loads in 2050 (vehicles, green hydrogen, data centres, cooling, cooking)",
+         "NITI Aayog 2026; TERI 2024; CEEW 2025; BloombergNEF 2026; IEA 2018 (secondary)",
+         "New-loads scenario outside the headline; only loads absent from the history are added"},
         {"Build limits by source, GW per year, FY2026-27 to FY2047-48 (low / central / high)",
          "CEA NEP 2022-32; CEA (Dec 2024); NITI Aayog (2026); DAE; MoP Annual Report 2025-26 (secondary)",
          "2047 build caps: GW per year x CUF x 8.76, summed from FY2024-25"},
@@ -1192,6 +1264,338 @@ void App::tab_data() {
   ImGui::BulletText("GDP per capita growth %d-%d: mean %.2f%%, s.d. %.2f%%; income convergence %.3f/yr (s.e. %.3f).",
                     d.g_hist_from, d.g_hist_to, 100 * d.g_hist_mean, 100 * d.g_hist_sd,
                     pl_->fitted().convergence.lambda, pl_->fitted().convergence.lambda_se);
+}
+
+namespace {
+
+constexpr ImGuiTableFlags kTableFlags =
+    ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingStretchProp;
+
+bool begin_table(const char* id, std::initializer_list<const char*> heads, float height = 0) {
+  const ImGuiTableFlags fl = kTableFlags | (height > 0 ? ImGuiTableFlags_ScrollY : 0);
+  if (!ImGui::BeginTable(id, static_cast<int>(heads.size()), fl, ImVec2(0, height))) return false;
+  if (height > 0) ImGui::TableSetupScrollFreeze(0, 1);
+  for (const char* h : heads) ImGui::TableSetupColumn(h);
+  ImGui::TableHeadersRow();
+  return true;
+}
+
+void cell(const char* fmt, double v) {
+  ImGui::TableNextColumn();
+  if (std::isfinite(v))
+    ImGui::Text(fmt, v);
+  else
+    ImGui::TextUnformatted("-");
+}
+
+void cell_text(const std::string& s) {
+  ImGui::TableNextColumn();
+  ImGui::TextWrapped("%s", s.c_str());
+}
+
+std::string fy(int y) {
+  char b[16];
+  std::snprintf(b, sizeof b, "FY%d-%02d", y, (y + 1) % 100);
+  return b;
+}
+
+// Normalised state names ("andaman and nicobar islands") for display ("Andaman and Nicobar Islands").
+std::string state_label(std::string s) {
+  for (size_t i = 0; i < s.size(); ++i)
+    if ((i == 0 || s[i - 1] == ' ') && s.compare(i, 4, "and ") != 0)
+      s[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[i])));
+  return s;
+}
+
+void heading(ImFont* f, const char* text) {
+  ImGui::Spacing();
+  if (f) ImGui::PushFont(f);
+  ImGui::TextUnformatted(text);
+  if (f) ImGui::PopFont();
+}
+
+}  // namespace
+
+// The panel's questions on the requirement: what besides income drives it, how the national
+// elasticity is applied state by state, why it is not estimated on states, and new loads.
+void App::data_requirement() {
+  const Job& j = *cur_;
+  if (!j.evidence_error.empty())
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Some tables are not available: %s", j.evidence_error.c_str());
+  if (!j.india) {
+    help("The growth decomposition and the state table belong to the India-only core (the primary forecast). "
+         "Switch the forecast core to India-only to see them.");
+  }
+
+  // 1. Growth decomposition of the central path.
+  const GrowthDecomposition& g = j.growth;
+  if (j.india && std::isfinite(g.total) && std::isfinite(g.income)) {
+    heading(font_head_, "What drives the requirement besides income: growth of the central path by driver");
+    help(("Central path " + fy(g.base_year) + " to " + fy(g.target_year) + ": " + with_commas(g.gen_base_twh) + " to " +
+          with_commas(g.gen_target_twh) +
+          " TWh under the current scenario settings (medium drivers, mean income growth). The parts are log points and "
+          "add up to the total; shares are of the log growth of the central path, not of the median.")
+             .c_str());
+    if (begin_table("growth", {"Driver", "Log points", "Share of growth", "What it is"})) {
+      const struct {
+        const char* name;
+        double v;
+        const char* what;
+      } rows[] = {
+          {"Population", g.population, "UN WPP 2024 medium path from the base-year population"},
+          {"Income", g.income, "income elasticity x change of ln GSDP per person (less the elasticity decline, if set)"},
+          {"Urbanisation beyond income", g.urbanisation,
+           "gamma x (change of urban share - kappa x change of ln income): the part income does not already imply"},
+          {"Model error", g.model_error, "the high base-year residual fading (AR(1)); negative because FY2023-24 was high"},
+          {"Total", g.total, "ln(central path in the target year / base year)"},
+      };
+      for (const auto& r : rows) {
+        ImGui::TableNextRow();
+        cell_text(r.name);
+        cell("%+.3f", r.v);
+        cell("%.1f%%", 100 * r.v / g.total);
+        cell_text(r.what);
+      }
+      ImGui::EndTable();
+    }
+  }
+
+  // 2. The national elasticity applied state by state.
+  if (j.india && !j.states.empty()) {
+    const DriverData& d = pl_->drivers();
+    const ForecastResult& f = j.forecast;
+    const size_t last = f.years.size() - 1;
+    heading(font_head_, "State-wise: the national elasticity applied to each state's own income");
+    char b[256];
+    std::snprintf(b, sizeof b,
+                  "%zu states and union territories of the Renewable India dataset; income relative to India from GSDP "
+                  "and population (%d), converging at %.4f a year; the kernel sums the states into NPP's grid regions.",
+                  j.states.size(), d.state_pop_year, pl_->fitted().convergence.lambda);
+    help(b);
+    std::array<double, kRegions> table{}, med{};
+    double med_sum = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      med[r] = f.quant.q[1 + r][last][3];
+      med_sum += med[r];
+    }
+    const std::string ty = std::to_string(f.years[last]), by = std::to_string(d.state_pop_year);
+    const std::string h_pop = "Population share " + by, h_ri0 = "Income vs India " + by, h_ri1 = "Income vs India " + ty,
+                      h_idx = "Generation per person " + ty + " (India = 1)", h_req = "Requirement share " + ty;
+    if (begin_table("states", {"State", "Grid region", h_pop.c_str(), h_ri0.c_str(), h_ri1.c_str(), h_idx.c_str(),
+                               h_req.c_str()},
+                    ImGui::GetTextLineHeightWithSpacing() * 13)) {
+      for (const StateRow& s : j.states) {
+        ImGui::TableNextRow();
+        cell_text(state_label(s.state));
+        cell_text(s.region + (s.region_from == "NPP" ? "" : " (dataset zone)"));
+        cell("%.2f%%", 100 * s.pop_share_base);
+        cell("%.2fx", std::exp(s.ln_rel_income_base));
+        cell("%.2fx", std::exp(s.ln_rel_income_target));
+        cell("%.2f", s.per_person_index_target);
+        cell("%.2f%%", 100 * s.requirement_share_target);
+        for (int r = 0; r < kRegions; ++r)
+          if (s.region == region_name(r)) table[r] += s.requirement_share_target;
+      }
+      ImGui::EndTable();
+    }
+    std::string sums = "Regional sums of the state table | Monte Carlo regional medians:";
+    for (int r = 0; r < kRegions; ++r) {
+      std::snprintf(b, sizeof b, " %s %.1f%% | %.1f%%;", region_name(r), 100 * table[r],
+                    med_sum > 0 ? 100 * med[r] / med_sum : 0.0);
+      sums += b;
+    }
+    help(sums.c_str());
+  }
+
+  // 3. State panel check (read once; a diagnostic, never used).
+  if (!panel_read_) {
+    panel_read_ = true;
+    try {
+      panel_ = state_panel_data(root_.string());
+      panel_fit_ = fe_slope(panel_.obs);
+    } catch (const std::exception& e) {
+      panel_error_ = e.what();
+    }
+  }
+  heading(font_head_, "Why not a state-wise elasticity: the state panel check (diagnostic, not used)");
+  if (!panel_error_.empty()) {
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Not available: %s", panel_error_.c_str());
+  } else {
+    char b[512];
+    std::string skipped;
+    for (const std::string& s : panel_.skipped) skipped += (skipped.empty() ? "" : ", ") + state_label(s);
+    std::snprintf(b, sizeof b,
+                  "ln(NPP state generation per person) on ln(GSDP per person) with state fixed effects, %s to %s: "
+                  "slope %.3f (s.e. %.3f), %d state-years, %d states, %d skipped (%s); the national elasticity is "
+                  "%.3f. %.0f%% of the variance of ln generation per person lies between states. NPP records "
+                  "generation where the plant stands (conventional stations only), so a state's figure measures where "
+                  "plants are, not its demand: from %.2fx to %.2fx the national %.0f kWh per person.",
+                  fy(panel_.first_year).c_str(), fy(panel_.last_year).c_str(), panel_fit_.slope, panel_fit_.se,
+                  panel_fit_.n_obs, panel_fit_.n_states, panel_fit_.n_skipped, skipped.empty() ? "none" : skipped.c_str(),
+                  pl_->fitted().india_fit.beta, 100 * panel_.between_share_ln_gen,
+                  [&] {
+                    double lo = 1e300;
+                    for (const auto& s : panel_.spread)
+                      if (s.ratio_to_national > 0) lo = std::min(lo, s.ratio_to_national);
+                    return lo;
+                  }(),
+                  [&] {
+                    double hi = 0;
+                    for (const auto& s : panel_.spread) hi = std::max(hi, s.ratio_to_national);
+                    return hi;
+                  }(),
+                  panel_.national_gen_pc_kwh);
+    help(b);
+    if (begin_table("panel", {"State", "Grid region (NPP)", "Years", "kWh per person", "x national"},
+                    ImGui::GetTextLineHeightWithSpacing() * 9)) {
+      for (const StateSpread& s : panel_.spread) {
+        ImGui::TableNextRow();
+        cell_text(state_label(s.state));
+        cell_text(s.region);
+        cell("%.0f", s.n_years);
+        cell("%.0f", s.gen_pc_kwh);
+        cell("%.2f", s.ratio_to_national);
+      }
+      ImGui::EndTable();
+    }
+  }
+
+  // 4. Published new loads: a scenario outside the headline.
+  heading(font_head_, "New loads (published estimates, outside the headline)");
+  if (new_loads_.empty()) {
+    help(new_loads_desc_.c_str());
+  } else {
+    help(new_loads_desc_.c_str());
+    const int ty = new_loads_.front().target_year, py = new_loads_.front().year;
+    const std::string lo = std::to_string(py) + " low / central / high", hi = std::to_string(ty) + " low / central / high";
+    if (begin_table("loads", {"Load", "Overlaps the history", "Added", lo.c_str(), hi.c_str()})) {
+      for (const NewLoad& l : new_loads_) {
+        ImGui::TableNextRow();
+        std::string name = l.load;
+        std::replace(name.begin(), name.end(), '_', ' ');
+        cell_text(name);
+        cell_text(l.overlaps);
+        cell_text(l.overlaps == "no" ? "yes" : "no (reported only)");
+        char b[96];
+        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", l.low_published, l.central_published, l.high_published);
+        cell_text(b);
+        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", l.low, l.central, l.high);
+        cell_text(b);
+      }
+      for (const bool all : {false, true}) {
+        const NewLoadTotals t = new_loads_total(new_loads_, all);
+        ImGui::TableNextRow();
+        cell_text(all ? "All loads (reference only, never added)" : "Add-on of the scenario");
+        cell_text(all ? "any" : "no");
+        cell_text(all ? "no" : "yes");
+        cell_text("");
+        char b[96];
+        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", t.low, t.central, t.high);
+        cell_text(b);
+      }
+      ImGui::EndTable();
+    }
+    help("End-use electricity, not grossed up for losses; the add-on assumes grid supply. Use the 'New loads' scenario "
+         "button to run it.");
+  }
+}
+
+// The panel's questions on the mix: how the published figures behind it move the plan, and
+// which plants already being built set floors.
+void App::data_mix() {
+  const Job& j = *cur_;
+  const AllocationInputs& alloc = pl_->allocation_inputs();
+  const StrategyResult& s = j.strategy;
+  if (!j.evidence_error.empty())
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Some tables are not available: %s", j.evidence_error.c_str());
+  double planned = 0, p90 = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    planned += s.requirement[r];
+    p90 += j.requirement_p90[r];
+  }
+
+  // 1. Mix sensitivity to the published figures.
+  heading(font_head_, "How the published figures move the mix: one change at a time");
+  char b[512];
+  std::snprintf(b, sizeof b,
+                "Each case is the current policy with one published figure changed, solved at the planned requirement "
+                "(P%.0f, %s TWh) and at P90 (%s TWh). Costs are in each case's own basis. A case that leaves the "
+                "requirement unmet describes less generation, so its CO2 and cost are not comparable.",
+                100 * sc_.requirement_quantile, with_commas(planned).c_str(), with_commas(p90).c_str());
+  help(b);
+  if (!j.mix.empty() &&
+      begin_table("mixsens", {"Case", "Non-fossil", "Coal", "CO2 (Mt)", "Cost (bn USD/yr)", "Unmet, planned (TWh)",
+                              "Unmet at P90 (TWh)", "What changes"})) {
+    for (const MixSensitivityRow& m : j.mix) {
+      const AllocationResult& a = m.plan;
+      ImGui::TableNextRow();
+      cell_text(m.name);
+      if (a.ok) {
+        cell("%.1f%%", 100 * a.nonfossil_share());
+        cell("%.1f%%", 100 * a.share(kCoal));
+        cell("%.0f", a.co2_mt);
+        cell("%.1f", a.cost_busd);
+        cell("%.0f", a.unserved_total());
+      } else {
+        for (int k = 0; k < 5; ++k) cell_text(k == 0 ? "infeasible" : "");
+      }
+      if (m.plan_p90.ok)
+        cell("%.0f", m.plan_p90.unserved_total());
+      else
+        cell_text("infeasible");
+      cell_text(m.description);
+    }
+    ImGui::EndTable();
+  }
+
+  // 2. Committed builds and the gas kept for peaking.
+  heading(font_head_, "Committed builds and gas kept for peaking (floors in TWh)");
+  std::snprintf(b, sizeof b,
+                "Floor = %s generation + committed MW x CUF x 8.76: nuclear units under construction, sanctioned or "
+                "commissioned after %s (CUF %.2f); large hydro under construction (CUF %.2f). Committed TWh are cut "
+                "to the national build cap and each region's upper bound. Gas: national minimum %.1f TWh (%.0f%% of "
+                "the %.1f TWh fleet floor, %s), each region within its %s share of the gas cap.",
+                fy(alloc.base_year).c_str(), fy(alloc.base_year).c_str(), alloc.committed_nuclear_cuf,
+                alloc.committed_hydro_cuf, gas_min_twh(alloc, s.policy), 100 * s.policy.gas_min_twh_share,
+                alloc.fleet_floor_twh[kGas], fy(alloc.fleet_floor_year[kGas]).c_str(), fy(alloc.base_year).c_str());
+  help(b);
+  if (begin_table("committed", {"Source", "Region", "Base TWh", "Committed MW", "Committed TWh", "Floor TWh",
+                                "Cut TWh", "Upper bound TWh", "Plan TWh"})) {
+    const Bounds& bd = j.bounds;
+    const AllocationResult& a = s.least_cost;
+    for (int t : {kNuclear, kHydro, kGas}) {
+      const auto* mw = t == kNuclear ? &alloc.committed_nuclear_mw : t == kHydro ? &alloc.committed_hydro_mw : nullptr;
+      std::array<double, 7> sum{};
+      for (int r = 0; r <= kRegions; ++r) {
+        const bool total = r == kRegions;
+        const std::array<double, 7> v =
+            total ? sum
+                  : std::array<double, 7>{alloc.base_twh[r][t], mw ? (*mw)[r] : 0.0, bd.committed[r][t], bd.lo[r][t],
+                                          bd.committed_cut[r][t], bd.hi[r][t], a.ok ? a.gen[r][t] : kNaN};
+        if (!total)
+          for (size_t k = 0; k < v.size(); ++k) sum[k] += v[k];
+        ImGui::TableNextRow();
+        cell_text(r == 0 || total ? tech_label(t) : "");
+        ImGui::TableNextColumn();
+        if (total)
+          ImGui::TextUnformatted("India");
+        else
+          ImGui::TextColored(kRegionColor[r], "%s", region_name(r));
+        cell("%.1f", v[0]);
+        cell("%.0f", v[1]);
+        for (size_t k = 2; k < v.size(); ++k) cell("%.1f", v[k]);
+      }
+    }
+    ImGui::EndTable();
+  }
+  if (s.storage.ok && s.storage.total.gas_twh > 0) {
+    const StorageSizing& z = s.storage.total;
+    std::snprintf(b, sizeof b,
+                  "Hourly check of this plan: gas runs %.0f hours a year, up to %.1f GW, with %.1f of its %.1f TWh "
+                  "(%.0f%%) in the evening peak, 18:00-24:00 IST.",
+                  z.gas_hours, z.gas_peak_gw, z.gas_evening_twh, z.gas_twh, 100 * z.gas_evening_twh / z.gas_twh);
+    help(b);
+  }
 }
 
 }  // namespace e47

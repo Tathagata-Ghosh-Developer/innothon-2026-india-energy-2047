@@ -601,4 +601,37 @@ AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySetti
   return res;
 }
 
+PlanVectors plan_vectors(const AllocationResult& a, double lead_min_twh) {
+  static const struct {
+    const char* key;
+    const char* label;
+    std::vector<int> techs;
+  } six[6] = {{"coal", "Coal", {kCoal}},       {"solar", "Solar", {kSolar}}, {"wind", "Wind", {kWind, kOffshore}},
+              {"gas", "Natural gas", {kGas}}, {"hydro", "Hydro", {kHydro}}, {"nuclear", "Nuclear", {kNuclear}}};
+  PlanVectors pv;
+  const double total = a.total_twh;
+  for (int k = 0; k < 6; ++k) {
+    SourceVector& v = pv.sources[k];
+    v.key = six[k].key;
+    v.label = six[k].label;
+    v.techs = six[k].techs;
+    int largest = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      for (int t : v.techs) v.region_twh[r] += a.gen[r][t];
+      v.twh += v.region_twh[r];
+      if (v.region_twh[r] > v.region_twh[largest]) largest = r;
+    }
+    v.share_pct = total > 0 ? 100 * v.twh / total : 0.0;
+    const double top = v.region_twh[largest];
+    for (int r = 0; r < kRegions; ++r) {
+      v.region_share_pct[r] = v.twh > 0 ? 100 * v.region_twh[r] / v.twh : 0.0;
+      v.radius[r] = top > 0 ? std::sqrt(std::max(0.0, v.region_twh[r]) / top) : 0.0;
+    }
+    v.lead = v.twh >= lead_min_twh && top > 0 ? largest : -1;
+  }
+  for (int s : {kFirmRE, kBio}) pv.other_twh += a.national[s];
+  pv.other_share_pct = total > 0 ? 100 * pv.other_twh / total : 0.0;
+  return pv;
+}
+
 }  // namespace e47

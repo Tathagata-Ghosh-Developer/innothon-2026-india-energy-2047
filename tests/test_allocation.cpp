@@ -1067,6 +1067,118 @@ int presets_feasible(const AllocationInputs& in, const std::array<double, kRegio
   return check.fails;
 }
 
+// The six sources of the landing-page map (plan_vectors): each source's regions add up to its
+// national TWh, its regional shares to 100%, and the six shares plus the rest (firmed
+// renewables and bioenergy) to 100% of the plan. Wind is onshore plus offshore. The lead
+// region is the largest and is left out below 0.5 TWh; radii are sqrt(TWh / largest region).
+int plan_vectors_add_up(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("plan_vectors_add_up\n");
+  PolicySettings robust;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(robust);
+  const AllocationResult a = solve_least_cost(in, robust, req);
+  check(a.ok, "Robust plan solved");
+  const PlanVectors pv = plan_vectors(a);
+  static const char* keys[6] = {"coal", "solar", "wind", "gas", "hydro", "nuclear"};
+  bool order = true;
+  for (int k = 0; k < 6; ++k) order = order && std::string(pv.sources[k].key) == keys[k];
+  check(order, "six sources in order: coal, solar, wind, gas, hydro, nuclear");
+  const std::vector<int> want[6] = {{kCoal}, {kSolar}, {kWind, kOffshore}, {kGas}, {kHydro}, {kNuclear}};
+  double shares = pv.other_share_pct;
+  for (int k = 0; k < 6; ++k) {
+    const SourceVector& v = pv.sources[k];
+    double national = 0, regions = 0, region_shares = 0, rmax = 0;
+    for (int t : want[k]) national += a.national[t];
+    int argmax = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      regions += v.region_twh[r];
+      region_shares += v.region_share_pct[r];
+      rmax = std::max(rmax, v.radius[r]);
+      if (v.region_twh[r] > v.region_twh[argmax]) argmax = r;
+    }
+    bool radius_ok = true;
+    for (int r = 0; r < kRegions; ++r)
+      radius_ok = radius_ok && v.radius[r] >= 0 && v.radius[r] <= 1 &&
+                  std::abs(v.radius[r] - std::sqrt(std::max(0.0, v.region_twh[r]) / v.region_twh[argmax])) < 1e-9;
+    char what[160];
+    std::snprintf(what, sizeof what, "%s: %.1f TWh (%.2f%%), regions sum to it (1e-9) and to the plan's sources (1e-6)",
+                  v.key, v.twh, v.share_pct);
+    check(std::abs(regions - v.twh) < 1e-9 && std::abs(national - v.twh) < 1e-6, what);
+    check(std::abs(v.share_pct - 100 * v.twh / a.total_twh) < 1e-9, std::string(v.key) + ": share of the plan's generation");
+    check(v.twh > 0 && std::abs(region_shares - 100) < 1e-9, std::string(v.key) + ": regional shares sum to 100%");
+    check(std::abs(rmax - 1) < 1e-12 && radius_ok, std::string(v.key) + ": radius sqrt(TWh / largest region), largest 1");
+    check(v.twh >= 0.5 ? v.lead == argmax : v.lead == -1, std::string(v.key) + ": lead is the largest region");
+    shares += v.share_pct;
+  }
+  check(std::abs(shares - 100) < 1e-9, "six sources + firmed renewables and bioenergy = 100% of the plan");
+  check(std::abs(pv.other_twh - a.national[kFirmRE] - a.national[kBio]) < 1e-6, "rest = firmed renewables + bioenergy");
+  // A source the plan does not generate, and one below the 0.5 TWh lead threshold.
+  AllocationResult z;
+  z.ok = true;
+  z.gen[0][kCoal] = 10;
+  z.gen[1][kCoal] = 40;
+  z.gen[2][kGas] = 0.3;
+  for (int r = 0; r < kRegions; ++r)
+    for (int s = 0; s < kTechs; ++s) {
+      z.national[s] += z.gen[r][s];
+      z.total_twh += z.gen[r][s];
+    }
+  const PlanVectors zv = plan_vectors(z);
+  const SourceVector& coal = zv.sources[0];
+  check(coal.lead == 1 && std::abs(coal.radius[0] - 0.5) < 1e-12 && std::abs(coal.region_share_pct[1] - 80) < 1e-9,
+        "synthetic coal 10 / 40 TWh: lead Western, radii 0.5 and 1, shares 20% and 80%");
+  const SourceVector& nuclear = zv.sources[5];
+  bool zero = nuclear.twh == 0 && nuclear.share_pct == 0 && nuclear.lead == -1;
+  for (int r = 0; r < kRegions; ++r) zero = zero && nuclear.radius[r] == 0 && nuclear.region_share_pct[r] == 0;
+  check(zero, "a source not generated: 0 TWh, no lead, radii and shares 0 (no NaN)");
+  const SourceVector& gas = zv.sources[3];
+  check(gas.lead == -1 && std::abs(gas.radius[2] - 1) < 1e-12 && std::abs(gas.region_share_pct[2] - 100) < 1e-9,
+        "gas 0.3 TWh: below 0.5 TWh, no lead; radius and share still given");
+  return check.fails;
+}
+
+// Known limit at low demand (docs/decisions.md, D13): the coal floor (a share of each region's
+// FY2023-24 coal) and the gas kept for peaking are fixed in TWh, while the non-fossil minimum is a
+// share of generation. Generation cannot exceed the requirement plus losses, so below about
+// (coal floor + gas minimum) / (1 - non-fossil minimum) the Robust LP has no solution. The test
+// finds the lowest feasible requirement by bisection (requirement split as `req`) and checks that
+// it sits at that bound, less what corridor losses add to generation.
+int robust_low_requirement_limit(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("robust_low_requirement_limit\n");
+  PolicySettings robust;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(robust);
+  double total = 0, coal_floor = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    total += req[r];
+    coal_floor += robust.coal_floor * in.base_twh[r][kCoal];
+  }
+  const double gas = gas_min_twh(in, robust);
+  const double bound = (coal_floor + gas) / (1 - robust.nonfossil_min);
+  auto feasible = [&](double national) {
+    std::array<double, kRegions> x = req;
+    for (double& v : x) v *= national / total;
+    return solve_least_cost(in, robust, x).ok;
+  };
+  double lo = 0.5 * bound, hi = 1.5 * bound;  // infeasible at lo, feasible at hi
+  check(!feasible(lo) && feasible(hi), "Robust: infeasible at 0.5x the bound, feasible at 1.5x");
+  for (int k = 0; k < 40; ++k) {
+    const double mid = 0.5 * (lo + hi);
+    if (feasible(mid))
+      hi = mid;
+    else
+      lo = mid;
+  }
+  char what[200];
+  std::snprintf(what, sizeof what,
+                "lowest feasible requirement %.0f TWh vs (coal floor %.0f + gas %.0f) / %.2f = %.0f TWh (within 5%%)", hi,
+                coal_floor, gas, 1 - robust.nonfossil_min, bound);
+  check(hi <= bound * 1.0001 && hi >= 0.95 * bound, what);
+  return check.fails;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -1118,6 +1230,8 @@ int main(int argc, char** argv) {
     fails += committed_hydro_floor(root, in, req);
     fails += gas_min_share_respected(in, req);
     fails += presets_feasible(in, req);
+    fails += plan_vectors_add_up(in, req);
+    fails += robust_low_requirement_limit(in, req);
 
     PolicySettings p;
     Timer t;

@@ -218,14 +218,15 @@ int main(int argc, char** argv) {
     int w = 0, h = 0;
     draw_frame(window, app, w, h);
     if (!shot_dir.empty() && app.ready()) {
+      // Every tab, then the data tab's evidence views (App::kShotCount, App::shot_slug).
       if (shot_tab < 0) {
         shot_tab = 0;
-        app.force_tab(0);
+        app.force_shot(0);
       } else if (++settle == 8) {
-        save_bmp(shot_dir / (std::string(e47::App::tab_slug(shot_tab)) + ".bmp"), w, h);
+        save_bmp(shot_dir / (std::string(e47::App::shot_slug(shot_tab)) + ".bmp"), w, h);
         settle = 0;
-        if (++shot_tab == e47::App::kTabCount) glfwSetWindowShouldClose(window, GLFW_TRUE);
-        else app.force_tab(shot_tab);
+        if (++shot_tab == e47::App::kShotCount) glfwSetWindowShouldClose(window, GLFW_TRUE);
+        else app.force_shot(shot_tab);
       }
     }
     glfwSwapBuffers(window);

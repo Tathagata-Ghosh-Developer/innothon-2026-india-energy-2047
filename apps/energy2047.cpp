@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
@@ -127,6 +128,15 @@ struct SiteSummary {
   int levers_build_case = kBuildHigh;
   double cea_power_gw = 0, cea_energy_gwh = 0;
   std::vector<ParetoPoint> pareto;  // cost-CO2 trade-off, Robust policy, median requirement
+  // Evidence behind the midpoint panel's questions (short summaries; the full tables are the
+  // CSV files named in each key's comment in write_site_summary).
+  int state_count = 0;              // states and union territories in the regional split
+  GrowthDecomposition growth;       // central path to the target year (growth_decomposition_2047.csv)
+  bool panel_ok = false;            // state panel check (state_panel_check.csv)
+  PanelFit panel;
+  StatePanelData panel_data;
+  std::vector<NewLoad> new_loads;               // new_loads_2047.csv
+  std::vector<MixSensitivityRow> mix_sensitivity;  // Robust preset copies (sensitivity_mix.csv)
 };
 
 // Storage and land back-calculated from the least-cost plan: Base and Robust policy
@@ -445,9 +455,12 @@ std::string fy_label(int y);  // "FY2023-24"; defined below
 // per person) with state fixed effects, FY2018-19..FY2023-24, and the spread of state
 // generation per person against the national figure. Sections: data (sources), fit,
 // spread (summary), state (one row per matched state), note (what was left out).
-void write_state_panel_check(const fs::path& out, const fs::path& root, const Pipeline& pl) {
+void write_state_panel_check(const fs::path& out, const fs::path& root, const Pipeline& pl, SiteSummary& site) {
   const StatePanelData d = state_panel_data(root.string());
   const PanelFit f = fe_slope(d.obs);
+  site.panel = f;
+  site.panel_data = d;
+  site.panel_ok = true;
   const IndiaFit& fi = pl.fitted().india_fit;
   const std::string window = fy_label(d.first_year) + ".." + fy_label(d.last_year);
   std::string skipped;
@@ -712,6 +725,18 @@ std::string fy_label(int y) {
   return b;
 }
 
+// "andaman and nicobar islands" -> "Andaman and Nicobar Islands"; "green_hydrogen" -> "green hydrogen"
+// with words=false (underscores to spaces only).
+std::string display_name(std::string s, bool words = true) {
+  std::replace(s.begin(), s.end(), '_', ' ');
+  if (!words) return s;
+  for (size_t i = 0; i < s.size(); ++i) {
+    const bool start = i == 0 || s[i - 1] == ' ';
+    if (start && s.compare(i, 4, "and ") != 0) s[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[i])));
+  }
+  return s;
+}
+
 // Upper end and step of a chart axis: about three steps of 1, 2, 2.5 or 5 x 10^k.
 std::pair<double, double> nice_axis(double top) {
   const double raw = top / 3;
@@ -846,6 +871,92 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.end();
   }
 
+  // What shapes the requirement beyond income (growth_decomposition_2047.csv): the central
+  // path's log growth to the target year split by driver; the shares add up to 100.
+  if (std::isfinite(s.growth.total) && s.growth.total != 0 && std::isfinite(s.growth.income)) {
+    const GrowthDecomposition& g = s.growth;
+    j.obj("growth_decomposition").str("from_label", fy_label(g.base_year)).str("to_label", fy_label(g.target_year));
+    j.num("base_twh", g.gen_base_twh).num("central_twh", g.gen_target_twh).num("total_log_points", g.total, 4);
+    j.num("population_pct", 100 * g.population / g.total, 2).num("income_pct", 100 * g.income / g.total, 2);
+    j.num("urbanisation_pct", 100 * g.urbanisation / g.total, 2);
+    j.num("model_error_pct", 100 * g.model_error / g.total, 2);
+    j.str("note", "Shares of the log growth of the central path (medium drivers, mean income growth), not of the "
+                  "median; model error is the fading of the high base-year residual.");
+    j.end();
+  }
+
+  // State panel check (state_panel_check.csv): a diagnostic, never used by the forecast.
+  if (s.panel_ok) {
+    const StatePanelData& d = s.panel_data;
+    const PanelFit& p = s.panel;
+    const StateSpread* lo = nullptr;
+    const StateSpread* hi = nullptr;
+    for (const StateSpread& x : d.spread) {
+      if (!(x.ratio_to_national > 0)) continue;
+      if (!lo || x.ratio_to_national < lo->ratio_to_national) lo = &x;
+      if (!hi || x.ratio_to_national > hi->ratio_to_national) hi = &x;
+    }
+    std::string skipped;
+    for (const std::string& x : d.skipped) skipped += (skipped.empty() ? "" : ", ") + display_name(x);
+    j.obj("state_panel").str("from_label", fy_label(d.first_year)).str("to_label", fy_label(d.last_year));
+    j.num("slope", p.slope).num("se", p.se).integer("n_obs", p.n_obs).integer("n_states", p.n_states);
+    j.integer("n_skipped", p.n_skipped).str("skipped", skipped);
+    j.num("national_beta", fit.india_fit.beta).num("national_kwh_per_person", d.national_gen_pc_kwh);
+    if (lo && hi) {
+      j.num("ratio_min", lo->ratio_to_national).str("ratio_min_state", display_name(lo->state));
+      j.num("ratio_max", hi->ratio_to_national).str("ratio_max_state", display_name(hi->state));
+    }
+    j.num("sd_ln_ratio", d.sd_ln_ratio).num("between_share_pct", 100 * d.between_share_ln_gen, 1);
+    j.str("note", "Diagnostic only, never used: ln(NPP state generation per person) on ln(GSDP per person) with state "
+                  "fixed effects. NPP records generation where the plant stands (conventional stations only), so a "
+                  "state's figure measures where plants are, not its demand.");
+    j.end();
+  }
+
+  // New-loads scenario (new_loads_2047.csv): outside the headline, secondary sources.
+  if (!s.new_loads.empty()) {
+    const NewLoadTotals add = new_loads_total(s.new_loads), all = new_loads_total(s.new_loads, true);
+    std::string added, not_added;
+    int year = 0;
+    double scale = 0;
+    for (const NewLoad& l : s.new_loads) {
+      std::string& to = l.overlaps == "no" ? added : not_added;
+      to += (to.empty() ? "" : ", ") + display_name(l.load, false);
+      if (l.overlaps == "no") {
+        year = (year == 0 || year == l.year) ? l.year : -1;
+        scale = l.scale;
+      }
+    }
+    j.obj("new_loads").str("added", added).str("not_added", not_added).integer("n_added", add.n);
+    j.integer("n_loads", static_cast<long long>(s.new_loads.size()));
+    if (year > 0) j.integer("published_year", year).num("scale", scale, 4);
+    j.num("addon_low_twh", add.low).num("addon_central_twh", add.central).num("addon_high_twh", add.high);
+    j.num("all_low_twh", all.low).num("all_high_twh", all.high);
+    for (const auto& c : s.sensitivity)
+      if (c.key == "new_loads_published")
+        j.num("p50_twh", c.p50).num("change_pct", 100 * (c.p50 / s.sensitivity.front().p50 - 1));
+    j.str("note", "Outside the headline. End-use electricity, not grossed up for losses, if supplied from the grid; "
+                  "loads the income elasticity already carries in part are reported, never added (all-loads total is "
+                  "a reference only).");
+    j.end();
+  }
+
+  // Sensitivity of the recommended mix to the published figures behind it (sensitivity_mix.csv):
+  // copies of the Robust preset with one change each, at the median and the P90 requirement.
+  // A case that leaves the median unmet describes less generation than the requirement.
+  if (!s.mix_sensitivity.empty()) {
+    j.obj("sensitivity_mix").str("policy", "Robust");
+    for (const MixSensitivityRow& r : s.mix_sensitivity) {
+      const AllocationResult& a = r.plan;
+      j.obj(r.name.c_str()).str("description", r.description).str("status", a.ok ? "optimal" : "infeasible");
+      j.num("nonfossil_pct", a.ok ? 100 * a.nonfossil_share() : kNaN).num("coal_pct", a.ok ? 100 * a.share(kCoal) : kNaN);
+      j.num("co2_mt", a.ok ? a.co2_mt : kNaN).num("cost_busd", a.ok ? a.cost_busd : kNaN);
+      j.num("unmet_median_twh", a.ok ? a.unserved_total() : kNaN);
+      j.num("unmet_p90_twh", r.plan_p90.ok ? r.plan_p90.unserved_total() : kNaN).end();
+    }
+    j.end();
+  }
+
   // Regional requirement (median) against today's NPP conventional generation.
   {
     double need_sum = 0, today_sum = 0;
@@ -857,6 +968,8 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     for (int r = 0; r < kRegions; ++r)
       scale = std::max({scale, 100 * f.quant.q[1 + r][last][3] / need_sum, 100 * s.today_twh[r] / today_sum});
     j.obj("regions").integer("today_year", s.today_year).str("today_label", fy_label(s.today_year));
+    // States and union territories of the challenge dataset in the split (state_income_2047.csv).
+    if (s.state_count > 0) j.integer("state_count", s.state_count);
     j.num("today_total_twh", today_sum).num("scale_pct", scale).arr("list");
     for (int r = 0; r < kRegions; ++r) {
       const auto& v = f.quant.q[1 + r][last];
@@ -918,7 +1031,60 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     for (const Share& m : mix)
       j.obj().str("key", m.g->key).str("label", m.g->label).str("note", m.g->note).num("twh", m.twh).num(
           "share_pct", a.total_twh > 0 ? 100 * m.twh / a.total_twh : 0.0).end();
-    j.end().arr("regions");  // where the plan generates, and what each region sends to or takes from others
+    j.end();
+    // The six energy sources of the official challenge page, region by region (the landing
+    // page's map; plan_vectors in allocation/allocate.hpp). Wind is onshore plus offshore.
+    // Solar is solar alone: firmed renewables (solar and wind sold round the clock with
+    // storage) and bioenergy are not among the six and go to vectors_other. "lead" is left out
+    // below 0.5 TWh; radius = sqrt(region TWh / largest region's TWh), for circle areas.
+    {
+      const PlanVectors pv = plan_vectors(a);
+      j.obj("vectors");
+      for (const SourceVector& v : pv.sources) {
+        j.obj(v.key).str("label", v.label).num("twh", v.twh).num("share_pct", v.share_pct);
+        if (v.lead >= 0) {
+          j.str("lead", region_name(v.lead)).num("lead_twh", v.region_twh[v.lead]);
+          j.num("lead_share_pct", v.region_share_pct[v.lead]);
+        }
+        j.arr("regions");
+        for (int r = 0; r < kRegions; ++r)
+          j.obj().str("name", region_name(r)).num("twh", v.region_twh[r]).num("share_pct", v.region_share_pct[r]).num(
+              "radius", v.radius[r], 4).end();
+        j.end().end();
+      }
+      j.end();
+      j.obj("vectors_other").str("label", "Firmed renewables and bioenergy").num("twh", pv.other_twh);
+      j.num("share_pct", pv.other_share_pct);
+      j.str("note", "Not among the six sources: solar and wind sold round the clock with storage, and bioenergy. "
+                    "With them the six shares add up to 100% of the plan.");
+      j.end();
+    }
+    // Committed builds and the gas kept for peaking in this plan (committed_builds_2047.csv):
+    // nuclear and hydro floors = FY2023-24 + committed MW x CUF x 8.76; gas minimum = share x
+    // the gas fleet's best NPP year.
+    {
+      const AllocationInputs& in = pl.allocation_inputs();
+      const PolicySettings& ps = s.robust_policy;
+      const Bounds b = make_bounds(in, ps, a.requirement);
+      double mw[2] = {0, 0}, committed[2] = {0, 0}, floor[2] = {0, 0}, cut[2] = {0, 0};
+      for (int r = 0; r < kRegions; ++r)
+        for (int k = 0; k < 2; ++k) {
+          const int t = k == 0 ? kNuclear : kHydro;
+          mw[k] += (k == 0 ? in.committed_nuclear_mw : in.committed_hydro_mw)[r];
+          committed[k] += b.committed[r][t];
+          floor[k] += b.lo[r][t];
+          cut[k] += b.committed_cut[r][t];
+        }
+      j.obj("committed");
+      j.num("nuclear_mw", mw[0], 1).num("nuclear_cuf", in.committed_nuclear_cuf, 2).num("nuclear_committed_twh", committed[0]);
+      j.num("nuclear_floor_twh", floor[0]).num("nuclear_cut_twh", cut[0]).num("nuclear_twh", a.national[kNuclear]);
+      j.num("hydro_mw", mw[1], 1).num("hydro_cuf", in.committed_hydro_cuf, 2).num("hydro_committed_twh", committed[1]);
+      j.num("hydro_floor_twh", floor[1]).num("hydro_cut_twh", cut[1]).num("hydro_twh", a.national[kHydro]);
+      j.num("gas_min_share_pct", 100 * ps.gas_min_twh_share).num("gas_fleet_floor_twh", in.fleet_floor_twh[kGas]);
+      j.str("gas_fleet_floor_label", fy_label(in.fleet_floor_year[kGas]));
+      j.num("gas_min_twh", gas_min_twh(in, ps)).num("gas_twh", a.national[kGas]).end();
+    }
+    j.arr("regions");  // where the plan generates, and what each region sends to or takes from others
     for (int r = 0; r < kRegions; ++r) {
       double gen = 0;
       for (int t = 0; t < kTechs; ++t) gen += a.gen[r][t];
@@ -988,7 +1154,11 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.num("curtailed_pct", z.curtailed_day_pct()).num("shortfall_after_twh", z.unmet_day_twh);
     j.num("shortfall_after_pct", req > 0 ? 100 * z.unmet_day_twh / req : 0.0).num("losses_twh", z.losses_twh);
     j.num("cea_2029_power_gw", s.cea_power_gw).num("cea_2029_energy_gwh", s.cea_energy_gwh);
-    j.num("energy_multiple_of_cea", s.cea_energy_gwh > 0 ? z.energy_day_gwh / s.cea_energy_gwh : 0.0).end();
+    j.num("energy_multiple_of_cea", s.cea_energy_gwh > 0 ? z.energy_day_gwh / s.cea_energy_gwh : 0.0);
+    // Gas kept for peaking, from the hourly check (evening = 18:00-24:00 IST).
+    j.num("gas_hours", z.gas_hours, 0).num("gas_twh", z.gas_twh).num("gas_peak_gw", z.gas_peak_gw);
+    j.num("gas_evening_twh", z.gas_evening_twh).num("gas_evening_pct", z.gas_twh > 0 ? 100 * z.gas_evening_twh / z.gas_twh : 0.0);
+    j.end();
 
     const StorageLandResult& L = s.robust_storage;
     j.obj("land").num("solar_wind_km2", L.land.total_km2()).num("share_india_pct", L.pct_india);
@@ -1094,8 +1264,10 @@ int main(int argc, char** argv) {
     std::printf("states %zu (challenge dataset %d); WPP medium %d %.0f M -> 2047 %.0f M; urban (WUP) %.3f -> %.3f\n",
                 drv.states.size(), drv.state_pop_year, drv.base_year, drv.wpp_med.front() / 1e6,
                 drv.wpp_med.back() / 1e6, drv.wup_base, drv.wup.back());
+    SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
+    site.state_count = static_cast<int>(drv.states.size());
     write_population_consistency(out, pl);
-    write_state_panel_check(out, root, pl);
+    write_state_panel_check(out, root, pl, site);
 
     ScenarioControls c;
     if (argc > 2) c.draws = std::stoull(argv[2]);
@@ -1161,6 +1333,7 @@ int main(int argc, char** argv) {
     // Parts in log points (they add up to the total) and as a share of the total.
     {
       const GrowthDecomposition d = pl.decompose_central(c, f.years[last]);
+      site.growth = d;
       const std::string from = fy_label(d.base_year), to = fy_label(d.target_year);
       auto text = [](const char* fmt, auto... v) {
         char b[256];
@@ -1212,7 +1385,7 @@ int main(int argc, char** argv) {
     // Published new loads (secondary sources) for a scenario outside the headline.
     const std::vector<NewLoad> new_loads = pl.new_loads();
     write_new_loads(out, new_loads, f.years[last]);
-    SiteSummary site;  // landing-page numbers, written at the end (write_site_summary)
+    site.new_loads = new_loads;
 
     // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes
     // conventional generation (thermal, nuclear, hydro) for them but no RES, so the
@@ -1306,7 +1479,7 @@ int main(int argc, char** argv) {
       }
       const Case cases[] = {
           {"base", "India elasticity with the excess-urbanisation prior", [](ScenarioControls&) {}},
-          {"no_urban_term", "gamma = 0: two organiser datasets only, urbanisation inside beta",
+          {"no_urban_term", "gamma = 0: no urbanisation effect beyond income (UN population path still used)",
            [](ScenarioControls& s) { s.w_model = {0, 1, 0}; }},
           {"damped_trend", "benchmark without drivers", [](ScenarioControls& s) { s.w_model = {0, 0, 1}; }},
           {"elasticity_decline_0.2", "elasticity falls 0.2 per unit of ln income",
@@ -1449,10 +1622,11 @@ int main(int argc, char** argv) {
                             "nonfossil_share", "coal_share", "solar_share", "wind_share", "hydro_share", "nuclear_share",
                             "co2_mt", "cost_busd", "unserved_twh", "eastern_net_export_twh", "gas_share",
                             "offshore_wind_share", "bioenergy_share", "firmed_re_share", "unserved_at_p90_twh",
-                            "cost_at_p90_busd"})
+                            "cost_at_p90_busd", "unserved_at_p05_twh", "cost_at_p05_busd"})
         w.field(h);
       w.endrow();
-      std::printf("preset matrix (2047 median TWh | non-fossil | coal | CO2 Mt | unserved TWh):\n");
+      std::printf("preset matrix (2047 median TWh | non-fossil | coal | CO2 Mt | unserved TWh; the same policy at "
+                  "P90 and at P05):\n");
       for (const auto& sp : scenario_presets()) {
         ScenarioControls sc = c;
         sc = ScenarioControls{};
@@ -1483,6 +1657,21 @@ int main(int argc, char** argv) {
             w.field(u90, 4).field(r90.least_cost.cost_busd, 5);
           else
             w.field("infeasible").field("infeasible");
+          // Low-demand stress test: the same policy at the P05 requirement. The coal floor, the
+          // gas minimum and the committed nuclear and hydro floors are fixed in TWh while the
+          // non-fossil minimum is a share, so a low enough requirement makes the LP infeasible.
+          // Split as in Pipeline::strategy: the national P05 shared by the regional medians.
+          const int tl = static_cast<int>(pf.years.size()) - 1;
+          const double p05 = pf.mc.quantile(pf.inputs, 0, tl, 0.05);
+          double med_sum = 0;
+          for (double x : r.requirement) med_sum += x;
+          std::array<double, kRegions> req05 = r.requirement;
+          for (double& x : req05) x *= p05 / med_sum;
+          const AllocationResult a05 = solve_least_cost(pl.allocation_inputs(), ps, req05);
+          if (a05.ok)
+            w.field(a05.unserved_total(), 4).field(a05.cost_busd, 5);
+          else
+            w.field("infeasible").field("infeasible");
           w.endrow();
           if (sp.name == "Base" && pp.name == "Robust") {  // the recommended plan on the landing page
             site.robust_plan = a;
@@ -1490,9 +1679,10 @@ int main(int argc, char** argv) {
             site.robust_policy = ps;
             site.robust_p90_unserved = r90.least_cost.ok ? u90 : -1.0;
           }
-          std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f | P90 unmet %6.1f %s\n",
+          std::printf("  %-12s x %-16s %6.0f | %5.1f%% | %5.1f%% | %5.0f | %6.1f | P90 unmet %6s | P05 (%4.0f TWh) %s %s\n",
                       sp.name.c_str(), pp.name.c_str(), q[3], 100 * a.nonfossil_share(), 100 * a.share(kCoal),
-                      a.co2_mt, unserved, r90.least_cost.ok ? u90 : -1.0, a.ok ? "" : a.status.c_str());
+                      a.co2_mt, unserved, r90.least_cost.ok ? std::to_string(std::lround(u90)).c_str() : "infeasible",
+                      p05, a05.ok ? "feasible" : "infeasible", a.ok ? "" : a.status.c_str());
         }
       }
     }
@@ -1542,6 +1732,7 @@ int main(int argc, char** argv) {
       const std::array<double, kRegions> req = pl.strategy(f, c, robust).requirement;
       const std::array<double, kRegions> req90 = pl.strategy(f, s90, robust).requirement;
       const std::vector<MixSensitivityRow> rows = mix_sensitivity(pl.allocation_inputs(), robust, req, req90);
+      site.mix_sensitivity = rows;
       CsvWriter w((out / "sensitivity_mix.csv").string());
       for (const char* h : {"case", "non_fossil_pct", "coal_pct", "co2_mt", "cost_busd", "unserved_p90_twh",
                             "unserved_median_twh"})
