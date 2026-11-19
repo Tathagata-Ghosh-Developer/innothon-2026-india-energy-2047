@@ -31,6 +31,14 @@ struct RowBuilder {
   void set(int row, int col, double v) { rows[row].push_back({col, v}); }
 };
 
+// National build cap (TWh) of the group whose row sums source s; no limit if none does.
+double cap_of(const std::vector<BuildCap>& caps, int s) {
+  for (const BuildCap& c : caps)
+    for (int t : c.techs)
+      if (t == s) return c.cap_twh;
+  return kHighsInf;
+}
+
 }  // namespace
 
 double AllocationResult::nonfossil_share() const {
@@ -62,11 +70,36 @@ double potential_twh(const AllocationInputs& in, const PolicySettings& p, int r,
   return in.potential_twh[r][s];
 }
 
+double gas_min_twh(const AllocationInputs& in, const PolicySettings& p) {
+  if (!(p.gas_min_twh_share >= 0.0 && p.gas_min_twh_share <= 1.0))
+    throw std::invalid_argument("gas_min_twh_share must be between 0 and 1");
+  if (p.gas_min_twh_share == 0.0) return 0.0;
+  return std::min(p.gas_min_twh_share * in.fleet_floor_twh[kGas], cap_of(build_caps(in, p), kGas));
+}
+
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req) {
   Bounds b;
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
   double units = 0;
   for (double u : in.nuclear_units) units += u;
+  // Committed builds raise the nuclear and hydro floors. They are part of the published
+  // additions, so together they fit within the national build cap of the source (nuclear also
+  // within its national share limit): fit[s] is the share of the committed TWh that does.
+  const std::vector<BuildCap> caps = build_caps(in, p);
+  std::array<double, kTechs> fit{};
+  double base_gas = 0;
+  for (int r = 0; r < kRegions; ++r) base_gas += in.base_twh[r][kGas];
+  for (int s : {kNuclear, kHydro}) {
+    double base = 0, committed = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      base += in.base_twh[r][s];
+      committed += in.committed_twh[r][s];
+    }
+    double room = cap_of(caps, s);
+    if (s == kNuclear) room = std::min(room, p.nuclear_max * total_req);
+    fit[s] = committed > 0 ? std::clamp((room - base) / committed, 0.0, 1.0) : 0.0;
+  }
+  const double gas_cap = cap_of(caps, kGas);
   for (int r = 0; r < kRegions; ++r) {
     const auto& base = in.base_twh[r];
     std::array<double, kTechs> pot{};
@@ -75,12 +108,17 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
     auto& hi = b.hi[r];
     lo[kCoal] = p.coal_floor * base[kCoal];
     hi[kCoal] = std::max(lo[kCoal], p.coal_regional_max * base[kCoal]);
+    // Gas: no published additions, so each region keeps its share of the existing fleet's cap.
     lo[kGas] = 0;
-    hi[kGas] = kHighsInf;
-    lo[kNuclear] = base[kNuclear];
+    hi[kGas] = base_gas > 0 && gas_cap < kHighsInf ? gas_cap * base[kGas] / base_gas : kHighsInf;
     hi[kNuclear] = std::max(base[kNuclear], p.nuclear_max * total_req * (units > 0 ? in.nuclear_units[r] / units : 0));
-    lo[kHydro] = base[kHydro];
     hi[kHydro] = std::max(base[kHydro], p.hydro_frac * pot[kHydro]);
+    for (int s : {kNuclear, kHydro}) {
+      const double add = std::min(fit[s] * in.committed_twh[r][s], hi[s] - base[s]);
+      lo[s] = base[s] + add;
+      b.committed[r][s] = add;
+      b.committed_cut[r][s] = in.committed_twh[r][s] - add;
+    }
     lo[kSolar] = base[kSolar];
     hi[kSolar] = std::max(base[kSolar], p.solar_land * pot[kSolar]);
     lo[kWind] = base[kWind];
@@ -144,6 +182,7 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   const int nc = static_cast<int>(in.corridors.size());
   const int ubase = kRegions * kTechs + 2 * nc;  // unserved energy variables
   const int nvar = ubase + kRegions;
+  const double gas_min = gas_min_twh(in, p);  // throws on a share outside [0, 1]
   const Bounds b = make_bounds(in, p, req);
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
   const RegionTech& unit_cost = cost_table(in, p);
@@ -205,6 +244,12 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
       rb.set(gas, v, (s == kGas ? 1.0 : 0.0) - p.gas_max);
       if (s == kNuclear) rb.set(nuclear, v, 1.0);
     }
+  // Gas kept for peaking and as a bridge (gas_min_twh_share): national gas at least a share of the
+  // existing fleet's best NPP year, sited by the LP within the regional gas bounds.
+  if (gas_min > 0) {
+    const int row = rb.add(gas_min, kHighsInf);
+    for (int r = 0; r < kRegions; ++r) rb.set(row, gvar(r, kGas), 1.0);
+  }
   // National build limits: max(existing-fleet floor, FY2023-24 generation) + build_accel x the
   // published additions to 2047 (build_caps). Firmed RE is solar and wind with storage, so it
   // shares their cap.
@@ -411,6 +456,8 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
       {"Corridor capacity (x 2032 plan)", 1.0, 3.0, [](PolicySettings& p, double v) { p.transfer_scale = v; }, "%.1fx"},
       {"Build-rate acceleration (x published limit)", 0.75, 1.5,
        [](PolicySettings& p, double v) { p.build_accel = v; }, "%.2fx"},
+      {"Gas kept for peaking (share of fleet floor)", 0.0, 1.0,
+       [](PolicySettings& p, double v) { p.gas_min_twh_share = v; }, "%.0f%%"},
       {"Carbon price (USD/t)", 0.0, 60.0, [](PolicySettings& p, double v) { p.carbon_price = v; }, "%.0f"},
       {"Solar cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kSolar] = v; }, "%.1fx"},
       {"Nuclear cost", 0.7, 1.3, [](PolicySettings& p, double v) { p.cost_mult[kNuclear] = v; }, "%.1fx"},
@@ -419,6 +466,7 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
   };
   constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
   const int nrow = ns + 1;  // + requirement uncertainty
+  (void)gas_min_twh(in, base);  // an invalid setting throws here, not inside the parallel region
   std::vector<TornadoRow> rows(nrow);
   auto label = [](const char* fmt, double v) {
     char b[32];
@@ -484,6 +532,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
     (void)potential_twh(in, rows[i].policy, 0, kSolar);
     (void)potential_twh(in, rows[i].policy, 0, kWind);
     (void)build_caps(in, rows[i].policy);
+    (void)gas_min_twh(in, rows[i].policy);
   }
 #pragma omp parallel for schedule(dynamic)
   for (int k = 0; k < 2 * ns; ++k) {

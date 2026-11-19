@@ -103,6 +103,18 @@ struct AllocationInputs {
   std::array<double, kTechs> emission_t_per_mwh{};
   std::string emission_period;  // CEA CO2 Baseline Database period of emission_t_per_mwh
   std::array<double, kRegions> nuclear_units{};  // reactor units built or in pipeline
+  // Committed builds (secondary): plants already being built generate in 2047 whatever the cost
+  // ranking says, so they raise the regional lower bound of their source above the FY2023-24
+  // base (allocate.cpp, make_bounds). Energy only: committed MW / 1000 x CUF x 8.76, a supply-side
+  // conversion; installed capacity is never forecast. Nuclear (nuclear_pipeline.csv): units under
+  // construction or sanctioned, plus units commissioned after the base year (a dd.mm.yyyy date
+  // after March of base_year + 1). Large hydro: CEA under-construction MW by state
+  // (resource_potential.csv, under_construction_mw), each state in its grid region. CUF: the
+  // lowest of the source's build_limits.csv rows, so a committed plant never counts for more
+  // than the build cap credits a published addition (nuclear 0.68, hydro 0.36).
+  std::array<double, kRegions> committed_nuclear_mw{}, committed_hydro_mw{};
+  double committed_nuclear_cuf = 0, committed_hydro_cuf = 0;
+  RegionTech committed_twh{};  // kNuclear and kHydro entries only, TWh a year
   std::vector<Corridor> corridors;
 
   // National build limits for 2047 (allocate.cpp, build_caps). Each source's 2047 generation

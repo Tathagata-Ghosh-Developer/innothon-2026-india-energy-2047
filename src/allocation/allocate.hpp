@@ -50,9 +50,19 @@ struct PolicySettings {
   int cost_basis = kCostIEA;                 // kCostIEA: IEA WEO 2025; kCostCEA: CEA NEP inputs (inputs.hpp)
   int solar_potential_set = kSolarNise2025;  // kSolarNise2025 or kSolarNise2014
   int wind_height = 150;                     // NIWE potential at 150 m (default) or 120 m
+  // Gas kept for peaking and as a bridge for variable renewables (gas_min_twh): national gas
+  // generation >= this share (0 to 1) of the existing gas fleet's best NPP year
+  // (AllocationInputs::fleet_floor_twh, diesel counted with gas as in the base mix). The LP sites
+  // it within the regional gas bounds (make_bounds), which follow the FY2023-24 gas shares. A
+  // gas_max too low to hold it makes the LP infeasible.
+  double gas_min_twh_share = 0.0;
 
   bool operator==(const PolicySettings&) const = default;
 };
+
+// National gas minimum of the policy, TWh: gas_min_twh_share x the gas fleet floor, at most the
+// national gas build cap. Throws std::invalid_argument if the share is not in [0, 1].
+double gas_min_twh(const AllocationInputs& in, const PolicySettings& p);
 
 // Cost table of the policy's cost basis, USD/MWh by region and source. Throws on an unknown basis.
 const RegionTech& cost_table(const AllocationInputs& in, const PolicySettings& p);
@@ -81,9 +91,16 @@ struct AllocationResult {
   double unserved_total() const;  // TWh, summed over regions
 };
 
-// Bounds actually used for each region and source (after policy fractions).
+// Bounds actually used for each region and source (after policy fractions). Nuclear and hydro:
+// lo = FY2023-24 base + committed builds (AllocationInputs::committed_twh). Committed plants are
+// part of the published additions, so the committed TWh of a source is first cut to fit its
+// national build cap (and, for nuclear, the nuclear_max share of the requirement), then each
+// region's floor to its regional bound hi. Gas: hi = the national gas build cap x the region's
+// FY2023-24 share of gas (no published gas additions: gas comes from the existing fleet).
 struct Bounds {
   RegionTech lo{}, hi{};
+  RegionTech committed{};      // committed-build TWh inside lo
+  RegionTech committed_cut{};  // committed-build TWh left out because a cap or bound is lower
 };
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req);
 

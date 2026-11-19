@@ -84,6 +84,22 @@ std::string strf(const char* f, ...) {
 // Fiscal year as written in the source files: start year 2023 -> "2023-24".
 std::string fiscal_label(int start) { return strf("%d-%02d", start, (start + 1) % 100); }
 
+// Fiscal start year (April to March) of the first "dd.mm.yyyy" date in a text; 0 if it has none.
+int fiscal_start_of_date(const std::string& text) {
+  auto digits = [&](size_t i, size_t n) {
+    for (size_t k = i; k < i + n; ++k)
+      if (!std::isdigit(static_cast<unsigned char>(text[k]))) return false;
+    return true;
+  };
+  for (size_t i = 0; i + 10 <= text.size(); ++i) {
+    if (text[i + 2] != '.' || text[i + 5] != '.' || !digits(i, 2) || !digits(i + 3, 2) || !digits(i + 6, 4)) continue;
+    const int month = std::stoi(text.substr(i + 3, 2)), year = std::stoi(text.substr(i + 6, 4));
+    if (month < 1 || month > 12) continue;
+    return month >= 4 ? year : year - 1;
+  }
+  return 0;
+}
+
 }  // namespace
 
 const char* tech_key(int s) {
@@ -708,7 +724,10 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     in.notes.push_back("Solar/wind CUF: CEA NEP 2022-32 regional planning values; missing regions use the lowest published regional value.");
   }
 
-  // 3. Resource potential converted to generation potential (TWh/yr).
+  // 3. Resource potential converted to generation potential (TWh/yr), and large hydro under
+  //    construction by region (committed builds, section 7b).
+  double hydro_uc_india = kNaN, hydro_uc_states = 0;
+  std::string hydro_uc_as_of, hydro_uc_unmatched;
   {
     const CsvTable t = CsvTable::read(ext + "/resource_potential.csv");
     const size_t cst = t.col("state"), cres = t.col("resource"), cmet = t.col("metric"), cval = t.col("value");
@@ -720,6 +739,17 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       if (st.find("incl. Ladakh") != std::string::npos && has_ladakh.count(res + "|" + met)) continue;
       const int reg = state_region(state_reg, st);
       const double v = t.num(r, cval);
+      if (res == "large_hydro" && met == "under_construction_mw" && !std::isnan(v)) {
+        if (t.has("as_of")) hydro_uc_as_of = t.str(r, t.col("as_of"));
+        if (normalize_state(st) == "india") {
+          hydro_uc_india = v;
+        } else {
+          hydro_uc_states += v;
+          if (reg >= 0) in.committed_hydro_mw[reg] += v;
+          else if (v > 0) hydro_uc_unmatched += (hydro_uc_unmatched.empty() ? "" : ", ") + st;
+        }
+        continue;
+      }
       if (reg < 0 || std::isnan(v)) continue;
       if (res == "solar" && met == "ground_mounted_potential_nise_2025")
         in.potential_twh[reg][kSolar] += v * cuf_solar[reg] * kHoursTWhPerGW;
@@ -930,6 +960,88 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     for (int r = 0; r < kRegions; ++r)
       if (in.base_twh[r][kNuclear] > 0) in.nuclear_units[r] += 1.0;  // existing stations
     in.notes.push_back("Nuclear siting key: reactor units in the NPCIL/DAE pipeline by region, plus existing stations.");
+  }
+
+  // 7b. Committed builds: plants already being built generate in 2047 whatever the cost ranking
+  //     says, so they raise the regional lower bound of nuclear and hydro above the FY2023-24
+  //     base (allocate.cpp, make_bounds). Energy only: MW / 1000 x CUF x 8.76.
+  {
+    auto lowest_cuf = [&](int s) {
+      double c = 2;
+      for (const BuildLimitRow& row : in.build_limits)
+        if (row.tech == s) c = std::min(c, row.cuf);
+      if (c > 1) throw std::runtime_error(std::string("no build-limit CUF for committed ") + tech_key(s));
+      return c;
+    };
+    in.committed_nuclear_cuf = lowest_cuf(kNuclear);
+    in.committed_hydro_cuf = lowest_cuf(kHydro);
+
+    // Nuclear: units under construction or sanctioned, plus units commissioned after the base
+    // year (their output is not in the base). Status "planned" and "target" rows do not count.
+    double uc = 0, sanctioned = 0, recent = 0;
+    std::string recent_names;
+    {
+      const CsvTable t = CsvTable::read(te + "/nuclear_pipeline.csv");
+      const size_t cp = t.col("project"), cr = t.col("region"), cs = t.col("status"), cm = t.col("capacity_mw"),
+                   cc = t.col("expected_commissioning");
+      for (size_t r = 0; r < t.rows(); ++r) {
+        const std::string& status = t.str(r, cs);
+        if (status != "under_construction" && status != "sanctioned" && status != "recently_commissioned") continue;
+        const std::string where = te + "/nuclear_pipeline.csv row " + std::to_string(r + 2) + " (" + t.str(r, cp) + ")";
+        const int reg = region_index(t.str(r, cr));
+        const double mw = t.num(r, cm);
+        if (reg < 0 || std::isnan(mw) || mw <= 0)
+          throw std::runtime_error("committed nuclear: no grid region or capacity in " + where);
+        if (status == "recently_commissioned") {
+          const int fy = fiscal_start_of_date(t.str(r, cc));
+          if (fy == 0)
+            throw std::runtime_error("committed nuclear: no dd.mm.yyyy commissioning date, so it cannot be told "
+                                     "whether the unit generated in the base year, in " + where);
+          if (fy <= in.base_year) continue;  // generating in the base year: in base_twh already
+          recent += mw;
+          recent_names += strf("%s%s, FY%s", recent_names.empty() ? "" : "; ", t.str(r, cp).c_str(),
+                               fiscal_label(fy).c_str());
+        } else {
+          (status == "under_construction" ? uc : sanctioned) += mw;
+        }
+        in.committed_nuclear_mw[reg] += mw;
+      }
+    }
+    // Large hydro under construction (section 3): every state with a grid region, and the
+    // states add up to the All-India row.
+    if (!hydro_uc_unmatched.empty())
+      throw std::runtime_error("large hydro under construction: no grid region for " + hydro_uc_unmatched);
+    if (!std::isnan(hydro_uc_india) && std::abs(hydro_uc_states - hydro_uc_india) > 0.5)
+      throw std::runtime_error(strf("large hydro under construction: states add up to %.1f MW, the All-India row is "
+                                    "%.1f MW", hydro_uc_states, hydro_uc_india));
+    double nuc_twh = 0, hydro_twh = 0, hydro_mw = 0;
+    std::string nuc_by, hydro_by;
+    for (int r = 0; r < kRegions; ++r) {
+      in.committed_twh[r][kNuclear] = in.committed_nuclear_mw[r] / 1000.0 * in.committed_nuclear_cuf * kHoursTWhPerGW;
+      in.committed_twh[r][kHydro] = in.committed_hydro_mw[r] / 1000.0 * in.committed_hydro_cuf * kHoursTWhPerGW;
+      nuc_twh += in.committed_twh[r][kNuclear];
+      hydro_twh += in.committed_twh[r][kHydro];
+      hydro_mw += in.committed_hydro_mw[r];
+      if (in.committed_nuclear_mw[r] > 0)
+        nuc_by += strf("%s%s %.0f MW", nuc_by.empty() ? "" : ", ", region_name(r), in.committed_nuclear_mw[r]);
+      if (in.committed_hydro_mw[r] > 0)
+        hydro_by += strf("%s%s %.1f MW", hydro_by.empty() ? "" : ", ", region_name(r), in.committed_hydro_mw[r]);
+    }
+    in.notes.push_back(strf(
+        "Committed builds (secondary): plants already being built generate in 2047 whatever the cost ranking says, "
+        "so each region's lower bound of nuclear and hydro is its FY%s generation + committed MW / 1000 x CUF x 8.76 "
+        "(energy only; installed capacity is not forecast). Nuclear (data/external/techno_economic/"
+        "nuclear_pipeline.csv, DAE/PIB): %.0f MW under construction, %.0f MW sanctioned and %.0f MW commissioned "
+        "after FY%s (%s); %s; at CUF %.2f (the nuclear rows of build_limits.csv, the CEA NEP 2022-32 availability) "
+        "%.1f TWh. Large hydro under construction (data/external/resource_potential.csv, under_construction_mw, CEA "
+        "status as on %s): %.1f MW, %s; at CUF %.2f (the lowest hydro row of build_limits.csv, NITI's large-hydro "
+        "PLF midpoint) %.1f TWh. The CUF is the lowest of the source's build-limit rows, so a committed plant never "
+        "counts for more than the build cap credits a published addition. Committed plants are part of the "
+        "published additions: the floors are cut to fit the national build cap and the nuclear share limit, and "
+        "each region's floor to its regional bound.",
+        fiscal_label(in.base_year).c_str(), uc, sanctioned, recent, fiscal_label(in.base_year).c_str(),
+        recent_names.empty() ? "none" : recent_names.c_str(), nuc_by.c_str(), in.committed_nuclear_cuf, nuc_twh,
+        hydro_uc_as_of.c_str(), hydro_mw, hydro_by.c_str(), in.committed_hydro_cuf, hydro_twh));
   }
 
   // 8. Inter-regional corridors: transfer capability planned for March 2032 and regional losses.

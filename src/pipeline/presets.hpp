@@ -67,8 +67,10 @@ inline const std::vector<PolicyPreset>& policy_presets() {
       {"Robust",
        "Meets the median requirement with margin: 75% non-fossil, 35% usable solar and 30% wind land (incl. rooftop "
        "and agri-PV), corridors 3x the 2032 plan, nuclear up to 15%, build rates at the published high-case limits, "
-       "coal floor 50%. Meeting the P90 also needs 45% of the solar potential usable; the published high-case build "
-       "rates are then enough (outputs/p90_levers.csv).",
+       "coal floor 50%, and the existing gas fleet kept at its best NPP year's output (FY2018-19 to FY2025-26) for "
+       "peaking and as a bridge for variable renewables, each region within its FY2023-24 share of gas. Meeting the "
+       "P90 also needs 45% of the solar potential usable; the published high-case build rates are then enough "
+       "(outputs/p90_levers.csv).",
        [](PolicySettings& p) {
          p.nonfossil_min = 0.75;
          p.solar_land = 0.35;
@@ -77,6 +79,7 @@ inline const std::vector<PolicyPreset>& policy_presets() {
          p.nuclear_max = 0.15;
          p.build_case = kBuildHigh;
          p.coal_floor = 0.50;
+         p.gas_min_twh_share = 1.0;
        }},
       {"Energy security",
        "Each region 40% self-firm, national firm 55%, corridors only at the 2032 plan, gas at most 2%, coal floor 70%.",

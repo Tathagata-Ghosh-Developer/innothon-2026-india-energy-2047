@@ -215,6 +215,7 @@ double smallest(F f, double lo, double hi, double goal) {
 struct Residual {
   std::vector<double> r, w;  // per hour of the representative year, chronological
   double vre_twh = 0;
+  double gas_hours = 0, gas_twh = 0, gas_peak_gw = 0, gas_evening_twh = 0;  // StorageSizing
 };
 
 Residual dispatch(const StorageInputs& in, double load_twh, const std::array<double, kTechs>& twh, bool firm_flat,
@@ -264,7 +265,13 @@ Residual dispatch(const StorageInputs& in, double load_twh, const std::array<dou
   if (twh[kGas] > 0) {
     const double mean = twh[kGas] * 1e3 / kHoursPerYear;
     waterfill(R, out.w, 0, n, 0.0, std::max(1.0, in.gas_peak_ratio) * mean, twh[kGas] * 1e3, gas);
-    for (size_t i = 0; i < n; ++i) R[i] -= gas[i];
+    for (size_t i = 0; i < n; ++i) {
+      R[i] -= gas[i];
+      if (gas[i] > 1e-3) out.gas_hours += out.w[i];  // above 1 MW
+      out.gas_twh += out.w[i] * gas[i] / 1e3;
+      out.gas_peak_gw = std::max(out.gas_peak_gw, gas[i]);
+      if (static_cast<int>(i % kDayHours) >= kEveningFromHour) out.gas_evening_twh += out.w[i] * gas[i] / 1e3;
+    }
   }
   for (size_t i = 0; i < n; ++i) out.r[i] = -R[i];
   return out;
@@ -277,6 +284,10 @@ StorageSizing size_storage(const StorageInputs& in, const Residual& res) {
   const double eta = in.round_trip, ec = std::sqrt(eta), ed = std::sqrt(eta);
   const double* r = res.r.data();
   s.vre_twh = res.vre_twh;
+  s.gas_hours = res.gas_hours;
+  s.gas_twh = res.gas_twh;
+  s.gas_peak_gw = res.gas_peak_gw;
+  s.gas_evening_twh = res.gas_evening_twh;
   for (int i = 0; i < n; ++i) {
     const double wi = res.w[i];
     if (r[i] < 0) {

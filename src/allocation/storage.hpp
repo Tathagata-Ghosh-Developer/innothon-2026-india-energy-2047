@@ -19,6 +19,7 @@
 namespace e47 {
 
 constexpr int kDayHours = 24;
+constexpr int kEveningFromHour = 18;  // evening peak: hours 18:00-24:00 IST of the Merit series
 
 // Hourly series of the representative year, one complete Merit day per entry.
 // Values are MW, detrended where the series has a fleet-growth trend.
@@ -85,6 +86,12 @@ struct StorageSizing {
   // Shortfall left with carry-over between days for stores of kCurveMult x the daily energy.
   static constexpr std::array<double, 6> kCurveMult{1.0, 1.5, 2.0, 3.0, 5.0, 10.0};
   std::array<double, 6> curve_unmet_twh{};
+  // Gas as peaking supply (firm dispatch, before storage): the plan's gas energy fills the hours
+  // of highest residual load, at most the fleet's Merit peak-to-mean ratio x its mean output.
+  double gas_hours = 0;        // hours a year with gas above 1 MW
+  double gas_twh = 0;          // gas energy dispatched (the plan's gas)
+  double gas_peak_gw = 0;      // largest hourly gas output
+  double gas_evening_twh = 0;  // part of gas_twh in the hours 18:00-24:00 IST (kEveningFromHour)
   double curtailed_day_pct() const { return vre_twh > 0 ? 100.0 * curtailed_day_twh / vre_twh : 0.0; }
 };
 

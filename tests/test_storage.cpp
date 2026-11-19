@@ -159,6 +159,24 @@ int main(int argc, char** argv) {
     check(a.system.energy_day_gwh == a2.system.energy_day_gwh && a.total.energy_multi_gwh == a2.total.energy_multi_gwh &&
               a.system.unmet_day_twh == a2.system.unmet_day_twh && a.system.power_gw == a2.system.power_gw,
           "identical results on a second run (deterministic)");
+    {
+      // Gas as peaking supply: the plan's gas energy fills the highest residual hours, at most the
+      // fleet's observed peak-to-mean ratio x its mean output. The check reports its hours and energy.
+      check(a.total.gas_hours == 0 && a.total.gas_twh == 0, "no gas in the plan: no gas hours");
+      const std::array<double, kTechs> se = {0.29, 0.01, 0.05, 0.08, 0.40, 0.10, 0.02, 0.02, 0.03};
+      const AllocationResult plan_e = make_plan(alloc, se);
+      const StorageLandResult e = storage_and_land(in, alloc, p, plan_e);
+      const StorageSizing& g = e.total;
+      const double mean_gw = plan_e.national[kGas] * 1e3 / 8760.0;
+      std::printf("plan E (1%% gas, %.1f TWh): gas runs %.0f h/yr, %.2f TWh, up to %.1f GW (mean %.1f GW); %.2f TWh "
+                  "in 18:00-24:00\n",
+                  plan_e.national[kGas], g.gas_hours, g.gas_twh, g.gas_peak_gw, mean_gw, g.gas_evening_twh);
+      check(e.ok, "plan E sized");
+      check(std::abs(g.gas_twh - plan_e.national[kGas]) < 1e-6 * plan_e.national[kGas], "gas hours carry the plan's gas energy");
+      check(g.gas_hours > 0 && g.gas_hours < 8760, "gas runs in part of the year only (peaking)");
+      check(g.gas_peak_gw <= std::max(1.0, in.gas_peak_ratio) * mean_gw * (1 + 1e-9), "gas output within its peak-to-mean ratio");
+      check(g.gas_evening_twh > 0 && g.gas_evening_twh <= g.gas_twh + 1e-9, "evening gas energy within the total");
+    }
     std::printf("%s\n", fails ? "FAIL" : "ok");
     return fails ? 1 : 0;
   } catch (const std::exception& e) {

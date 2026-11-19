@@ -4,6 +4,7 @@
 // shares), and verifies balances and policy constraints.
 // Usage: test_allocation <repo_root>
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
@@ -17,6 +18,7 @@
 #include "core/stats.hpp"
 #include "pipeline/pipeline.hpp"
 #include "pipeline/presets.hpp"
+#include "regional/convergence.hpp"  // normalize_state
 
 using namespace e47;
 
@@ -742,6 +744,329 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
   return check.fails;
 }
 
+PolicySettings robust_preset() {
+  PolicySettings p;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(p);
+  return p;
+}
+
+// Lowest CUF of a source's rows in build_limits.csv (the CUF of committed builds).
+double lowest_build_cuf(const AllocationInputs& in, int s) {
+  double c = 2;
+  for (const BuildLimitRow& row : in.build_limits)
+    if (row.tech == s) c = std::min(c, row.cuf);
+  return c;
+}
+
+// Fiscal start year of a "dd.mm.yyyy" date inside a text (April to March), or 0 if none.
+int fiscal_start_of_date(const std::string& text) {
+  for (size_t i = 0; i + 10 <= text.size(); ++i) {
+    const std::string d = text.substr(i, 10);
+    bool date = d[2] == '.' && d[5] == '.';
+    for (size_t k : {0, 1, 3, 4, 6, 7, 8, 9}) date &= std::isdigit(static_cast<unsigned char>(d[k])) != 0;
+    if (!date) continue;
+    const int m = std::stoi(d.substr(3, 2)), y = std::stoi(d.substr(6, 4));
+    return m >= 4 ? y : y - 1;
+  }
+  return 0;
+}
+
+// Committed nuclear (nuclear_pipeline.csv): units under construction or sanctioned, plus units
+// commissioned after the FY2023-24 base year (not in its generation), MW by region, read here
+// from the file. Each region's floor = FY2023-24 base + MW / 1000 x CUF x 8.76, CUF the lowest
+// of the nuclear rows in build_limits.csv (0.68, the CEA NEP availability). The Robust plan's
+// nuclear in each region is at least that floor, and the floor binds (the least-cost plan
+// would not build these units on its own). A floor never exceeds the regional nuclear bound or
+// the national nuclear build cap.
+int committed_nuclear_floor_binds(const std::string& root, const AllocationInputs& in,
+                                  const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("committed_nuclear_floor_binds\n");
+  std::array<double, kRegions> mw{};
+  bool dated = true;
+  {
+    const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/nuclear_pipeline.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      const std::string status = t.str(i, t.col("status"));
+      const int r = region_of(t.str(i, t.col("region")));
+      if (r < 0) continue;
+      if (status == "recently_commissioned") {
+        const int fy = fiscal_start_of_date(t.str(i, t.col("expected_commissioning")));
+        dated &= fy > 0;
+        if (fy <= in.base_year) continue;  // generating in the base year already
+      } else if (status != "under_construction" && status != "sanctioned") {
+        continue;
+      }
+      mw[r] += t.num(i, t.col("capacity_mw"));
+    }
+  }
+  check(dated, "every recently commissioned unit has a dd.mm.yyyy commissioning date");
+  const double cuf = lowest_build_cuf(in, kNuclear);
+  check(cuf == 0.68 && in.committed_nuclear_cuf == cuf, "CUF 0.68: the nuclear rows of build_limits.csv (CEA NEP)");
+  bool same = true;
+  double total = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    const double twh = mw[r] / 1000.0 * cuf * 8.76;
+    std::printf("  %-14s committed %7.0f MW (loaded %7.0f) -> %6.2f TWh (loaded %6.2f); base %6.2f TWh\n",
+                region_name(r), mw[r], in.committed_nuclear_mw[r], twh, in.committed_twh[r][kNuclear],
+                in.base_twh[r][kNuclear]);
+    same &= std::abs(in.committed_nuclear_mw[r] - mw[r]) < 1e-9 &&
+            std::abs(in.committed_twh[r][kNuclear] - twh) < 1e-9 * std::max(1.0, twh);
+    total += mw[r];
+  }
+  check(same, "committed MW and TWh by region = the file's units x 0.68 x 8.76");
+  check(total > 0 && mw[0] > 0 && mw[1] > 0 && mw[2] > 0, "committed units in the Northern, Western and Southern regions");
+
+  const PolicySettings robust = robust_preset();
+  const Bounds b = make_bounds(in, robust, req);
+  bool floor_ok = true, no_cut = true;
+  for (int r = 0; r < kRegions; ++r) {
+    const double want = in.base_twh[r][kNuclear] + in.committed_twh[r][kNuclear];
+    floor_ok &= std::abs(b.lo[r][kNuclear] - want) < 1e-9 * std::max(1.0, want) && b.lo[r][kNuclear] <= b.hi[r][kNuclear];
+    no_cut &= b.committed_cut[r][kNuclear] == 0 && b.committed[r][kNuclear] == in.committed_twh[r][kNuclear];
+  }
+  check(floor_ok, "Robust bounds: regional nuclear floor = base + committed, within the regional bound");
+  check(no_cut, "Robust bounds: no committed nuclear cut by a cap");
+  const AllocationResult a = solve_least_cost(in, robust, req);
+  check(a.ok, "Robust LP feasible (" + a.status + ")");
+  if (!a.ok) return check.fails;
+  bool above = true, binds = false;
+  for (int r = 0; r < kRegions; ++r) {
+    std::printf("  %-14s Robust nuclear %7.2f TWh, floor %7.2f TWh\n", region_name(r), a.gen[r][kNuclear],
+                b.lo[r][kNuclear]);
+    above &= a.gen[r][kNuclear] >= b.lo[r][kNuclear] - 1e-6;
+    binds |= in.committed_twh[r][kNuclear] > 0 && std::abs(a.gen[r][kNuclear] - b.lo[r][kNuclear]) < 1e-6;
+  }
+  check(above, "Robust plan: nuclear in each region >= its committed floor");
+  check(binds, "the committed floor binds in at least one region");
+  const BuildCap* cap = cap_with(build_caps(in, robust), kNuclear);
+  double floors = 0;
+  for (int r = 0; r < kRegions; ++r) floors += b.lo[r][kNuclear];
+  check(cap && floors <= cap->cap_twh + 1e-9, "sum of nuclear floors within the national nuclear build cap");
+
+  // A regional bound below the floor caps it, and the cut is reported: with no pipeline units
+  // in the Northern Region its bound is its base.
+  AllocationInputs no_units = in;
+  no_units.nuclear_units[0] = 0;
+  const Bounds bt = make_bounds(no_units, robust, req);
+  bool capped = true;
+  for (int r = 0; r < kRegions; ++r) {
+    capped &= bt.lo[r][kNuclear] <= bt.hi[r][kNuclear] + 1e-12 && bt.lo[r][kNuclear] >= in.base_twh[r][kNuclear];
+    capped &= std::abs(bt.committed[r][kNuclear] + bt.committed_cut[r][kNuclear] - in.committed_twh[r][kNuclear]) < 1e-9;
+  }
+  std::printf("  Northern bound at its base: floor %.2f TWh, cut %.2f TWh\n", bt.lo[0][kNuclear], bt.committed_cut[0][kNuclear]);
+  check(capped && std::abs(bt.lo[0][kNuclear] - in.base_twh[0][kNuclear]) < 1e-9 &&
+            std::abs(bt.committed_cut[0][kNuclear] - in.committed_twh[0][kNuclear]) < 1e-9,
+        "regional bound at base: floor capped at the bound, the cut reported");
+  check(solve_least_cost(no_units, robust, req).ok, "regional bound at base: LP feasible");
+  // No published additions (build_accel 0, share and firm rows off so only bounds and caps
+  // bind): the floors are cut to fit the national cap, and the LP stays feasible.
+  PolicySettings none = robust;
+  none.build_accel = 0;
+  none.nonfossil_min = 0;
+  none.firm_national = 0;
+  none.firm_regional = 0;
+  const Bounds bn = make_bounds(in, none, req);
+  const BuildCap* cn = cap_with(build_caps(in, none), kNuclear);
+  double fn = 0, cut = 0;
+  for (int r = 0; r < kRegions; ++r) {
+    fn += bn.lo[r][kNuclear];
+    cut += bn.committed_cut[r][kNuclear];
+  }
+  std::printf("  build_accel 0: nuclear floors %.2f TWh (cut %.2f), cap %.2f TWh\n", fn, cut, cn ? cn->cap_twh : 0.0);
+  check(cn && fn <= cn->cap_twh + 1e-9 && cut > 0, "build_accel 0: nuclear floors cut to the national cap");
+  check(solve_least_cost(in, none, req).ok, "build_accel 0: LP feasible");
+  bool note = false;
+  for (const std::string& n : in.notes) {
+    if (n.rfind("Committed builds", 0) != 0) continue;
+    std::printf("    %s\n", n.c_str());
+    note |= n.find("nuclear_pipeline.csv") != std::string::npos && n.find("0.68") != std::string::npos &&
+            n.find("secondary") != std::string::npos;
+  }
+  check(note, "provenance note: committed nuclear, its file and its CUF, labelled secondary");
+  return check.fails;
+}
+
+// Committed large hydro (resource_potential.csv, under_construction_mw, CEA status as on
+// 31.10.2026): MW by state, each state in its grid region (state_region_map.csv; Jammu and
+// Kashmir and Ladakh are one entry there), read here from the files. Floor = base + MW / 1000 x
+// CUF x 8.76, CUF the lowest of the hydro rows in build_limits.csv (0.36, NITI). Hydro in the
+// Robust and the default plan is at least the floor, which never exceeds the regional bound.
+int committed_hydro_floor(const std::string& root, const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("committed_hydro_floor\n");
+  std::map<std::string, int> region;
+  {
+    const CsvTable t = CsvTable::read(root + "/data/raw/generation/state/state_region_map.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      const int r = region_of(t.str(i, t.col("region")));
+      if (r >= 0) region[normalize_state(t.str(i, t.col("state")))] = r;
+    }
+  }
+  std::array<double, kRegions> mw{};
+  double india = 0, states = 0;
+  std::string unmapped;
+  {
+    const CsvTable t = CsvTable::read(root + "/data/external/resource_potential.csv");
+    for (size_t i = 0; i < t.rows(); ++i) {
+      if (t.str(i, t.col("resource")) != "large_hydro" || t.str(i, t.col("metric")) != "under_construction_mw") continue;
+      const std::string st = normalize_state(t.str(i, t.col("state")));
+      const double v = t.num(i, t.col("value"));
+      if (st == "india") {
+        india = v;
+        continue;
+      }
+      states += v;
+      auto it = region.find(st == "jammu and kashmir" || st == "ladakh" ? "jammu and kashmir and ladakh" : st);
+      if (it == region.end()) {
+        unmapped += " " + st;
+        continue;
+      }
+      mw[it->second] += v;
+    }
+  }
+  check(unmapped.empty(), "every state with a large-hydro row has a grid region" + unmapped);
+  check(india > 0 && std::abs(states - india) < 1e-6, "state rows add up to the All-India row");
+  const double cuf = lowest_build_cuf(in, kHydro);
+  check(cuf == 0.36 && in.committed_hydro_cuf == cuf, "CUF 0.36: the lowest hydro row of build_limits.csv (NITI)");
+  bool same = true;
+  for (int r = 0; r < kRegions; ++r) {
+    const double twh = mw[r] / 1000.0 * cuf * 8.76;
+    std::printf("  %-14s under construction %7.1f MW (loaded %7.1f) -> %6.2f TWh (loaded %6.2f); base %6.2f TWh\n",
+                region_name(r), mw[r], in.committed_hydro_mw[r], twh, in.committed_twh[r][kHydro], in.base_twh[r][kHydro]);
+    same &= std::abs(in.committed_hydro_mw[r] - mw[r]) < 1e-9 &&
+            std::abs(in.committed_twh[r][kHydro] - twh) < 1e-9 * std::max(1.0, twh);
+  }
+  check(same, "committed large hydro MW and TWh by region = the file x 0.36 x 8.76");
+  check(mw[4] > 0, "North-Eastern Region has hydro under construction");
+  for (const PolicySettings& p : {robust_preset(), PolicySettings{}}) {
+    const char* name = p == PolicySettings{} ? "default" : "Robust";
+    const Bounds b = make_bounds(in, p, req);
+    bool floor_ok = true;
+    for (int r = 0; r < kRegions; ++r) {
+      const double want = std::min(b.hi[r][kHydro], in.base_twh[r][kHydro] + b.committed[r][kHydro]);
+      floor_ok &= std::abs(b.lo[r][kHydro] - want) < 1e-9 * std::max(1.0, want) && b.lo[r][kHydro] <= b.hi[r][kHydro];
+      floor_ok &= b.lo[r][kHydro] >= in.base_twh[r][kHydro];
+      floor_ok &= std::abs(b.committed[r][kHydro] + b.committed_cut[r][kHydro] - in.committed_twh[r][kHydro]) < 1e-9;
+    }
+    check(floor_ok, std::string(name) + ": hydro floor = base + committed, within the regional bound");
+    const AllocationResult a = solve_least_cost(in, p, req);
+    check(a.ok, std::string(name) + ": LP feasible (" + a.status + ")");
+    if (!a.ok) continue;
+    bool above = true;
+    for (int r = 0; r < kRegions; ++r) {
+      std::printf("  %-8s %-14s hydro %7.2f TWh, floor %7.2f TWh (cut %.2f)\n", name, region_name(r), a.gen[r][kHydro],
+                  b.lo[r][kHydro], b.committed_cut[r][kHydro]);
+      above &= a.gen[r][kHydro] >= b.lo[r][kHydro] - 1e-6;
+    }
+    check(above, std::string(name) + ": hydro in each region >= its committed floor");
+    const BuildCap* cap = cap_with(build_caps(in, p), kHydro);
+    double floors = 0;
+    for (int r = 0; r < kRegions; ++r) floors += b.lo[r][kHydro];
+    check(cap && floors <= cap->cap_twh + 1e-9, std::string(name) + ": hydro floors within the national hydro cap");
+  }
+  bool note = false;
+  for (const std::string& n : in.notes)
+    note |= n.rfind("Committed builds", 0) == 0 && n.find("under_construction_mw") != std::string::npos &&
+            n.find("0.36") != std::string::npos;
+  check(note, "provenance note: committed large hydro, its file and its CUF");
+  return check.fails;
+}
+
+// Gas kept for peaking and as a bridge: national gas >= gas_min_twh_share x the existing
+// fleet's best NPP year (fleet_floor_twh, R11). Default 0; the Robust preset keeps all of it
+// (1.0). Each region's gas is at most the national gas cap x its FY2023-24 share of gas, so
+// the Western Region, with most of the existing fleet, carries most of it.
+int gas_min_share_respected(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("gas_min_share_respected\n");
+  const PolicySettings robust = robust_preset();
+  check(PolicySettings{}.gas_min_twh_share == 0.0, "default: no gas minimum");
+  check(robust.gas_min_twh_share == 1.0, "Robust: gas kept at the fleet floor (share 1.0)");
+  const double floor = in.fleet_floor_twh[kGas];
+  std::printf("  gas fleet floor %.2f TWh (FY%d-%02d); gas minimum at Robust %.2f TWh\n", floor, in.fleet_floor_year[kGas],
+              (in.fleet_floor_year[kGas] + 1) % 100, gas_min_twh(in, robust));
+  check(floor > 40 && std::abs(gas_min_twh(in, robust) - floor) < 1e-9, "Robust gas minimum = the fleet floor");
+  check(gas_min_twh(in, PolicySettings{}) == 0.0, "default gas minimum 0");
+  double base_gas = 0;
+  for (int r = 0; r < kRegions; ++r) base_gas += in.base_twh[r][kGas];
+  for (double share : {1.0, 0.5}) {
+    for (int k = 0; k < 2; ++k) {
+      PolicySettings p = k == 0 ? robust : PolicySettings{};
+      p.gas_min_twh_share = share;
+      const AllocationResult a = solve_least_cost(in, p, req);
+      char what[128];
+      std::snprintf(what, sizeof what, "%s, share %.1f: LP feasible, gas %.2f >= %.2f TWh", k == 0 ? "Robust" : "default",
+                    share, a.ok ? a.national[kGas] : 0.0, share * floor);
+      check(a.ok && a.national[kGas] >= share * floor - 1e-6, what);
+    }
+  }
+  const AllocationResult a = solve_least_cost(in, robust, req);
+  const BuildCap* gcap = cap_with(build_caps(in, robust), kGas);
+  if (a.ok && gcap) {
+    bool within = true;
+    int top = 0;
+    for (int r = 0; r < kRegions; ++r) {
+      const double bound = gcap->cap_twh * in.base_twh[r][kGas] / base_gas;
+      std::printf("  %-14s Robust gas %6.2f TWh (bound %6.2f, FY2023-24 %6.2f)\n", region_name(r), a.gen[r][kGas], bound,
+                  in.base_twh[r][kGas]);
+      within &= a.gen[r][kGas] <= bound + 1e-6;
+      if (a.gen[r][kGas] > a.gen[top][kGas]) top = r;
+    }
+    check(within, "Robust: each region's gas <= national gas cap x its FY2023-24 gas share");
+    check(top == 1, "Robust: the Western Region generates the most gas");
+  } else {
+    check(false, "Robust plan and gas cap available");
+  }
+  auto throws = [&](double share) {
+    PolicySettings p;
+    p.gas_min_twh_share = share;
+    try {
+      solve_least_cost(in, p, req);
+    } catch (const std::invalid_argument&) {
+      return true;
+    }
+    return false;
+  };
+  check(throws(-0.1) && throws(1.5), "share outside 0..1: error");
+  // Tornado lever, 0 to 1, around the default policy.
+  const std::vector<TornadoRow> rows = policy_tornado(in, PolicySettings{}, req, 0.7, 1.4);
+  const TornadoRow* gas = nullptr;
+  for (const TornadoRow& t : rows)
+    if (t.name == "Gas kept for peaking (share of fleet floor)") gas = &t;
+  check(gas && gas->low_label == "0%" && gas->high_label == "100%", "tornado lever 'Gas kept for peaking', 0% to 100%");
+  check(gas && gas->low.ok && gas->high.ok && gas->high.national[kGas] >= floor - 1e-6,
+        "tornado high end keeps the fleet floor of gas");
+  return check.fails;
+}
+
+// The LP is feasible at the default policy and at every policy preset, at the test
+// requirement and at 0.7x and 1.4x of it (unserved energy keeps the balance feasible; the
+// share, firm and floor rows are hard).
+int presets_feasible(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("presets_feasible\n");
+  std::vector<std::pair<std::string, PolicySettings>> policies = {{"defaults", PolicySettings{}}};
+  for (const auto& pp : policy_presets()) {
+    PolicySettings p;
+    pp.apply(p);
+    policies.emplace_back(pp.name, p);
+  }
+  for (const auto& [name, p] : policies)
+    for (double scale : {0.7, 1.0, 1.4}) {
+      std::array<double, kRegions> r = req;
+      for (double& x : r) x *= scale;
+      const AllocationResult a = solve_least_cost(in, p, r);
+      char what[160];
+      std::snprintf(what, sizeof what, "%s at %.1fx: %s (nuclear %.1f%%, gas %.1f%%, unmet %.0f TWh)", name.c_str(), scale,
+                    a.status.c_str(), a.ok ? 100 * a.share(kNuclear) : 0.0, a.ok ? 100 * a.share(kGas) : 0.0,
+                    a.ok ? a.unserved_total() : 0.0);
+      check(a.ok, what);
+    }
+  return check.fails;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -789,6 +1114,10 @@ int main(int argc, char** argv) {
     fails += emission_factor_latest_period(root, std::filesystem::temp_directory_path().string(), in);
     fails += cea_lcoe_formula(root, in);
     fails += sensitivity_from_copy(in, req);
+    fails += committed_nuclear_floor_binds(root, in, req);
+    fails += committed_hydro_floor(root, in, req);
+    fails += gas_min_share_respected(in, req);
+    fails += presets_feasible(in, req);
 
     PolicySettings p;
     Timer t;

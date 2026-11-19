@@ -366,6 +366,11 @@ void App::sidebar() {
   ImGui::TextUnformatted("Maximum gas / nuclear share");
   dirty_ |= slider("##gm", &pol_.gas_max, 0.0, 0.15, "gas %.0f%%", 100, nullptr);
   dirty_ |= slider("##nm", &pol_.nuclear_max, 0.0, 0.25, "nuclear %.0f%%", 100, nullptr);
+  ImGui::TextUnformatted("Gas kept for peaking (share of fleet floor)");
+  dirty_ |= slider("##gk", &pol_.gas_min_twh_share, 0.0, 1.0, "%.0f%%", 100,
+                   "National gas generation >= this share of the existing gas fleet's best NPP year (FY2018-19 to "
+                   "FY2025-26), kept for peaking and as a bridge for renewables; each region's gas within its "
+                   "FY2023-24 share of the gas cap.");
   ImGui::TextUnformatted("Usable resource (solar / wind / hydro)");
   dirty_ |= slider("##sl", &pol_.solar_land, 0.05, 0.6, "solar %.0f%%", 100, "Fraction of solar generation potential usable by 2047.");
   dirty_ |= slider("##wl", &pol_.wind_land, 0.05, 0.6, "wind %.0f%%", 100, nullptr);

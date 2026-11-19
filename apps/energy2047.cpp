@@ -280,6 +280,11 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
       put("unmet_after_daily_storage", z.unmet_day_twh, "TWh", "extra generation still needed hour by hour");
       put("unmet_after_daily_storage_free_charging", z.unmet_day_free_charge_twh, "TWh",
           "same store if charging were not limited by its power (value of a larger charging rating)");
+      put("gas_peaking_hours", z.gas_hours, "h/yr",
+          "hours with gas above 1 MW; the plan's gas fills the hours of highest residual load");
+      put("gas_peaking_generation", z.gas_twh, "TWh", "gas dispatched hour by hour (the plan's gas)");
+      put("gas_peaking_max_power", z.gas_peak_gw, "GW", "largest hourly gas output (at most Merit peak/mean x mean)");
+      put("gas_evening_generation", z.gas_evening_twh, "TWh", "gas in the hours 18:00-24:00 IST");
       put("storage_throughput", z.throughput_twh, "TWh/yr", "energy discharged");
       put("storage_losses", z.losses_twh, "TWh/yr", "charged - discharged");
       put("storage_full_cycles", z.cycles, "cycles/yr", "");
@@ -317,10 +322,64 @@ void write_storage_land(const fs::path& out, const Pipeline& pl, const ForecastR
                 "the clock): %.0f GW, %.0f GWh, %.1f h, shortfall left %.0f TWh\n",
                 "", unserved, z.unmet_day_twh, s.system.power_gw, s.system.energy_day_gwh, s.system.duration_h,
                 s.system.unmet_day_twh);
+    if (z.gas_twh > 0)
+      std::printf("  %-18s gas as peaking supply: %.0f h/yr, %.1f TWh, up to %.1f GW; %.1f TWh (%.0f%%) in 18:00-24:00 "
+                  "IST\n",
+                  "", z.gas_hours, z.gas_twh, z.gas_peak_gw, z.gas_evening_twh, 100 * z.gas_evening_twh / z.gas_twh);
   }
   std::printf("  CEA 2029-30 optimal mix: %.1f GW, %.1f GWh for %.0f TWh of solar and wind (%.2f GWh per TWh)\n",
               si.bench_power_gw, si.bench_energy_gwh, si.bench_generation_twh * si.bench_vre_share,
               si.bench_energy_gwh / (si.bench_generation_twh * si.bench_vre_share));
+}
+
+// outputs/committed_builds_2047.csv: lower bounds from plants already being built, by region, for
+// the default (Base) and the Robust policy at the median requirement, with each plan's generation.
+// Nuclear: units under construction or sanctioned, or commissioned after FY2023-24
+// (nuclear_pipeline.csv); hydro: large hydro under construction (resource_potential.csv); floor =
+// FY2023-24 + committed MW / 1000 x CUF x 8.76, cut to the national cap and the regional bound.
+// Gas has no committed builds: its rows show the regional bound (the gas cap x the FY2023-24 share)
+// and where the plan keeps the national gas minimum (gas_min_twh_share x the fleet floor).
+void write_committed_builds(const fs::path& out, const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  CsvWriter w((out / "committed_builds_2047.csv").string());
+  for (const char* h : {"policy", "region", "source", "base_fy2023_24_twh", "committed_mw", "cuf", "committed_twh",
+                        "floor_twh", "committed_cut_twh", "upper_bound_twh", "plan_twh"})
+    w.field(h);
+  w.endrow();
+  std::printf("committed builds and gas (2047 TWh, median requirement; floor = FY2023-24 + committed MW x CUF x 8.76):\n");
+  for (const char* name : {"Base", "Robust"}) {
+    PolicySettings ps;
+    for (const auto& pp : policy_presets())
+      if (pp.name == name) pp.apply(ps);
+    const Bounds b = make_bounds(in, ps, req);
+    const AllocationResult a = solve_least_cost(in, ps, req);
+    for (int s : {kNuclear, kHydro, kGas}) {
+      const auto* mw = s == kNuclear ? &in.committed_nuclear_mw : s == kHydro ? &in.committed_hydro_mw : nullptr;
+      const double cuf = s == kNuclear ? in.committed_nuclear_cuf : s == kHydro ? in.committed_hydro_cuf : 0.0;
+      double base = 0, committed = 0, cut = 0, floor = 0, plan = 0;
+      std::string by;
+      for (int r = 0; r < kRegions; ++r) {
+        w.field(name).field(region_name(r)).field(tech_key(s)).field(in.base_twh[r][s], 6);
+        w.field(mw ? (*mw)[r] : 0.0, 6).field(cuf, 4).field(b.committed[r][s], 6).field(b.lo[r][s], 6);
+        w.field(b.committed_cut[r][s], 6).field(b.hi[r][s], 6);
+        a.ok ? w.field(a.gen[r][s], 6) : w.field("infeasible");
+        w.endrow();
+        base += in.base_twh[r][s];
+        committed += b.committed[r][s];
+        cut += b.committed_cut[r][s];
+        floor += b.lo[r][s];
+        plan += a.ok ? a.gen[r][s] : 0.0;
+        char cell[64];
+        std::snprintf(cell, sizeof cell, "%s%s %.1f", by.empty() ? "" : ", ", region_name(r), a.ok ? a.gen[r][s] : 0.0);
+        by += cell;
+      }
+      if (s == kGas)
+        std::printf("  %-6s gas: national minimum %.1f TWh (%.0f%% of the %.1f TWh fleet floor); plan %.1f TWh (%s)\n",
+                    name, gas_min_twh(in, ps), 100 * ps.gas_min_twh_share, in.fleet_floor_twh[kGas], plan, by.c_str());
+      else
+        std::printf("  %-6s %s: floor %.1f = FY2023-24 %.1f + committed %.1f (cut %.1f); plan %.1f TWh (%s)\n", name,
+                    tech_key(s), floor, base, committed, cut, plan, by.c_str());
+    }
+  }
 }
 
 // outputs/population_consistency.csv: growth of the challenge dataset's state and
@@ -1342,6 +1401,7 @@ int main(int argc, char** argv) {
       std::printf("  %-14s requirement %6.0f  net export LC %+6.0f  score %+6.0f TWh\n", region_name(r),
                   st.requirement[r], lc.net_export[r], st.score.net_export[r]);
     write_strategy(out, pl.allocation_inputs(), st);
+    write_committed_builds(out, pl.allocation_inputs(), st.requirement);
     {
       CsvWriter w((out / "tornado.csv").string());
       w.field("setting").field("low").field("high").field("co2_low_mt").field("co2_high_mt").field("coal_share_low");
