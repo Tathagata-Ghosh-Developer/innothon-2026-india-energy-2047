@@ -22,7 +22,7 @@ Every number below matches `outputs/*.csv`, `outputs/site_summary.json` and the 
   - the native dashboard, already loaded: `"%USERPROFILE%\.e47build_core\apps\e47_dashboard.exe" "<repo folder>"`. It runs the full 4.2 million futures, so its numbers match the slides;
   - the screenshots in [img/](img/) (`1_national_forecast.png`, `2_regional_requirement.png`, `3_generation_mix_2047.png`), if both dashboards fail.
 - **Screen sharing:** Tathagata shares his whole screen (not one window), so he can switch between the slideshow and the browser with Alt+Tab without re-sharing. Sai Anirudh has the PDF open, ready to share at once if Tathagata's connection drops.
-- **The repository is private.** Slide 1 shows the GitHub link, but never say the code is public. Say: "The repository is private; we will share access with the jury on request."
+- **The repository is public** (made public on 20 Nov at the organisers' request). Slide 1 shows the GitHub link. Say: "The code, data provenance and documentation are public on GitHub."
 - **Check the organisers' reply** to our 17 November clarification on published figures in the mix. If it has arrived, update question 2 of [final_qa.md](final_qa.md) and the last paragraph of slide 2 before we start.
 - **Mute when not speaking.** Each speaker ends with the hand-over line, so there is no gap.
 - **Say it this way:**
@@ -69,7 +69,7 @@ Our answer is the big number: 4,703 terawatt-hours in twenty forty-seven. It is 
 
 To meet it, we recommend what we call the Robust plan. It is led by solar. It keeps the nuclear and hydro plants already being built, keeps coal mainly in the East, holds the gas fleet for the evening peak, and uses corridors that carry power from the West and South. At the median requirement it reaches 79.5 percent non-fossil, 912 million tonnes of CO2, and about 178 billion dollars a year.
 
-*(cut if short)* All of this is live at india-energy-2047.vercel.app, and we will show it on slide 6. Our repository is private; we will share access with the jury on request.
+*(cut if short)* All of this is live at india-energy-2047.vercel.app, and we will show it on slide 6. The code and documentation are public on GitHub, at the link on this slide.
 
 *Hand-over:* Sai Anirudh will now show how one pipeline turns two datasets into these numbers.
 

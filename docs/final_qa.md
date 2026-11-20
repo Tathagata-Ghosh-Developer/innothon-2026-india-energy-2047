@@ -167,7 +167,7 @@ Seven ctest suites: CPU-GPU Monte Carlo parity, allocation, storage, the cost-CO
 The browser has no GPU and one compute thread, so it runs 65,536 futures and 300 bootstrap replicates instead of 4.2 million and 2,000. A full update takes several seconds. Its medians and ranges agree with the native run within about 0.5 percent, so the last digit can differ from the slides.
 
 **37. Can we reproduce it and see the code?** *Owner: Gaurav.*
-Yes. One command, `energy2047` with the repository path, regenerates every output with a fixed seed (20470815) and a counter-based random generator, so runs repeat exactly; the forecast files are byte-identical to the midpoint run. Every input has a provenance row in `docs/data_audit.md`. The repository is private; we will give the jury access on request.
+Yes. One command, `energy2047` with the repository path, regenerates every output with a fixed seed (20470815) and a counter-based random generator, so runs repeat exactly; the forecast files are byte-identical to the midpoint run. Every input has a provenance row in `docs/data_audit.md`. The repository is public on GitHub, with the code, the tests and the documentation.
 
 ## 7. Usability and impact
 
@@ -230,6 +230,6 @@ Next: act on the organisers' reply on published figures; an hourly capacity-expa
 | "firmed solar and wind with storage" | "a seventh source" | It is solar and wind sold round the clock. |
 | CEA gross generation (NEP 2,666; 2026 review 3,596) | comparing with the Electric Power Survey's energy requirement | Those figures are consumption-side. |
 | "the GPU kernel time; timings vary with load" | "the browser runs on the GPU" | The browser runs the CPU path on its CPU threads (8 in our test), not the GPU. |
-| "the repository is private; access on request" | "the code is public" | The repository is private. |
+| "the code is public on GitHub" | "the repository is private" | The repository was made public on 20 Nov at the organisers' request. |
 | Current numbers (79.5 percent, 912 Mt, 178 bn USD, 633 TWh) | Midpoint numbers (78.3 percent, 993 Mt, 176 bn USD, 638 TWh) | The mix changed after the midpoint (D13). |
 | "captive plants are excluded, as the organisers ruled" | adding captive generation to any number | The ruling allows NPP generation only. |
