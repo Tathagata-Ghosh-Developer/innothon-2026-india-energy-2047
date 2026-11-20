@@ -3,6 +3,7 @@
 Saturday 21 November 2026, 11:10 to 11:40 AM. Team "The Losers", IISc Bengaluru, to the ExxonMobil INNOTHON 2026 jury.
 Format: 20 minutes of presentation, including a live dashboard demo, then 10 minutes of questions.
 Deck: [deck/India_Energy_2047_The_Losers.pptx](deck/India_Energy_2047_The_Losers.pptx) (7 slides; PDF copy beside it).
+Animations: each slide fades in and builds by itself within about 3 seconds, so it is still one click per slide, and the hand-over cues are unchanged.
 Questions and answers: [final_qa.md](final_qa.md).
 The jury scores innovation, technical implementation, usability, impact, and the quality of the presentation and demonstration.
 
