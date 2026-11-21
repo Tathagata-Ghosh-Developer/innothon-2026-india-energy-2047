@@ -1,6 +1,6 @@
 // Demand-feature layer checks (data/external/demand_features.csv; rulings R22-R24). The
 // headline stays the two-dataset forecast; every feature scenario is a labelled layer.
-//  1. features_load_and_validate: the catalogue has 44 rows, 11 of them layer rows, with
+//  1. features_load_and_validate: the catalogue has 49 rows, 11 of them layer rows, with
 //     the counts by in_model; a bad row (sign, order, missing or stray TWh, unknown class,
 //     repeated name) throws.
 //  2. scenario_totals_known: Features central = the sum of sign x central over the layer
@@ -103,15 +103,15 @@ void features_load_and_validate(const fs::path& root, const fs::path& tmp) {
   std::printf("    %zu rows:", f.size());
   for (const auto& [k, v] : n.by_in_model) std::printf(" %s %d", k.c_str(), v);
   std::printf("\n");
-  check(f.size() == 44 && n.total == 44, "44 rows");
+  check(f.size() == 49 && n.total == 49, "49 rows");
   check(layer == 11 && n.by_in_model.at("layer") == 11, "11 layer rows");
   check(n.by_in_model.at("core") == 7 && n.by_in_model.at("driver") == 3 && n.by_in_model.at("excluded_rule") == 1 &&
-            n.by_in_model.at("context") == 22,
-        "counts by in_model: core 7, driver 3, excluded_rule 1, context 22");
+            n.by_in_model.at("context") == 27,
+        "counts by in_model: core 7, driver 3, excluded_rule 1, context 27");
   int grouped = 0;
   for (const auto& [g, by] : n.not_layer_by_group)
     for (const auto& [k, v] : by) grouped += (k != "layer") ? v : 1000;
-  check(grouped == 33, "rows outside the layer counted by group: 33");
+  check(grouped == 38, "rows outside the layer counted by group: 38");
   bool layer_ok = true, rest_blank = true;
   for (const DemandFeature& x : f) {
     if (x.layer())

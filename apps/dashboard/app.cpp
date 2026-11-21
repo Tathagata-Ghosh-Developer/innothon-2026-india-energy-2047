@@ -1297,8 +1297,8 @@ void App::data_sources() {
          "Nuclear siting key; committed floors (units under construction or sanctioned x CUF x 8.76)"},
         {"Large hydro under construction", "CEA hydro status (resource_potential.csv)",
          "Committed hydro floors (MW x CUF x 8.76)"},
-        {"Demand features for FY2047-48: 44 drivers, 11 quantified as signed TWh beyond the historical trend",
-         "CEA (General Review 2025, 20th EPS, NEP 2022-32, NGAP 2026); MoP; MNRE; MoEFCC (ICAP); BEE; NITI Aayog "
+        {"Demand features for FY2047-48: 49 drivers, 11 quantified as signed TWh beyond the historical trend",
+         "CEA (General Review 2025, 20th EPS, NEP 2022-32, NGAP 2026); MoP; MNRE; MoEFCC (ICAP); BEE; MeitY; TRAI; DoT; NITI Aayog "
          "2026 (secondary; data/external/demand_features.csv)",
          "Demand-feature scenarios outside the headline: named scenarios, one at a time and joint draws"},
         {"New loads in 2050 (vehicles, green hydrogen, data centres, cooling, cooking)",
