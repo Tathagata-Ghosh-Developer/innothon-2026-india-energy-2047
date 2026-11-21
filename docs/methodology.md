@@ -18,7 +18,7 @@ India elasticity of generation per person on real GSDP per person
    |                                     cross-country panel (independent check, justification only)
    v                                         |
 Monte Carlo ensemble (CPU OpenMP or GPU CUDA): national + 5 regions, FY2024-25..FY2047-48
-   |
+   |                                     demand-feature layer (official sources, secondary): labelled scenarios outside the headline
    v
 2047 regional requirement (planning quantile), split by state population (challenge dataset) and income convergence
    |                                     Part 1 above: the two challenge datasets only
@@ -56,7 +56,8 @@ For the growth rates and constraints of each energy source, publicly available l
 The work is therefore in two parts:
 
 - **Part 1, the 2047 requirement** (national and regional, sections 2 to 5): estimated from the two challenge datasets only.
-- **Part 2, the 2047 generation mix** (section 6): published figures set its limits and prices (build limits, committed builds, resource potentials, costs and emission factors), each labelled secondary. None of them enters Part 1.
+- **Part 2, the 2047 generation mix** (section 6): published figures set its limits and prices (build limits, committed builds, resource potentials, costs and emission factors), each labelled secondary. None of them enters Part 1. Every money figure is in real 2024 USD (section 7).
+- **Demand features** (section 2.9): every other driver of the 2047 requirement, catalogued from official sources (secondary) and applied only as labelled scenarios outside the headline.
 
 **Source hierarchy.** NPP (<https://npp.gov.in/landing-home>) and the Renewable India dataset (<https://github.com/chrisjaimyantony/renewable-india-dataset>) are the primary sources; every other source is secondary and labelled ([data_audit.md](data_audit.md)).
 
@@ -96,9 +97,19 @@ Population growth uses every matched state.
 Income growth uses only the matched states whose GSDP changed from the year before.
 Several states repeat one GSDP figure across years: Telangana, Jammu and Kashmir, Andaman and Nicobar Islands and Lakshadweep for 2006 to 2010, and Nagaland for 2007.
 These copies are placeholders, not observations, and counting them as zero growth would understate national growth.
+The repeat test compares the values as read, before any price correction, so a deflation cannot hide a placeholder.
 The organiser GSDP changes price base in 2011 (from 2004-05 to 2011-12 prices), so the jump in that year is not growth.
-Its growth per person is imputed as the mean of 2010 and 2012 (4.63 percent); the splice requires both neighbouring years.
+Its growth per person is imputed as the mean of 2010 and 2012 (4.59 percent); the splice requires both neighbouring years.
 The 2024 GSDP values are incomplete and are not used.
+
+**Price basis of the GSDP (since 21 November 2026; [decisions.md](decisions.md), D14).**
+A check against MoSPI state GSDP (2011-12 series) shows that from 2011 the dataset's values are at constant 2011-12 prices, with dataset year t equal to fiscal year t to t+1, for every state but one.
+Jammu and Kashmir's values from 2012 equal MoSPI's current-price values (2016: 124,848 crore, against 100,203 at constant prices), although the upstream README calls all GSDP values nominal.
+`data/external/macro/gsdp_price_basis.csv` lists that state and year; the model divides each listed value by the MoSPI national GDP deflator of its fiscal year (`data/external/macro/price_indices.csv`, official, secondary), 13 state-years in all.
+This is an inflation correction of a mis-based series, not new estimation data: the values stay the dataset's own.
+Every reader of the dataset's GSDP must pass the price basis (`GsdpPriceBasis` in `src/core/price_base.hpp`): national income growth, the relative incomes and convergence speed of the regional split (section 4) and the state panel check.
+The deflated values lie -2.0 to +4.2 percent from MoSPI's constant-price values over 2012-2021; 2022 to 2024 are predicted values in the dataset and lie +7.9, +5.8 and -3.5 percent away.
+The sensitivity row `jk_excluded` leaves Jammu and Kashmir out of national income growth instead: 4,683 TWh against the headline 4,688.
 
 ### 2.2 Model
 
@@ -112,12 +123,12 @@ It is the only parameter estimated from the two datasets.
 
 | Estimate | FY2011-12 to FY2023-24 (one price base) | FY2006-07 to FY2023-24 (spliced) |
 | --- | --- | --- |
-| beta | 0.828 (s.e. 0.063) | 0.866 (s.e. 0.031) |
-| beta, first differences (FY2020-21 and FY2021-22 changes left out; also the imputed 2011 change in the spliced window) | 0.782 | 0.787 |
+| beta | 0.835 (s.e. 0.065) | 0.872 (s.e. 0.032) |
+| beta, first differences (FY2020-21 and FY2021-22 changes left out; also the imputed 2011 change in the spliced window) | 0.786 | 0.789 |
 | FY2020-21 effect | -0.055 | |
 | Residual s.d. | 0.037 | |
-| Durbin-Watson | 0.99 | |
-| FY2023-24 residual | +0.070 | |
+| Durbin-Watson | 0.97 | |
+| FY2023-24 residual | +0.072 | |
 
 The first-difference estimates answer the concern that two trending series can produce a spurious fit: growth in generation per person still follows growth in income per person with an elasticity near 0.8.
 The imputed 2011 change is left out of the first differences because it is not an observed change.
@@ -134,7 +145,7 @@ The projection adds only that excess:
 
 ln e(t) - ln e(base) = beta dx + gamma (du - kappa dx)
 
-- kappa = 0.092 is the slope of urban share on x over the same years and regressors, so in the sample the excess urban share is uncorrelated with x and beta does not depend on gamma.
+- kappa = 0.093 is the slope of urban share on x over the same years and regressors, so in the sample the excess urban share is uncorrelated with x and beta does not depend on gamma.
 - gamma comes from the literature as a prior: normal with mean 1.0 and s.d. 0.5, truncated at zero (a negative draw is redrawn, not set to zero).
   Liddle (2013) reports an elasticity of residential electricity to urbanisation of 1.02 (s.e. 0.13) in a low-income panel that includes India; Shahbaz et al. (2016) report 0.56 to 0.80 for India's total energy use; Holtedahl and Joutz (2004) report a semi-elasticity of 3.3 to 3.9 for residential electricity in Taiwan.
   Residential use is about a quarter of India's electricity, which puts the total-electricity value near 1.0.
@@ -143,28 +154,28 @@ ln e(t) - ln e(base) = beta dx + gamma (du - kappa dx)
 
 ### 2.4 Parameter uncertainty
 
-Residuals are serially correlated (Durbin-Watson 0.99), so the bootstrap resamples circular blocks of three years.
+Residuals are serially correlated (Durbin-Watson 0.97), so the bootstrap resamples circular blocks of three years.
 The resampling pool holds the residuals of the years without the pandemic dummy (the dummy year's residual is zero by construction).
 They are rescaled by the square root of (number of pooled residuals) / (number of years minus number of regressors), so the bootstrap does not understate the spread of a fit that used up degrees of freedom.
 2,000 replicates are drawn: half from the FY2011-12 window and half from the spliced FY2006-07 window, so the choice of window is part of the uncertainty.
-The resulting elasticity has a median of 0.850 and a 90 percent interval of 0.731 to 0.939.
+The resulting elasticity has a median of 0.857 and a 90 percent interval of 0.737 to 0.947.
 Each replicate also draws gamma from its prior.
 
 ### 2.5 Base year and model error
 
 The projection starts from observed FY2023-24 generation per person.
-FY2023-24 lies 0.070 log points above the fitted line, almost two residual standard deviations (a hot, fast-growth year).
+FY2023-24 lies 0.072 log points above the fitted line, almost two residual standard deviations (a hot, fast-growth year).
 Carrying that residual unchanged to 2047 would raise the whole path; dropping it at once would ignore that the residuals persist.
 The Monte Carlo therefore carries the model error of the India core as an AR(1) residual of ln(kWh per person):
 
-r(t) = rho r(t-1) + s eps(t), with r(FY2023-24) = +0.070 and eps(t) standard normal
+r(t) = rho r(t-1) + s eps(t), with r(FY2023-24) = +0.072 and eps(t) standard normal
 
-- rho = 1 - DW / 2 = 0.51, from the Durbin-Watson statistic (0.99).
+- rho = 1 - DW / 2 = 0.51, from the Durbin-Watson statistic (0.97).
   With 13 to 18 points a direct lag regression is dominated by the slow drift of the early, supply-constrained years; the Durbin-Watson relation uses every residual.
 - s = residual s.d. x sqrt(1 - rho^2) = 0.037 x 0.86 = 0.032, so in steady state the residual has the regression's residual s.d. (0.037).
 - Each draw follows the fitted relation plus r(t).
-  The base-year residual reverts to the fitted relation: its expected value is 0.036 in FY2024-25 and 0.018 in FY2025-26 (it halves in about a year), while new model error keeps entering every year.
-- Central paths (results, section 1) use the expected residual path, 0.070 x rho^k after k years.
+  The base-year residual reverts to the fitted relation: its expected value is 0.037 in FY2024-25 and 0.019 in FY2025-26 (it halves in about a year), while new model error keeps entering every year.
+- Central paths (results, section 1) use the expected residual path, 0.072 x rho^k after k years.
 - The residual moves the national total only; it is common to every state, so it does not change the regional shares (section 4).
 
 This replaces an earlier threshold rule that moved the anchor to the fitted value plus the mean residual of the last three years ([decisions.md](decisions.md), D11).
@@ -177,7 +188,7 @@ The model is fitted on FY2006-07 up to each origin from FY2012-13 to FY2018-19 a
 
 | Horizon (years) | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- |
-| Elasticity model, MAPE | 2.0% | 3.6% | 4.2% | 5.3% | 6.4% |
+| Elasticity model, MAPE | 2.0% | 3.6% | 4.1% | 5.3% | 6.4% |
 | Damped trend (no drivers), MAPE | 2.2% | 4.8% | 6.5% | 7.1% | 6.9% |
 
 Backtest errors are not used as ensemble weights: with seven short origins they are too noisy.
@@ -189,8 +200,8 @@ NPP publishes their conventional generation (thermal, nuclear, hydro) but no ren
 
 | Year | NPP conventional | Renewable (extended) | Total | Model P50 | Model P5 to P95 | Error |
 | --- | --- | --- | --- | --- | --- | --- |
-| FY2024-25 | 1,569 | 216 | 1,785 | 1,727 | 1,632 to 1,827 | -3.3% |
-| FY2025-26 | 1,530 | 247 | 1,776 | 1,786 | 1,661 to 1,922 | +0.5% |
+| FY2024-25 | 1,569 | 216 | 1,785 | 1,726 | 1,630 to 1,828 | -3.3% |
+| FY2025-26 | 1,530 | 247 | 1,776 | 1,785 | 1,658 to 1,923 | +0.5% |
 
 Both holdout years fall inside the model's 90 percent range.
 
@@ -210,38 +221,64 @@ ln(G2047 / G2023) = ln(P2047 / P2023) + beta dx + gamma (du - kappa dx) + (r2047
 | Part | Log points | Share |
 | --- | --- | --- |
 | Population (UN WPP 2024 medium) | 0.148 | 14.8% |
-| Income (beta 0.828 x the change in ln GSDP per person) | 0.872 | 87.5% |
+| Income (beta 0.835 x the change in ln GSDP per person) | 0.870 | 87.5% |
 | Urbanisation beyond the income path (gamma 1.0) | 0.048 | 4.8% |
-| Model error (the base-year residual +0.070 fading) | -0.070 | -7.1% |
-| Total, ln(4,600 / 1,698 TWh) | 0.997 | 100% |
+| Model error (the base-year residual +0.072 fading) | -0.072 | -7.2% |
+| Total, ln(4,589 / 1,698 TWh) | 0.994 | 100% |
 
 The parts add up exactly (test `decomposition_adds_up` in `tests/test_india.cpp`).
-The decomposition is of the central path (4,600 TWh: medium drivers, mean growth, point estimates), not of the Monte Carlo median (4,703 TWh), and it ignores the `beta_shift` and `beta_window` controls below.
+The decomposition is of the central path (4,589 TWh: medium drivers, mean growth, point estimates), not of the Monte Carlo median (4,688 TWh), and it ignores the `beta_shift` and `beta_window` controls below.
 
 The elasticity is estimated for India as a whole.
 Its uncertainty is already in the bootstrap (section 2.4); five sensitivity rows in `outputs/sensitivity_2047.csv` show its effect directly, each run on a copy of the default controls:
 
 | Row | Control | FY2047-48 median |
 | --- | --- | --- |
-| `beta_minus_1se`, `beta_plus_1se` | `beta_shift` = -0.063 or +0.063 (one OLS s.e.) in every replicate | 4,400 or 5,027 TWh (-6.4 or +6.9%) |
-| `beta_window_s1` | `beta_window` = 1: only the FY2011-12 window's replicates | 4,583 TWh (-2.6%) |
-| `beta_window_s3` | `beta_window` = 2: only the FY2006-07 window's replicates | 4,829 TWh (+2.7%) |
-| `beta_first_difference` | `beta_shift` = -0.065, recentring on the first-difference estimate | 4,392 TWh (-6.6%) |
+| `beta_minus_1se`, `beta_plus_1se` | `beta_shift` = -0.065 or +0.065 (one OLS s.e.) in every replicate | 4,381 or 5,016 TWh (-6.5 or +7.0%) |
+| `beta_window_s1` | `beta_window` = 1: only the FY2011-12 window's replicates | 4,571 TWh (-2.5%) |
+| `beta_window_s3` | `beta_window` = 2: only the FY2006-07 window's replicates | 4,810 TWh (+2.6%) |
+| `beta_first_difference` | `beta_shift` = -0.068, recentring on the first-difference estimate | 4,366 TWh (-6.9%) |
 
 Test `elasticity_shift_monotone` checks that the median rises with the shift.
-On the central path ln income per person rises by 1.05, so each 0.01 of elasticity moves the FY2047-48 figure by about 1 percent.
+On the central path ln income per person rises by 1.04, so each 0.01 of elasticity moves the FY2047-48 figure by about 1 percent.
 
-### 2.9 New loads (a separate scenario, outside the headline)
+### 2.9 Demand-feature layer (outside the headline)
 
-Loads that are absent from the historical generation series cannot be learned by the elasticity.
-`data/external/new_loads.csv` (secondary) holds published 2050 estimates for five loads: electric vehicles, green hydrogen, data centres, space cooling and electric cooking.
-`outputs/new_loads_2047.csv` reports each of them:
+The elasticity learns only what is in the 2006-2024 history.
+Drivers that the history does not carry, or carries only in part, form a separate layer that is never the headline ([decisions.md](decisions.md), D14; the full catalogue is [demand_features.md](demand_features.md)).
 
-- Values are scaled to 2047 linearly from the base year: 24/27 = 0.889 of the 2050 value.
-- They are end-use electricity, not generation, and are not grossed up for losses.
-- Only a load the file marks as absent from the history (green hydrogen: 418 to 1,237 TWh in 2047) is added, and only in the scenario `new_loads_published`. It is drawn uniformly between its low and high values in each Monte Carlo draw and ramped linearly from the base year, and it is labelled "if supplied from the grid": electrolysers on captive or off-grid renewables would be outside NPP utility generation.
-- Loads that partly overlap the history (electric vehicles, data centres, cooling, cooking) are reported, never added, because the income elasticity already carries part of them (test `new_loads_excludes_overlap`).
-- The scenario's median is 5,537 TWh (+17.7 percent). It is never the headline.
+**Catalogue.** `data/external/demand_features.csv` lists 44 drivers of FY2047-48 utility generation, every one from an official source (secondary). Each row has a sign, a treatment and an overlap flag against the trend:
+
+| Treatment | Rows | Meaning |
+| --- | --- | --- |
+| Core | 7 | Estimated in the headline (population, income, the pandemic dummy, and four efficiency programmes realised inside the history) |
+| Driver | 3 | An existing setting or uncertainty (urbanisation prior, elasticity decline, model error for heat years) |
+| Layer | 11 | A signed TWh adjustment outside the headline |
+| Excluded by rule | 1 | Captive generation (organisers' ruling of 16 November 2026) |
+| Context | 22 | Not quantified: no official figure, inside the trend or another row, or supply-side only |
+
+**Layer rows.** Each of the 11 has a low, central and high size in TWh of FY2047-48 generation, already reduced to its part beyond the trend and grossed up to generation (`src/pipeline/demand_features.hpp` reads and validates the file):
+
+- lowering generation: T&D losses, auxiliary consumption, cross-border imports, rooftop solar, PM-KUSUM C pump solarisation and efficiency beyond trend;
+- raising generation: storage round-trip losses, transport electrification, green hydrogen, data centres and space cooling.
+
+**How a row is applied** (ruling R22).
+
+- Rows flagged `partial` or `no` apply as given: sign x size.
+- T&D losses, the one layer row flagged `yes`, may already be inside the trend (their fall from 28.65 to 17.63 percent is in the history). They count 0 at low and central, their high value (476.3 TWh) only in the downside scenarios, and -uniform(0, 476.3) in the joint draws.
+
+**Scenarios** (ruling R24).
+
+- **Named scenarios** set the add-on to one constant total: Core (no layer, the headline), Features central, Electrification high, Efficiency and distributed, Climate stress, All upside and All downside. Like the existing add-on, the total ramps linearly from the base year to its full value in FY2047-48, and every other setting is kept.
+- **Joint.** Each Monte Carlo draw adds an independent draw of every layer row: sign x triangular(low, central, high), and -uniform(0, high) for T&D losses. The feature uniforms come from their own Philox stream (purpose 6), so with the layer off every draw is bit-identical to the headline (`feature_draw_total` in `src/forecast/mc.hpp`).
+- **One at a time**: each row at its central value and at its extreme.
+- **P90 plan test**: the Robust plan solved at the joint P50 and P90.
+
+**Regions** (ruling R23). The kernel splits total generation, add-on included, by each draw's regional shares, so features are spread in proportion to each region's requirement. No official regional split of the features exists.
+
+**Results** (`outputs/feature_scenarios_2047.csv`): Features central 5,810 TWh (+23.9 percent), All downside 4,865, All upside 6,555, joint P50 5,668 (P5 4,130, P95 8,017). Every combination of feature levels lies between All downside (+177.3 TWh) and All upside (+1,866.8 TWh). The headline stays 4,688 TWh.
+
+The earlier new-loads scenario (`new_loads_published`, green hydrogen only, with a think-tank central value) is retired; `data/external/new_loads.csv` is kept as an archive and is no longer read.
 
 ## 3. Independent check: cross-country panel
 
@@ -271,7 +308,7 @@ Ember's India series is total generation, beyond NPP's utility series, and uses 
 | FE-Gompertz | a = 2.37, b = 0.223 | c = 2.46 | d = 0.032 | 0.481 | 0.57 |
 
 A country-cluster bootstrap gives 2,000 replicates per model; ensemble weights are 1 / MAPE of a 2010-origin backtest.
-The cross-country elasticity at India's income (0.44 to 0.57) is well below India's own (0.83): richer countries' elasticities fall, and the panel carries that saturation into India's future.
+The cross-country elasticity at India's income (0.44 to 0.57) is well below India's own (0.835): richer countries' elasticities fall, and the panel carries that saturation into India's future.
 The primary model can reproduce it through the "elasticity decline" setting.
 
 ## 4. Regional requirement
@@ -292,7 +329,7 @@ The regions add up exactly to the national total.
 The model-error term of the national core (section 2.5) is common to every state, so it scales the national total and leaves the shares unchanged.
 The split has no state urbanisation term, because the challenge dataset has no state urban share.
 Urbanisation acts only through the national total (section 2.3), which the split divides but does not change.
-The income-linked part of the urbanisation term (-gamma kappa dx) stays in f, so across states generation per person rises with relative income at beta - gamma kappa: 0.828 - 1.0 x 0.092 = 0.736 on the central path (`outputs/state_income_2047.csv`).
+The income-linked part of the urbanisation term (-gamma kappa dx) stays in f, so across states generation per person rises with relative income at beta - gamma kappa: 0.835 - 1.0 x 0.093 = 0.742 on the central path (`outputs/state_income_2047.csv`).
 
 **Grid regions.** Each state is placed in the grid region under which NPP reports its generation (`data/raw/npp/npp_state_generation_fy.csv`).
 A state that NPP does not list takes the region of its Zone in the challenge dataset; Central (Madhya Pradesh, Chhattisgarh) maps to Western.
@@ -334,15 +371,28 @@ The shares are renormalised every year and only they enter the Monte Carlo; the 
 
 **State income.** In the base year, state income relative to the national average comes from the organiser dataset (state GSDP and population, 2024).
 Only the State, Year, Zone, Population and GSDP columns of that file are read.
-Relative income gaps then close at a speed estimated from the same data (2006 to 2024), by long-difference beta-convergence over 32 states:
+Jammu and Kashmir's GSDP is deflated to constant prices first (section 2.1).
+Relative income gaps then close at a speed estimated from the same data (2006 to 2024), by long-difference beta-convergence over 34 states.
+
+**Base year of each state (since 21 November 2026; rulings R25 and R28).**
+A state's long difference starts at its first year from 2006 whose GSDP, as read, equals neither the year before nor the year after, so a whole run of repeated values counts as placeholders (`first_unrepeated_year` in `src/regional/convergence.cpp`).
+
+- Jammu and Kashmir, Telangana, Andaman and Nicobar Islands and Lakshadweep start in 2011, after their 2006-2010 placeholder run; Nagaland starts in 2008.
+- Delhi (2009) and Chandigarh (2013) start in their first years in the dataset, so they now enter; with a fixed 2006 base they were dropped.
+- Every other state starts in 2006. In all, 34 states enter, 7 of them with a base year after 2006.
+- Each state's growth of relative income runs over its own span, and lambda = -ln(1 + slope x S) / S, where S is the mean span (17.06 years); with equal spans this is the exact relation. Each bootstrap replicate uses its own mean span.
 
 | Estimate | Value |
 | --- | --- |
-| lambda | 0.021 per year |
-| Bootstrap s.e. | 0.011 |
-| Half-life | about 33 years |
+| lambda | 0.0021 per year |
+| Bootstrap s.e. | 0.0051 |
+| States; with a later base year | 34; 7 |
+| Half-life | about 330 years: convergence is essentially absent |
 
-A common price level cancels in the ratio, so the 2011 price-base change does not affect it.
+Before this rule (2006 base for every state, 32 states) lambda was 0.0208, and after the Jammu and Kashmir deflation alone 0.0249; that speed came from the false 2006 relative incomes of the four placeholder states (+0.50 to +1.40 log points).
+The literal reading "the first year that differs from the next year" would give 0.0166, but it starts the four states in 2010, the last placeholder year (R28).
+A common price level cancels in the ratio, so the 2011 price-base change does not affect lambda; a single state at current prices does, which is why Jammu and Kashmir is deflated first.
+The national forecast does not depend on lambda; only the split does (test `convergence_base_skips_repeats` in `tests/test_regions.cpp`).
 
 **Where power is needed vs where it is generated.**
 NPP regional generation shows where plants are, not where power is used, because the Eastern and Western regions export.
@@ -357,7 +407,7 @@ It uses the kernel's own index function (`state_log_index` in `src/forecast/mc.h
 It is never used by the forecast; it shows why the elasticity is estimated nationally:
 
 - NPP state generation (CEA 18-column Sub-report 16) covers conventional stations only and is recorded where the plant stands. State generation per person runs from 0.08 (Nagaland) to 15.9 times (Sikkim) the national 979 kWh, and 97 percent of its variance lies between states.
-- The within slope is 0.434 (s.e. 0.242; 188 state-years, 32 states). The standard error is conventional, not clustered by state.
+- The within slope is 0.522 (s.e. 0.258; 188 state-years, 32 states). The standard error is conventional, not clustered by state.
 - Ladakh (in the NPP file, not in the dataset) is skipped, not merged into another state; Goa has no NPP generation. Tests `fe_slope_recovers_known` and `fe_slope_skips_unmatched` check the estimator on synthetic data with a known slope.
 
 ## 5. Monte Carlo ensemble
@@ -368,12 +418,12 @@ Each draw is one consistent future (primary core):
 | --- | --- |
 | Population path | UN WPP 2024 medium, anchored on FY2023-24; normal shift scaled so low/high is a 90 percent band |
 | Urban share path | UN WUP 2018 change, anchored on FY2023-24; normal shift with s.d. growing to 2 points by 2047 |
-| Income growth per person | Mean path (4.95 percent a year to 2030, the FY2012-13 to FY2023-24 organiser average without the two pandemic years, then slowing by 1.5 points by 2047), persistent shift (s.d. 0.9 points, so the 90 percent band of the average spans about +-1.5 points) and AR(1) annual shocks (s.d. 1.50 percent; persistence 0.63, estimated from consecutive retained years only) |
+| Income growth per person | Mean path (4.90 percent a year to 2030, the FY2012-13 to FY2023-24 organiser average without the two pandemic years, then slowing by 1.5 points by 2047), persistent shift (s.d. 0.9 points, so the 90 percent band of the average spans about +-1.5 points) and AR(1) annual shocks (s.d. 1.51 percent; persistence 0.63, estimated from consecutive retained years only) |
 | Model | India elasticity with the urban prior (default weight 1); no-urban-term and damped-trend slots for ablation |
 | Elasticity and gamma | One of 2,000 block-bootstrap replicates, gamma from its prior (truncated normal) |
-| Model error (India core) | AR(1) residual of ln(kWh per person): starts at the FY2023-24 residual (+0.070), persistence 0.51, innovation s.d. 0.032 (section 2.5) |
-| Income convergence speed | Normal(0.021, 0.011) |
-| New loads | Uniform between dashboard limits (0 by default), ramped to 2047; the scenario `new_loads_published` uses the published green hydrogen range, 418 to 1,237 TWh (section 2.9) |
+| Model error (India core) | AR(1) residual of ln(kWh per person): starts at the FY2023-24 residual (+0.072), persistence 0.51, innovation s.d. 0.032 (section 2.5) |
+| Income convergence speed | Normal(0.0021, 0.0051); a negative draw means slow divergence |
+| Add-on and demand features | 0 in the headline. A named feature scenario sets a constant add-on; the joint scenario draws each of the 11 layer rows from its own random stream; both ramp linearly from the base year (section 2.9). The dashboard's add-on sliders are signed (-1,000 to +2,500 TWh) |
 
 Random numbers come from the Philox 4x32-10 counter-based generator, keyed by draw index.
 A draw therefore has identical inputs on the CPU and the GPU.
@@ -390,16 +440,16 @@ Quantiles are read from those histograms.
   - The kernel is compiled to machine code for the RTX 30 series (sm_86).
 - **Web path:** the same kernel compiled to WebAssembly (no GPU, fewer draws), see [deployment.md](deployment.md).
 
-A parity test checks that CPU double, CPU float and GPU float agree within 0.2 percent at the 5th, 50th and 95th percentiles of every series.
+A parity test checks that CPU double, CPU float and GPU float agree within 0.2 percent at the 5th, 50th and 95th percentiles of every series, and that the per-draw feature totals of the kernel equal the host's sum of the feature draws.
 The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and synccheck tools with no errors.
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| CPU, 1 thread | 19.85 s |
-| CPU, 16 threads | 4.15 s |
-| GPU, RTX 3070 Ti Laptop | 7.75 ms |
+| CPU, 1 thread | 19.99 s |
+| CPU, 16 threads | 2.26 s |
+| GPU, RTX 3070 Ti Laptop | 11.2 ms |
 
-From `outputs/timings.csv` (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
+From `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
 
 ## 6. Regional generation strategy for 2047
 
@@ -458,16 +508,29 @@ Two allocation methods then meet it.
 
 **Costs:**
 
-| Source | 2047 cost basis (default: IEA) |
+| Source | 2047 cost basis (default: IEA, real 2024 USD) |
 | --- | --- |
-| Coal, gas, nuclear, solar, onshore and offshore wind | IEA WEO 2025 India LCOE projections interpolated to 2047 |
+| Coal, gas, nuclear, solar, onshore and offshore wind | IEA WEO 2025 India LCOE projections interpolated to 2047, in USD(2024)/MWh |
 | Solar and wind (regional) | Scaled by the regional capacity factor |
-| Hydro and bioenergy | Their tariff ratio to recent new-coal bids |
-| Firmed RE | Solar plus today's round-the-clock premium over plain solar |
+| Hydro and bioenergy | Their tariff ratio to recent new-coal bids, times the IEA coal cost |
+| Firmed RE | Solar plus today's round-the-clock premium over plain solar, as a ratio to coal |
+
+Every cost is in real 2024 USD (section 7). The rupee tariffs enter only as ratios, which need no price conversion.
 
 A second cost basis, CEA, is used only as a sensitivity (section 6.6).
-It computes a levelised cost from CEA NEP 2022-32 capital costs, O&M, lives and capacity factors, CEA and CERC fuel costs, the pre-tax WACC of the CERC RE tariff order (12.585 percent) and an RBI exchange rate (`data/external/techno_economic/cea_costs.csv`, `cea_cost_basis.csv`; all secondary). Nuclear and gas keep their IEA cost, because the NEP gives no capital cost for them.
-Caveat: the CERC interest rate and return on equity are nominal while the NEP capital costs are in real 2021-22 terms, so the basis gives a level nominal annuity, as a tariff does. This overstates a real levelised cost against the IEA basis, most for capital-heavy sources (solar, wind, hydro). The CEA cost level is therefore not comparable with the IEA basis; it shows only the direction of the mix.
+It computes a levelised cost from CEA NEP 2022-32 capital costs, O&M, lives and capacity factors, CEA and CERC fuel costs and the pre-tax WACC of the CERC RE tariff order (12.585 percent) (`data/external/techno_economic/cea_costs.csv`, `cea_cost_basis.csv`; all secondary). Nuclear and gas keep their IEA cost, because the NEP gives no capital cost for them.
+Since 21 November 2026 the CEA basis is on the same price base as the IEA costs, real 2024 USD, so the two can be compared directly (section 7):
+
+- Capital cost, fixed O&M and CEA coal fuel (2021-22 prices) are multiplied by 1.11991, the MoSPI GDP deflator of FY2024-25 over FY2021-22; CERC biomass fuel (FY2026-27 prices) by 0.95628; then all are divided by the RBI calendar-2024 rate, Rs 83.6693 per USD.
+- The CERC interest rate and return on equity are nominal, so the WACC is made real with the Fisher relation at the RBI inflation target of 4 percent: (1.12585 / 1.04) - 1 = 8.255 percent. The capital recovery factor is then a real annuity on real capital cost.
+- The RBI tolerance band gives two more rows: 2 percent inflation (real WACC 10.377 percent) and 6 percent (6.212 percent).
+
+| CEA basis, USD/MWh before regional scaling | Coal | Hydro | Solar (2029-30 capital cost) | Onshore wind | Offshore wind | Bioenergy |
+| --- | --- | --- | --- | --- | --- | --- |
+| Real 2024 USD, 4 percent (default) | 57.98 | 53.45 | 30.11 | 40.32 | 47.11 | 98.97 |
+| 2 percent | 61.82 | 62.90 | 35.13 | 47.05 | 54.97 | 102.80 |
+| 6 percent | 54.53 | 44.84 | 25.57 | 34.25 | 40.02 | 95.51 |
+| IEA basis (mean over regions), for comparison | 69.00 | 59.24 | 16.07 | 45.11 | 58.00 | 122.66 |
 
 **Emission factors:** CEA CO2 Baseline Database v22.0 (FY2025-26), station-weighted: coal 0.971 and gas 0.470 tCO2/MWh (secondary). The loader takes the latest actual period in `emission_factors.csv`; the earlier versions stay in the file as history.
 
@@ -583,11 +646,54 @@ Each case is solved at the median and at the P90 requirement; `outputs/sensitivi
 
 | Case | Change |
 | --- | --- |
-| `cost_basis_cea` | CEA cost basis instead of IEA (section 6.1); its cost is in its own basis |
+| `cost_basis_cea` | CEA cost basis instead of IEA (section 6.1), in real 2024 USD with the WACC made real at the RBI target (4 percent) |
+| `cost_basis_cea_pi2`, `cost_basis_cea_pi6` | The same CEA basis with the WACC made real at 2 or 6 percent inflation (the RBI tolerance band) |
 | `solar_potential_nise2014` | NISE 2014 technical solar potential instead of NISE 2025 ground-mounted |
 | `wind_120m` | NIWE onshore wind potential at 120 m instead of 150 m |
 | `build_low`, `build_central` | Published build limits, low or central case, instead of the high case |
 
 **Known limit: low requirements.** The coal floor and the gas kept for peaking are fixed in TWh, while the non-fossil minimum is a share of generation.
 Below about (coal floor + gas minimum) / (1 - non-fossil minimum) of generation the LP has no feasible plan: about 2,794 TWh for the Robust policy, (647 + 51) / 0.25 (test `robust_low_requirement_limit` finds 2,780 TWh by bisection).
-The Low growth scenario's P05 requirement (2,332 TWh) is below it, so `outputs/presets.csv` reports that case as infeasible; the dashboard explains the state and names the levers (the coal floor, the gas kept for peaking and the non-fossil minimum).
+The Low growth scenario's P05 requirement (2,306 TWh) is below it, so `outputs/presets.csv` reports that case as infeasible; the dashboard explains the state and names the levers (the coal floor, the gas kept for peaking and the non-fossil minimum).
+
+## 7. Price base: real 2024 USD
+
+Since 21 November 2026 every money figure in the model is on one stated price base, real 2024 USD, the price year of IEA WEO 2025 ([decisions.md](decisions.md), D14).
+The conversions use official indices only, in `data/external/macro/price_indices.csv` (all secondary; `data/external/macro/SOURCES.md`):
+
+| Index | Source | Use |
+| --- | --- | --- |
+| India GDP deflator, 2011-12 series | MoSPI (NSO), National Accounts | Deflating rupee costs; deflating Jammu and Kashmir's current-price GSDP (section 2.1) |
+| India WPI, India CPI | Office of the Economic Adviser (DPIIT); MoSPI (NSO), via the RBI Handbook | Recorded; the WPI is the alternative deflator |
+| Rupees per US dollar, fiscal and calendar averages | RBI reference rate (RBI Handbook, Tables 132 and 133) | Calendar 2024: Rs 83.6693 per USD |
+| RBI inflation target and band | Gazette notifications under section 45ZA of the RBI Act (4 percent, band 2 to 6 percent, to FY2030-31) | The Fisher relation for the CEA WACC; extending the deflator past its last year; the nominal outlook |
+| US GDP deflator, US CPI-U | BEA (NIPA Table 1.1.9); BLS | Rebasing any USD cost not in 2024 dollars (none today) |
+| FOMC longer-run goal | Federal Reserve (2 percent, PCE price index, reaffirmed 27 Jan 2026) | Extending the US deflator past 2025; the nominal USD outlook |
+
+**Conversion rule** (`src/core/price_base.hpp`).
+
+1. Deflate a cost within its own currency from its price year to 2024 with the GDP deflator. India publishes the deflator by fiscal year only, so FY2024-25 stands for 2024.
+2. Convert rupees at the RBI calendar-2024 average rate.
+3. A year after the last published index is extended at the target (India 4 percent a year, United States 2 percent) and labelled as not an official figure.
+4. A nominal rate becomes real with the Fisher relation, r_real = (1 + r_nominal) / (1 + inflation) - 1, at the RBI target; the tolerance band gives the sensitivity rows.
+
+**What each input needs.**
+
+| Input | Price year or currency | Conversion |
+| --- | --- | --- |
+| IEA WEO 2025 LCOE (coal, gas, nuclear, solar, wind) | USD(2024)/MWh | None; the code checks the unit and would rebase any other year |
+| Hydro, bioenergy and firmed-RE premium | Rupee tariff ratios to new-coal bids | None: ratios |
+| CEA NEP capital cost and fixed O&M; CEA coal fuel | Rupees, 2021-22 prices | x 1.11991, then / 83.6693 |
+| CERC biomass fuel | Rupees, FY2026-27 | x 0.95628 (deflator extended at the target, not official), then / 83.6693 |
+| CERC WACC | Nominal rate | Fisher at 4 percent: 8.255 percent (2 percent: 10.377; 6 percent: 6.212) |
+| Storage and transmission | No money input | None |
+| Unserved-energy penalty and carbon price | Model settings | Read as real 2024 USD |
+
+**Effect.** The default plan (IEA basis) does not change: with the price base alone every default-plan output was byte-identical. Only the CEA rows of `outputs/sensitivity_mix.csv` move. The Robust plan costs 202.58 bn USD a year on the CEA basis at 4 percent inflation (225.22 at 2 percent, 182.13 at 6 percent), against 176.16 bn USD on the IEA basis; on the old mixed basis it was 250.29 bn USD.
+
+**Nominal outlook** (information only; `outputs/site_summary.json`, `plan.nominal_outlook`). In 2047 money, the Robust plan's 176.16 bn USD a year (real 2024 USD) is:
+
+- Rs 36.33 lakh crore a year: x 83.6693 Rs per USD x 1.04^23 (RBI target);
+- 277.8 bn USD a year: x 1.02^23 (FOMC goal).
+
+Every headline cost stays in real 2024 USD.

@@ -320,6 +320,7 @@ The source hierarchy is unchanged: NPP and the Renewable India dataset are prima
   - `data/external/new_loads.csv` holds published 2050 estimates (secondary). `outputs/new_loads_2047.csv` reports them.
   - Only green hydrogen, the one load absent from the historical series, is added: 418 to 1,237 TWh in 2047, scaled by 24/27.
   - The sensitivity row `new_loads_published` gives a median of 5,537 TWh (+17.7 percent). It is never in the headline.
+  - Retired on 21 November 2026 and replaced by the demand-feature layer from official sources (D14, R27).
 - **Regional base mix from NPP** (Task 7; question 3; ruling R9). The FY2023-24 base mix (1,734.4 TWh) is built from two parts:
   - NPP regional conventional generation (1,508.5 TWh, primary), with thermal split into coal and gas by NPP's own station sums;
   - CEA General Review Table 4.7 state renewables (225.8 TWh, secondary), which fill the gap NPP leaves.
@@ -445,7 +446,7 @@ The NISE 2014 and low-case rows cannot meet the median requirement. Their lower 
 - The existing-fleet floors are best-year maxima: hydro in the wet FY2025-26, gas in FY2020-21.
 - FY2024-25 and FY2025-26 have no rows in the build-limit file, so they take the first period's rate.
 - Published coal additions are gross of retirements. The 1.10 times base national coal ceiling binds before them.
-- The CEA cost basis applies nominal CERC rates to real 2021-22 NEP capital costs, at the FY2021-22 rate. Its cost level is not comparable with the IEA basis; it shows only the direction of the mix.
+- The CEA cost basis applies nominal CERC rates to real 2021-22 NEP capital costs, at the FY2021-22 rate. Its cost level is not comparable with the IEA basis; it shows only the direction of the mix. Resolved on 21 November 2026: the CEA basis is now in real 2024 USD (D14).
 - The committed floors ignore commissioning dates, and the hydro CUF (0.36) is the lowest published value.
 - At 100 percent gas kept for peaking, the gas minimum equals the gas cap, so the regional gas bounds fix where gas runs. The Western Region has the largest share (38 percent), not a majority.
 - A gas maximum below about 1.1 percent with a non-zero gas minimum makes the LP infeasible. The dashboard says so.
@@ -458,3 +459,155 @@ The NISE 2014 and low-case rows cannot meet the median requirement. Their lower 
   - `test_allocation`, from earlier tasks: `base_mix_matches_npp`, the published-limit and fleet-floor tests, `emission_factor_latest_period`, `cea_lcoe_formula`, `sensitivity_from_copy`, the committed-floor and gas tests, `presets_feasible`.
   - `test_allocation`, added in this task: `plan_vectors_add_up` (regions sum to each source's total, regional shares and plan shares to 100 percent) and `robust_low_requirement_limit`.
 - The forecast outputs are byte-identical to the midpoint run: the national P50 and the regional medians are unchanged.
+
+## D14. Inflation and the full set of demand drivers (2026-11-21)
+
+**Trigger.** After the final presentation (21 November 2026) the team set two goals. The design is `docs/plans/2026-11-21-inflation-features-design.md`.
+
+1. **Inflation.** Every money figure must sit on one stated real price base, converted with official price indices.
+2. **Demand drivers.** Every factor that can change India's 2047 generation requirement must be listed, and quantified wherever an official source allows. The scenario set must span all of them.
+
+The rules do not change:
+
+- The headline is estimated on the two challenge datasets. NPP and the Renewable India dataset stay the only primary sources.
+- Every new figure comes from an official source (a ministry, a statutory body, NITI Aayog, a central bank or a national statistics office) and is labelled secondary.
+- Installed capacity and consumption are never forecast metrics. A capacity or end-use figure appears only after an explicit conversion to TWh of generation, as the size of a feature.
+- Generation figures appear only in comparisons; consumption-side figures are context.
+
+**Why.**
+
+- **Mixed price bases in the CEA cost basis.** The CEA basis applied the nominal CERC WACC (12.585 percent) to real 2021-22 NEP capital costs. It priced fuel in 2021-22 and FY2026-27 rupees and converted at the FY2021-22 exchange rate. D13 listed this as a known limit: its cost level could not be compared with the IEA basis.
+- **One state's income at current prices.** A check of the organiser GSDP against MoSPI found that every state is at constant 2011-12 prices from 2011 except Jammu and Kashmir. Its values from 2012 equal MoSPI current prices (2016: 124,848 crore, against 100,203 at constant prices). Its inflation was counted as real income growth, both in the national income series and in the relative incomes of the regional split.
+- **Placeholder base years in the convergence estimate.** Once Jammu and Kashmir was deflated, its 2006 relative income still rested on the 2006-2010 placeholder run (D11). Telangana, Andaman and Nicobar Islands and Lakshadweep had the same problem. The old convergence speed was driven by these four placeholder states (2006 relative incomes of +1.40, +1.16, +0.93 and +0.50 log points for Telangana, Andaman and Nicobar Islands, Jammu and Kashmir and Lakshadweep).
+- **Demand drivers beyond income.** The midpoint panel asked whether income was the only factor (D13, question 1). The answer listed four drivers and one new-loads scenario that added green hydrogen only, with a central value from a think tank (TERI); the other loads were reported, not added, and several of their figures were not official. A full catalogue from official sources only was missing.
+
+**Choice.** What changed (commits 8c4dd8a to 62c347f):
+
+- **One real price base: real 2024 USD**, the price year of IEA WEO 2025 (`src/core/price_base.hpp`).
+  - The official indices are in `data/external/macro/price_indices.csv` (secondary): the MoSPI GDP deflator (2011-12 series), the OEA WPI, the MoSPI CPI, the RBI rupee-dollar reference rates, the RBI inflation target (4 percent, band 2 to 6 percent, notified to FY2030-31), the BEA GDP deflator, the BLS CPI-U and the FOMC longer-run goal (2 percent).
+  - A cost given in a currency and price year is first deflated within its own currency with the GDP deflator, then converted at the RBI calendar-2024 rate (Rs 83.6693 per USD). A year after the last published index is extended at the target (India 4 percent, United States 2 percent) and labelled as not official.
+  - **The CEA cost basis is fully real.** NEP capital cost, fixed O&M and CEA coal fuel (2021-22 prices) are multiplied by 1.11991, the MoSPI deflator of FY2024-25 over FY2021-22. CERC biomass fuel (FY2026-27 prices) is multiplied by 0.95628. Both are then divided by 83.6693. The CERC WACC is made real with the Fisher relation at the RBI target: (1.12585 / 1.04) - 1 = 8.255 percent. Two new mix-sensitivity rows take the RBI band: 2 percent inflation (real WACC 10.377 percent) and 6 percent (6.212 percent). The default inflation is read from `price_indices.csv`.
+  - **The default IEA plan does not change.** Every IEA cost is already in USD(2024)/MWh. Hydro, bioenergy and the firmed-RE premium are rupee tariff ratios, which need no conversion. With the price base alone, every output of the default plan was byte-identical.
+  - **Nominal 2047 outlook**, for information only (`site_summary.json`, `plan.nominal_outlook`). The Robust plan's cost, 176.16 bn USD a year in real 2024 USD, is Rs 36.33 lakh crore a year in 2047 rupees at the RBI target, or 277.8 bn USD a year in 2047 dollars at the FOMC goal. Every headline cost stays real.
+- **Jammu and Kashmir GSDP deflated** (R21; `data/external/macro/gsdp_price_basis.csv`).
+  - Its values from 2012 are divided by the MoSPI national GDP deflator of their fiscal year: 13 state-years in all.
+  - Every reader of the dataset's GSDP must pass the price basis: national income growth, the relative incomes and convergence speed of the regional split, and the state panel check.
+  - The GSDP values stay the dataset's own; only their price basis is made consistent. This is an inflation correction of a mis-based series, not new estimation data.
+  - A sensitivity row, `jk_excluded`, leaves Jammu and Kashmir out of national income growth instead.
+- **Convergence base year** (R25, R28).
+  - Each state's long difference starts at its first year from 2006 whose GSDP, as read, equals neither the year before nor the year after.
+  - Jammu and Kashmir, Telangana, Andaman and Nicobar Islands and Lakshadweep start in 2011, and Nagaland in 2008. Delhi (2009) and Chandigarh (2013) start in their first years. All other states start in 2006. So 34 states enter instead of 32, 7 of them with a later base year.
+  - lambda = -ln(1 + slope x S) / S, where S is the mean span (17.06 years).
+  - lambda falls from 0.0208 to 0.0021 (s.e. 0.0051): convergence is essentially absent. The national forecast does not depend on it.
+- **Demand-feature layer** (R22, R23, R24; `src/pipeline/demand_features.hpp`; the catalogue is [demand_features.md](demand_features.md)).
+  - `data/external/demand_features.csv` lists 44 drivers, all from official sources: 7 estimated in the core forecast, 3 existing drivers or settings, 11 quantified feature rows (the layer), 1 excluded by rule (captive generation) and 22 context rows.
+  - The 11 layer rows are signed TWh adjustments to FY2047-48 utility generation. They are already reduced to their part beyond the historical trend and grossed up to generation.
+  - Seven named scenarios: Core, Features central, Electrification high, Efficiency and distributed, Climate stress, All upside and All downside. A joint Monte Carlo adds independent feature draws to each core draw. A P90 plan test solves the Robust plan at the joint P50 and P90.
+  - Each adjustment is ramped linearly from the base year, like the existing add-on. Feature draws use their own Philox stream, so the headline draws are bit-identical.
+  - New outputs: `outputs/demand_features_catalogue.csv`, `outputs/feature_scenarios_2047.csv` and `features.*` in `site_summary.json`. The dashboard gets a "Demand features (official, outside headline)" selector and a catalogue view.
+  - The headline stays the two-dataset forecast (4,688 TWh). Every feature scenario is labelled as outside the headline.
+- **Retired.**
+  - The new-loads scenario (`new_loads_published`: green hydrogen only, 418 to 1,237 TWh, with a think-tank central value) and its code (R27). `data/external/new_loads.csv` is kept as an archive and is no longer read.
+  - The High growth preset's fixed 100 to 300 TWh add-on, which had no official source (R26).
+
+**Rulings** (the ledger of this work).
+
+| Ruling | Decision | What it costs if wrong |
+| --- | --- | --- |
+| R21 | Jammu and Kashmir GSDP from 2012 (current prices) is deflated with the MoSPI national GDP deflator, with `jk_excluded` as the sensitivity. It is an inflation correction of a mis-based series | A small headline shift, disclosed: `jk_excluded` gives 4,683 TWh against 4,688 (-0.1 percent). A Jammu and Kashmir deflator would differ from the national one: the deflated values lie -2.0 to +4.2 percent from MoSPI's constant-price values over 2012-2021 |
+| R22 | Layer rows apply as the CSV gives them (already cut to the part beyond the trend), except the one row that overlaps the history, T&D losses: 0 at central, uniform(0, high) in the joint draws, and its high value only in the downside scenarios | If T&D losses are in fact beyond the trend, Features central overstates the requirement by up to about 465 TWh (the listed central value, 464.6) |
+| R23 | Features are split across regions in proportion to each region's share of the requirement; where a feature sits is context only | Regional feature effects are approximate. No official regional split exists, and data centres, hydrogen and rooftop solar need not be spread like the requirement |
+| R24 | Seven named scenarios, a joint Monte Carlo (core draws plus independent triangular feature draws) and a P90 plan test on core plus features | None: computation only |
+| R25 | Each state's convergence base year is its first non-repeated GSDP year, matching the existing repeat-skip rule | The regional split moved without cause: lambda went from 0.0249 (after R21) to 0.0021, and the regional medians moved by -125 (Eastern) to +137 TWh (Southern) |
+| R26 | The High growth preset's unofficial 100 to 300 TWh add-on is removed | The High growth rows drop by about 200 TWh (P50 6,780 to 6,580) |
+| R27 | The landing page reads `features.*` instead of the new-loads row, and the new-loads code is retired | None |
+| R28 | The base year is the first year that differs from both neighbours, not the literal "differs from the next year", which still lands on the Jammu and Kashmir 2010 placeholder | Under the literal reading lambda would be 0.0166 instead of 0.0021, and the regional shift would be smaller |
+| R29 | The presented decks (pptx and Beamer) and talk materials stay as presented on 21 Nov; the README and this entry record every change since | The decks' numbers differ from the outputs and the live site |
+
+**Effect on results** (before: the 20 Nov run, as presented on 21 Nov; after: `outputs/` of commit 62c347f; GPU, 4,194,304 draws, default seed).
+
+| Quantity | 20 Nov, as presented | Now |
+| --- | --- | --- |
+| FY2047-48 national P5 / P50 / P95, TWh | 3,217 / 4,703 / 7,002 | 3,190 / 4,688 / 7,021 |
+| National P90 (the plan's stress test), TWh | 6,400 | 6,408 |
+| Increase over FY2023-24 (1,698 TWh) | +3,005 TWh (2.77 times) | +2,990 TWh (2.76 times) |
+| Elasticity beta, FY2011-12 window (s.e.) | 0.828 (0.063) | 0.835 (0.065) |
+| Elasticity beta, FY2006-07 window (s.e.) | 0.866 (0.031) | 0.872 (0.032) |
+| Elasticity used: bootstrap median (90 percent interval) | 0.850 (0.731 to 0.939) | 0.857 (0.737 to 0.947) |
+| Mean growth of income per person (organiser data) | 4.95 percent a year | 4.90 percent a year |
+| Convergence lambda (s.e.; states) | 0.0208 (0.0106; 32) | 0.0021 (0.0051; 34) |
+| Regional medians: Northern / Western / Southern / Eastern / North-Eastern, TWh | 1,405 / 1,226 / 1,068 / 840 / 161 | 1,342 / 1,276 / 1,188 / 730 / 151 |
+| Regional shares of the requirement | 29.9 / 26.1 / 22.7 / 17.9 / 3.4% | 28.6 / 27.2 / 25.3 / 15.6 / 3.2% |
+| Robust plan: non-fossil; coal | 79.5%; 19.4% | 79.9%; 19.0% |
+| Robust plan: CO2 | 911.7 Mt | 891.3 Mt |
+| Robust plan: cost at the median (real 2024 USD, IEA basis) | 177.51 bn USD/yr | 176.16 bn USD/yr |
+| Robust plan: unmet at the median; at P90 | 0; 632.9 TWh | 0; 639.5 TWh |
+| Base policy: CO2; cost; unmet at P90 | 1,373.5 Mt; 215.29 bn USD/yr; 1,463 TWh | 1,367.2 Mt; 213.05 bn USD/yr; 1,471 TWh |
+| CEA cost basis (copy of the Robust plan) | 250.29 bn USD/yr and 1,118.3 Mt, on a mixed price base that could not be compared with IEA | 202.58 bn USD/yr in real 2024 USD at 4 percent inflation (225.22 at 2 percent, 182.13 at 6 percent); 1,113.8 Mt; non-fossil 75.0% in all three |
+| Nominal 2047 outlook (information only) | none | Rs 36.33 lakh crore or 277.8 bn USD a year |
+| Scenarios outside the headline, FY2047-48 P50 | New loads (green hydrogen only): 5,537 TWh (+17.7%) | Features central 5,810; Electrification high 6,528; Efficiency and distributed 5,076; Climate stress 6,063; All upside 6,555; All downside 4,865 TWh |
+| Joint distribution (core plus features) | none | P5 4,130 / P50 5,668 (+20.9%) / P95 8,017 TWh |
+| Robust plan: unmet at the joint P50; at the joint P90 (7,404 TWh) | none | 0; 1,635 TWh |
+| High growth preset, P50 | 6,785 TWh (with the 100 to 300 TWh add-on) | 6,580 TWh |
+| Central path; its log growth from FY2023-24 | 4,600 TWh; 0.997 | 4,589 TWh; 0.994 |
+| State panel check: slope (s.e.) | 0.434 (0.242) | 0.522 (0.258) |
+| Cost-CO2 trade-off of the Robust plan | 911.7 to 652.7 Mt for +0.46 bn USD/yr | 891.3 to 652.7 Mt for +0.45 bn USD/yr |
+| Robust storage at the median: power; daily energy | 448 GW; 3,044 GWh | 448 GW; 3,048 GWh |
+| Tests | 7 | 9 |
+
+How the numbers moved, step by step:
+
+| Step (commit) | National P50 (P5 to P95), TWh | lambda | Regional medians N / W / S / E / NE, TWh | Robust plan: non-fossil, CO2, cost, unmet at P90 |
+| --- | --- | --- | --- | --- |
+| 20 Nov, as presented | 4,703 (3,217 to 7,002) | 0.0208 | 1,405 / 1,226 / 1,068 / 840 / 161 | 79.54%, 911.7 Mt, 177.51 bn USD, 632.9 TWh |
+| Price base (8c4dd8a) | unchanged | unchanged | unchanged | unchanged; only the CEA rows move (250.29 to 203.44 bn USD) |
+| Jammu and Kashmir deflated (5f7857b) | 4,688 (3,190 to 7,021) | 0.0249 | 1,399 / 1,217 / 1,051 / 854 / 162 | 79.78%, 897.7 Mt, 176.57 bn USD, 641.3 TWh |
+| Feature layer (c957a6e, 0aded2d, 62c0916) | unchanged | unchanged | unchanged | unchanged (every output byte-identical except `timings.csv`) |
+| Convergence base year, R25 (c41d93d) | unchanged | 0.0021 | 1,342 / 1,276 / 1,188 / 730 / 151 | 79.90%, 891.3 Mt, 176.16 bn USD, 639.5 TWh |
+| R26 and R27 (00e873d, 62c347f) | unchanged | unchanged | unchanged | unchanged; the High growth P50 falls from 6,780 to 6,580 TWh |
+
+- The national median falls by 15 TWh (-0.3 percent) because the deflation removes Jammu and Kashmir's inflated growth: mean income growth per person falls from 4.95 to 4.90 percent a year. The elasticity rises (0.828 to 0.835), which partly offsets it.
+- The regional split changes a lot. Under the old lambda, poorer states' relative incomes rose towards the national average by 2047; now they barely move. The Southern and Western regions gain; the Eastern, Northern and North-Eastern regions lose.
+- The Robust plan moves only through the regional requirements: a smaller Eastern requirement means less import over the West-East corridor.
+
+**What stays the same.** The holdout errors (-3.3 and +0.5 percent, both inside the 90 percent range), the backtest errors (2.0 percent one year ahead, 6.4 percent five years ahead), the cross-country check (4,528 TWh), the FY2023-24 base mix, the build limits, the committed floors, the emission factors, the IEA costs, and the end point of the cost-CO2 trade-off (652.7 Mt, highest marginal abatement cost 4.04 USD/t).
+
+**Rejected.**
+
+- A Jammu and Kashmir state deflator: it is not among the official indices fetched, and the national deflator is the official index (R21).
+- Dropping Jammu and Kashmir from the estimation: it would remove a state from a primary source. It is kept as the `jk_excluded` sensitivity instead.
+- Adding any feature to the headline: the headline must stay estimated on the two challenge datasets.
+- Figures from TERI, CEEW, BloombergNEF and the IEA as feature sizes: they are not official Indian sources. Official figures replace them where one exists, and electric cooking, which has none, is a context row.
+- Correlated feature draws: no official source gives the correlations, so the draws are independent and say so.
+- The literal reading of R25 (R28).
+- Editing the presented decks (R29).
+
+**Known limits.**
+
+- **Placeholder end years.** Andaman and Nicobar Islands and Lakshadweep repeat their 2023 GSDP in 2024, so their 2024 relative income, the end point of the convergence estimate and the start of the split, rests on a placeholder. Only the base year was in scope. In the convergence estimate, the national GSDP per person that relative incomes are measured against still includes the 2006-2010 placeholder values of those years.
+- **Convergence is essentially absent** (lambda 0.0021, s.e. 0.0051). It depends on how placeholders are read: the literal R25 reading gives 0.0166, and leaving out Delhi and Chandigarh, which the new rule brings in, gives -0.0005.
+- **Jammu and Kashmir 2022-2024** are predicted values (the upstream README says some values were predicted), treated as current prices. After deflation they differ from MoSPI constant prices by +7.9, +5.8 and -3.5 percent. The price basis of its 2006-2010 placeholder value was not checked.
+- **Overlap caveats in the feature rows.**
+  - T&D losses are an upper bound: the 2006-07 to 2023-24 fall from 28.65 to 17.63 percent is inside the estimated elasticity.
+  - New loads are grossed up at FY2023-24 loss rates, so with T&D losses active they are overstated by up to about 10 percent.
+  - Storage round-trip losses would be counted twice if the Part 2 storage back-calculation, which reports its own losses (136 TWh in the Robust plan), were added on top.
+  - Distributed renewables under the renewable consumption obligation overlap rooftop solar and PM-KUSUM.
+  - Rows are summed independently, exactly as the CSV gives them.
+- **NPP scope of feeder-level solar.** PM-KUSUM C feeder-level plants feed 11 kV feeders. If CEA counts them as utility generation, their effect on NPP generation is zero. Whether Component A plants are inside NPP's series is not stated in the sources, and rooftop solar assumes NPP excludes rooftop output.
+- **Conversion factors.**
+  - The layer's unit factors are official but fixed: 1 Mtoe = 11.63 TWh; 50 kWh per kg of hydrogen with a 50 percent grid share; rooftop CUF 17 percent with 75 percent self-consumed; 7.5 HP pumps at 17 percent CUF; hydro import PLF 32 to 40 percent; storage round trip 88 percent (batteries) and 80 percent (pumped storage) at one cycle a day.
+  - 2050 values are scaled linearly from the base year (24/27), and values for earlier years are held flat to 2047.
+  - The trend rule carries each existing load x2.7697 to FY2047-48, the multiple of the 20 Nov headline (4,703 TWh). On the current headline it is x2.7607. The layer values were not rescaled; the difference is under 2 TWh for any row.
+- **Tariff ratios across years.** Hydro (2020), new-coal bids (2025), biomass (FY2026-27), round-the-clock bids (2025-26) and solar (2025) are used as ratios to coal, which are treated as inflation-neutral. A ratio across different years is not strictly inflation-neutral.
+- **Price base proxies.** FY2024-25 stands for 2024, because MoSPI publishes the deflator by fiscal year only, and it is paired with the calendar-2024 exchange rate. The FY2026-27 deflator for biomass is extended at the RBI target and is not an official figure. The CEA band rows (2 and 6 percent) are fixed in the code; only the default reads `price_indices.csv`.
+- **Nominal outlook.** The RBI target is notified only to FY2030-31; the outlook carries it to 2047. The FOMC goal is stated for the PCE price index, not the GDP deflator.
+- **Every feature scenario raises the requirement.** Even All downside adds 177 TWh, because transport (at least 512 TWh), data centres (at least 356) and hydrogen (at least 138) outweigh every row that lowers generation.
+- **The decks differ from the outputs** (R29).
+
+**Checks.**
+
+- The suite has nine tests, all passing (ctest 9 of 9 at 62c347f).
+  - New `price_base`: the Fisher relation, deflation, the rupee-dollar conversion, extension beyond the data at the target, the nominal outlook, the Jammu and Kashmir deflation (within 1 percent of MoSPI's 2016 constant-price value; -0.37 percent observed), every GSDP reader applying the basis on synthetic data, and the default plan unchanged by the price base (cost and CO2 reproduced to 1e-6).
+  - New `features`: catalogue validation, the scenario totals, the T&D treatment, the joint quantiles within the All downside to All upside envelope, and the headline unchanged with the layer at Core.
+  - `mc_parity` checks the feature draws on the CPU and the GPU; `regions` adds `convergence_base_skips_repeats`; `allocation` checks the CEA tables (2 percent above 4 percent above 6 percent) and the inflation default.
+- With the price base alone, every default-plan output was byte-identical. With the feature layer, every output except `timings.csv` was byte-identical. R25 left the national forecast rows byte-identical.
