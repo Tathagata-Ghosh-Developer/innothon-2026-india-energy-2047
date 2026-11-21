@@ -1303,8 +1303,8 @@ void App::data_sources() {
          "Demand-feature scenarios outside the headline: named scenarios, one at a time and joint draws"},
         {"New loads in 2050 (vehicles, green hydrogen, data centres, cooling, cooking)",
          "NITI Aayog 2026; TERI 2024; CEEW 2025; BloombergNEF 2026; IEA 2018 (secondary)",
-         "Superseded by the demand features in this dashboard; kept for one sensitivity row of the command-line "
-         "tool"},
+         "Superseded by the demand features; data/external/new_loads.csv is kept as an archive and no longer "
+         "read"},
         {"Build limits by source, GW per year, FY2026-27 to FY2047-48 (low / central / high)",
          "CEA NEP 2022-32; CEA (Dec 2024); NITI Aayog (2026); DAE; MoP Annual Report 2025-26 (secondary)",
          "2047 build caps: GW per year x CUF x 8.76, summed from FY2024-25"},

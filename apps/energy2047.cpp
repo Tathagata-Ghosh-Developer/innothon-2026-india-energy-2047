@@ -153,7 +153,6 @@ struct SiteSummary {
   bool panel_ok = false;            // state panel check (state_panel_check.csv)
   PanelFit panel;
   StatePanelData panel_data;
-  std::vector<NewLoad> new_loads;               // new_loads_2047.csv
   std::vector<MixSensitivityRow> mix_sensitivity;  // Robust preset copies (sensitivity_mix.csv)
   // Demand-feature layer, outside the headline (demand_features_catalogue.csv,
   // feature_scenarios_2047.csv).
@@ -601,66 +600,6 @@ void write_state_table(const fs::path& out, const Pipeline& pl, const ForecastRe
     std::printf(" %s %.1f%% | %.1f%%", region_name(r), 100 * by_region[region_name(r)],
                 100 * f.quant.q[1 + r][last][3] / med_sum);
   std::printf("\n");
-}
-
-// outputs/new_loads_2047.csv: the published new loads (secondary sources) behind the
-// new-loads scenario, which stays outside the headline. One row per load, scaled from its
-// published year to the target year, then two totals: without the overlapping loads (the
-// add-on of the new_loads_published sensitivity row and the dashboard preset) and with
-// them (a reference only, never added).
-void write_new_loads(const fs::path& out, const std::vector<NewLoad>& loads, int target_year) {
-  const std::string t = std::to_string(target_year);
-  const char* units = "TWh of end-use electricity, not generation: not grossed up for losses";
-  CsvWriter w((out / ("new_loads_" + t + ".csv")).string());
-  w.field("load").field("overlaps_history").field("in_addon").field("published_year").field("base_year");
-  w.field("scale_to_" + t).field("low_published_twh").field("central_published_twh").field("high_published_twh");
-  w.field("low_" + t + "_twh").field("central_" + t + "_twh").field("high_" + t + "_twh").field("units").field("note");
-  w.field("basis");
-  w.endrow();
-  for (const NewLoad& l : loads) {
-    const bool added = l.overlaps == "no";
-    w.field(l.load).field(l.overlaps).field(added ? "yes" : "no").field(l.year).field(l.base_year).field(l.scale, 6);
-    w.field(l.low_published, 6).field(l.central_published, 6).field(l.high_published, 6);
-    w.field(l.low, 6).field(l.central, 6).field(l.high, 6).field(units);
-    w.field(added ? "added to the new-loads scenario (outside the headline): absent from the historical generation "
-                    "series; linear growth from near zero in the base year; if supplied from the grid (off-grid or "
-                    "captive supply would be outside NPP utility generation)"
-            : l.overlaps == "partial"
-                ? "reported, not added: the income elasticity already carries part of this load"
-                : "reported, not added: the historical series and the income elasticity already carry this load");
-    w.field(l.basis);
-    w.endrow();
-  }
-  // Totals; the published sums are given only when the summed loads share a published year.
-  const auto total = [&](const char* name, bool with_overlap, const char* in_addon, const char* note) {
-    const NewLoadTotals s = new_loads_total(loads, with_overlap);
-    double pub[3] = {0, 0, 0}, scale = 0;
-    int year = 0, base = 0;
-    for (const NewLoad& l : loads) {
-      if (!with_overlap && l.overlaps != "no") continue;
-      pub[0] += l.low_published, pub[1] += l.central_published, pub[2] += l.high_published;
-      year = (year == 0 || year == l.year) ? l.year : -1;
-      base = l.base_year;
-      scale = l.scale;
-    }
-    w.field(name).field(with_overlap ? "any" : "no").field(in_addon);
-    year > 0 ? w.field(year) : w.field("");
-    base > 0 ? w.field(base) : w.field("");
-    year > 0 ? w.field(scale, 6) : w.field("");
-    for (double v : pub) year > 0 ? w.field(v, 6) : w.field("");
-    w.field(s.low, 6).field(s.central, 6).field(s.high, 6).field(units).field(note).field("");
-    w.endrow();
-  };
-  total("total_without_overlapping_loads", false, "yes",
-        "the add-on of the new-loads scenario (outside the headline): addon_lo = low, addon_hi = high, drawn uniformly "
-        "and ramped linearly from the base year to the full value in the target year; if supplied from the grid");
-  total("total_with_overlapping_loads", true, "no",
-        "reference only, never added: double counts the part of the overlapping loads that the income elasticity "
-        "already carries");
-  const NewLoadTotals a = new_loads_total(loads), all = new_loads_total(loads, true);
-  std::printf("new loads %s (published, outside the headline): add-on %.0f-%.0f TWh from %d of %zu loads; all loads "
-              "%.0f-%.0f TWh (reference only)\n",
-              t.c_str(), a.low, a.high, a.n, loads.size(), all.low, all.high);
 }
 
 // Minimal JSON writer. Numbers are written in fixed notation (never exponents) so the
@@ -1147,34 +1086,6 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.str("note", "Diagnostic only, never used: ln(NPP state generation per person) on ln(GSDP per person) with state "
                   "fixed effects. NPP records generation where the plant stands (conventional stations only), so a "
                   "state's figure measures where plants are, not its demand.");
-    j.end();
-  }
-
-  // New-loads scenario (new_loads_2047.csv): outside the headline, secondary sources.
-  if (!s.new_loads.empty()) {
-    const NewLoadTotals add = new_loads_total(s.new_loads), all = new_loads_total(s.new_loads, true);
-    std::string added, not_added;
-    int year = 0;
-    double scale = 0;
-    for (const NewLoad& l : s.new_loads) {
-      std::string& to = l.overlaps == "no" ? added : not_added;
-      to += (to.empty() ? "" : ", ") + display_name(l.load, false);
-      if (l.overlaps == "no") {
-        year = (year == 0 || year == l.year) ? l.year : -1;
-        scale = l.scale;
-      }
-    }
-    j.obj("new_loads").str("added", added).str("not_added", not_added).integer("n_added", add.n);
-    j.integer("n_loads", static_cast<long long>(s.new_loads.size()));
-    if (year > 0) j.integer("published_year", year).num("scale", scale, 4);
-    j.num("addon_low_twh", add.low).num("addon_central_twh", add.central).num("addon_high_twh", add.high);
-    j.num("all_low_twh", all.low).num("all_high_twh", all.high);
-    for (const auto& c : s.sensitivity)
-      if (c.key == "new_loads_published")
-        j.num("p50_twh", c.p50).num("change_pct", 100 * (c.p50 / s.sensitivity.front().p50 - 1));
-    j.str("note", "Outside the headline. End-use electricity, not grossed up for losses, if supplied from the grid; "
-                  "loads the income elasticity already carries in part are reported, never added (all-loads total is "
-                  "a reference only).");
     j.end();
   }
 
@@ -1726,10 +1637,6 @@ int main(int argc, char** argv) {
     }
     // The national elasticity applied state by state: the regional split made visible.
     write_state_table(out, pl, f, c);
-    // Published new loads (secondary sources) for a scenario outside the headline.
-    const std::vector<NewLoad> new_loads = pl.new_loads();
-    write_new_loads(out, new_loads, f.years[last]);
-    site.new_loads = new_loads;
 
     // Holdout: FY2024-25 and FY2025-26 were not used in fitting. NPP publishes
     // conventional generation (thermal, nuclear, hydro) for them but no RES, so the
@@ -1799,29 +1706,6 @@ int main(int argc, char** argv) {
         std::snprintf(b, sizeof b, fmt, v);
         return std::string(b);
       };
-      // New-loads case: which loads are added, the add-on range and how it was scaled.
-      std::string new_loads_case;
-      {
-        const NewLoadTotals a = new_loads_total(new_loads);
-        std::string names;
-        double scale = 0;
-        int year = 0;
-        for (const NewLoad& l : new_loads)
-          if (l.overlaps == "no") {
-            names += (names.empty() ? "" : ", ") + l.load;
-            scale = l.scale;
-            year = (year == 0 || year == l.year) ? l.year : -1;
-          }
-        const std::string scaled =
-            year > 0 ? with_value(" (published values x %.4f, linear from the base year)", scale) : "";
-        char b[512];
-        std::snprintf(b, sizeof b,
-                      "outside the headline: published new loads absent from the historical series (%s), add-on "
-                      "%.0f-%.0f TWh in %d%s; end-use electricity, not grossed up for losses; if supplied from the "
-                      "grid; loads that partly overlap the income elasticity not added (secondary sources)",
-                      names.empty() ? "none" : names.c_str(), a.low, a.high, f.years[last], scaled.c_str());
-        new_loads_case = b;
-      }
       // Jammu and Kashmir left out of national income growth: its GSDP in the challenge dataset is
       // at current prices from 2012, which the main run corrects with the MoSPI GDP deflator; this
       // run drops the state from income growth instead, and re-estimates the elasticity.
@@ -1857,10 +1741,6 @@ int main(int argc, char** argv) {
           {"beta_first_difference",
            with_value("elasticity recentred on the first-difference estimate (shift %+.3f in every replicate)", fd_shift),
            [fd_shift](ScenarioControls& s) { s.beta_shift = fd_shift; }},
-          // Outside the headline: published new loads absent from the historical series
-          // (outputs/new_loads_2047.csv), on a copy of the default controls.
-          {"new_loads_published", new_loads_case,
-           [&new_loads](ScenarioControls& s) { apply_new_loads(s, new_loads); }},
           {"jk_excluded", jk_desc, [](ScenarioControls&) {}, &jk},
       };
       std::printf("sensitivity (2047 national, TWh P5 / P50 / P95):\n");

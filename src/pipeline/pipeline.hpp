@@ -51,8 +51,8 @@ struct ScenarioControls {
   double urban_shift_2047 = 0;  // added to the projected 2047 urban share (fraction)
   double urban_sd_2047 = 0.02;  // 1-sigma uncertainty of the 2047 urban share
   double pop_band_scale = 1.0;  // multiplier on the UN low-high band
-  // Add-on in 2047, TWh (signed), drawn uniformly between the two: published new loads
-  // (apply_new_loads) or a named demand-feature scenario (apply_feature_scenario).
+  // Add-on in 2047, TWh (signed), drawn uniformly between the two: a named demand-feature
+  // scenario (apply_feature_scenario) or the dashboard's add-on sliders.
   double addon_lo = 0, addon_hi = 0;
   // Demand features drawn independently in every draw, added to the add-on (the joint
   // feature scenario, apply_feature_scenario); empty = none.
@@ -189,54 +189,6 @@ struct StateRow {
   double requirement_share_target = 0;
 };
 
-// A published estimate of a new load (data/external/new_loads.csv; every source is
-// secondary). These loads feed a separate, labelled scenario only, never the headline
-// forecast, which uses the two challenge datasets alone.
-//   overlaps: the file's overlaps_history column. "no": the load is absent from the
-//     historical generation series, so the scenario adds it. "partial" or "yes": the
-//     income elasticity already carries part of it (or all of it); reported, never added.
-//   Values are end-use electricity in TWh, not generation: they are not grossed up for
-//     losses. The scenario assumes the load is supplied from the grid; a load supplied
-//     off-grid or by captive plants (green hydrogen electrolysers on captive renewables)
-//     would be outside NPP utility generation.
-//   Scaling: the file gives each value for its published year (2050). A genuinely new
-//     load starts near zero, so the value is scaled to the target year linearly from the
-//     forecast base year: scale = (target_year - base_year) / (year - base_year).
-// low, central and high are the target-year values (published value x scale).
-struct NewLoad {
-  std::string load, basis, overlaps;
-  double low = kNaN, central = kNaN, high = kNaN;  // TWh in target_year
-  int year = 0;                                    // published year of the values
-  int base_year = 0, target_year = 0;
-  double scale = kNaN;  // (target_year - base_year) / (year - base_year)
-  double low_published = kNaN, central_published = kNaN, high_published = kNaN;  // TWh in `year`
-};
-
-// Reads a new-loads file (columns load, year, twh_low, twh_central, twh_high, basis,
-// overlaps_history) and scales every value to target_year. Throws on a missing column,
-// an overlap class other than no / partial / yes, a published year not after the base
-// year, or values that are not finite with 0 <= low <= central <= high.
-std::vector<NewLoad> read_new_loads(const std::string& csv_path, int base_year, int target_year);
-
-// Sums of the target-year values. By default only the loads that do not overlap the
-// historical series (overlaps "no"): the add-on of the new-loads scenario. With
-// include_overlapping, every load: a reference total that double counts the part of the
-// overlapping loads the income elasticity already carries, so it is never added.
-struct NewLoadTotals {
-  double low = 0, central = 0, high = 0;  // TWh in the target year
-  int n = 0;                              // loads summed
-};
-NewLoadTotals new_loads_total(const std::vector<NewLoad>& loads, bool include_overlapping = false);
-
-// The new-loads scenario on top of c: addon_lo and addon_hi become the low and high
-// totals of the non-overlapping loads. The kernel draws the add-on uniformly between
-// them and ramps it linearly from the base year to the full value in the target year.
-void apply_new_loads(ScenarioControls& c, const std::vector<NewLoad>& loads);
-
-// One-paragraph description of that scenario: which loads are added and which are not,
-// the add-on range, the scaling, the units and the grid assumption.
-std::string new_loads_description(const std::vector<NewLoad>& loads);
-
 // A demand-feature scenario (demand_features.hpp) on top of c, outside the headline. Sets
 // only the add-on and the feature draws; every other setting of c is kept.
 //   kCore: no add-on, no feature draws (the headline).
@@ -325,11 +277,6 @@ class Pipeline {
   // the forecast's population input; a state's path is its projected population.
   // Reads the Technical Group projections for the reference column only.
   PopulationConsistency population_consistency() const;
-
-  // Published new loads (data/external/new_loads.csv), each scaled from its published
-  // year to 2047 from the forecast base year (read_new_loads). For the separate
-  // new-loads scenario only (apply_new_loads); the headline never uses them.
-  std::vector<NewLoad> new_loads() const;
 
   // The demand-feature catalogue (kDemandFeaturesFile, read_demand_features): every driver
   // of the 2047 requirement, and the signed adjustments of the feature layer, which stays

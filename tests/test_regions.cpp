@@ -10,10 +10,7 @@
 //     estimator recovers a known slope, and names it cannot match are skipped and counted.
 //  6. The state table: one row per state, shares sum to 1, and its regional sums agree
 //     with the Monte Carlo's regional medians.
-//  7. The new-loads scenario (outside the headline): only loads absent from the
-//     historical series (overlaps_history "no") enter the add-on, scaled from their
-//     published year to 2047, and the headline with no add-on is unchanged.
-//  8. Convergence base years (ruling R25): each state's long difference starts at its first
+//  7. Convergence base years (ruling R25): each state's long difference starts at its first
 //     GSDP year that is not part of a run of repeated values (a placeholder), so a
 //     placeholder never sets a state's starting relative income.
 // Usage: test_regions <repo_root>
@@ -413,85 +410,6 @@ void convergence_base_skips_repeats(const Pipeline& pl, const fs::path& tmp) {
   check(d.n_states == 34 && d.n_late_base == 7, "34 states in the regression, 7 with a base year after 2006");
 }
 
-// New loads: a temporary file with one load of each overlap class. Only the "no" load
-// enters the add-on, scaled from 2050 to 2047 by (2047 - base) / (2050 - base); the
-// totals with overlapping loads are reported but never added. The headline (default
-// controls, no add-on) is unchanged.
-void new_loads_excludes_overlap(const Pipeline& pl, const fs::path& tmp) {
-  std::printf("new_loads_excludes_overlap\n");
-  fs::remove_all(tmp);
-  const fs::path file = tmp / "new_loads.csv";
-  write_text(file,
-             "load,year,twh_low,twh_central,twh_high,basis,overlaps_history,source_name\n"
-             "cooling,2050,500,700,900,\"2050 as published, end use\",yes,synthetic\n"
-             "vehicles,2050,300,400,600,2050 as published,partial,synthetic\n"
-             "hydrogen,2050,270,540,810,2050 as published,no,synthetic\n");
-  const int base = pl.drivers().base_year;
-  const double s = (2047.0 - base) / (2050.0 - base);
-  std::printf("    base year %d, scale to 2047 = %.6f\n", base, s);
-  check(base == 2023 && std::abs(s - 24.0 / 27.0) < 1e-15,
-        "base year FY2023-24, scale (2047-2023)/(2050-2023) = 24/27");
-  const auto near = [](double a, double b) { return std::abs(a - b) < 1e-9 * std::max(1.0, std::abs(b)); };
-
-  const std::vector<NewLoad> v = read_new_loads(file.string(), base, 2047);
-  check(v.size() == 3 && v[0].overlaps == "yes" && v[1].overlaps == "partial" && v[2].overlaps == "no",
-        "three loads read with their overlap class");
-  if (v.size() != 3) return;
-  check(v[2].load == "hydrogen" && v[2].year == 2050 && near(v[2].scale, s) && near(v[2].low_published, 270) &&
-            near(v[2].low, 270 * s) && near(v[2].central, 540 * s) && near(v[2].high, 810 * s),
-        "values scaled to 2047, published values kept");
-  check(v[0].basis == "2050 as published, end use", "basis read (quoted field)");
-
-  const NewLoadTotals added = new_loads_total(v);
-  const NewLoadTotals all = new_loads_total(v, true);
-  std::printf("    add-on %.3f-%.3f TWh (n %d) | all loads %.3f-%.3f TWh (n %d)\n", added.low, added.high, added.n,
-              all.low, all.high, all.n);
-  check(added.n == 1 && near(added.low, 270 * s) && near(added.central, 540 * s) && near(added.high, 810 * s),
-        "add-on totals: the 'no' load only, scaled");
-  check(all.n == 3 && near(all.low, 1070 * s) && near(all.high, 2310 * s), "totals with overlapping loads: all three");
-
-  ScenarioControls c;
-  apply_new_loads(c, v);
-  check(c.addon_lo == added.low && c.addon_hi == added.high, "apply_new_loads sets addon_lo / addon_hi to the add-on");
-  const std::string desc = new_loads_description(v);
-  std::printf("    description: %s\n", desc.c_str());
-  const auto has = [&](const char* s) { return desc.find(s) != std::string::npos; };
-  check(has("Outside the headline") && has("(hydrogen): 240-720 TWh in 2047") && has("if supplied from the grid") &&
-            has("not grossed up for losses") && has("Not added") && has(": cooling, vehicles."),
-        "description: outside the headline, grid label, no loss gross-up, which loads are added");
-
-  // Headline: default controls carry no add-on; overlapping loads alone add nothing,
-  // so the P50 is the same number; the "no" load moves the P50 by an amount inside its range.
-  ScenarioControls h;
-  h.draws = 1u << 18;
-  h.use_gpu = false;
-  check(h.addon_lo == 0 && h.addon_hi == 0, "default controls carry no add-on");
-  ScenarioControls z = h;
-  apply_new_loads(z, {v[0], v[1]});
-  ScenarioControls n = h;
-  apply_new_loads(n, v);
-  const auto p50 = [&](const ScenarioControls& sc) {
-    const ForecastResult f = pl.forecast(sc);
-    return f.quant.q[0][f.years.size() - 1][3];
-  };
-  const double head = p50(h), zero = p50(z), with = p50(n);
-  std::printf("    2047 P50: headline %.3f | overlapping loads only %.3f | with the add-on %.3f TWh (+%.1f)\n", head,
-              zero, with, with - head);
-  check(z.addon_lo == 0 && z.addon_hi == 0 && zero == head,
-        "overlapping loads only: zero add-on, headline P50 unchanged");
-  check(std::abs(head / 4684.099 - 1) < 0.005, "headline P50 within 0.5% of 4684.1 TWh");
-  check(with - head >= added.low && with - head <= added.high,
-        "the add-on moves the P50 by an amount inside its range");
-
-  // The repository file: every load scaled from its published year to 2047.
-  const std::vector<NewLoad> repo = pl.new_loads();
-  bool scaled = !repo.empty();
-  for (const NewLoad& l : repo)
-    scaled = scaled && near(l.scale, (2047.0 - base) / (l.year - base)) && near(l.low, l.low_published * l.scale) &&
-             near(l.high, l.high_published * l.scale);
-  check(scaled, "data/external/new_loads.csv: " + std::to_string(repo.size()) + " loads, each scaled to 2047");
-}
-
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -507,7 +425,6 @@ int main(int argc, char** argv) {
     national_unchanged(pl);
     population_consistent(pl);
     state_table_shares_sum(pl);
-    new_loads_excludes_overlap(pl, fs::temp_directory_path() / "e47_test_new_loads");
     convergence_base_skips_repeats(pl, fs::temp_directory_path() / "e47_test_convergence");
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;

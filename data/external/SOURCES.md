@@ -17,7 +17,7 @@ All CSVs are UTF-8, comma-separated, with a header row. Each has a `source_url` 
 | `nuclear_sites.csv` | 40 | Operating units, units under construction, sanctioned projects and in-principle sites, by state |
 | `policy_targets.csv` | 147 | National targets (500 GW, net zero 2070, NDC 2022, 100 GW nuclear) and NEP 2022-32 demand, capacity and generation benchmarks |
 | `nep2023_state_demand.csv` | 135 | NEP 2022-32 / 20th EPS state-wise energy requirement (MU) and peak demand (MW) for 2021-22, 2026-27, 2031-32 |
-| `new_loads.csv` | 5 | Secondary. Published 2050 electricity estimates (low, central, high TWh) for electric vehicles, green hydrogen, data centres, space cooling and electric cooking, for a separate scenario outside the headline |
+| `new_loads.csv` | 5 | Superseded by `demand_features.csv` and no longer read by the code; kept as an archive. Secondary. Published 2050 electricity estimates (low, central, high TWh) for electric vehicles, green hydrogen, data centres, space cooling and electric cooking |
 | `demand_features.csv` | 44 | Secondary. Catalogue of every driver of the 2047 utility generation requirement, with signed TWh adjustments (low, central, high) for the 11 quantified feature-layer rows, all from official sources |
 
 The helper and extraction scripts were kept outside the repository and are not committed. The prose below is the record of each extraction step (table, page, filters, unit conversions), detailed enough to repeat by hand or in any language.
@@ -425,7 +425,9 @@ Columns: `state, state_as_reported, grid_region, row_type, fiscal_year, energy_r
 
 ---
 
-## 10. new_loads.csv (secondary; a separate scenario, never in the headline)
+## 10. new_loads.csv (superseded; archive only, no longer read)
+
+**Status: superseded by `demand_features.csv` (section 11).** The code no longer reads this file: the `new_loads_published` sensitivity row, `outputs/new_loads_2047.csv` and the loader were retired, and new loads now enter only through the demand-feature layer, outside the headline. The file and the record below are kept unchanged as an archive of what was read and how.
 
 Columns: `load, year, twh_low, twh_central, twh_high, basis, overlaps_history, source_name, source_url, source_location, notes`. Five rows, one per load.
 

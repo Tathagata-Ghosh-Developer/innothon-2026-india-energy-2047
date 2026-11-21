@@ -86,8 +86,8 @@ struct McInputs {
   float dt_level, dt_trend, dt_phi, dt_alpha, dt_beta, dt_sigma;
 
   // Optional add-on, TWh in the final year (signed), drawn uniformly between addon_lo and
-  // addon_hi and ramped linearly from the base year: a published new load or a demand-feature
-  // scenario, never the headline.
+  // addon_hi and ramped linearly from the base year: a demand-feature scenario or the
+  // dashboard's add-on sliders, never the headline.
   float addon_lo, addon_hi;
   // Optional demand-feature draws (the joint feature scenario): n_features independent
   // draws, each feat_sign x a value from triangular(feat_lo, feat_mode, feat_hi) or
