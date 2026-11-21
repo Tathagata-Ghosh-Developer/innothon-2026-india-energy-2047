@@ -161,7 +161,7 @@ Two: the plan is stress-tested at the 90th percentile, because a plan sized only
 
 Three: realistic limits. Each source grows only as fast as CEA, NITI Aayog and the Department of Atomic Energy publish. Existing fleets start at their best NPP year, and reactors and dams already under construction are floors. That is why nuclear is 133 terawatt-hours and hydro at least 185.
 
-Four: one engine. The same C++20 code runs CUDA on a GPU, OpenMP on CPUs and WebAssembly in your browser. Every future gets the same random inputs on CPU and GPU, and an automated parity test checks them. A million futures take 11.2 milliseconds on a laptop GPU, against 2.26 seconds on 16 CPU threads.
+Four: one engine. The same C++20 code runs CUDA on a GPU, OpenMP on CPUs and WebAssembly in your browser. Every future gets the same random inputs on CPU and GPU, and an automated parity test checks them. A million futures take 11.2 milliseconds on a laptop GPU, against 2.35 seconds on 16 CPU threads.
 
 *(cut if short)* The GPU figure is the kernel time, and all timings vary with machine load.
 
@@ -292,4 +292,4 @@ To close: in twenty forty-seven India will need about 2.8 times today's generati
 - **The P90 lever** (questions 28 and 29 in [final_qa.md](final_qa.md)). On "2047 generation mix", drag "Plan for requirement quantile" to P90: about 639 TWh of unmet requirement appears. Then drag the "solar" slider under "Usable resource (solar / wind / hydro)" from 35 to 45 percent: unmet falls to zero in the full run (the browser should show zero or close to it). Say that this plan, at P90, costs about 258 billion dollars a year, and never compare it with the median plan's 176. To return, click "Robust" under "Policy and planning", then "Base" under "Scenario".
 - **The evidence views.** "Data and assumptions" tab, then "Requirement evidence" (growth decomposition, state table, state panel check, demand features) or "Mix evidence" (mix sensitivities, committed builds, gas peaking hours). The mix sensitivities are solved when the view opens, so allow a few seconds.
 - **Income growth by hand.** Drag "Income growth per person, to 2030" down or up by 1.5 points; the twenty forty-seven median moves by about a quarter (3,568 or 6,163 TWh in the full run). "Reset scenario" brings it back.
-- **The demand features.** Under "Scenario", open the drop-down "Demand features (official, outside headline)" and choose "Features central": the median rises to about 5,810 TWh, labelled outside the headline (the joint draws give 5,668). "Reset scenario" brings it back.
+- **The demand features.** Under "Scenario", open the drop-down "Demand features (official, outside headline)" and choose "Features central": the median rises to about 5,810 TWh, labelled outside the headline (the joint draws give 5,769). "Reset scenario" brings it back.

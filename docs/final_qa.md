@@ -82,8 +82,9 @@ State-wise: the GSDP and population of 34 states and union territories from the 
 Because NPP state generation records where plants stand, not what a state needs: Sikkim generates 15.9 times the national figure per person, Nagaland 0.08 times. A state panel gives 0.52 (standard error 0.26), and 97 percent of the variation lies between states. So we estimate nationally, where generation and need coincide, and apply it state by state.
 
 **14. What about electric vehicles, data centres, cooling and green hydrogen?** *Owner: Devendra.*
-Loads that grew with income are already inside the elasticity, so adding them in full would double count. What lies beyond the historical trend is a separate demand-feature layer from official sources only: 44 drivers listed, 11 quantified as TWh of 2047 generation. Every feature at its central value (Features central) gives 5,810 TWh, plus 23.9 percent; drawing the features jointly gives a median of 5,668 TWh (P5 4,130 to P95 8,017). It is never the headline.
-*If pressed:* the largest central sizes beyond the trend are transport 512 TWh, data centres 397, green hydrogen 230 and storage round-trip losses 150; auxiliary consumption, pump solarisation, rooftop solar and imports lower it. Space cooling adds nothing beyond the trend at its central value; the Electrification high and Climate stress scenarios raise it. The named scenarios run from 4,865 (All downside) to 6,555 TWh (All upside). The Robust plan meets the joint median in full; planned for the joint P90 (7,404 TWh) it leaves 1,635 TWh unmet, against 639 at our own P90.
+Loads that grew with income are already inside the elasticity, so adding them in full would double count. What lies beyond the historical trend is a separate demand-feature layer from official sources only: 49 drivers listed, 11 quantified as TWh of 2047 generation. Every feature at its central value (Features central) gives 5,810 TWh, plus 23.9 percent; drawing the features jointly gives a median of 5,769 TWh (P5 4,225 to P95 8,121). It is never the headline.
+*If pressed:* the largest central sizes beyond the trend are transport 512 TWh, data centres 397, green hydrogen 230 and storage round-trip losses 150; auxiliary consumption, pump solarisation, rooftop solar and imports lower it. Space cooling adds nothing beyond the trend at its central value; the Electrification high and Climate stress scenarios raise it. The named scenarios run from 4,865 (All downside) to 6,855 TWh (All upside). The Robust plan leaves 9 TWh of the joint median unmet; planned for the joint P90 (7,506 TWh) it leaves 1,738 TWh unmet, against 639 at our own P90.
+*If asked about AI:* the Ministry of Power projects 26.3 GW of additional load from AI data centres by 2031-32 (Rajya Sabha, 27 July 2026). Read as a flat load, that is 230 TWh a year; continued to 2047 it sets the data-centre high, 698 TWh beyond the trend, against NITI Aayog's central 397. GPUs, telecom networks, phones and other devices, chip fabs and government data centres are listed but not added: they sit inside data centres or the trend, or no official figure sizes them. Before this was added the joint median was 5,668 TWh.
 
 **15. Why don't the regional medians add up to 4,688?** *Owner: Devendra.*
 The median of a sum is not the sum of medians: the five regional medians add to 4,686 TWh. The plan splits the national median by regional shares, so its regional requirements (1,343, 1,276, 1,188, 730 and 151 TWh) add to exactly 4,688.
@@ -158,7 +159,7 @@ Its median is about 6,580 TWh, above our P90. At that median the Robust plan as 
 ## 6. Engineering
 
 **33. Why do you need a GPU, and how fast is it?** *Owner: Gaurav.*
-The uncertainty is millions of independent futures. 1,048,576 futures take 11.20 ms on a laptop GPU, against 2.26 s on 16 CPU threads (about 200 times faster) and about 20.0 s on one thread. Caveat: the GPU figure is the kernel time only, without data transfers, the single-thread time is scaled from a smaller run, and all timings vary with machine load.
+The uncertainty is millions of independent futures. 1,048,576 futures take 11.21 ms on a laptop GPU, against 2.35 s on 16 CPU threads (about 210 times faster) and about 20.6 s on one thread. Caveat: the GPU figure is the kernel time only, without data transfers, the single-thread time is scaled from a smaller run, and all timings vary with machine load.
 *If pressed:* CPU and GPU results agree within 0.2 percent; an automated parity test checks this on a GPU machine.
 
 **34. Why C++, CUDA, OpenMP, HiGHS and WebAssembly?** *Owner: Gaurav.*
@@ -199,8 +200,8 @@ Next: act on the organisers' reply on published figures; an hourly capacity-expa
 | Growth shares (central path, 4,589 TWh) | income 87.5; population 14.8; urbanisation 4.8; model error minus 7.2 percent |
 | Income growth 1.5 points slower / faster | 3,568 TWh (minus 24 percent) / 6,163 TWh (plus 31 percent) |
 | Without the urbanisation prior | 4,438 TWh (minus 5 percent) |
-| Demand features (outside the headline) | 44 drivers listed, 11 quantified; Features central 5,810 TWh (plus 23.9 percent); joint median 5,668 TWh (P5 4,130, P95 8,017) |
-| Robust plan with the features | 0 unmet at the joint median; 1,635 TWh unmet at the joint P90 (7,404 TWh) |
+| Demand features (outside the headline) | 49 drivers listed, 11 quantified; Features central 5,810 TWh (plus 23.9 percent); joint median 5,769 TWh (P5 4,225, P95 8,121); All upside 6,855 TWh |
+| Robust plan with the features | 8.9 TWh unmet at the joint median; 1,738 TWh unmet at the joint P90 (7,506 TWh) |
 | CEA NEP, FY2031-32 (gross generation) | 2,666 TWh vs our 2,378 (P75 2,550, P90 2,719) |
 | CEA 2026 review, FY2035-36 (gross generation) | about 3,596 BU vs our 2,879 (P95 3,641) |
 | Robust plan, at the median | 79.9 percent non-fossil; 891 Mt CO2; 176 bn USD a year (real 2024 USD); 0 unmet |
@@ -216,7 +217,7 @@ Next: act on the organisers' reply on published figures; an hourly capacity-expa
 | Storage and land | 448 GW, 3,048 GWh, 6.8 hours; 19,990 km², 0.61 percent of India |
 | CO2 cap | 891 to 653 Mt (minus 27 percent) for plus 0.45 bn USD a year; highest 4.04 USD per tonne |
 | Where it breaks | no feasible Robust plan below about 2,780 TWh; Low growth P5 is 2,306 TWh |
-| Speed (1,048,576 futures) | GPU 11.20 ms; 16 CPU threads 2.26 s; 1 thread about 20.0 s |
+| Speed (1,048,576 futures) | GPU 11.21 ms; 16 CPU threads 2.35 s; 1 thread about 20.6 s |
 | Tests | 9 ctest suites; GitHub Actions on every push |
 | Costs | real 2024 USD (the IEA WEO 2025 price year); other price bases converted with official price indices |
 

@@ -25,7 +25,7 @@ The scope is the country's total NPP utility generation, and the headline is tha
 > Every money figure is now in real 2024 USD, converted with official price indices; the CEA cost basis is fully real, and the default (IEA) plan does not change.
 > Jammu and Kashmir's GSDP, which the organiser dataset gives at current prices from 2012, is deflated with the MoSPI GDP deflator: the FY2047-48 median moves from 4,703 to 4,688 TWh.
 > Placeholder years no longer set a state's convergence base year: the convergence speed falls from 0.0208 to 0.0021, and the regional split changes a lot.
-> A demand-feature layer from official sources (44 drivers catalogued, 11 quantified) gives named scenarios and a joint distribution outside the headline (section 1.6; [demand_features.md](demand_features.md)); it replaces the new-loads scenario.
+> A demand-feature layer from official sources (49 drivers catalogued, 11 quantified) gives named scenarios and a joint distribution outside the headline (section 1.6; [demand_features.md](demand_features.md)); it replaces the new-loads scenario. Later on 21 November the data-centre high was raised with the Ministry of Power's projection of AI data-centre load, and five AI and digital loads were listed as context (D14, ruling R30).
 > The decks and Q&A notes were updated to this run after the final evaluation; the talk script and the midpoint slide keep the numbers presented then. D14 records every change.
 
 ![National forecast](img/1_national_forecast.png)
@@ -127,26 +127,27 @@ The elasticity is estimated for India as a whole; its sensitivities are in secti
 
 ### 1.6 Demand features (a separate layer, outside the headline)
 
-Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 44 drivers. Every quantified size comes from an official source (secondary); six unquantified rows have no external source.
-7 are estimated in the core forecast, 3 are existing drivers or settings, 1 is excluded by the organisers' ruling (captive generation) and 22 are context.
+Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 49 drivers. Every quantified size comes from an official source (secondary); six unquantified rows have no external source.
+7 are estimated in the core forecast, 3 are existing drivers or settings, 1 is excluded by the organisers' ruling (captive generation) and 27 are context.
 The other 11 are quantified as signed TWh adjustments to FY2047-48 generation, beyond the historical trend, and form a layer that is never the headline (`outputs/feature_scenarios_2047.csv`):
 
 | Scenario | Adjustment, TWh | P5 | P50 | P95 | P50 vs headline |
 | --- | --- | --- | --- | --- | --- |
 | Core (headline) | 0 | 3,190 | 4,688 | 7,021 | |
 | Features central | +1,122.4 | 4,313 | 5,810 | 8,143 | +23.9% |
-| Electrification high | +1,839.9 | 5,030 | 6,528 | 8,860 | +39.3% |
+| Electrification high | +2,140.6 | 5,331 | 6,828 | 9,161 | +45.7% |
 | Efficiency and distributed | +388.6 | 3,579 | 5,076 | 7,409 | +8.3% |
 | Climate stress | +1,374.7 | 4,565 | 6,063 | 8,395 | +29.3% |
-| All upside | +1,866.8 | 5,057 | 6,555 | 8,887 | +39.8% |
+| All upside | +2,167.5 | 5,358 | 6,855 | 9,188 | +46.2% |
 | All downside | +177.3 | 3,368 | 4,865 | 7,198 | +3.8% |
-| Joint (core draws plus independent feature draws) | drawn | 4,130 | 5,668 | 8,017 | +20.9% |
+| Joint (core draws plus independent feature draws) | drawn | 4,225 | 5,769 | 8,121 | +23.1% |
 
 TWh in FY2047-48.
 
 - Every combination of feature levels lies between All downside and All upside.
 - T&D losses may already be inside the trend, so they count only as an upper bound: 0 at central, up to -476 TWh in the downside scenarios.
-- The Robust plan meets the joint median (5,668 TWh) in full; planned for the joint P90 (7,404 TWh) it leaves 1,635 TWh unmet, against 639 TWh at the headline P90.
+- The data-centre high (697.8 TWh beyond the trend) continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (230.4 TWh a year as average load) to FY2047-48; low and central are NITI Aayog's (356.2 and 397.1). AI compute, telecom networks, consumer electronics, semiconductor manufacturing and digital public infrastructure are listed as context: inside data centres or the trend, or with no official figure (D14, ruling R30). Before R30, Electrification high was 6,528 TWh, All upside 6,555 and the joint median 5,668 (P5 4,130, P95 8,017).
+- The Robust plan leaves 8.9 TWh of the joint median (5,769 TWh) unmet; before R30 it met the joint median in full. Planned for the joint P90 (7,506 TWh) it leaves 1,738 TWh unmet, against 639 TWh at the headline P90.
 - The plan is stress-tested at the headline P90 (6,408 TWh), which is 1,720 TWh above the median.
 
 ## 2. Regional requirement
@@ -313,7 +314,7 @@ Land for solar is the binding constraint (`outputs/p90_levers.csv`, unmet TWh):
 
 Faster building alone does not close the gap: twice the published high-case limits still leaves 217 TWh unmet.
 Usable solar land (rooftop, agri-PV, canal-top and floating solar) does: 45 percent of the potential meets the P90 already at the published high-case limits, for about 258 billion USD a year (244 billion with 55 percent).
-These levers were tested at the headline P90 only; at the core-plus-features joint P90 (7,404 TWh) the Robust plan leaves 1,635 TWh unmet (section 1.6).
+These levers were tested at the headline P90 only; at the core-plus-features joint P90 (7,506 TWh) the Robust plan leaves 1,738 TWh unmet (section 1.6).
 
 ### 3.4 Scenario and policy presets
 
@@ -544,8 +545,8 @@ More usable solar land (35 percent) is also the largest cost saving, 213 to 177 
 
 | Run | 1,048,576 scenarios | Scenarios per second |
 | --- | --- | --- |
-| CPU, 1 thread | 19.99 s | 52,000 |
-| CPU, 16 threads (OpenMP) | 2.26 s | 464,000 |
+| CPU, 1 thread | 20.60 s | 51,000 |
+| CPU, 16 threads (OpenMP) | 2.35 s | 447,000 |
 | GPU, RTX 3070 Ti Laptop (CUDA) | 11.2 ms | 94 million |
 
 These are from `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.

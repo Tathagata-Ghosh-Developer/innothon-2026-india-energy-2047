@@ -247,7 +247,7 @@ On the central path ln income per person rises by 1.04, so each 0.01 of elastici
 The elasticity learns only what is in the 2006-2024 history.
 Drivers that the history does not carry, or carries only in part, form a separate layer that is never the headline ([decisions.md](decisions.md), D14; the full catalogue is [demand_features.md](demand_features.md)).
 
-**Catalogue.** `data/external/demand_features.csv` lists 44 drivers of FY2047-48 utility generation. Every quantified size comes from an official source (secondary); six unquantified rows name no external source (three where no official figure was found, three that point to the model's own runs). Each row has a sign, a treatment and an overlap flag against the trend:
+**Catalogue.** `data/external/demand_features.csv` lists 49 drivers of FY2047-48 utility generation. Every quantified size comes from an official source (secondary); six unquantified rows name no external source (three where no official figure was found, three that point to the model's own runs). Each row has a sign, a treatment and an overlap flag against the trend:
 
 | Treatment | Rows | Meaning |
 | --- | --- | --- |
@@ -255,12 +255,14 @@ Drivers that the history does not carry, or carries only in part, form a separat
 | Driver | 3 | An existing setting or uncertainty (urbanisation prior, elasticity decline, model error for heat years) |
 | Layer | 11 | A signed TWh adjustment outside the headline |
 | Excluded by rule | 1 | Captive generation (organisers' ruling of 16 November 2026) |
-| Context | 22 | Not quantified: no official figure, inside the trend or another row, or supply-side only |
+| Context | 27 | Not quantified: no official figure, inside the trend or another row, or supply-side only (AI compute, telecom, devices, semiconductor manufacturing and digital public infrastructure among them) |
 
 **Layer rows.** Each of the 11 has a low, central and high size in TWh of FY2047-48 generation, already reduced to its part beyond the trend and grossed up to generation (`src/pipeline/demand_features.hpp` reads and validates the file):
 
 - lowering generation: T&D losses, auxiliary consumption, cross-border imports, rooftop solar, PM-KUSUM C pump solarisation and efficiency beyond trend;
 - raising generation: storage round-trip losses, transport electrification, green hydrogen, data centres and space cooling.
+
+The data-centre high continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (read as average load, x 8.76 = 230.4 TWh) linearly to FY2047-48, a stated extrapolation (ruling R30).
 
 **How a row is applied** (ruling R22).
 
@@ -276,7 +278,7 @@ Drivers that the history does not carry, or carries only in part, form a separat
 
 **Regions** (ruling R23). The kernel splits total generation, add-on included, by each draw's regional shares, so features are spread in proportion to each region's requirement. No official regional split of the features exists.
 
-**Results** (`outputs/feature_scenarios_2047.csv`): Features central 5,810 TWh (+23.9 percent), All downside 4,865, All upside 6,555, joint P50 5,668 (P5 4,130, P95 8,017). Every combination of feature levels lies between All downside (+177.3 TWh) and All upside (+1,866.8 TWh). The headline stays 4,688 TWh.
+**Results** (`outputs/feature_scenarios_2047.csv`): Features central 5,810 TWh (+23.9 percent), All downside 4,865, All upside 6,855, joint P50 5,769 (P5 4,225, P95 8,121). Every combination of feature levels lies between All downside (+177.3 TWh) and All upside (+2,167.5 TWh). The headline stays 4,688 TWh.
 
 The earlier new-loads scenario (`new_loads_published`, green hydrogen only, with a think-tank central value) is retired; `data/external/new_loads.csv` is kept as an archive and is no longer read.
 
@@ -445,8 +447,8 @@ The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and 
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| CPU, 1 thread | 19.99 s |
-| CPU, 16 threads | 2.26 s |
+| CPU, 1 thread | 20.60 s |
+| CPU, 16 threads | 2.35 s |
 | GPU, RTX 3070 Ti Laptop | 11.2 ms |
 
 From `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.

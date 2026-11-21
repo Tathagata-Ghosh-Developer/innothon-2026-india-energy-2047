@@ -23,7 +23,7 @@ Scope: the country's total utility generation as published by the National Power
 - Holdout years not used in fitting: FY2024-25 error -3.3%, FY2025-26 error +0.5%; both inside the model's 90% range.
 - Income is the largest driver but not the only one: of the growth to FY2047-48 on the central path, income accounts for 88%, population for 15% and urbanisation beyond income for 5%, while the fading of the high FY2023-24 level takes back 7% (`outputs/growth_decomposition_2047.csv`).
 - Income growth dominates the uncertainty: +-1.5 points of growth moves the 2047 median by +31% / -24%.
-- Every other driver of the requirement, 44 in all, is catalogued in [docs/demand_features.md](docs/demand_features.md), each quantified size from an official source. The 11 that the history does not carry form a labelled layer outside the headline: with every feature at its central value the median is 5,810 TWh (+23.9%), with the features drawn jointly 5,668 TWh (+20.9%; P5 4,130, P95 8,017), and the median of every combination of feature levels lies between All downside (4,865) and All upside (6,555).
+- Every other driver of the requirement, 49 in all (AI data centres, telecom networks and consumer devices among them), is catalogued in [docs/demand_features.md](docs/demand_features.md), each quantified size from an official source. The 11 that the history does not carry form a labelled layer outside the headline: with every feature at its central value the median is 5,810 TWh (+23.9%), with the features drawn jointly 5,769 TWh (+23.1%; P5 4,225, P95 8,121), and the median of every combination of feature levels lies between All downside (4,865) and All upside (6,855).
 - Independent cross-country check, used for justification and not for estimation (153 countries, total generation in calendar 2047): 4,528 TWh.
 
 The regional split uses only the challenge data: the population and GSDP of 34 states and union territories in the Renewable India dataset, with each state's own income applied state by state (the income gaps barely converge: 0.2 percent a year), state populations grown at the UN's India growth plus each state's own 2019-2024 offset, and the grid region NPP reports each state under.
@@ -92,7 +92,7 @@ Full details are in [docs/methodology.md](docs/methodology.md).
 | --- | --- |
 | [docs/methodology.md](docs/methodology.md) | Models, regional split, Monte Carlo, allocation, price base |
 | [docs/results.md](docs/results.md) | Forecast tables, regional mixes, sensitivity, performance |
-| [docs/demand_features.md](docs/demand_features.md) | All 44 drivers of the 2047 requirement: mechanism, sign, treatment, official source, size; feature scenarios and the joint distribution |
+| [docs/demand_features.md](docs/demand_features.md) | All 49 drivers of the 2047 requirement: mechanism, sign, treatment, official source, size; feature scenarios and the joint distribution |
 | [docs/assumptions_and_uncertainty.md](docs/assumptions_and_uncertainty.md) | Every assumption, how uncertainty is handled, limitations |
 | [docs/data_audit.md](docs/data_audit.md) | Provenance of every input; generation-only compliance |
 | [docs/decisions.md](docs/decisions.md) | Design decisions and rejected alternatives |

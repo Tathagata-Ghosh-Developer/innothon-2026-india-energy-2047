@@ -23,7 +23,7 @@ Each driver gets one of five treatments (column `in_model`).
 | Driver | 3 | An existing uncertainty or setting of the core forecast | The forecast already carries it as a prior, a setting or the model error |
 | Layer | 11 | A signed TWh adjustment, outside the headline | An official source sizes its effect beyond the historical trend |
 | Excluded by rule | 1 | Not estimated or reported | The organisers' written ruling of 16 November 2026 excludes it (captive generation) |
-| Context | 22 | Listed, not quantified | No official figure exists, the effect is inside the trend or inside another row, or it changes the supply mix, not the quantity; each entry says which |
+| Context | 27 | Listed, not quantified | No official figure exists, the effect is inside the trend or inside another row, or it changes the supply mix, not the quantity; each entry says which |
 
 **Conventions of the layer rows.**
 
@@ -34,7 +34,7 @@ Each driver gets one of five treatments (column `in_model`).
 - **Gross-up to generation** (CEA General Review 2025, FY2023-24): loads at low tension x1.2936 = 1 / ((1 - 0.1763)(1 - 0.0615)); high-tension loads x1.1029 = 1 / ((1 - 0.0339)(1 - 0.0615)); energy at the bus bar x1.0655 = 1 / (1 - 0.0615).
 - **Overlap flag** (`overlap_history`): yes, partial or no overlap with the FY2006-07 to FY2023-24 trend.
 
-## 2. All 44 drivers at a glance
+## 2. All 49 drivers at a glance
 
 Sizes are FY2047-48 TWh as the layer applies them (low to high, central in brackets); "-" means not quantified.
 
@@ -63,27 +63,32 @@ Sizes are FY2047-48 TWh as the layer applies them (low to high, central in brack
 | 21 | National efficiency targets | Efficiency | - | Context | - |
 | 22 | Transport electrification | Electrification and new loads | + | Layer | 511.9 to 525.2 (511.9) |
 | 23 | Green hydrogen | Electrification and new loads | + | Layer | 137.9 to 682.3 (230.4) |
-| 24 | Data centres | Electrification and new loads | + | Layer | 356.2 to 397.1 (397.1) |
-| 25 | Space cooling | Electrification and new loads | + | Layer | 0 to 252.3 (0) |
-| 26 | Electric cooking | Electrification and new loads | + | Context | - |
-| 27 | Railway traction | Electrification and new loads | + | Context | - |
-| 28 | Metro rail | Electrification and new loads | + | Context | - |
-| 29 | Desalination | Electrification and new loads | + | Context | - |
-| 30 | Industrial electrification (green steel) | Electrification and new loads | + | Context | - |
-| 31 | Agriculture pumping | Electrification and new loads | + | Context | - |
-| 32 | Cold chain refrigeration | Electrification and new loads | + | Context | - |
-| 33 | Warming (cooling degree days) | Climate and weather | + | Context | - |
-| 34 | Monsoon hydro variability | Climate and weather | + | Context | - |
-| 35 | Extreme heat year | Shocks | + | Driver | - |
-| 36 | Drought | Shocks | + | Context | - |
-| 37 | Pandemic | Shocks | - | Core | - |
-| 38 | Electricity tariffs | Prices and policy | - | Context | - |
-| 39 | Price elasticity | Prices and policy | - | Context | - |
-| 40 | Carbon market (CCTS) | Prices and policy | - | Context | - |
-| 41 | Net zero 2070 | Prices and policy | + | Context | - |
-| 42 | RPO and RCO trajectory | Prices and policy | + | Context | - |
-| 43 | Trend carry-over (losses, deficit) | Historical trend effects | + | Context | - |
-| 44 | Household access and supply hours | Historical trend effects | + | Context | - |
+| 24 | Data centres | Electrification and new loads | + | Layer | 356.2 to 697.8 (397.1) |
+| 25 | AI compute (GPUs) | Electrification and new loads | + | Context | - |
+| 26 | Telecom networks | Electrification and new loads | + | Context | - |
+| 27 | Consumer electronics and devices | Electrification and new loads | + | Context | - |
+| 28 | Semiconductor and electronics manufacturing | Electrification and new loads | + | Context | - |
+| 29 | Digital public infrastructure | Electrification and new loads | + | Context | - |
+| 30 | Space cooling | Electrification and new loads | + | Layer | 0 to 252.3 (0) |
+| 31 | Electric cooking | Electrification and new loads | + | Context | - |
+| 32 | Railway traction | Electrification and new loads | + | Context | - |
+| 33 | Metro rail | Electrification and new loads | + | Context | - |
+| 34 | Desalination | Electrification and new loads | + | Context | - |
+| 35 | Industrial electrification (green steel) | Electrification and new loads | + | Context | - |
+| 36 | Agriculture pumping | Electrification and new loads | + | Context | - |
+| 37 | Cold chain refrigeration | Electrification and new loads | + | Context | - |
+| 38 | Warming (cooling degree days) | Climate and weather | + | Context | - |
+| 39 | Monsoon hydro variability | Climate and weather | + | Context | - |
+| 40 | Extreme heat year | Shocks | + | Driver | - |
+| 41 | Drought | Shocks | + | Context | - |
+| 42 | Pandemic | Shocks | - | Core | - |
+| 43 | Electricity tariffs | Prices and policy | - | Context | - |
+| 44 | Price elasticity | Prices and policy | - | Context | - |
+| 45 | Carbon market (CCTS) | Prices and policy | - | Context | - |
+| 46 | Net zero 2070 | Prices and policy | + | Context | - |
+| 47 | RPO and RCO trajectory | Prices and policy | + | Context | - |
+| 48 | Trend carry-over (losses, deficit) | Historical trend effects | + | Context | - |
+| 49 | Household access and supply hours | Historical trend effects | + | Context | - |
 
 ## 3. The catalogue, by group
 
@@ -208,7 +213,7 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 **16. UJALA LED lighting** (`ujala_led_lighting`). Sign -. Core.
 
 - Mechanism: LED lamps replaced incandescent and CFL lamps, lowering lighting demand.
-- Treatment: inside the core forecast. The savings were realised within the 2006-2024 estimation window, so the elasticity already reflects them. The replacement is largely complete, so the trend may embed a gain that will not recur (row 43).
+- Treatment: inside the core forecast. The savings were realised within the 2006-2024 estimation window, so the elasticity already reflects them. The replacement is largely complete, so the trend may embed a gain that will not recur (row 48).
 - Source: BEE, India Energy Scenario for 2023-24 (2nd ed., Dec 2024), Table 25, p. 134 (182.00 BU saved in 2023-24 against BEE's no-programme counterfactual); BEE, Impact of Energy Efficiency Measures 2022-23, p. 3.
 - Size: inside the history, not a feature.
 
@@ -222,7 +227,7 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 **18. PAT scheme** (`pat_scheme`). Sign -. Core.
 
 - Mechanism: Perform, Achieve and Trade targets for energy-intensive industries.
-- Treatment: inside the core forecast. PAT is being folded into the carbon credit trading scheme (row 40).
+- Treatment: inside the core forecast. PAT is being folded into the carbon credit trading scheme (row 45).
 - Source: BEE, India Energy Scenario 2023-24, Table 25, p. 134 (40.11 BU saved in 2023-24, cycles I to VI).
 - Size: inside the history.
 
@@ -236,7 +241,7 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 **20. Efficiency beyond trend** (`efficiency_beyond_trend`). Sign -. Layer.
 
 - Mechanism: appliance efficiency faster than current policy lowers residential demand.
-- Treatment: applied as given. Low and central are 0, because NITI Aayog's Current Policy Scenario represents current policies and past trends. High is the gap between NITI's Net Zero and Current Policy scenarios. Cooling is left out here (row 25). BEE's UNNATEE target (285 BU in 2031) is already in the 20th EPS baseline, and its part beyond the model's trend cannot be separated, so it is not added.
+- Treatment: applied as given. Low and central are 0, because NITI Aayog's Current Policy Scenario represents current policies and past trends. High is the gap between NITI's Net Zero and Current Policy scenarios. Cooling is left out here (row 30). BEE's UNNATEE target (285 BU in 2031) is already in the 20th EPS baseline, and its part beyond the model's trend cannot be separated, so it is not added.
 - Source: NITI Aayog (Feb 2026), Sectoral Insights: Buildings, Sec. 4.5.1, pp. 79 and 81 (lighting 66 / 62, heating 96 / 76 and other appliances 277 / 192 TWh in 2050, Current Policy / Net Zero); NITI Aayog, Sectoral Insights: Power, p. 58; CEA, 20th EPS, Sec. 1.5.6, p. 30.
 - Size: 0 / 0 / 125.3 TWh: the Net Zero gap of 109 TWh in 2050, x 24/27 and x 1.2936.
 
@@ -252,7 +257,7 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 **22. Transport electrification** (`transport_electrification`). Sign +. Layer.
 
 - Mechanism: battery electric road vehicles, rail and metro traction add grid load.
-- Treatment: applied as given; only the part beyond the trend counts (2047 level less FY2023-24 traction carried by the trend). Rail and metro are inside this row, so rows 27 and 28 are not added on top.
+- Treatment: applied as given; only the part beyond the trend counts (2047 level less FY2023-24 traction carried by the trend). Rail and metro are inside this row, so rows 32 and 33 are not added on top.
 - Source: NITI Aayog (Feb 2026), Sectoral Insights: Transport, Table 4.6, p. 92 and p. 93 (transport electricity 47 Mtoe in the Current Policy Scenario and 48 Mtoe in Net Zero, 2050); NITI Aayog, Sectoral Insights: Power, p. 71; CEA General Review 2025, Table 9.1, p. 137 (railways and tramways 33.92 TWh in FY2023-24); CEA, 20th EPS, p. 26 (a lower near-term path).
 - Size: 511.9 / 511.9 / 525.2 TWh. 1 Mtoe = 11.63 TWh, so 546.6 and 558.2 TWh in 2050, and 489.6 and 500.0 TWh in 2047 by 24/27. The trend carries 33.92 x 2.7697 = 93.9 TWh. Each less the trend, x 1.2936. Only two official figures exist, so low = central.
 
@@ -265,61 +270,96 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 
 **24. Data centres** (`data_centres`). Sign +. Layer.
 
-- Mechanism: data-centre IT and cooling load (IT load x utilisation x PUE).
-- Treatment: applied as given; only the part beyond the 2024 level carried by the trend counts. Operators also use captive and group-captive supply, which would be outside NPP; no official share was found, so none is removed.
-- Source: NITI Aayog (Feb 2026), An Overview, p. 143 (2047: 65 GW of IT load at 50 percent utilisation and PUE 1.4, about 45 GW on average, which is 394 TWh); NITI Aayog, Sectoral Insights: Power, p. 63 (1.4 GW in 2024, 12.26 TWh a year) and pp. 71-72 (about 400 TWh by 2050).
-- Size: 356.2 / 397.1 / 397.1 TWh. The trend carries 34.0 TWh. Low: the 2050 value scaled to 2047 (356.9 TWh); central = high: 394 TWh in 2047, the highest official figure. Each less the trend, x 1.1029.
+- Mechanism: data-centre IT and cooling load (IT load x utilisation x PUE), including AI and GPU data centres.
+- Treatment: applied as given; only the part beyond the 2024 level carried by the trend counts. Operators also use captive and group-captive supply, which would be outside NPP. The Ministry of Power says the AI load is expected to be integrated into the grid, and no official captive share exists, so none is removed. AI compute (row 25) and government data centres (row 29) are inside this row.
+- Source: NITI Aayog (Feb 2026), An Overview, Sec. 5.4.4, p. 143 (2047: 65 GW of IT load at 50 percent utilisation and PUE 1.4, about 45 GW on average, which is 394 TWh; growth from 2030 to 2047 "due to AI integration"); NITI Aayog, Sectoral Insights: Power, Sec. 3.3.6, p. 63 (1.4 GW in 2024, 12.26 TWh a year) and pp. 71-72 (about 400 TWh by 2050 and 700 TWh by 2070, steady across all hours); NITI Aayog, Sectoral Insights: Buildings, p. 73 (data-centre IT load and utilisation in 2030 and 2050); Ministry of Power, Rajya Sabha Unstarred Question 956, answered 27.07.2026, part (a), p. 32 ("an additional load of 26.3 GW from Artificial Intelligence (AI) Data Centres is projected by 2031-32, which is expected to be integrated into the grid"); MeitY, Rajya Sabha replies of 07.08.2026 (PIB 2298108: CEA, about 17 GW of data-centre demand up to 2031-32, 148.9 TWh as average load) and 13.03.2026 (PIB 2239616: Ministry of Power, 13.56 GW by 2031-32, 118.8 TWh as average load); CEA, 20th EPS, Sec. 1.5, pp. 26-30 (its emerging loads do not include data centres).
+- Size: 356.2 / 397.1 / 697.8 TWh. Average load in GW x 8.76 = TWh a year, NITI Aayog's own conversion (45 GW = 394 TWh, a flat load around the clock). The trend carries 12.26 x 2.7697 = 34.0 TWh. Low: the 2050 value scaled to 2047 (356.9 TWh). Central: 394 TWh in 2047 (the Overview). High: the Ministry of Power's 26.3 GW in 2031-32, read as average load, is 230.4 TWh; the official FY2023-24 to FY2031-32 path continued linearly to FY2047-48, as rooftop solar's high is, gives 12.26 + (230.4 - 12.26) x 24/8 = 666.6 TWh (76.1 GW), still below NITI's 700 TWh for 2070. This is a stated extrapolation. Each less the trend, x 1.1029. The 26.3 GW is the only official figure that separates AI data centres; it is read as the whole data-centre level in 2031-32, not as an addition to CEA's 17 GW. CEA's 17 GW (148.9 TWh) continued the same way would give a milder high of 428.2 TWh. Read as sanctioned capacity at NITI's 50 percent utilisation, the 26.3 GW would give 316.6 TWh, below the central, and the high would stay 397.1 ([decisions.md](decisions.md), D14, ruling R30).
 
-**25. Space cooling** (`space_cooling`). Sign +. Layer.
+**25. AI compute (GPUs)** (`ai_compute_gpus`). Sign +. Context.
+
+- Mechanism: GPU compute for AI training and inference (the IndiaAI common compute pool and private AI clusters) adds data-centre load.
+- Treatment: inside row 24. The GPUs are hosted in empanelled data centres, NITI Aayog attributes its 2030-2047 growth in IT load to AI integration, and the Ministry of Power's 26.3 GW of AI data-centre load (230.4 TWh a year as average load) sets the data-centre high. Counting AI compute again would double count.
+- Source: MeitY, Rajya Sabha reply of 13.03.2026 (PIB 2239616: about 38,231 GPUs onboarded through 14 empanelled service providers and data centres, at Rs 65 per GPU-hour); PIB Backgrounder, India's AI Moment (17.02.2026, PIB 2229397: 20,000 more GPUs, from 38,000 to more than 58,000); Ministry of Power, Rajya Sabha Unstarred Question 956 (27.07.2026), p. 32.
+- Size: not quantified: no official kW per GPU, utilisation or PUE exists for the IndiaAI pool.
+
+**26. Telecom networks** (`telecom_networks`). Sign +. Context.
+
+- Mechanism: mobile towers, 4G and 5G base stations, core networks and broadband equipment draw power. Traffic growth and 5G densification raise it; efficiency and on-site renewables lower grid draw.
+- Treatment: inside the trend. Telecom growth over 2006-2024 is in the history, and no TRAI or DoT projection of telecom electricity exists, so no increment beyond the trend can be sized. A shift of towers from diesel to the grid would raise grid demand, and the National Broadband Mission 2.0 renewable target would lower it; neither is quantified officially.
+- Source: TRAI, Recommendations on Approach towards Green Telecommunications (12.04.2011), p. 8, para (vi) (about 400,000 towers at an average 3 to 4 kW) and p. 21, para 1.17; DoT, 2025 Year End Review (PIB 2206477, 19.12.2025; pages of DoT's PDF copy), p. 8 (about 8.40 lakh towers with about 31.31 lakh base stations), p. 11 (5.08 lakh 5G base stations on 31.10.2025) and p. 14 (30 percent of towers on sustainable energy by 2030); TRAI, Press Release 140/2026 (27.10.2026), pp. 6-7 and 11 (1,300.00 million wireless subscriptions, including 144.85 million M2M).
+- Size: not quantified. For scale only, not a layer value: 8.40 lakh towers x 3 kW (TRAI's 2011 average) x 8.76 = 22.1 TWh a year, about 1.3 percent of FY2023-24 generation, which the trend carries to about 61 TWh in 2047. The 3 kW is a 2011 figure and part of tower energy is diesel or on-site renewables, so this overstates grid draw. TRAI's own 11,169 million kWh does not match its 400,000 towers x 3 kW x 8,760 h (10,512 million kWh).
+
+**27. Consumer electronics and devices** (`consumer_electronics_devices`). Sign +. Context.
+
+- Mechanism: televisions, computers, laptops, Wi-Fi routers and phone charging in homes and offices. More devices per household raise demand; labelled efficiency lowers it.
+- Treatment: inside the trend and NITI Aayog's Current Policy appliance path. A television in NITI's Current Policy case uses 80 W x 1,850 h = 148 kWh a year (urban, 2020) and 65 W x 1,850 h = 120 kWh in 2050 (-19 percent), while ownership saturates. TV electricity therefore grows more slowly than total generation, and any effect beyond the trend lowers generation; NITI's faster Net Zero appliance efficiency is inside row 20's high. For phones, computers and routers no official per-device or total figure exists: BEE has no phone label, its laptop label is voluntary with no labelled production in 2023-24, and NITI Aayog leaves computers and routers out as small.
+- Source: BEE, India Energy Scenario 2023-24, Table 17, p. 101 (colour televisions 5.15 TWh in 2023-24; 302 of 500 TWh of building use "to be estimated") and Table V, pp. 152-153 (labelled production in 2023-24: 6,414,183 colour televisions, no computers); NITI Aayog, Sectoral Insights: Buildings, p. 70 (computers and Wi-Fi routers "excluded due to data limitations and their relatively small impact on overall demand") and Annexure B, pp. 123-125 (television ownership, sets, hours and wattage in 2020 and 2050); TRAI, Press Release 140/2026, pp. 1 and 7 (1,300.00 million wireless subscriptions, about 1,155 million excluding M2M).
+- Size: not quantified. Televisions used 5.15 TWh in 2023-24, which the trend already carries (5.15 x 2.7697 = 14.3 TWh in 2047).
+
+**28. Semiconductor and electronics manufacturing** (`semiconductor_electronics_manufacturing`). Sign +. Context.
+
+- Mechanism: semiconductor fabs, assembly and test (ATMP and OSAT) units and electronics assembly add industrial load (clean rooms, process tools, ultra-pure water).
+- Treatment: context. Industrial growth is in the trend, no official electricity figure exists for any approved unit, and the scale is small against a 4,688 TWh median.
+- Source: Union Cabinet, Semicon 2.0 approval and progress of ISM 1.0 (PMIndia, 15.07.2026: 12 units approved with over Rs 1.64 lakh crore, namely a silicon fab, a silicon carbide fab, a GaN micro-LED display fab and nine packaging units; the first fab to be commissioned in 2028); Union Cabinet, three semiconductor units (PMIndia, 29.02.2024: the Tata-PSMC fab at Dholera, 50,000 wafer starts a month).
+- Size: not quantified: the Cabinet releases give investment and wafer or chip capacity, not MW or TWh. Per-fab power figures in the press are industry estimates and are not used.
+
+**29. Digital public infrastructure** (`digital_public_infrastructure`). Sign +. Context.
+
+- Mechanism: government data centres and cloud for e-governance, Aadhaar, UPI and other digital public platforms.
+- Treatment: inside row 24. Government platforms run in NIC and empanelled cloud data centres, which are inside the national data-centre totals.
+- Source: PIB Explainer, Data Centres in India: Infrastructure for the Digital Age (14.09.2026, NoteId 159969: NIC national data centres at Delhi, Pune, Hyderabad and Bhubaneswar and 37 smaller ones in state capitals). Its data-centre capacity figures give no utilisation, so they are neither converted nor used.
+- Size: not quantified: no separate official electricity figure.
+
+**30. Space cooling** (`space_cooling`). Sign +. Layer.
 
 - Mechanism: air conditioners, coolers and fans in homes and commercial buildings, rising with income and heat.
-- Treatment: low and central are 0, because cooling that grows with income is in the trend. High is the India Cooling Action Plan's growth above the trend. It is an upper bound: cooling also grew faster than total demand in 2006-2024, and that is inside the elasticity. Hotter weather is part of the projection, so row 33 is not added on top.
+- Treatment: low and central are 0, because cooling that grows with income is in the trend. High is the India Cooling Action Plan's growth above the trend. It is an upper bound: cooling also grew faster than total demand in 2006-2024, and that is inside the elasticity. Hotter weather is part of the projection, so row 38 is not added on top.
 - Source: MoEFCC Ozone Cell, India Cooling Action Plan (Mar 2019), Figure D and the summaries of Chapters 3 and 4, p. 17 (space cooling about 135 TWh in 2017-18 and about 585 TWh in 2037-38 in the reference case; the intervention case about 30 percent lower); NITI Aayog, Sectoral Insights: Buildings, p. 79.
 - Size: 0 / 0 / 252.3 TWh. FY2023-24 cooling = 135 x (585/135)^(6/20) = 209.6 TWh, which the trend carries to 389.9 TWh in FY2037-38. The plan's excess in 2037-38 (195.1 TWh) is held flat to 2047 and x 1.2936. The intervention case would cut the high value to roughly 25 TWh.
 
-**26. Electric cooking** (`electric_cooking`). Sign +. Context.
+**31. Electric cooking** (`electric_cooking`). Sign +. Context.
 
 - Mechanism: a shift from LPG and biomass to electric cooking.
 - Treatment: context. NITI Aayog gives only shares and a chart without printed values, and the only TWh figures (TERI) are from a think tank.
 - Source: NITI Aayog, Sectoral Insights: Power, Table 3.3, p. 61 (cooking under 1 percent electric today; 30 percent in the Current Policy Scenario and 60 percent in Net Zero by 2070); NITI Aayog, Sectoral Insights: Buildings, Fig. 4.9, p. 87.
 - Size: not quantified: no official TWh figure.
 
-**27. Railway traction** (`railway_traction`). Sign +. Context.
+**32. Railway traction** (`railway_traction`). Sign +. Context.
 
 - Mechanism: railway electrification and traffic growth raise traction demand.
 - Treatment: inside row 22 (NITI Aayog's transport electricity includes rail). Railways buying through open access stay inside NPP generation.
 - Source: CEA General Review 2025, Table 9.1, p. 137 (33,917.67 GWh, 2.51 percent of utility sales, +12.96 percent); NITI Aayog, Sectoral Insights: Power, p. 59; BEE, Impact of Energy Efficiency Measures 2022-23, p. 184 (non-traction use).
 - Size: not quantified separately: counted in transport electrification.
 
-**28. Metro rail** (`metro_rail`). Sign +. Context.
+**33. Metro rail** (`metro_rail`). Sign +. Context.
 
 - Mechanism: urban metro networks add traction load.
 - Treatment: inside row 22 and CEA's railways and tramways category. No official national metro electricity figure was found.
 - Source: NITI Aayog, Sectoral Insights: Power, Table 3.2, p. 60 (metro modal share 1 percent in 2024, 2 percent in 2050).
 - Size: not quantified separately.
 
-**29. Desalination** (`desalination`). Sign +. Context.
+**34. Desalination** (`desalination`). Sign +. Context.
 
 - Mechanism: seawater desalination for urban and industrial water.
 - Treatment: context.
 - Source: no official Indian figure for desalination electricity to 2047 was found in the CEA, NITI Aayog and MoHUA material searched.
 - Size: not quantified: no official figure.
 
-**30. Industrial electrification (green steel)** (`industrial_electrification_green_steel`). Sign +. Context.
+**35. Industrial electrification (green steel)** (`industrial_electrification_green_steel`). Sign +. Context.
 
 - Mechanism: electric process heat, heat pumps, scrap-based electric arc furnaces and hydrogen-based steel shift industry towards electricity.
 - Treatment: context. Industry is 33.3 percent of utility sales and its growth is inside the trend. The official figures include captive supply, which is excluded by rule, and give no grid-only increment for 2047. Hydrogen for steel is inside row 23.
 - Source: Ministry of Steel, Greening the Steel Sector in India (Sept 2024), Executive Summary, p. 21 (steel electricity 94 TWh in 2021-22 and 184 TWh in 2030-31, mostly captive in integrated plants); NITI Aayog, Sectoral Insights: Power, Table 3.4, p. 62 and p. 70.
 - Size: not quantified: the grid share beyond the trend cannot be separated.
 
-**31. Agriculture pumping** (`agriculture_pumping`). Sign +. Context.
+**36. Agriculture pumping** (`agriculture_pumping`). Sign +. Context.
 
 - Mechanism: irrigation pumping grows with groundwater depth and cropping; efficiency and solar pumps lower it.
-- Treatment: inside the trend. Solar pumps are row 12; a dry year is row 36.
+- Treatment: inside the trend. Solar pumps are row 12; a dry year is row 41.
 - Source: CEA General Review 2025, Table 9.1, p. 137 (agriculture 275,484.96 GWh, 20.40 percent of utility sales, +12.97 percent); NITI Aayog, Sectoral Insights: Power, pp. 59 and 70.
 - Size: not quantified: inside the history.
 
-**32. Cold chain refrigeration** (`cold_chain_refrigeration`). Sign +. Context.
+**37. Cold chain refrigeration** (`cold_chain_refrigeration`). Sign +. Context.
 
 - Mechanism: pack-houses, cold storage, refrigerated transport and commercial refrigeration.
 - Treatment: context: small against the 2047 total, and its growth with farm income is inside the trend.
@@ -328,14 +368,14 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 
 ### 3.7 Climate and weather
 
-**33. Warming (cooling degree days)** (`warming_cooling_degree_days`). Sign +. Context.
+**38. Warming (cooling degree days)** (`warming_cooling_degree_days`). Sign +. Context.
 
 - Mechanism: warmer years raise cooling demand.
-- Treatment: context. No official Indian estimate of electricity per cooling degree day was found; any value would come from the literature only. Warming is part of the cooling projections, so it is inside row 25's high value.
+- Treatment: context. No official Indian estimate of electricity per cooling degree day was found; any value would come from the literature only. Warming is part of the cooling projections, so it is inside row 30's high value.
 - Source: MoES (2020), Assessment of Climate Change over the Indian Region, Executive Summary, pp. 10-12 (about 0.7 C of warming over 1901-2018; about 4.4 C by 2100 under RCP8.5; summer heat waves three to four times more frequent by 2100); NITI Aayog, Sectoral Insights: Buildings.
 - Size: not quantified.
 
-**34. Monsoon hydro variability** (`monsoon_hydro_variability`). Sign +. Context.
+**39. Monsoon hydro variability** (`monsoon_hydro_variability`). Sign +. Context.
 
 - Mechanism: a weak monsoon lowers hydro output and raises pumping demand.
 - Treatment: context. Hydro variability changes the mix (Part 2), not the total requirement; the extra pumping of dry years is inside the core forecast's persistent model error.
@@ -344,21 +384,21 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 
 ### 3.8 Shocks
 
-**35. Extreme heat year** (`extreme_heat_year`). Sign +. Driver.
+**40. Extreme heat year** (`extreme_heat_year`). Sign +. Driver.
 
 - Mechanism: a hot year raises demand above the trend; FY2023-24 was 0.072 log points above the fitted relation.
 - Treatment: an existing uncertainty. Weather-year shocks enter through the AR(1) model error of the core forecast (persistence 0.51, residual s.d. 0.037; [methodology.md](methodology.md), section 2.5).
 - Source: the model's own estimate on NPP data (`outputs/india_fit.csv`); MoES (2020), Executive Summary, p. 12 (heat waves).
 - Size: not a feature.
 
-**36. Drought** (`drought`). Sign +. Context.
+**41. Drought** (`drought`). Sign +. Context.
 
 - Mechanism: drought years raise irrigation pumping and cut hydro.
 - Treatment: context: part of the model error, not quantified separately.
 - Source: CEA General Review 2025, Table 9.1, p. 137 (agriculture +12.97 percent in FY2023-24).
 - Size: not quantified.
 
-**37. Pandemic** (`pandemic`). Sign -. Core.
+**42. Pandemic** (`pandemic`). Sign -. Core.
 
 - Mechanism: a pandemic year depresses demand (FY2020-21).
 - Treatment: estimated as a dummy in the core regression (-0.055 log points). No pandemic is assumed for 2047.
@@ -367,35 +407,35 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 
 ### 3.9 Prices and policy
 
-**38. Electricity tariffs** (`electricity_tariffs`). Sign -. Context.
+**43. Electricity tariffs** (`electricity_tariffs`). Sign -. Context.
 
 - Mechanism: higher real tariffs lower demand.
 - Treatment: context. Tariffs are set by CERC and the state commissions, and no official projection of real tariffs to 2047 was found.
 - Source: no official source found in the CEA, CERC, NITI Aayog and BEE documents searched.
 - Size: not quantified: literature only.
 
-**39. Price elasticity** (`price_elasticity`). Sign -. Context.
+**44. Price elasticity** (`price_elasticity`). Sign -. Context.
 
 - Mechanism: the own-price elasticity of electricity demand.
 - Treatment: context. No official estimate from CEA, CERC, RBI or NITI Aayog was found.
 - Source: no official source found.
 - Size: not quantified: literature only.
 
-**40. Carbon market (CCTS)** (`carbon_market_ccts`). Sign -. Context.
+**45. Carbon market (CCTS)** (`carbon_market_ccts`). Sign -. Context.
 
 - Mechanism: a carbon price on obligated industries favours efficiency and cleaner supply.
 - Treatment: context. No official electricity-demand impact is published; it works through PAT's successor and through generation costs (the mix's carbon-price setting).
 - Source: Ministry of Power, Carbon Credit Trading Scheme 2023, Gazette S.O. 2825(E), 28 Jun 2023, p. 6.
 - Size: not quantified.
 
-**41. Net zero 2070** (`net_zero_2070`). Sign +. Context.
+**46. Net zero 2070** (`net_zero_2070`). Sign +. Context.
 
 - Mechanism: the net-zero commitment pushes electrification, which raises demand, and efficiency, which lowers it.
 - Treatment: context. It shows up through the Net Zero (high) values of rows 20, 22 and 23. NITI Aayog's scenario totals include captive use and are consumption-side, so they are context only.
 - Source: the Prime Minister's national statement at COP26 (1 Nov 2021); NITI Aayog, Sectoral Insights: Power, Table E.1, p. 24.
 - Size: not quantified separately.
 
-**42. RPO and RCO trajectory** (`rpo_rco_trajectory`). Sign +. Context.
+**47. RPO and RCO trajectory** (`rpo_rco_trajectory`). Sign +. Context.
 
 - Mechanism: renewable consumption obligations set the supply mix, not the quantity.
 - Treatment: context (supply side). Its distributed renewable component overlaps rows 11 and 12.
@@ -404,14 +444,14 @@ Numbers of the core forecast (elasticity, log points, sensitivity rows) are from
 
 ### 3.10 Historical trend effects
 
-**43. Trend carry-over (losses, deficit)** (`trend_carryover_losses_deficit`). Sign +. Context.
+**48. Trend carry-over (losses, deficit)** (`trend_carryover_losses_deficit`). Sign +. Context.
 
 - Mechanism: the 2006-2024 trend embeds one-off gains that cannot recur at the same pace: falling losses, closing supply deficits and the LED roll-out.
 - Treatment: a diagnostic, not added. Falling T&D losses lowered generation growth by about 0.144 log points over the window, so the trend may understate future generation if losses cannot keep falling. Closing supply deficits raised it, so the trend may overstate. The net direction is not established from official figures alone. This row is why T&D losses (row 6) are flagged as overlapping.
 - Source: CEA, Growth of Electricity Sector in India 1947-2025, Chart 29, p. 58 (T&D losses 28.65 percent in 2006-07, 17.63 percent in 2023-24); NITI Aayog, Sectoral Insights: Power, p. 37 (energy deficit 11.1 percent in 2008-09, 0.1 percent in 2024-25); BEE, India Energy Scenario 2023-24, Table 25, p. 134.
 - Size: not quantified.
 
-**44. Household access and supply hours** (`household_access_supply_hours`). Sign +. Context.
+**49. Household access and supply hours** (`household_access_supply_hours`). Sign +. Context.
 
 - Mechanism: universal household connection and longer supply hours released suppressed demand.
 - Treatment: inside the history and close to saturation, so it will not repeat at the same pace.
@@ -427,14 +467,15 @@ Every other setting is the default, with the same seed and draws as the headline
 | --- | --- | --- | --- | --- | --- | --- |
 | Core (headline) | No feature layer | 0 | 3,190 | 4,688 | 7,021 | |
 | Features central | Every row at its central value; T&D losses at 0 | +1,122.4 | 4,313 | 5,810 | 8,143 | +23.9% |
-| Electrification high | Transport, green hydrogen, data centres and space cooling high; the rest central | +1,839.9 | 5,030 | 6,528 | 8,860 | +39.3% |
+| Electrification high | Transport, green hydrogen, data centres and space cooling high; the rest central | +2,140.6 | 5,331 | 6,828 | 9,161 | +45.7% |
 | Efficiency and distributed | Every row that lowers generation at its high value (T&D losses included, at their upper bound); the rest central | +388.6 | 3,579 | 5,076 | 7,409 | +8.3% |
 | Climate stress | Space cooling and storage losses high; the rest central | +1,374.7 | 4,565 | 6,063 | 8,395 | +29.3% |
-| All upside | Every row that raises generation high, every row that lowers it low (T&D losses at 0) | +1,866.8 | 5,057 | 6,555 | 8,887 | +39.8% |
+| All upside | Every row that raises generation high, every row that lowers it low (T&D losses at 0) | +2,167.5 | 5,358 | 6,855 | 9,188 | +46.2% |
 | All downside | Every row that raises generation low, every row that lowers it high (T&D losses at their upper bound) | +177.3 | 3,368 | 4,865 | 7,198 | +3.8% |
 
 TWh in FY2047-48.
 A constant adjustment shifts every quantile by its total (up to histogram binning, about 0.1 TWh).
+Before ruling R30 raised the data-centre high from 397.1 to 697.8 TWh ([decisions.md](decisions.md), D14), Electrification high was 6,528 TWh and All upside 6,555; the other scenarios did not change.
 
 Regional medians, TWh:
 
@@ -442,12 +483,12 @@ Regional medians, TWh:
 | --- | --- | --- | --- | --- | --- |
 | Core (headline) | 1,342 | 1,276 | 1,188 | 730 | 151 |
 | Features central | 1,663 | 1,582 | 1,473 | 905 | 187 |
-| Electrification high | 1,869 | 1,777 | 1,655 | 1,017 | 210 |
+| Electrification high | 1,955 | 1,859 | 1,731 | 1,064 | 219 |
 | Efficiency and distributed | 1,453 | 1,382 | 1,286 | 790 | 163 |
 | Climate stress | 1,736 | 1,650 | 1,537 | 944 | 195 |
-| All upside | 1,877 | 1,784 | 1,662 | 1,021 | 211 |
+| All upside | 1,963 | 1,866 | 1,738 | 1,068 | 220 |
 | All downside | 1,393 | 1,324 | 1,233 | 757 | 156 |
-| Joint (section 5) | 1,623 | 1,543 | 1,436 | 883 | 182 |
+| Joint (section 5) | 1,652 | 1,570 | 1,462 | 898 | 185 |
 
 Every feature scenario raises the requirement, even All downside: transport (at least 512 TWh), data centres (at least 356) and hydrogen (at least 138) outweigh every row that lowers generation at its high value, T&D losses included.
 
@@ -464,7 +505,7 @@ Every feature scenario raises the requirement, even All downside: transport (at 
 | Efficiency beyond trend | 0; 4,688 | high; -125.3; 4,563 |
 | Transport electrification | +511.9; 5,200 | high; +525.2; 5,213 |
 | Green hydrogen | +230.4; 4,918 | high; +682.3; 5,370 |
-| Data centres | +397.1; 5,085 | low; +356.2; 5,044 |
+| Data centres | +397.1; 5,085 | high; +697.8; 5,386 |
 | Space cooling | 0; 4,688 | high; +252.3; 4,940 |
 
 TWh in FY2047-48.
@@ -480,11 +521,12 @@ The joint scenario adds an independent draw of every layer row to each core draw
 | FY2047-48, TWh | P5 | P10 | P50 | P90 | P95 | Mean |
 | --- | --- | --- | --- | --- | --- | --- |
 | Core (headline) | 3,190 | 3,471 | 4,688 | 6,408 | 7,021 | 4,843 |
-| Core plus features (joint) | 4,130 | 4,423 | 5,668 | 7,404 | 8,017 | 5,819 |
-| Feature total alone | 659 | | 973 | | 1,308 | 976 |
+| Core plus features (joint) | 4,225 | 4,519 | 5,769 | 7,506 | 8,121 | 5,919 |
+| Feature total alone | 736 | | 1,072 | | 1,431 | 1,076 |
 
-- The joint median is 980 TWh (+20.9 percent) above the headline.
-- It sits below Features central (+1,122 TWh) because the joint draws give T&D losses a mean of -238 TWh, where Features central counts them at 0.
+- The joint median is 1,081 TWh (+23.1 percent) above the headline.
+- It sits below Features central (+1,122 TWh) because the joint draws give T&D losses a mean of -238 TWh, where Features central counts them at 0. Most of that is offset because the triangular draws of the other rows average 192 TWh more than their central values: green hydrogen, data centres and space cooling have high ends far above central.
+- Before ruling R30 the joint distribution was P5 4,130, P50 5,668 (+20.9 percent), P90 7,404 and P95 8,017 TWh.
 - Joint regional medians are in the table of section 4.
 
 **P90 plan test** (`outputs/feature_scenarios_2047.csv`, section `p90_plan`). The Robust policy's least-cost plan is solved at three requirements:
@@ -492,14 +534,14 @@ The joint scenario adds an independent draw of every layer row to each core draw
 | Requirement planned for | TWh | Robust plan unmet, TWh |
 | --- | --- | --- |
 | Core P90 (the headline stress test) | 6,408 | 639 |
-| Core plus features, joint P50 | 5,668 | 0 |
-| Core plus features, joint P90 | 7,404 | 1,635 |
+| Core plus features, joint P50 | 5,769 | 8.9 |
+| Core plus features, joint P90 | 7,506 | 1,738 |
 
-The Robust plan meets the joint median in full. At the joint P90 it leaves 1,635 TWh unmet (the LP status is optimal). The levers that close the core P90 gap (more usable solar land, [results.md](results.md), section 3.3) were tested only at the core P90.
+The Robust plan leaves 8.9 TWh (0.15 percent) of the joint median unmet; before ruling R30 it met the joint median (then 5,668 TWh) in full. At the joint P90 it leaves 1,738 TWh unmet (1,635 at 7,404 TWh before R30; the LP status is optimal). The levers that close the core P90 gap (more usable solar land, [results.md](results.md), section 3.3) were tested only at the core P90.
 
 ## 6. How the scenarios cover every combination
 
-- **Every combination of feature levels lies between All downside and All upside.** The layer is a sum of independent signed rows, each between its low and high value (T&D losses between 0 and their upper bound). The smallest possible total takes each row at the end that lowers generation: All downside, +177.3 TWh. The largest takes each at the end that raises it: All upside, +1,866.8 TWh. Every joint draw lies inside this envelope; the test `joint_quantiles_bracket` checks it on 2^18 draws.
+- **Every combination of feature levels lies between All downside and All upside.** The layer is a sum of independent signed rows, each between its low and high value (T&D losses between 0 and their upper bound). The smallest possible total takes each row at the end that lowers generation: All downside, +177.3 TWh. The largest takes each at the end that raises it: All upside, +2,167.5 TWh. Every joint draw lies inside this envelope; the test `joint_quantiles_bracket` checks it on 2^18 draws.
 - **The named scenarios mark the corners that matter.** Electrification high and Climate stress push the load rows up; Efficiency and distributed pushes the offset rows to their limit; Features central is the official central case; the joint distribution weighs all combinations by their ranges.
 - **Crossed with growth.** The three growth presets (Base, High growth, Low growth; [assumptions_and_uncertainty.md](assumptions_and_uncertainty.md), section 6) change the core forecast. A named feature scenario adds the same ramped total to any of them, so it shifts that preset's quantiles by its adjustment; the joint scenario adds the same feature draws. `outputs/feature_scenarios_2047.csv` reports the scenarios on the Base growth preset; the dashboard applies any feature scenario on top of any growth preset.
 - **Crossed with policy.** The four policy presets (Base, Low carbon, Robust, Energy security) take whatever requirement the growth and feature settings give. `outputs/presets.csv` holds the 3 x 4 growth-by-policy matrix without features, the P90 plan test above solves the Robust plan with them, and the dashboard solves any policy for any feature scenario.
@@ -510,10 +552,10 @@ The Robust plan meets the joint median in full. At the joint P90 it leaves 1,635
 - **The trend rule.** The core forecast carries every existing load growing with total generation: x2.7697 from FY2023-24 (1,698.03 TWh) to FY2047-48, and x1.8604 to FY2037-38. Only level 2047 - level 2023 x 2.7697 is beyond the trend. For supply-side rows (T&D losses, auxiliary use, imports) the rule is the change in rate or level from FY2023-24. The multiples are those of the 20 Nov headline (4,703 TWh); on the current headline the multiple is 2.7607, which changes no row by more than 2 TWh, so the values were not rescaled.
 - **Rows that overlap the history** (`overlap_history` = yes). Only T&D losses is a layer row with full overlap. Its size is an upper bound on the effect beyond the trend, so it is 0 at central, uniform from 0 in the joint draws and at its high value only in the downside scenarios (ruling R22). The other "yes" rows are core, driver or context rows and add nothing.
 - **Partly overlapping rows** (`partial`) are already cut to the part beyond the trend. Where no official figure separates that part (space cooling, efficiency beyond trend), low and central are 0 and high is the whole excess over the trend.
-- **Rows inside other rows.** Rail and metro are inside transport electrification. Hotter weather is inside space cooling. Hydrogen for steel is inside green hydrogen. The distributed renewable component of the RCO overlaps rooftop solar and PM-KUSUM. None of these is added twice.
+- **Rows inside other rows.** Rail and metro are inside transport electrification. AI compute (GPUs) and digital public infrastructure are inside data centres. Hotter weather is inside space cooling. Hydrogen for steel is inside green hydrogen. The distributed renewable component of the RCO overlaps rooftop solar and PM-KUSUM. None of these is added twice.
 - **Part 2 storage.** The storage back-calculation of the plan ([results.md](results.md), section 3.6) reports its own round-trip losses (136 TWh in the Robust plan). If those are added to the requirement, the storage row must not be added again.
 - **Gross-up interaction.** New loads are grossed up at FY2023-24 loss rates. With T&D losses active they are overstated by up to about 10 percent.
-- **Captive and off-grid supply.** Hydrogen takes CEA's 50 percent grid share; the co-located half is captive and outside NPP. No official captive share exists for data centres, so none is removed.
+- **Captive and off-grid supply.** Hydrogen takes CEA's 50 percent grid share; the co-located half is captive and outside NPP. No official captive share exists for data centres, and the Ministry of Power expects the AI data-centre load to be integrated into the grid, so none is removed.
 - **Independence.** The rows are summed, and drawn, independently, exactly as the CSV gives them; no official source gives their correlations.
 
 ## 8. Limits
@@ -521,6 +563,8 @@ The Robust plan meets the joint median in full. At the joint P90 it leaves 1,635
 The full list is in [decisions.md](decisions.md), D14. The ones that touch this catalogue:
 
 - Only T&D losses and data centres have official values for or near 2047; the other rows hold or scale official values for 2030 to 2050.
+- The data-centre high continues the Ministry of Power's 2031-32 AI data-centre load linearly for 16 more years and reads its 26.3 GW as average load (230.4 TWh a year); the reply does not say whether it is load or capacity (ruling R30).
+- Telecom networks, consumer electronics, semiconductor manufacturing and AI compute have no official electricity projection; they stay context rows.
 - The unit factors are official but fixed (section 3 gives each).
 - Whether feeder-level solar (PM-KUSUM C) and Component A plants are inside NPP utility generation is not stated in the sources. If they are, row 12's effect is zero.
 - Features are split across regions by each region's share of the requirement; no official regional split exists (ruling R23).

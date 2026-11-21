@@ -23,7 +23,7 @@ Provenance of every input is in [data_audit.md](data_audit.md).
 No. Income is the largest factor, but the forecast also carries population growth, urbanisation beyond what income implies, and the model's own error.
 On the central path, income accounts for 88 percent of the growth from FY2023-24 to FY2047-48, population for 15 percent and urbanisation for 5 percent, while the fading of the unusually high FY2023-24 level takes back 7 percent.
 Drivers the history does not carry, such as transport electrification, green hydrogen and data centres, less rooftop solar and other offsets, form a separate layer outside the headline.
-**Every driver, 44 in all, is catalogued in [demand_features.md](demand_features.md)**, each with its mechanism, the sign of its effect, how the model treats it, its official source and its size in TWh or the reason it has none.
+**Every driver, 49 in all, is catalogued in [demand_features.md](demand_features.md)**, each with its mechanism, the sign of its effect, how the model treats it, its official source and its size in TWh or the reason it has none.
 
 **Evidence.**
 
@@ -54,7 +54,7 @@ How each driver moves the FY2047-48 median (`outputs/sensitivity_2047.csv`; base
 
 The elasticity cases are under question 4.
 
-The 44 drivers ([demand_features.md](demand_features.md); `outputs/demand_features_catalogue.csv`) are treated in five ways:
+The 49 drivers ([demand_features.md](demand_features.md); `outputs/demand_features_catalogue.csv`) are treated in five ways:
 
 | Treatment | Drivers | Examples |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ The 44 drivers ([demand_features.md](demand_features.md); `outputs/demand_featur
 | An existing driver or setting | 3 | Urbanisation beyond income, a falling elasticity, hot years (model error) |
 | Quantified layer, outside the headline | 11 | T&D losses, auxiliary use, storage losses, imports, rooftop solar, solar pumps, efficiency beyond trend, transport electrification, green hydrogen, data centres, space cooling |
 | Excluded by the organisers' ruling | 1 | Captive generation |
-| Context, not quantified | 22 | No official figure (for example electric cooking, desalination, price effects), inside the trend or inside another row, or supply-side only |
+| Context, not quantified | 27 | No official figure (for example electric cooking, desalination, price effects, semiconductor fabs), inside the trend (for example telecom networks, consumer electronics) or inside another row (AI compute and digital public infrastructure inside data centres), or supply-side only |
 
 Scenarios of the layer (`outputs/feature_scenarios_2047.csv`), FY2047-48 median:
 
@@ -70,16 +70,17 @@ Scenarios of the layer (`outputs/feature_scenarios_2047.csv`), FY2047-48 median:
 | --- | --- | --- | --- |
 | Core (the headline) | 0 | 4,688 | |
 | Features central | +1,122.4 | 5,810 | +23.9% |
-| Electrification high | +1,839.9 | 6,528 | +39.3% |
+| Electrification high | +2,140.6 | 6,828 | +45.7% |
 | Efficiency and distributed | +388.6 | 5,076 | +8.3% |
 | Climate stress | +1,374.7 | 6,063 | +29.3% |
-| All upside | +1,866.8 | 6,555 | +39.8% |
+| All upside | +2,167.5 | 6,855 | +46.2% |
 | All downside | +177.3 | 4,865 | +3.8% |
-| Joint (P5 4,130, P95 8,017) | drawn | 5,668 | +20.9% |
+| Joint (P5 4,225, P95 8,121) | drawn | 5,769 | +23.1% |
 
 - Each layer size is the part beyond the historical trend, converted to generation. T&D losses may already be inside the trend, so they count only as an upper bound.
 - Every combination of feature levels lies between All downside and All upside.
-- The layer is never in the headline. The headline P90 (6,408 TWh) is 1,720 TWh above the median, and the recommended plan is tested against it (question 5); it meets the joint median in full and leaves 1,635 TWh unmet at the joint P90 (7,404 TWh).
+- The data-centre high continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (230.4 TWh a year as average load) to 2047 (697.8 TWh beyond the trend; [decisions.md](decisions.md), D14, ruling R30). Before that ruling the joint median was 5,668 TWh and Electrification high 6,528.
+- The layer is never in the headline. The headline P90 (6,408 TWh) is 1,720 TWh above the median, and the recommended plan is tested against it (question 5); it leaves 8.9 TWh of the joint median unmet and 1,738 TWh at the joint P90 (7,506 TWh).
 - The earlier new-loads scenario (green hydrogen only, with a think-tank central value) was retired on 21 November.
 
 **Sources.**
@@ -87,7 +88,7 @@ Scenarios of the layer (`outputs/feature_scenarios_2047.csv`), FY2047-48 median:
 - Primary: NPP all-India generation, FY2006-07 to FY2023-24 (`data/raw/npp/npp_national_generation_fy.csv`). Renewable India dataset: state population and GSDP, the only columns read.
 - Secondary: UN WPP 2024 (India's population path) and UN WUP 2018 (India's urban share path), which the organisers' ruling of 16 November 2026 allows if consistent with the dataset's state growth (`outputs/population_consistency.csv`).
 - Secondary: Liddle 2013, Shahbaz et al. 2016 and Holtedahl and Joutz 2004, behind the urbanisation prior; the organisers ruled that the coefficient is the team's own judgment.
-- Secondary, demand features only, all official: CEA, NITI Aayog, the Ministries of Power, Finance and Steel, MNRE, MoEFCC, BEE, MoSPI, MoES and RBI, in `data/external/demand_features.csv` (`data/external/SOURCES.md`, section 11).
+- Secondary, demand features only, all official: CEA, NITI Aayog, the Ministries of Power, Finance and Steel, MNRE, MoEFCC, BEE, MoSPI, MoES, RBI, MeitY, TRAI, DoT, the Union Cabinet and PIB, in `data/external/demand_features.csv` (`data/external/SOURCES.md`, section 11).
 
 ## 2. Was income data used state-wise, region-wise or for India as a whole?
 
@@ -246,7 +247,7 @@ Each has a mitigation in the model; what is left is stated as a known limit.
 | 11 | The 2047 range is wide, mostly because of income growth | The plan is tested at the P90 requirement (6,408 TWh). The Robust plan leaves 639 TWh unmet there; with 45 percent of the solar potential usable it leaves none, at 1.0 times the published high-case build limits | `outputs/p90_levers.csv` |
 | 12 | An annual plan cannot see hours | Hourly back-calculation from NPP Merit data: the Robust plan needs 448 GW and 3,048 GWh of storage; its gas runs 2,698 hours a year, 49 percent of its energy between 18:00 and 24:00 IST | `outputs/storage_land_2047.csv`, `site_summary.json` (`storage`) |
 | 13 | Low-demand futures: at the Low growth scenario's P05 (2,306 TWh) the Robust policy has no feasible plan, because its coal floor (647 TWh) and the gas kept for peaking (51 TWh) are fixed in TWh while its non-fossil minimum is a share | Stated as a known limit; the dashboard explains it and names the levers. The Low carbon policy is feasible there (86.1 bn USD a year), and every policy is feasible at the Base scenario's P05 (3,190 TWh) and at every scenario's median | `outputs/presets.csv`; D13, known limits |
-| 14 | Honest ranges need millions of scenarios | GPU Monte Carlo: 1,048,576 scenarios in 11.2 ms, against 2.26 s on 16 CPU threads (timings vary by run and machine load); the same code runs in the browser | `outputs/timings.csv` |
+| 14 | Honest ranges need millions of scenarios | GPU Monte Carlo: 1,048,576 scenarios in 11.2 ms, against 2.35 s on 16 CPU threads (timings vary by run and machine load); the same code runs in the browser | `outputs/timings.csv` |
 
 **Before the final evaluation (21-22 November 2026):** answer the organisers' clarification if it arrives, and keep Part 2 as it is until then; rehearse these answers and the live dashboard; keep every new number traced to an output file.
 

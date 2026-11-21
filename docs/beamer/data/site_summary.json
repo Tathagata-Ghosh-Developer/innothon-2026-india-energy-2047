@@ -478,8 +478,8 @@
   "features": {
     "note": "Outside the headline: the core forecast plus a signed adjustment in TWh for FY2047-48, ramped linearly from the base year and split across the regions by their share of the requirement. Official sources (secondary). T&D losses are an upper bound that may already be inside the trend: 0 at central.",
     "counts": {
-      "total": 44,
-      "context": 22,
+      "total": 49,
+      "context": 27,
       "core": 7,
       "driver": 3,
       "excluded_rule": 1,
@@ -841,10 +841,85 @@
         "overlap": "partial",
         "low": 356.2,
         "central": 397.1,
-        "high": 397.1,
+        "high": 697.8,
         "upper_bound": "no",
-        "range": "356.2 to 397.1 TWh (central 397.1)",
-        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+        "range": "356.2 to 697.8 TWh (central 397.1)",
+        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026 | MeitY, Rajya Sabha reply of 07.08.2026 (PIB Release ID 2298108) | MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+      },
+      {
+        "name": "ai_compute_gpus",
+        "label": "AI compute (GPUs)",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | PIB Backgrounder, India's AI Moment: 20,000 additional GPUs (17.02.2026, Release ID 2229397) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026"
+      },
+      {
+        "name": "telecom_networks",
+        "label": "Telecom networks",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "yes",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "TRAI, Recommendations on Approach towards Green Telecommunications (12.04.2011) | DoT, 2025 Year End Review (PIB, 19.12.2025, Release ID 2206477) | TRAI, Press Release No. 140/2026, Telecom Subscription Data at the end of September 2026 (27.10.2026)"
+      },
+      {
+        "name": "consumer_electronics_devices",
+        "label": "Consumer electronics and devices",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "yes",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "BEE, India Energy Scenario for the Year 2023-24 (2nd edition, Dec 2024) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | TRAI, Press Release No. 140/2026, Telecom Subscription Data at the end of September 2026 (27.10.2026)"
+      },
+      {
+        "name": "semiconductor_electronics_manufacturing",
+        "label": "Semiconductor and electronics manufacturing",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Union Cabinet, Semicon 2.0 approval and ISM 1.0 progress (PMIndia, 15.07.2026) | Union Cabinet, three semiconductor units approved (PMIndia, 29.02.2024)"
+      },
+      {
+        "name": "digital_public_infrastructure",
+        "label": "Digital public infrastructure",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB Explainer, Data Centres in India: Infrastructure for the Digital Age (14.09.2026, NoteId 159969)"
       },
       {
         "name": "space_cooling",
@@ -1219,32 +1294,32 @@
           "key": "electrification_high",
           "name": "Electrification high",
           "description": "Transport, green hydrogen, data centres and space cooling at their high values; the rest at central.",
-          "adjustment_twh": 1839.900,
-          "p05_twh": 5030.296,
-          "p50_twh": 6527.722,
-          "p95_twh": 8860.481,
-          "change_twh": 1839.946,
-          "change_pct": 39.250,
+          "adjustment_twh": 2140.600,
+          "p05_twh": 5330.945,
+          "p50_twh": 6828.388,
+          "p95_twh": 9161.113,
+          "change_twh": 2140.613,
+          "change_pct": 45.664,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1868.928
+              "p50_twh": 1955.032
             },
             {
               "name": "Western",
-              "p50_twh": 1776.888
+              "p50_twh": 1858.756
             },
             {
               "name": "Southern",
-              "p50_twh": 1654.788
+              "p50_twh": 1731.162
             },
             {
               "name": "Eastern",
-              "p50_twh": 1017.101
+              "p50_twh": 1064.135
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 209.806
+              "p50_twh": 219.484
             }
           ]
         },
@@ -1318,32 +1393,32 @@
           "key": "all_upside",
           "name": "All upside",
           "description": "Every feature that raises generation at its high value and every one that lowers it at its low value (T&D losses at 0).",
-          "adjustment_twh": 1866.800,
-          "p05_twh": 5057.126,
-          "p50_twh": 6554.628,
-          "p95_twh": 8887.391,
-          "change_twh": 1866.853,
-          "change_pct": 39.824,
+          "adjustment_twh": 2167.500,
+          "p05_twh": 5357.983,
+          "p50_twh": 6855.284,
+          "p95_twh": 9188.024,
+          "change_twh": 2167.508,
+          "change_pct": 46.237,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1876.644
+              "p50_twh": 1962.744
             },
             {
               "name": "Western",
-              "p50_twh": 1784.207
+              "p50_twh": 1866.083
             },
             {
               "name": "Southern",
-              "p50_twh": 1661.620
+              "p50_twh": 1737.966
             },
             {
               "name": "Eastern",
-              "p50_twh": 1021.305
+              "p50_twh": 1068.335
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 210.673
+              "p50_twh": 220.350
             }
           ]
         },
@@ -1451,32 +1526,32 @@
         "key": "electrification_high",
         "name": "Electrification high",
         "description": "Transport, green hydrogen, data centres and space cooling at their high values; the rest at central.",
-        "adjustment_twh": 1839.900,
-        "p05_twh": 5030.296,
-        "p50_twh": 6527.722,
-        "p95_twh": 8860.481,
-        "change_twh": 1839.946,
-        "change_pct": 39.250,
+        "adjustment_twh": 2140.600,
+        "p05_twh": 5330.945,
+        "p50_twh": 6828.388,
+        "p95_twh": 9161.113,
+        "change_twh": 2140.613,
+        "change_pct": 45.664,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1868.928
+            "p50_twh": 1955.032
           },
           {
             "name": "Western",
-            "p50_twh": 1776.888
+            "p50_twh": 1858.756
           },
           {
             "name": "Southern",
-            "p50_twh": 1654.788
+            "p50_twh": 1731.162
           },
           {
             "name": "Eastern",
-            "p50_twh": 1017.101
+            "p50_twh": 1064.135
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 209.806
+            "p50_twh": 219.484
           }
         ]
       },
@@ -1550,32 +1625,32 @@
         "key": "all_upside",
         "name": "All upside",
         "description": "Every feature that raises generation at its high value and every one that lowers it at its low value (T&D losses at 0).",
-        "adjustment_twh": 1866.800,
-        "p05_twh": 5057.126,
-        "p50_twh": 6554.628,
-        "p95_twh": 8887.391,
-        "change_twh": 1866.853,
-        "change_pct": 39.824,
+        "adjustment_twh": 2167.500,
+        "p05_twh": 5357.983,
+        "p50_twh": 6855.284,
+        "p95_twh": 9188.024,
+        "change_twh": 2167.508,
+        "change_pct": 46.237,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1876.644
+            "p50_twh": 1962.744
           },
           {
             "name": "Western",
-            "p50_twh": 1784.207
+            "p50_twh": 1866.083
           },
           {
             "name": "Southern",
-            "p50_twh": 1661.620
+            "p50_twh": 1737.966
           },
           {
             "name": "Eastern",
-            "p50_twh": 1021.305
+            "p50_twh": 1068.335
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 210.673
+            "p50_twh": 220.350
           }
         ]
       },
@@ -1769,10 +1844,10 @@
       {
         "feature": "data_centres",
         "label": "Data centres",
-        "level": "low",
-        "adjustment_twh": 356.200,
-        "p50_twh": 5043.999,
-        "change_twh": 356.224
+        "level": "high",
+        "adjustment_twh": 697.800,
+        "p50_twh": 5385.611,
+        "change_twh": 697.836
       },
       {
         "feature": "space_cooling",
@@ -1793,48 +1868,48 @@
     ],
     "joint": {
       "description": "Core draws plus independent feature draws: each feature triangular (low, central, high) times its sign; T&D losses uniform from 0 to their upper bound.",
-      "p05_twh": 4130.202,
-      "p10_twh": 4422.602,
-      "p50_twh": 5667.606,
-      "p90_twh": 7403.648,
-      "p95_twh": 8017.464,
-      "mean_twh": 5818.868,
-      "change_p50_twh": 979.831,
-      "change_p50_pct": 20.902,
-      "features_p05_twh": 659.186,
-      "features_p50_twh": 973.233,
-      "features_p95_twh": 1308.330,
-      "features_mean_twh": 975.973,
+      "p05_twh": 4225.379,
+      "p10_twh": 4518.671,
+      "p50_twh": 5768.819,
+      "p90_twh": 7506.089,
+      "p95_twh": 8120.981,
+      "mean_twh": 5919.066,
+      "change_p50_twh": 1081.044,
+      "change_p50_pct": 23.061,
+      "features_p05_twh": 735.816,
+      "features_p50_twh": 1072.151,
+      "features_p95_twh": 1431.275,
+      "features_mean_twh": 1076.124,
       "regions": [
         {
           "name": "Northern",
-          "p50_twh": 1622.736
+          "p50_twh": 1651.550
         },
         {
           "name": "Western",
-          "p50_twh": 1542.732
+          "p50_twh": 1570.231
         },
         {
           "name": "Southern",
-          "p50_twh": 1436.421
+          "p50_twh": 1461.962
         },
         {
           "name": "Eastern",
-          "p50_twh": 882.556
+          "p50_twh": 898.232
         },
         {
           "name": "North-Eastern",
-          "p50_twh": 182.147
+          "p50_twh": 185.378
         }
       ]
     },
     "p90_plan": {
       "policy": "Robust",
-      "requirement_twh": 7403.648,
+      "requirement_twh": 7506.089,
       "status": "optimal",
-      "robust_unmet_twh": 1635.137,
-      "joint_p50_twh": 5667.606,
-      "joint_p50_unmet_twh": 0.000,
+      "robust_unmet_twh": 1737.578,
+      "joint_p50_twh": 5768.819,
+      "joint_p50_unmet_twh": 8.861,
       "core_p90_twh": 6407.984,
       "core_robust_unmet_twh": 639.473,
       "note": "Least-cost Robust plan planned for the core + features joint P90 (and P50), against the core P90. Unmet is requirement the plan cannot serve; null = infeasible."

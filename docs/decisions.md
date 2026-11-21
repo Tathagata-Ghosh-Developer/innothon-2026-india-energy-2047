@@ -481,7 +481,7 @@ The rules do not change:
 - **Placeholder base years in the convergence estimate.** Once Jammu and Kashmir was deflated, its 2006 relative income still rested on the 2006-2010 placeholder run (D11). Telangana, Andaman and Nicobar Islands and Lakshadweep had the same problem. The old convergence speed was driven by these four placeholder states (2006 relative incomes of +1.40, +1.16, +0.93 and +0.50 log points for Telangana, Andaman and Nicobar Islands, Jammu and Kashmir and Lakshadweep).
 - **Demand drivers beyond income.** The midpoint panel asked whether income was the only factor (D13, question 1). The answer listed four drivers and one new-loads scenario that added green hydrogen only, with a central value from a think tank (TERI); the other loads were reported, not added, and several of their figures were not official. A full catalogue from official sources only was missing.
 
-**Choice.** What changed (commits 8c4dd8a to 62c347f):
+**Choice.** What changed (commits 8c4dd8a to 62c347f; ruling R30 in 6f19e6e):
 
 - **One real price base: real 2024 USD**, the price year of IEA WEO 2025 (`src/core/price_base.hpp`).
   - The official indices are in `data/external/macro/price_indices.csv` (secondary): the MoSPI GDP deflator (2011-12 series), the OEA WPI, the MoSPI CPI, the RBI rupee-dollar reference rates, the RBI inflation target (4 percent, band 2 to 6 percent, notified to FY2030-31), the BEA GDP deflator, the BLS CPI-U and the FOMC longer-run goal (2 percent).
@@ -500,12 +500,16 @@ The rules do not change:
   - lambda = -ln(1 + slope x S) / S, where S is the mean span (17.06 years).
   - lambda falls from 0.0208 to 0.0021 (s.e. 0.0051): convergence is essentially absent. The national forecast does not depend on it.
 - **Demand-feature layer** (R22, R23, R24; `src/pipeline/demand_features.hpp`; the catalogue is [demand_features.md](demand_features.md)).
-  - `data/external/demand_features.csv` lists 44 drivers; every quantified size comes from an official source, and six unquantified rows have no external source (three where no official figure was found, three that point to the model's own runs): 7 estimated in the core forecast, 3 existing drivers or settings, 11 quantified feature rows (the layer), 1 excluded by rule (captive generation) and 22 context rows.
+  - `data/external/demand_features.csv` lists 49 drivers (44 before R30); every quantified size comes from an official source, and six unquantified rows have no external source (three where no official figure was found, three that point to the model's own runs): 7 estimated in the core forecast, 3 existing drivers or settings, 11 quantified feature rows (the layer), 1 excluded by rule (captive generation) and 27 context rows (22 before R30).
   - The 11 layer rows are signed TWh adjustments to FY2047-48 utility generation. They are already reduced to their part beyond the historical trend and grossed up to generation.
   - Seven named scenarios: Core, Features central, Electrification high, Efficiency and distributed, Climate stress, All upside and All downside. A joint Monte Carlo adds independent feature draws to each core draw. A P90 plan test solves the Robust plan at the joint P50 and P90.
   - Each adjustment is ramped linearly from the base year, like the existing add-on. Feature draws use their own Philox stream, so the headline draws are bit-identical.
   - New outputs: `outputs/demand_features_catalogue.csv`, `outputs/feature_scenarios_2047.csv` and `features.*` in `site_summary.json`. The dashboard gets a "Demand features (official, outside headline)" selector and a catalogue view.
   - The headline stays the two-dataset forecast (4,688 TWh). Every feature scenario is labelled as outside the headline.
+- **AI and digital loads** (R30, commit 6f19e6e, later on 21 Nov).
+  - The data-centre high takes the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (Rajya Sabha Unstarred Question 956, answered 27.07.2026), read as average load (x 8.76 = 230.4 TWh) and continued to FY2047-48: 697.8 TWh beyond the trend, from 397.1. Low and central stay NITI Aayog's.
+  - Five context rows are added with their official sources and not quantified: AI compute (GPUs), telecom networks, consumer electronics and devices, semiconductor and electronics manufacturing, and digital public infrastructure.
+  - The layer stays 11 rows and the headline does not move. Electrification high, All upside, the one-at-a-time data-centre row, the joint distribution and the P90 plan test change (tables below).
 - **Retired.**
   - The new-loads scenario (`new_loads_published`: green hydrogen only, 418 to 1,237 TWh, with a think-tank central value) and its code (R27). `data/external/new_loads.csv` is kept as an archive and is no longer read.
   - The High growth preset's fixed 100 to 300 TWh add-on, which had no official source (R26).
@@ -523,8 +527,9 @@ The rules do not change:
 | R27 | The landing page reads `features.*` instead of the new-loads row, and the new-loads code is retired | None |
 | R28 | The base year is the first year that differs from both neighbours, not the literal "differs from the next year", which still lands on the Jammu and Kashmir 2010 placeholder | Under the literal reading lambda would be 0.0166 instead of 0.0021, and the regional shift would be smaller |
 | R29 | Revised later on 21 Nov: the final deck (pptx and PDF), the Beamer decks and the Q&A notes are updated to the current run, each with a dated line, and the landing page says what changed after the evaluation; the talk script and the midpoint slide keep the presented numbers | Jurors comparing the site with the deck they saw find different regional numbers; the dated lines and the landing note explain why |
+| R30 | Added later on 21 Nov (6f19e6e): AI and digital loads. The data-centre high takes the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (Rajya Sabha USQ 956, 27.07.2026), read as average load by NITI Aayog's flat-load convention (x 8.76 = 230.4 TWh), and continues the FY2023-24 to FY2031-32 path linearly to FY2047-48, as rooftop solar's high does: 666.6 TWh, still below NITI's 700 TWh for 2070. Less the trend and x1.1029 this is 697.8 TWh (397.1 before); low 356.2 and central 397.1 stay NITI Aayog's. Five rows are listed as context, not quantified: AI compute (GPUs) and digital public infrastructure sit inside data centres and would double count; telecom networks and consumer electronics are inside the trend, and no official projection sizes growth beyond it (telecom is about 22 TWh a year today at TRAI's 2011 load per tower, for scale only); semiconductor manufacturing has no official MW or TWh. Industry, press and think-tank figures are not used | If the 26.3 GW is sanctioned capacity at NITI's 50 percent utilisation, the continued path gives 316.6 TWh, below the central, so the high stays 397.1 and every feature result returns to its value before R30 (joint P50 5,668 instead of 5,769; Electrification high 6,528 instead of 6,828). CEA's 17 GW (via MeitY; 148.9 TWh as average load) on the same path gives a milder high of 428.2 TWh, 269.6 lower. If the 26.3 GW is in addition to CEA's 17 GW, the high is too low. The continuation runs an 8-year official path 16 more years |
 
-**Effect on results** (before: the 20 Nov run, as presented on 21 Nov; after: `outputs/` of commit 62c347f; GPU, 4,194,304 draws, default seed).
+**Effect on results** (before: the 20 Nov run, as presented on 21 Nov; after: `outputs/` of commit 62c347f, and of 6f19e6e for the feature rows that R30 moves; GPU, 4,194,304 draws, default seed).
 
 | Quantity | 20 Nov, as presented | Now |
 | --- | --- | --- |
@@ -545,9 +550,9 @@ The rules do not change:
 | Base policy: CO2; cost; unmet at P90 | 1,373.5 Mt; 215.29 bn USD/yr; 1,463 TWh | 1,367.2 Mt; 213.05 bn USD/yr; 1,471 TWh |
 | CEA cost basis (copy of the Robust plan) | 250.29 bn USD/yr and 1,118.3 Mt, on a mixed price base that could not be compared with IEA | 202.58 bn USD/yr in real 2024 USD at 4 percent inflation (225.22 at 2 percent, 182.13 at 6 percent); 1,113.8 Mt; non-fossil 75.0% in all three |
 | Nominal 2047 outlook (information only) | none | Rs 36.33 lakh crore or 277.8 bn USD a year |
-| Scenarios outside the headline, FY2047-48 P50 | New loads (green hydrogen only): 5,537 TWh (+17.7%) | Features central 5,810; Electrification high 6,528; Efficiency and distributed 5,076; Climate stress 6,063; All upside 6,555; All downside 4,865 TWh |
-| Joint distribution (core plus features) | none | P5 4,130 / P50 5,668 (+20.9%) / P95 8,017 TWh |
-| Robust plan: unmet at the joint P50; at the joint P90 (7,404 TWh) | none | 0; 1,635 TWh |
+| Scenarios outside the headline, FY2047-48 P50 | New loads (green hydrogen only): 5,537 TWh (+17.7%) | Features central 5,810; Electrification high 6,828; Efficiency and distributed 5,076; Climate stress 6,063; All upside 6,855; All downside 4,865 TWh. Before R30: Electrification high 6,528, All upside 6,555 |
+| Joint distribution (core plus features) | none | P5 4,225 / P50 5,769 (+23.1%) / P95 8,121 TWh. Before R30: 4,130 / 5,668 (+20.9%) / 8,017 |
+| Robust plan: unmet at the joint P50; at the joint P90 | none | 8.9 TWh at 5,769; 1,738 TWh at 7,506. Before R30: 0 at 5,668; 1,635 TWh at 7,404 |
 | High growth preset, P50 | 6,785 TWh (with the 100 to 300 TWh add-on) | 6,580 TWh |
 | Central path; its log growth from FY2023-24 | 4,600 TWh; 0.997 | 4,589 TWh; 0.994 |
 | State panel check: slope (s.e.) | 0.434 (0.242) | 0.522 (0.258) |
@@ -565,6 +570,7 @@ How the numbers moved, step by step:
 | Feature layer (c957a6e, 0aded2d, 62c0916) | unchanged | unchanged | unchanged | unchanged (every output byte-identical except `timings.csv`) |
 | Convergence base year, R25 (c41d93d) | unchanged | 0.0021 | 1,342 / 1,276 / 1,188 / 730 / 151 | 79.90%, 891.3 Mt, 176.16 bn USD, 639.5 TWh |
 | R26 and R27 (00e873d, 62c347f) | unchanged | unchanged | unchanged | unchanged; the High growth P50 falls from 6,780 to 6,580 TWh |
+| AI and digital loads, R30 (6f19e6e) | unchanged | unchanged | unchanged | unchanged at the median and P90; data-centre high 397.1 to 697.8 TWh: Electrification high 6,528 to 6,828, All upside 6,555 to 6,855, joint P50 5,668 to 5,769 TWh; unmet at the joint P50 0 to 8.9 TWh, at the joint P90 1,635 to 1,738 TWh |
 
 - The national median falls by 15 TWh (-0.3 percent) because the deflation removes Jammu and Kashmir's inflated growth: mean income growth per person falls from 4.95 to 4.90 percent a year. The elasticity rises (0.828 to 0.835), which partly offsets it.
 - The regional split changes a lot. Under the old lambda, poorer states' relative incomes rose towards the national average by 2047; now they barely move. The Southern and Western regions gain; the Eastern, Northern and North-Eastern regions lose.
@@ -581,6 +587,9 @@ How the numbers moved, step by step:
 - Correlated feature draws: no official source gives the correlations, so the draws are independent and say so.
 - The literal reading of R25 (R28).
 - Keeping the presented numbers in the decks: the deck, the site and the repository would disagree (R29).
+- AI and data-centre figures that are not official or cannot be converted, as sizes (R30): the Economic Survey 2025-26's "8 GW by 2030", which it attributes to industry; a PIB data-centre capacity figure of 8 GW with no utilisation; CEA figures quoted only in the press; S&P, JLL, Nasscom and similar industry estimates.
+- Adding the Ministry of Power's 26.3 GW (230.4 TWh as average load) on top of CEA's 17 GW (148.9 TWh): the reply does not say the two are additive, so the 26.3 GW is read as the whole data-centre level in 2031-32 (R30).
+- A TWh size for telecom from TRAI's 2011 load per tower: the figure is fifteen years old, part of tower energy is diesel or on-site renewables, and no official projection separates growth beyond the trend (R30).
 
 **Known limits.**
 
@@ -592,6 +601,7 @@ How the numbers moved, step by step:
   - New loads are grossed up at FY2023-24 loss rates, so with T&D losses active they are overstated by up to about 10 percent.
   - Storage round-trip losses would be counted twice if the Part 2 storage back-calculation, which reports its own losses (136 TWh in the Robust plan), were added on top.
   - Distributed renewables under the renewable consumption obligation overlap rooftop solar and PM-KUSUM.
+  - AI compute (GPUs) and digital public infrastructure are inside data centres, and telecom networks and consumer electronics are inside the trend; none of them is added (R30).
   - Rows are summed independently, exactly as the CSV gives them.
 - **NPP scope of feeder-level solar.** PM-KUSUM C feeder-level plants feed 11 kV feeders. If CEA counts them as utility generation, their effect on NPP generation is zero. Whether Component A plants are inside NPP's series is not stated in the sources, and rooftop solar assumes NPP excludes rooftop output.
 - **Conversion factors.**
@@ -601,6 +611,7 @@ How the numbers moved, step by step:
 - **Tariff ratios across years.** Hydro (2020), new-coal bids (2025), biomass (FY2026-27), round-the-clock bids (2025-26) and solar (2025) are used as ratios to coal, which are treated as inflation-neutral. A ratio across different years is not strictly inflation-neutral.
 - **Price base proxies.** FY2024-25 stands for 2024, because MoSPI publishes the deflator by fiscal year only, and it is paired with the calendar-2024 exchange rate. The FY2026-27 deflator for biomass is extended at the RBI target and is not an official figure. The CEA band rows (2 and 6 percent) are fixed in the code; only the default reads `price_indices.csv`.
 - **Nominal outlook.** The RBI target is notified only to FY2030-31; the outlook carries it to 2047. The FOMC goal is stated for the PCE price index, not the GDP deflator.
+- **The data-centre high is an extrapolation** (R30). The Ministry of Power's 2031-32 figure is continued linearly for 16 more years and read as average load (26.3 GW x 8.76 = 230.4 TWh); the reply does not say whether it is load or capacity. No official captive share exists for data centres, so none is removed.
 - **Every feature scenario raises the requirement.** Even All downside adds 177 TWh, because transport (at least 512 TWh), data centres (at least 356) and hydrogen (at least 138) outweigh every row that lowers generation.
 - **The talk script and the midpoint slide keep the presented numbers** (R29); the decks and Q&A notes match the outputs.
 
@@ -608,6 +619,6 @@ How the numbers moved, step by step:
 
 - The suite has nine tests, all passing (ctest 9 of 9 at 62c347f).
   - New `price_base`: the Fisher relation, deflation, the rupee-dollar conversion, extension beyond the data at the target, the nominal outlook, the Jammu and Kashmir deflation (within 1 percent of MoSPI's 2016 constant-price value; -0.37 percent observed), every GSDP reader applying the basis on synthetic data, and the default plan unchanged by the price base (cost and CO2 reproduced to 1e-6).
-  - New `features`: catalogue validation, the scenario totals, the T&D treatment, the joint quantiles within the All downside to All upside envelope, and the headline unchanged with the layer at Core.
+  - New `features`: catalogue validation, the scenario totals, the T&D treatment, the joint quantiles within the All downside to All upside envelope, and the headline unchanged with the layer at Core. R30 changed its expected counts to 49 rows (27 context).
   - `mc_parity` checks the feature draws on the CPU and the GPU; `regions` adds `convergence_base_skips_repeats`; `allocation` checks the CEA tables (2 percent above 4 percent above 6 percent) and the inflation default.
 - With the price base alone, every default-plan output was byte-identical. With the feature layer, every output except `timings.csv` was byte-identical. R25 left the national forecast rows byte-identical.
