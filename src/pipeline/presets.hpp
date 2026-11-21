@@ -21,15 +21,17 @@ inline const std::vector<ScenarioPreset>& scenario_presets() {
   static const std::vector<ScenarioPreset> v = {
       {"Base", "India's historical income growth per person to 2030, slowing by 1.5 points by 2047; no new loads.",
        [](ScenarioControls&) {}},
+      // No add-on: new loads enter only through the demand-feature scenarios (official sources,
+      // outside the headline), which can be chosen on top of this preset.
       {"High growth",
        "Income growth per person 1.5 points above history to 2030, slowing by 1 point; urban share 3 points above the "
-       "UN path by 2047; 100-300 TWh of new loads (green hydrogen, data centres).",
+       "UN path by 2047; no fixed new-loads add-on (new loads come only from the demand-feature scenarios).",
        [](ScenarioControls& c) {
          c.g_start_shift = 0.015;
          c.g_slowdown = 0.010;
          c.urban_shift_2047 = 0.03;
-         c.addon_lo = 100;
-         c.addon_hi = 300;
+         c.addon_lo = 0;
+         c.addon_hi = 0;
        }},
       {"Low growth",
        "Income growth per person 1.5 points below history to 2030, slowing by 2 points; urban share 2 points below the "
