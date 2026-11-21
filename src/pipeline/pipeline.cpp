@@ -542,6 +542,7 @@ McInputs Pipeline::build_inputs(const ScenarioControls& c) const {
   in.dt_sigma = static_cast<float>(d.sigma);
   in.addon_lo = static_cast<float>(c.addon_lo);
   in.addon_hi = static_cast<float>(std::max(c.addon_lo, c.addon_hi));
+  pack_features(in, c.feature_draws);
 
   in.n_states = static_cast<int>(drv_.states.size());
   for (int s = 0; s < in.n_states; ++s) {
@@ -840,6 +841,22 @@ std::string new_loads_description(const std::vector<NewLoad>& loads) {
 
 std::vector<NewLoad> Pipeline::new_loads() const {
   return read_new_loads((fs::path(root_) / "data/external/new_loads.csv").string(), drv_.base_year, kTargetYear);
+}
+
+void apply_feature_scenario(ScenarioControls& c, const std::vector<DemandFeature>& features, Scenario s) {
+  // Computed first, so a scenario that throws leaves c as it was.
+  std::vector<FeatureDraw> draws;
+  double fixed = 0;
+  if (s == Scenario::kJoint)
+    draws = joint_distribution(features);
+  else if (s != Scenario::kCore)
+    fixed = scenario_total(features, s).total;
+  c.addon_lo = c.addon_hi = fixed;
+  c.feature_draws = std::move(draws);
+}
+
+std::vector<DemandFeature> Pipeline::demand_features() const {
+  return read_demand_features((fs::path(root_) / kDemandFeaturesFile).string());
 }
 
 StrategyResult Pipeline::strategy(const ForecastResult& f, const ScenarioControls& c, const PolicySettings& p) const {

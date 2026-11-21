@@ -4,15 +4,17 @@
 // One draw = one internally consistent future: a population path, an urban
 // share path, a GDP-per-capita path with persistent and transitory shocks, a
 // model choice (FE-Quad, FE-Gompertz, damped trend) with parameters taken from
-// a bootstrap replicate, an inter-state income convergence speed, and optional
-// new loads. The draw yields national generation and its split into the five
-// grid regions for every projection year.
+// a bootstrap replicate, an inter-state income convergence speed, and an optional
+// add-on (a fixed range, plus independent demand-feature draws in the joint feature
+// scenario). The draw yields national generation and its split into the five grid
+// regions for every projection year.
 //
 // simulate_draw() is shared by the CPU (OpenMP) and GPU (CUDA) drivers. Random
 // inputs come from Philox keyed by (seed, draw index), so both drivers see the
 // same random numbers for the same draw.
 #include <cmath>
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -28,8 +30,19 @@ constexpr int kSeries = 1 + kRegions;  // 0 = national, 1..5 = regions
 constexpr int kBins = 1024;
 constexpr int kBootStride = 8;          // q_b1 q_b2 q_g q_d g_a g_b g_c g_d
 constexpr int kKeepFeatures = 8;        // per-draw inputs kept for sensitivity analysis
+constexpr int kMaxFeatures = 16;        // demand-feature draws per Monte Carlo draw (joint feature scenario)
 
 enum Model : int { kFeQuad = 0, kFeGompertz = 1, kDamped = 2 };
+
+// Distribution of one demand-feature draw: triangular(lo, mode, hi) or uniform(lo, hi).
+enum FeatureKind : int { kFeatureTriangular = 0, kFeatureUniform = 1 };
+
+// One demand feature of the joint feature scenario (host side; pack_features copies it into
+// McInputs): each draw adds sign x a value from the distribution, TWh in the final year.
+struct FeatureDraw {
+  int kind = kFeatureTriangular;
+  double sign = 1, lo = 0, mode = 0, hi = 0;
+};
 
 inline const char* region_name(int r) {
   static const char* names[kRegions] = {"Northern", "Western", "Southern", "Eastern", "North-Eastern"};
@@ -72,8 +85,21 @@ struct McInputs {
   // Damped trend on ln(total generation)
   float dt_level, dt_trend, dt_phi, dt_alpha, dt_beta, dt_sigma;
 
-  // Optional new loads (green hydrogen, data centres), TWh in the final year, linear ramp
+  // Optional add-on, TWh in the final year (signed), drawn uniformly between addon_lo and
+  // addon_hi and ramped linearly from the base year: a published new load or a demand-feature
+  // scenario, never the headline.
   float addon_lo, addon_hi;
+  // Optional demand-feature draws (the joint feature scenario): n_features independent
+  // draws, each feat_sign x a value from triangular(feat_lo, feat_mode, feat_hi) or
+  // uniform(feat_lo, feat_hi) (feat_kind), TWh in the final year, added to the add-on with
+  // the same ramp. 0 = none. Their uniforms come from a stream of the draw used nowhere
+  // else, so every other random input of the draw is the same with or without them.
+  int n_features;
+  int feat_kind[kMaxFeatures];
+  float feat_sign[kMaxFeatures];
+  float feat_lo[kMaxFeatures];
+  float feat_mode[kMaxFeatures];
+  float feat_hi[kMaxFeatures];
 
   // Regional split: state population and relative income only. The challenge data
   // have no state urban share, so the split has no state urbanisation term; the
@@ -93,6 +119,50 @@ struct McInputs {
 template <class Real>
 E47_HD Real clamp01(Real v) {
   return v < Real(0) ? Real(0) : (v > Real(1) ? Real(1) : v);
+}
+
+// Copies the demand-feature distributions into the kernel inputs (n_features = 0 for none).
+inline void pack_features(McInputs& in, const std::vector<FeatureDraw>& d) {
+  if (d.size() > static_cast<size_t>(kMaxFeatures))
+    throw std::invalid_argument("pack_features: " + std::to_string(d.size()) + " features, at most " +
+                                std::to_string(kMaxFeatures));
+  in.n_features = static_cast<int>(d.size());
+  for (int j = 0; j < kMaxFeatures; ++j) {
+    const bool on = j < in.n_features;
+    in.feat_kind[j] = on ? d[j].kind : kFeatureTriangular;
+    in.feat_sign[j] = on ? static_cast<float>(d[j].sign) : 0.0f;
+    in.feat_lo[j] = on ? static_cast<float>(d[j].lo) : 0.0f;
+    in.feat_mode[j] = on ? static_cast<float>(d[j].mode) : 0.0f;
+    in.feat_hi[j] = on ? static_cast<float>(d[j].hi) : 0.0f;
+  }
+}
+
+// Inverse distribution function of one demand-feature draw at u in (0, 1]. A distribution
+// with hi <= lo is the constant lo.
+template <class Real>
+E47_HD Real feature_inverse_cdf(int kind, Real lo, Real mode, Real hi, Real u) {
+  using std::sqrt;
+  const Real w = hi - lo;
+  if (!(w > Real(0))) return lo;
+  if (kind == kFeatureUniform) return lo + w * u;
+  const Real a = mode - lo;
+  if (u * w <= a) return lo + sqrt(u * w * a);
+  return hi - sqrt((Real(1) - u) * w * (hi - mode));
+}
+
+// Sum of the demand-feature draws of one Monte Carlo draw: sum of sign x value, TWh in the
+// final year. Uniforms come from stream 6 of the draw, four per step.
+template <class Real>
+E47_HD Real feature_draw_total(const McInputs& in, const DrawRng& rng) {
+  Real s = 0;
+  Real u[4] = {0, 0, 0, 0};
+  for (int j = 0; j < in.n_features; ++j) {
+    if ((j & 3) == 0) rng.template uniform4<Real>(static_cast<uint32_t>(j >> 2), 6, u);
+    s += Real(in.feat_sign[j]) *
+         feature_inverse_cdf<Real>(in.feat_kind[j], Real(in.feat_lo[j]), Real(in.feat_mode[j]), Real(in.feat_hi[j]),
+                                   u[j & 3]);
+  }
+  return s;
 }
 
 // Parameters of the quadratic-form model used by `model`: slot 0 reads p[0..3];
@@ -144,7 +214,8 @@ E47_HD void simulate_draw(const McInputs& in, const float* boot, uint64_t seed, 
   const float* p = boot + static_cast<size_t>(k) * kBootStride;
 
   const Real lambda = Real(in.conv_mean) + Real(in.conv_sd) * z[3];
-  const Real addon = Real(in.addon_lo) + (Real(in.addon_hi) - Real(in.addon_lo)) * uu[2];
+  Real addon = Real(in.addon_lo) + (Real(in.addon_hi) - Real(in.addon_lo)) * uu[2];
+  if (in.n_features > 0) addon += feature_draw_total<Real>(in, rng);
   const Real g_level = Real(in.g_level_sd) * z[2];
 
   const bool quad = model == kFeQuad || (model == kFeGompertz && in.quad_only);

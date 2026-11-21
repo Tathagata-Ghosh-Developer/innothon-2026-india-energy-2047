@@ -17,6 +17,7 @@
 #include "../forecast/models.hpp"
 #include "../forecast/panel.hpp"
 #include "../regional/convergence.hpp"
+#include "demand_features.hpp"
 
 namespace e47 {
 
@@ -50,7 +51,12 @@ struct ScenarioControls {
   double urban_shift_2047 = 0;  // added to the projected 2047 urban share (fraction)
   double urban_sd_2047 = 0.02;  // 1-sigma uncertainty of the 2047 urban share
   double pop_band_scale = 1.0;  // multiplier on the UN low-high band
-  double addon_lo = 0, addon_hi = 0;  // new loads in 2047, TWh
+  // Add-on in 2047, TWh (signed), drawn uniformly between the two: published new loads
+  // (apply_new_loads) or a named demand-feature scenario (apply_feature_scenario).
+  double addon_lo = 0, addon_hi = 0;
+  // Demand features drawn independently in every draw, added to the add-on (the joint
+  // feature scenario, apply_feature_scenario); empty = none.
+  std::vector<FeatureDraw> feature_draws;
   std::array<double, 3> w_model{-1, -1, -1};  // < 0 = backtest-based weights
   uint64_t draws = 1ull << kDefaultDrawsLog2;
   uint64_t seed = 20470815;
@@ -231,6 +237,17 @@ void apply_new_loads(ScenarioControls& c, const std::vector<NewLoad>& loads);
 // the add-on range, the scaling, the units and the grid assumption.
 std::string new_loads_description(const std::vector<NewLoad>& loads);
 
+// A demand-feature scenario (demand_features.hpp) on top of c, outside the headline. Sets
+// only the add-on and the feature draws; every other setting of c is kept.
+//   kCore: no add-on, no feature draws (the headline).
+//   other named scenarios: addon_lo = addon_hi = the scenario's constant adjustment
+//     (scenario_total), no feature draws.
+//   kJoint: no fixed add-on; every layer row drawn independently in each draw
+//     (joint_distribution).
+// The kernel ramps the add-on linearly from the base year to the target year and splits
+// it across the regions with the rest of the requirement (rulings R23, R24).
+void apply_feature_scenario(ScenarioControls& c, const std::vector<DemandFeature>& features, Scenario s);
+
 struct StrategyResult {
   std::array<double, kRegions> requirement{};
   AllocationResult least_cost;
@@ -313,6 +330,11 @@ class Pipeline {
   // year to 2047 from the forecast base year (read_new_loads). For the separate
   // new-loads scenario only (apply_new_loads); the headline never uses them.
   std::vector<NewLoad> new_loads() const;
+
+  // The demand-feature catalogue (kDemandFeaturesFile, read_demand_features): every driver
+  // of the 2047 requirement, and the signed adjustments of the feature layer, which stays
+  // outside the headline (apply_feature_scenario).
+  std::vector<DemandFeature> demand_features() const;
 
  private:
   std::string root_;

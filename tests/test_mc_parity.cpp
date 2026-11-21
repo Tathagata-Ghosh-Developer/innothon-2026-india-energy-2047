@@ -1,5 +1,9 @@
 // Parity test: the CPU (double), CPU (float) and GPU (float) Monte Carlo paths
 // must agree. Uses a synthetic, self-contained input set (test fixture only).
+// Also checks the demand-feature draws of the joint feature scenario: the three paths
+// agree with them, each draw's add-on equals the host-side sum of its feature draws, and
+// constant features give exactly the ensemble of the same constant add-on.
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <vector>
@@ -74,6 +78,19 @@ int compare(const char* label, const McInputs& in, const McResult& a, const McRe
   return fails;
 }
 
+// Each kept draw's add-on (keep[6]) against the host-side sum of its feature draws.
+int compare_feature_keep(const char* label, const McInputs& in, const McResult& r, uint64_t seed, int n_keep) {
+  double worst = 0;
+  for (int i = 0; i < n_keep; ++i) {
+    const double host = feature_draw_total<double>(in, DrawRng(seed, static_cast<uint64_t>(i)));
+    const double kernel = r.keep[static_cast<size_t>(i) * kKeepFeatures + 6];
+    worst = std::max(worst, std::abs(kernel - host) / (1.0 + std::abs(host)));
+  }
+  const bool ok = n_keep > 0 && worst < 1e-4;
+  std::printf("%s: %d draws, worst relative gap %.2e: %s\n", label, n_keep, worst, ok ? "ok" : "FAIL");
+  return ok ? 0 : 1;
+}
+
 }  // namespace
 
 int run();
@@ -144,6 +161,50 @@ int run() {
       const McResult qg = run_mc_gpu(iq, qboot, seed, draws, 0);
       fails += compare("india layout: cpu float vs gpu float", iq, qf, qg, 2e-3);
     }
+  }
+
+  // Demand-feature draws: triangular and uniform, both signs, more than one step of four.
+  {
+    McInputs fi = in;
+    fi.addon_lo = 0.0f;
+    fi.addon_hi = 0.0f;
+    pack_features(fi, {{kFeatureTriangular, 1, 100, 150, 400},
+                       {kFeatureUniform, -1, 0, 0, 250},
+                       {kFeatureTriangular, 1, 50, 50, 80},
+                       {kFeatureTriangular, -1, 10, 30, 30},
+                       {kFeatureTriangular, 1, 20, 40, 60}});
+    calibrate_hist_ranges(fi, boot, seed, 4096);
+    const int n_keep = 4096;
+    const McResult fd = run_mc_cpu(fi, boot, seed, draws, n_keep, false);
+    const McResult ff = run_mc_cpu(fi, boot, seed, draws, n_keep, true);
+    fails += compare("features: cpu double vs cpu float", fi, fd, ff, 2e-3);
+    fails += compare_feature_keep("features: cpu double add-on = host feature sum", fi, fd, seed, n_keep);
+    fails += compare_feature_keep("features: cpu float add-on = host feature sum", fi, ff, seed, n_keep);
+    if (cuda_available()) {
+      const McResult fg = run_mc_gpu(fi, boot, seed, draws, n_keep);
+      fails += compare("features: cpu float vs gpu float", fi, ff, fg, 2e-3);
+      fails += compare_feature_keep("features: gpu float add-on = host feature sum", fi, fg, seed, n_keep);
+    }
+
+    // Constant features (lo = mode = hi) against the same constant add-on: the same ensemble
+    // bin for bin, so the feature stream leaves every other random input of a draw unchanged.
+    McInputs a = in, b = in;
+    a.addon_lo = 120.0f;
+    a.addon_hi = 120.0f;
+    calibrate_hist_ranges(a, boot, seed, 4096);
+    b.addon_lo = 0.0f;
+    b.addon_hi = 0.0f;
+    pack_features(b, {{kFeatureTriangular, 1, 200, 200, 200}, {kFeatureUniform, -1, 80, 80, 80}});
+    for (int s = 0; s < kSeries; ++s)
+      for (int t = 0; t < kMaxYears; ++t) {
+        b.hist_lo[s][t] = a.hist_lo[s][t];
+        b.hist_hi[s][t] = a.hist_hi[s][t];
+      }
+    const McResult ra = run_mc_cpu(a, boot, seed, draws, 0, true);
+    const McResult rb = run_mc_cpu(b, boot, seed, draws, 0, true);
+    const bool same = ra.hist == rb.hist;
+    std::printf("features: constant features = the same constant add-on, bin for bin: %s\n", same ? "ok" : "FAIL");
+    fails += same ? 0 : 1;
   }
   return fails == 0 ? 0 : 1;
 }
