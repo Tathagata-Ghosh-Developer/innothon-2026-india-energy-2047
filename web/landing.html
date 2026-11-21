@@ -64,6 +64,10 @@
     --region-2: #1baf7a;
     --region-3: #eda100;
     --region-4: #e87ba4;
+    /* Demand-feature scenarios: Core in the de-emphasis gray, named scenarios slot 1, joint slot 2 */
+    --scen-core: #50575f;
+    --scen-feature: #2a78d6;
+    --scen-joint: #eb6834;
     /* Space and type */
     --space-2xs: 0.375rem;
     --space-xs: 0.625rem;
@@ -119,6 +123,9 @@
       --region-2: #199e70;
       --region-3: #c98500;
       --region-4: #d55181;
+      --scen-core: #8c97a3;
+      --scen-feature: #3987e5;
+      --scen-joint: #d95926;
     }
   }
 
@@ -211,9 +218,10 @@
     .site-header__inner { grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: "brand tag . cta" "nav nav nav nav"; }
     .site-header__tag { padding-inline-start: var(--space-s); border-inline-start: 1px solid var(--line); }
   }
+  /* Seven section links do not fit beside the brand, tag and button in the 75rem container,
+     so the links keep their own row at every width from 48rem. */
   @media (min-width: 80rem) {
-    .site-header__inner { grid-template-areas: "brand tag nav cta"; gap: var(--space-m); padding-block: var(--space-s); }
-    .site-nav { justify-self: end; }
+    .site-header__inner { gap: var(--space-xs) var(--space-m); padding-block: var(--space-s) var(--space-2xs); }
   }
 
   /* Sections */
@@ -437,7 +445,7 @@
   .chart__bar--change { fill: var(--navy); }
 
   /* Data tables */
-  .data { color: var(--ink-2); font-size: var(--text-s); }
+  .data { min-inline-size: 0; color: var(--ink-2); font-size: var(--text-s); }  /* in a grid figure, a wide table scrolls instead of widening the figure */
   .data__toggle {
     display: inline-flex; align-items: center; min-block-size: 2.75rem; cursor: pointer;
     color: var(--navy); font-weight: 700;
@@ -475,6 +483,81 @@
 
   .callout { padding: var(--space-m); background: var(--card); border: 1px solid var(--line); border-inline-start: 4px solid var(--red); border-radius: var(--radius-l); box-shadow: var(--shadow-sm); }
   .callout__title { margin-block-end: var(--space-2xs); font-size: 1.125rem; font-weight: 700; }
+  .callout__list { display: grid; gap: var(--space-xs); margin-block-start: var(--space-xs); padding-inline-start: 1.25rem; }
+  .callout__list strong { color: var(--ink); }
+
+  /* What else drives 2047: drivers by treatment, scenario ranges, the driver catalogue */
+  .counts { display: grid; gap: var(--space-s); margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
+  .count { display: grid; gap: var(--space-2xs); align-content: start; padding: var(--space-s); background: var(--card); border: 1px solid var(--line); border-block-start: 4px solid var(--navy-fill); border-radius: var(--radius-m); box-shadow: var(--shadow-sm); }
+  .count__value { color: var(--ink); font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .count__label { color: var(--ink); font-weight: 700; line-height: 1.3; }
+  .count__text { color: var(--ink-3); font-size: var(--text-s); }
+  /* Range chart: one horizontal TWh axis from --min to --min + --span (ticks every quarter). */
+  .rng, .rng__axis { --min: 2000; --span: 8000; }
+  .rng { display: grid; margin: var(--space-s) 0 0; padding: 0; list-style: none; }
+  .rng__row, .rng__axis { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-s); }
+  .rng__row { --rng-color: var(--scen-feature); grid-template-areas: "name val" "track track"; padding-block: var(--space-2xs); border-radius: var(--radius-s); }
+  .rng__row[data-key="core"] { --rng-color: var(--scen-core); }
+  .rng__row--joint { --rng-color: var(--scen-joint); margin-block-start: var(--space-2xs); border-block-start: 1px solid var(--line-strong); border-start-start-radius: 0; border-start-end-radius: 0; }
+  .rng__row:hover, .rng__row:focus-visible { background: var(--navy-tint); }
+  .rng__name { grid-area: name; align-self: center; color: var(--ink); font-size: var(--text-s); font-weight: 650; line-height: 1.3; }
+  .rng__val { grid-area: val; align-self: center; color: var(--ink-2); font-size: var(--text-s); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: end; }
+  .rng__val strong { color: var(--ink); }
+  .rng__row[data-key="core"] .rng__chg, .rng__row:not([data-key="core"]) .rng__hl { display: none; }
+  .rng__track {
+    grid-area: track; position: relative; block-size: 1.75rem;
+    background: linear-gradient(to right, var(--line) 1px, transparent 1px) 0 0 / 25% 100%; box-shadow: inset -1px 0 var(--line);
+  }
+  .rng__track::before {
+    content: ""; position: absolute; inset-block: 0; inline-size: 2px; translate: -1px 0; background: var(--scen-core); opacity: 0.6;
+    inset-inline-start: clamp(0%, (var(--core) - var(--min)) / var(--span) * 100%, 100%);
+  }
+  .rng__bar {
+    position: absolute; inset-block-start: 50%; block-size: 6px; translate: 0 -50%; border-radius: 3px; background: var(--rng-color);
+    inset-inline-start: clamp(0%, (var(--p05) - var(--min)) / var(--span) * 100%, 100%);
+    inset-inline-end: clamp(0%, (var(--min) + var(--span) - var(--p95)) / var(--span) * 100%, 100%);
+  }
+  .rng__dot {
+    position: absolute; inset-block-start: 50%; inline-size: 0.875rem; block-size: 0.875rem; translate: -50% -50%;
+    border-radius: 50%; background: var(--rng-color); box-shadow: 0 0 0 2px var(--card);
+    inset-inline-start: clamp(0%, (var(--p50) - var(--min)) / var(--span) * 100%, 100%);
+  }
+  .rng__end {
+    position: absolute; inset-block-start: 50%; translate: 0 -50%; padding-inline: 0.375rem; color: var(--ink-2);
+    font-size: var(--text-xs); line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: 0; transition: opacity 0.15s ease;
+    background: var(--navy-tint); border-radius: 3px;
+  }
+  .rng__end--lo { inset-inline-end: calc(100% - clamp(0%, (var(--p05) - var(--min)) / var(--span) * 100%, 100%)); }
+  .rng__end--hi { inset-inline-start: clamp(0%, (var(--p95) - var(--min)) / var(--span) * 100%, 100%); }
+  .rng__row:hover .rng__end, .rng__row:focus-visible .rng__end { opacity: 1; }
+  .rng__axis { grid-template-areas: "ticks ticks" "label label"; margin-block-start: var(--space-2xs); }
+  .rng__ticks { grid-area: ticks; position: relative; block-size: 1.25rem; }
+  .rng__tick {
+    position: absolute; inset-block-start: 0; translate: -50% 0; color: var(--ink-3); font-size: var(--text-xs); line-height: 1.2;
+    font-variant-numeric: tabular-nums; white-space: nowrap; inset-inline-start: calc((var(--v) - var(--min)) / var(--span) * 100%);
+  }
+  .rng__tick:first-child { translate: 0 0; }
+  .rng__tick:last-child { translate: -100% 0; }
+  .rng__axis-label { grid-area: label; color: var(--ink-3); font-size: var(--text-xs); font-weight: 650; text-align: center; }
+  .legend__swatch--dot { inline-size: 0.75rem; block-size: 0.75rem; border-radius: 50%; }
+  .legend__swatch--range { block-size: 6px; border-radius: 3px; background: var(--ink-3); }
+  .legend__swatch--ref { inline-size: 2px; block-size: 0.875rem; border-radius: 0; background: var(--scen-core); }
+  @media (min-width: 48rem) {
+    .rng__row, .rng__axis { grid-template-columns: 14rem minmax(0, 1fr) 9.5rem; }
+    .rng__row { grid-template-areas: "name track val"; padding-block: 0; }
+    .rng__track { block-size: 2.5rem; }
+    .rng__axis { grid-template-areas: ". ticks ." ". label ."; }
+  }
+  .cat__table { min-inline-size: 52rem; }
+  .cat__table td, .cat__table th { vertical-align: top; }
+  .cat__group-head { padding-block-start: var(--space-s); color: var(--navy); font-size: var(--text-s); font-weight: 800; letter-spacing: 0.02em; background: var(--card-soft); }
+  .cat__source { min-inline-size: 18rem; color: var(--ink-2); font-size: var(--text-xs); }
+  .cat__range { min-inline-size: 9rem; }
+  .cat__table .sg, .cat__table .tm { white-space: nowrap; }
+  /* Effect and treatment: every label is in the page; only the one matching the value shows. */
+  .sg[data-v="1"] [data-k="-1"], .sg[data-v="-1"] [data-k="1"] { display: none; }
+  .tm:not([data-v="core"]) [data-k="core"], .tm:not([data-v="driver"]) [data-k="driver"], .tm:not([data-v="layer"]) [data-k="layer"],
+  .tm:not([data-v="excluded_rule"]) [data-k="excluded_rule"], .tm:not([data-v="context"]) [data-k="context"] { display: none; }
 
   /* Evidence */
   .problem { display: grid; gap: var(--space-s); }
@@ -591,6 +674,7 @@
     .chip[aria-pressed="true"] { outline: 3px solid Highlight; }
     .smap__fill { fill: Highlight; }
     .card--topline::before { background: CanvasText; }
+    .rng__bar, .rng__dot, .rng__track::before { forced-color-adjust: none; background: CanvasText; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
@@ -636,6 +720,7 @@
     <nav class="site-nav" aria-label="Sections">
       <ul class="site-nav__list">
         <li><a class="site-nav__link" href="#forecast">Forecast</a></li>
+        <li><a class="site-nav__link" href="#drivers">Drivers</a></li>
         <li><a class="site-nav__link" href="#regions">Regions</a></li>
         <li><a class="site-nav__link" href="#mix">Mix</a></li>
         <li><a class="site-nav__link" href="#evidence">Evidence</a></li>
@@ -689,7 +774,7 @@
         <span class="icon-box icon-box--red"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-leaf"/></svg></span>
         <div class="stat__body">
           <div class="stat__top"><p class="stat__value stat__value--red num">{{plan.nonfossil_pct|1}}% non-fossil</p><span class="pill">Recommended mix</span></div>
-          <p class="stat__text"><span class="num">{{plan.co2_mt|0}} Mt</span> CO₂ and <span class="num">{{plan.cost_busd|0}} bn USD</span> a year, against <span class="num">{{plan.base_policy.co2_mt|0}} Mt</span> and <span class="num">{{plan.base_policy.cost_busd|0}} bn USD</span> under base policy; <span class="num">{{plan.unmet_twh|0}} TWh</span> unmet at the median.</p>
+          <p class="stat__text"><span class="num">{{plan.co2_mt|0}} Mt</span> CO₂ and <span class="num">{{plan.cost_busd|0}} bn USD</span> a year (real 2024 USD), against <span class="num">{{plan.base_policy.co2_mt|0}} Mt</span> and <span class="num">{{plan.base_policy.cost_busd|0}} bn USD</span> under base policy; <span class="num">{{plan.unmet_twh|0}} TWh</span> unmet at the median.</p>
         </div>
       </li>
       <li class="stat stat--accent">
@@ -934,7 +1019,113 @@
   </div>
 </section>
 
-<section class="section section--band" id="regions" aria-labelledby="regions-title">
+<!-- What else drives 2047: the demand-feature layer (features.* in the summary). It sits on
+     top of the headline and never changes it. The scenario chart is HTML: each row places its
+     range and median on one TWh axis with CSS calc() from the values in its style attribute;
+     the axis runs from --min to --min + --span in .rng (CSS) and the ticks below match it. -->
+<section class="section section--band" id="drivers" aria-labelledby="drivers-sec-title">
+  <div class="container">
+    <div class="section__head">
+      <p class="kicker">Drivers</p>
+      <h2 class="section__title" id="drivers-sec-title">What else drives 2047</h2>
+      <p class="lead">Income, population and urbanisation drive the forecast, but much else can change what India must generate. We listed every driver we found, <strong class="num">{{features.counts.total|0}}</strong> in all, each with its source, and sized in TWh those that official figures allow.</p>
+    </div>
+
+    <aside class="callout" aria-labelledby="feat-read-title">
+      <h3 class="callout__title" id="feat-read-title">What this layer is, and what it is not</h3>
+      <ul class="callout__list">
+        <li><strong>The headline stays the two-dataset estimate.</strong> The <span class="num">{{national.p50|0}} TWh</span> for {{years.target_label}} is estimated on NPP and the Renewable India dataset alone. Nothing in this section changes it.</li>
+        <li><strong>The features are an official-source layer on top.</strong> Each quantified driver is a signed TWh adjustment from official sources: ministries, statutory bodies such as CEA and BEE, and NITI Aayog (secondary, labelled). Only its part beyond the historical trend is counted, phased in linearly from {{years.base_label}} and shared across the regions in proportion to their requirement.</li>
+        <li><strong>T&amp;D losses are an upper bound.</strong> Lower grid losses would cut the generation needed, but that gain may already be inside the historical trend. It counts as 0 at central, at its upper bound only in the two downside cases (Efficiency and distributed, All downside), and as a draw between 0 and that bound in the joint scenarios.</li>
+      </ul>
+    </aside>
+
+    <h3 class="sub-title" id="counts-title"><span class="num">{{features.counts.total|0}}</span> drivers, by how the model treats them</h3>
+    <ul class="counts" aria-labelledby="counts-title">
+      <li class="count"><span class="count__value">{{features.counts.core|0}}</span><span class="count__label">Estimated</span><span class="count__text">Inside the two-dataset estimate, such as population, income and the efficiency programmes already in the historical trend.</span></li>
+      <li class="count"><span class="count__value">{{features.counts.driver|0}}</span><span class="count__label">Model drivers</span><span class="count__text">Carried by the forecast as an assumption, a setting or its model error, such as the urbanisation effect.</span></li>
+      <li class="count"><span class="count__value">{{features.counts.layer|0}}</span><span class="count__label">Quantified layer</span><span class="count__text">Sized in TWh for {{years.target_label}} from official figures. These make the scenarios below.</span></li>
+      <li class="count"><span class="count__value">{{features.counts.excluded_rule|0}}</span><span class="count__label">Excluded by rule</span><span class="count__text">Outside the forecast's scope by the organisers' ruling, such as captive generation, which NPP's utility series leaves out.</span></li>
+      <li class="count"><span class="count__value">{{features.counts.context|0}}</span><span class="count__label">Context</span><span class="count__text">Listed with its source but not added: no official figure separates it from the trend, it is already inside it, or it is a target rather than a load.</span></li>
+    </ul>
+
+    <figure class="figure grid--spaced" aria-labelledby="scen-caption">
+      <figcaption class="figure__title" id="scen-caption">{{years.target_label}} requirement by scenario: median and 90% range, TWh</figcaption>
+      <p class="note">Core is the headline. Every other row adds the quantified features, set as its name says.</p>
+      <ol class="rng" aria-labelledby="scen-caption" style="--core: {{features.scenarios.core.p50_twh|r0}}">
+        <!--each features.scenarios.list--><li class="rng__row" data-key="{{@.key}}" tabindex="0" style="--p05: {{@.p05_twh|r0}}; --p50: {{@.p50_twh|r0}}; --p95: {{@.p95_twh|r0}}">
+          <span class="rng__name">{{@.name}}</span>
+          <span class="rng__track" aria-hidden="true"><span class="rng__bar"></span><span class="rng__dot"></span><span class="rng__end rng__end--lo">{{@.p05_twh|0}}</span><span class="rng__end rng__end--hi">{{@.p95_twh|0}}</span></span>
+          <span class="rng__val"><strong>{{@.p50_twh|0}}</strong> TWh <span class="rng__chg">{{@.change_pct|+0}}%</span><span class="rng__hl">headline</span><span class="visually-hidden">; 90% of scenarios between {{@.p05_twh|0}} and {{@.p95_twh|0}} TWh</span></span>
+        </li><!--/each-->
+        <li class="rng__row rng__row--joint" data-key="joint" tabindex="0" style="--p05: {{features.joint.p05_twh|r0}}; --p50: {{features.joint.p50_twh|r0}}; --p95: {{features.joint.p95_twh|r0}}">
+          <span class="rng__name">Joint: all features at random</span>
+          <span class="rng__track" aria-hidden="true"><span class="rng__bar"></span><span class="rng__dot"></span><span class="rng__end rng__end--lo">{{features.joint.p05_twh|0}}</span><span class="rng__end rng__end--hi">{{features.joint.p95_twh|0}}</span></span>
+          <span class="rng__val"><strong>{{features.joint.p50_twh|0}}</strong> TWh <span class="rng__chg">{{features.joint.change_p50_pct|+0}}%</span><span class="visually-hidden">; 90% of scenarios between {{features.joint.p05_twh|0}} and {{features.joint.p95_twh|0}} TWh</span></span>
+        </li>
+      </ol>
+      <div class="rng__axis" aria-hidden="true">
+        <span class="rng__ticks"><span class="rng__tick" style="--v: 2000">2,000</span><span class="rng__tick" style="--v: 4000">4,000</span><span class="rng__tick" style="--v: 6000">6,000</span><span class="rng__tick" style="--v: 8000">8,000</span><span class="rng__tick" style="--v: 10000">10,000</span></span>
+        <span class="rng__axis-label">{{years.target_label}} generation requirement, TWh</span>
+      </div>
+      <ul class="legend" aria-hidden="true">
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch: var(--scen-core)"></span>Core (headline)</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch: var(--scen-feature)"></span>Named feature scenario</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch: var(--scen-joint)"></span>Joint draw</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--range"></span>90% of scenarios (P5 to P95); dot: median</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--ref"></span>Core median</li>
+      </ul>
+      <p class="note">Each row reruns all {{scenarios|0}} core scenarios with the features added. Percentages: change in the median from Core. Hover over or focus a row for its P5 and P95.</p>
+      <details class="data">
+        <summary class="data__toggle">Show the numbers</summary>
+        <div class="data__scroll" tabindex="0" role="region" aria-labelledby="scen-table-caption">
+          <table class="table">
+            <caption class="table__caption" id="scen-table-caption">{{years.target_label}} requirement by scenario, TWh. Core is the headline; the other rows add the quantified features.</caption>
+            <thead><tr><th class="table__head" scope="col">Scenario</th><th class="table__head" scope="col">Features set to</th><th class="table__head table__head--num" scope="col">Features add</th><th class="table__head table__head--num" scope="col">P5</th><th class="table__head table__head--num" scope="col">Median</th><th class="table__head table__head--num" scope="col">P95</th><th class="table__head table__head--num" scope="col">Median vs Core</th></tr></thead>
+            <tbody>
+              <!--each features.scenarios.list--><tr><th class="table__cell" scope="row">{{@.name}}</th><td class="table__cell">{{@.description}}</td><td class="table__cell table__cell--num">{{@.adjustment_twh|+0}}</td><td class="table__cell table__cell--num">{{@.p05_twh|0}}</td><td class="table__cell table__cell--num">{{@.p50_twh|0}}</td><td class="table__cell table__cell--num">{{@.p95_twh|0}}</td><td class="table__cell table__cell--num">{{@.change_pct|+1}}%</td></tr><!--/each-->
+              <tr><th class="table__cell" scope="row">Joint: all features at random</th><td class="table__cell">{{features.joint.description}}</td><td class="table__cell table__cell--num">{{features.joint.features_p50_twh|+0}} (median)</td><td class="table__cell table__cell--num">{{features.joint.p05_twh|0}}</td><td class="table__cell table__cell--num">{{features.joint.p50_twh|0}}</td><td class="table__cell table__cell--num">{{features.joint.p95_twh|0}}</td><td class="table__cell table__cell--num">{{features.joint.change_p50_pct|+1}}%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
+
+    <div class="grid grid--2 grid--spaced">
+      <article class="card kpi" aria-labelledby="joint-title">
+        <h3 class="kpi__title" id="joint-title">The joint distribution: every feature at once</h3>
+        <p class="kpi__value">{{features.joint.p50_twh|0}}<span class="kpi__unit">TWh</span></p>
+        <p class="kpi__detail">Median of Core plus every quantified feature drawn at random over its official range: <span class="num">{{features.joint.change_p50_pct|+0}}%</span> on the headline, with 90% of scenarios between <span class="num">{{features.joint.p05_twh|0}}</span> and <span class="num">{{features.joint.p95_twh|0}} TWh</span>. The features alone add <span class="num">{{features.joint.features_p50_twh|0}} TWh</span> at the median (90%: <span class="num">{{features.joint.features_p05_twh|0}}</span> to <span class="num">{{features.joint.features_p95_twh|0}} TWh</span>).</p>
+        <p class="kpi__detail">Each feature is drawn on its own, triangular between its low, central and high values; T&amp;D losses are drawn evenly between 0 and their upper bound. Every combination of feature levels lies between All downside (<span class="num">{{features.scenarios.all_downside.adjustment_twh|+0}} TWh</span>) and All upside (<span class="num">{{features.scenarios.all_upside.adjustment_twh|+0}} TWh</span>) on top of Core.</p>
+      </article>
+      <aside class="callout" aria-labelledby="feat-p90-title">
+        <h3 class="callout__title" id="feat-p90-title">The P90 plan test under the joint distribution</h3>
+        <p>The {{features.p90_plan.policy}} plan, solved at least cost for each requirement:</p>
+        <ul class="callout__list">
+          <li>Core P90, the headline stress test (<span class="num">{{features.p90_plan.core_p90_twh|0}} TWh</span>): <!--if features.p90_plan.core_robust_unmet_twh--><strong class="num">{{features.p90_plan.core_robust_unmet_twh|0}} TWh</strong> unmet<!--else--><strong>infeasible</strong><!--/if-->.</li>
+          <li>Joint median (<span class="num">{{features.p90_plan.joint_p50_twh|0}} TWh</span>): <!--if features.p90_plan.joint_p50_unmet_twh--><strong class="num">{{features.p90_plan.joint_p50_unmet_twh|0}} TWh</strong> unmet<!--else--><strong>infeasible</strong><!--/if-->.</li>
+          <li>Joint P90 (<span class="num">{{features.p90_plan.requirement_twh|0}} TWh</span>): <!--if features.p90_plan.robust_unmet_twh--><strong class="num">{{features.p90_plan.robust_unmet_twh|0}} TWh</strong> unmet<!--else--><strong>infeasible</strong><!--/if-->.</li>
+        </ul>
+        <p class="note grid--spaced">Unmet: requirement the plan cannot serve within its land, build and corridor limits. The recommended plan is sized on the Core median; choose a demand-feature scenario in the <a href="app/">dashboard</a> to rerun the forecast, the regional split and the plan with it.</p>
+      </aside>
+    </div>
+
+    <details class="figure data grid--spaced">
+      <summary class="data__toggle">Show all {{features.counts.total|0}} drivers, by group</summary>
+      <div class="data__scroll" tabindex="0" role="region" aria-labelledby="cat-caption">
+        <table class="table cat__table">
+          <caption class="table__caption" id="cat-caption">Every driver of the {{years.target_label}} requirement we found: its effect on generation, how the model treats it, its size in {{years.target_label}} and its source</caption>
+          <thead><tr><th class="table__head" scope="col">Driver</th><th class="table__head" scope="col">Effect</th><th class="table__head" scope="col">Treatment</th><th class="table__head" scope="col">Size in {{years.target_label}}</th><th class="table__head" scope="col">Source</th></tr></thead>
+          <!--each features.catalogue--><!--group @.group--><tbody><tr><th class="table__cell cat__group-head" scope="rowgroup" colspan="5">{{@.group_label}}</th></tr><!--/group--><tr><th class="table__cell" scope="row">{{@.label}}</th><td class="table__cell"><span class="sg" data-v="{{@.sign}}"><span data-k="1">Raises</span><span data-k="-1">Lowers</span></span></td><td class="table__cell"><span class="tm" data-v="{{@.in_model}}"><span data-k="core">Estimated</span><span data-k="driver">Model driver</span><span data-k="layer">Quantified layer</span><span data-k="excluded_rule">Excluded by rule</span><span data-k="context">Context</span></span></td><td class="table__cell cat__range">{{@.range}}</td><td class="table__cell cat__source">{{@.source}}</td></tr>
+          <!--/each-->
+        </table>
+      </div>
+      <p class="note">Sizes are the change in {{years.target_label}} utility generation beyond the historical trend, low to high. Sources are official and secondary unless a row says otherwise; each row's page or table, link and access date are in <code>data/external/demand_features.csv</code> in the repository, and every value in this section is in <a href="summary.json">summary.json</a>.</p>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="regions" aria-labelledby="regions-title">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Regions</p>
@@ -1007,7 +1198,7 @@
   </div>
 </section>
 
-<section class="section" id="mix" aria-labelledby="mix-title">
+<section class="section section--band" id="mix" aria-labelledby="mix-title">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Mix</p>
@@ -1031,7 +1222,7 @@
       <article class="card kpi" aria-labelledby="kpi-cost">
         <h3 class="kpi__title" id="kpi-cost">System cost</h3>
         <p class="kpi__value">{{plan.cost_busd|0}}<span class="kpi__unit">bn USD/yr</span></p>
-        <p class="kpi__detail">Base policy: {{plan.base_policy.cost_busd|0}} bn USD a year</p>
+        <p class="kpi__detail">Real 2024 USD. Base policy: {{plan.base_policy.cost_busd|0}} bn USD a year</p>
       </article>
       <article class="card kpi" aria-labelledby="kpi-unmet">
         <h3 class="kpi__title" id="kpi-unmet">Unmet at the median</h3>
@@ -1039,6 +1230,13 @@
         <p class="kpi__detail">Base policy: {{plan.base_policy.unmet_twh|0}} TWh</p>
       </article>
     </div>
+    <section class="card card--soft grid--spaced" aria-labelledby="prices-title">
+      <h3 class="callout__title" id="prices-title">Prices: real 2024 US dollars</h3>
+      <div class="grid grid--2">
+        <p class="kpi__detail">Every cost on this page is in real 2024 USD. The default costs (IEA World Energy Outlook 2025) are already on that base; costs given in rupees or for other years, such as CEA's, are converted with official indices: the MoSPI GDP deflator, the RBI exchange rate (Rs {{plan.nominal_outlook.inr_per_usd_2024|2}} per USD in 2024) and the US BEA GDP deflator. Nominal interest rates are made real at the RBI inflation target. On CEA's cost basis the least-cost plan under the same policy costs <span class="num">{{sensitivity_mix.cost_basis_cea.cost_busd|0}} bn USD</span> a year, <span class="num">{{sensitivity_mix.cost_basis_cea_pi6.cost_busd|0}}</span> to <span class="num">{{sensitivity_mix.cost_basis_cea_pi2.cost_busd|0}}</span> across the RBI's tolerance band.</p>
+        <p class="kpi__detail"><strong>Nominal outlook, for information only:</strong> in the money of {{plan.nominal_outlook.year}}, the plan's <span class="num">{{plan.nominal_outlook.real_2024_busd|0}} bn USD</span> a year is about <span class="num">Rs {{plan.nominal_outlook.inr_lakh_crore|1}} lakh crore</span> ({{plan.nominal_outlook.inr_lakh_crore|1}} trillion rupees) or <span class="num">{{plan.nominal_outlook.usd_bn|0}} bn USD</span>, with prices rising {{plan.nominal_outlook.india_inflation_pct|0}}% a year in India (the RBI target) and {{plan.nominal_outlook.us_inflation_pct|0}}% in the US (the Federal Reserve's goal).</p>
+      </div>
+    </section>
 
     <div class="grid grid--golden grid--spaced">
       <figure class="figure chart" aria-labelledby="mix-caption">
@@ -1134,7 +1332,7 @@
   </div>
 </section>
 
-<section class="section section--band" id="evidence" aria-labelledby="evidence-title">
+<section class="section" id="evidence" aria-labelledby="evidence-title">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Evidence</p>
@@ -1147,7 +1345,7 @@
     </div>
 
     <h3 class="sub-title" id="sources-title">Key evidence sources</h3>
-    <p class="note" style="margin-block: calc(-1 * var(--space-s)) var(--space-m)">Primary: the two challenge datasets, the National Power Portal and the Renewable India dataset. Every other source is secondary and labelled. Three outside inputs shape the 2047 requirement: the UN population and urban-share paths, used as driver assumptions as the organisers ruled and checked against the dataset's state growth, and the size of the urbanisation effect, our judgment from published studies. All other secondary sources set only limits and prices in the mix.</p>
+    <p class="note" style="margin-block: calc(-1 * var(--space-s)) var(--space-m)">Primary: the two challenge datasets, the National Power Portal and the Renewable India dataset. Every other source is secondary and labelled. Three outside inputs shape the 2047 requirement: the UN population and urban-share paths, used as driver assumptions as the organisers ruled and checked against the dataset's state growth, and the size of the urbanisation effect, our judgment from published studies. The MoSPI GDP deflator corrects one input: Jammu and Kashmir's GSDP, which the dataset gives at current prices from FY2012-13, is put on constant prices like every other state's. All other secondary sources set only limits and prices in the mix, or size the demand features, which stay outside the headline.</p>
     <ul class="evidence" aria-labelledby="sources-title">
       <li class="card card--soft evidence__item">
         <span class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg></span>
@@ -1177,7 +1375,7 @@
           <p class="evidence__what">Today's baseload and renewable generation in each region.</p>
           <ul class="sources">
             <li class="sources__item"><span class="tag tag--primary">Primary</span><span>NPP coal, gas, nuclear and hydro generation by region, {{years.base_label}}</span></li>
-            <li class="sources__item"><span class="tag tag--secondary">Secondary</span><span>CEA state-wise renewable generation; costs (IEA World Energy Outlook 2025, CEA), build limits (CEA National Electricity Plan), CO₂ factors (CEA CO₂ Baseline Database)</span></li>
+            <li class="sources__item"><span class="tag tag--secondary">Secondary</span><span>CEA state-wise renewable generation; costs (IEA World Energy Outlook 2025, CEA), all in real 2024 USD through MoSPI, RBI and US BEA price indices; build limits (CEA National Electricity Plan), CO₂ factors (CEA CO₂ Baseline Database)</span></li>
           </ul>
         </div>
       </li>
@@ -1209,6 +1407,7 @@
           <p class="evidence__what">Income growth by state, and towns and cities growing faster than income alone implies.</p>
           <ul class="sources">
             <li class="sources__item"><span class="tag tag--primary">Primary</span><span>Renewable India dataset: state GSDP at constant prices</span></li>
+            <li class="sources__item"><span class="tag tag--secondary">Secondary</span><span>MoSPI GDP deflator: Jammu and Kashmir's GSDP, given at current prices from FY2012-13, deflated to constant prices</span></li>
             <li class="sources__item"><span class="tag tag--secondary">Secondary</span><span>Size of the urbanisation effect, from published studies (our judgment; the run without it is always shown)</span></li>
           </ul>
         </div>
@@ -1217,7 +1416,7 @@
   </div>
 </section>
 
-<section class="section" id="method" aria-labelledby="method-title">
+<section class="section section--band" id="method" aria-labelledby="method-title">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Method</p>
@@ -1260,7 +1459,7 @@
       <h3 class="callout__title" id="rules-title">Data rules</h3>
       <div class="stack">
         <p>The 2047 prediction is estimated on the two challenge datasets: generation from the National Power Portal (NPP) and the organisers' state population and GSDP. Its population and urban-share paths come from the UN (World Population Prospects 2024, World Urbanization Prospects 2018; secondary), as driver assumptions the organisers' ruling allows, checked against the dataset's state growth; the size of the urbanisation effect is our judgment from published studies, and the run without it is always shown.</p>
-        <p>Only energy generated (TWh) is forecast and compared; installed capacity and energy consumption are never inputs. All other published sources supply only limits and prices for the mix: costs, resource potential, build rates and emissions.</p>
+        <p>Only energy generated (TWh) is forecast and compared; installed capacity and energy consumption are never inputs to the forecast. All other published sources supply only limits and prices for the mix (costs, resource potential, build rates and emissions) or size the <a href="#drivers">demand features</a>, an official-source layer kept outside the headline. Every cost is in real 2024 USD.</p>
         <p class="note">Years are fiscal years: {{years.target_label}} runs from April {{years.target}} to March of the next year.</p>
       </div>
     </div>
@@ -1268,7 +1467,7 @@
   </div>
 </section>
 
-<section class="section section--band" id="deliverables" aria-labelledby="deliverables-title">
+<section class="section" id="deliverables" aria-labelledby="deliverables-title">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Deliverables</p>
@@ -1279,7 +1478,7 @@
       <li class="card card--topline deliverable">
         <p class="deliverable__no">Deliverable 01</p>
         <h3 class="card__title">2047 forecast model</h3>
-        <p>National and region-wise generation requirement, from population, income and urbanisation, with its range.</p>
+        <p>National and region-wise generation requirement, from population, income and urbanisation, with its range. All {{features.counts.total|0}} drivers we found are listed with their sources; the {{features.counts.layer|0}} that official figures can size are shown as scenarios outside the headline.</p>
         <a class="deliverable__link" href="#forecast">See the forecast</a>
       </li>
       <li class="card card--topline deliverable">
@@ -1311,7 +1510,7 @@
   </div>
 </section>
 
-<section class="section" id="timeline" aria-labelledby="timeline-title">
+<section class="section section--band" id="timeline" aria-labelledby="timeline-title">
   <div class="container split">
     <div class="section__head">
       <p class="kicker">Timeline</p>
@@ -1377,7 +1576,7 @@
   </div>
 </section>
 
-<section class="section section--band" id="faq" aria-labelledby="faq-title">
+<section class="section" id="faq" aria-labelledby="faq-title">
   <div class="container split">
     <div class="section__head">
       <p class="kicker">FAQ</p>
@@ -1393,14 +1592,15 @@
             <li>Income growth 1.5 points a year higher or lower: <span class="num">{{sensitivity.growth_plus_1_5.change_pct|+0}}%</span> or <span class="num">{{sensitivity.growth_minus_1_5.change_pct|0}}%</span>.</li>
             <li>Urban share 5 points above the UN path: <span class="num">{{sensitivity.urban_plus_5.change_pct|+0}}%</span>; no urbanisation effect: <span class="num">{{sensitivity.no_urban_term.change_pct|0}}%</span>.</li>
             <li>Population range twice as wide: <span class="num">{{sensitivity.pop_band_x2.change_pct|+1}}%</span>.</li>
-            <li>Demand features beyond the historical trend, such as transport electrification, green hydrogen and data centres, less rooftop solar and other offsets, from official sources (secondary), are a separate layer outside the headline: a median of <span class="num">{{features.scenarios.features_central.p50_twh|0}} TWh</span> (<span class="num">{{features.scenarios.features_central.change_pct|+0}}%</span>) with every feature at its central value, and <span class="num">{{features.joint.p50_twh|0}} TWh</span> (<span class="num">{{features.joint.change_p50_pct|+0}}%</span>) with the features drawn jointly.</li>
+            <li>Demand features beyond the historical trend, such as transport electrification, green hydrogen and data centres, less rooftop solar and other offsets, from official sources (secondary), are a separate layer outside the headline: a median of <span class="num">{{features.scenarios.features_central.p50_twh|0}} TWh</span> (<span class="num">{{features.scenarios.features_central.change_pct|+0}}%</span>) with every feature at its central value, and <span class="num">{{features.joint.p50_twh|0}} TWh</span> (<span class="num">{{features.joint.change_p50_pct|+0}}%</span>) with the features drawn jointly. See <a href="#drivers">what else drives 2047</a>.</li>
           </ul>
         </div>
       </details>
       <details class="faq__item">
         <summary class="faq__q"><span class="faq__no" aria-hidden="true">02</span><span class="faq__text">Is income data used state-wise, region-wise or for India as a whole?</span><svg class="icon faq__chev" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></summary>
         <div class="faq__a">
-          <p>State-wise. Each of the<!--if regions.state_count--> {{regions.state_count|0}}<!--/if--> states and union territories in the Renewable India dataset has its own income per person, from its GSDP at constant prices and its population, converging over time at a rate estimated from the same data.</p>
+          <p>State-wise. Each of the<!--if regions.state_count--> {{regions.state_count|0}}<!--/if--> states and union territories in the Renewable India dataset has its own income per person, from its GSDP at constant prices and its population. Jammu and Kashmir's GSDP, which the dataset gives at current prices from FY2012-13, is first deflated with the MoSPI GDP deflator; leaving the state out of national income growth instead moves the {{years.target_label}} median by <span class="num">{{sensitivity.jk_excluded.change_pct|+1}}%</span>.</p>
+          <p>Relative incomes move towards the national average at a convergence rate estimated from the same data, each state measured from its first year that is not a repeated placeholder value. The dashboard shows the estimated rate.</p>
           <p>Each state's population grows at India's UN path plus its own recent trend in the dataset, and its generation per person follows its own income; states are weighted by population and summed into NPP's {{len regions.list}} grid regions.</p>
         </div>
       </details>
@@ -1430,7 +1630,7 @@
         <summary class="faq__q"><span class="faq__no" aria-hidden="true">05</span><span class="faq__text">What hurdles did you face, and how are you dealing with them?</span><svg class="icon faq__chev" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg></summary>
         <div class="faq__a">
           <ul>
-            <li><strong>Rules on outside data.</strong> We asked the organisers in writing and applied their ruling: the requirement is estimated on NPP and the Renewable India dataset, with the UN population and urban-share paths as stated driver assumptions (secondary, checked against the dataset) and an urbanisation effect sized from published studies; all other published sources set only limits and prices in the mix. Without our urbanisation effect the forecast gives {{sensitivity.no_urban_term.p50_twh|0}} TWh.</li>
+            <li><strong>Rules on outside data.</strong> We asked the organisers in writing and applied their ruling: the requirement is estimated on NPP and the Renewable India dataset, with the UN population and urban-share paths as stated driver assumptions (secondary, checked against the dataset) and an urbanisation effect sized from published studies; the MoSPI GDP deflator puts Jammu and Kashmir's current-price GSDP on constant prices; all other published sources set only limits and prices in the mix, or size the demand features shown outside the headline. Without our urbanisation effect the forecast gives {{sensitivity.no_urban_term.p50_twh|0}} TWh.</li>
             <li><strong>Wide uncertainty.</strong> Income growth dominates, so the plan is also tested at the P90 requirement ({{plan.p90.requirement_twh|0}} TWh): the Robust policy leaves {{plan.p90.robust_unmet_twh|0}} TWh unmet, and making {{plan.p90.levers_solar_land_pct|0}}% of the solar potential usable brings that to {{plan.p90.levers_unmet_twh|0}} TWh.</li>
             <li><strong>Missing regional renewable data.</strong> Handled as in question 3, with every secondary source labelled.</li>
             <li><strong>Evening peaks an annual plan can hide.</strong> The plan is run hour by hour through a year of NPP hourly generation; it needs {{storage.energy_gwh|0}} GWh of storage, about {{storage.duration_h|1}} hours.</li>
