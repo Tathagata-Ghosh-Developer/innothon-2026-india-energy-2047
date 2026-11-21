@@ -1,8 +1,8 @@
 % India's electricity in 2047: forecast from the two challenge datasets and a robust regional strategy.
 % Build: latexmk -pdf main.tex      (presentation)
 %        latexmk -pdf reader.tex    (reader's edition: a note page after every slide)
-% Every number comes from data/*.csv and data/site_summary.json (copies of outputs/, run of 21 Nov 2026,
-% commit 982bdec, after the final evaluation; every change is in docs/decisions.md, D14) or a cited source.
+% Every number comes from data/*.csv and data/site_summary.json (copies of outputs/, run of 22 Nov 2026,
+% commit 8800881; the changes after the final evaluation are in docs/decisions.md, D14) or a cited source.
 % Money is in real 2024 USD.
 \documentclass[aspectratio=169,10pt,t]{beamer}
 \usetheme{India2047}
@@ -94,7 +94,7 @@
 \textbf{Since the final evaluation (21 Nov, D14).} Every number in this deck is from the run after it.\par\medskip
 \textbf{Inflation.} Jammu and Kashmir's GSDP, which the dataset gives at current prices from 2012, is deflated with the MoSPI GDP deflator (secondary): the median moves from 4,703 to 4,688\,TWh. Every cost is in real 2024 USD; the CEA cost basis is now on the same base, the IEA plan did not change.\par\medskip
 \textbf{Regions.} Each state's convergence base year now skips its placeholder years: convergence falls from 2.1\% to 0.2\% a year, so the South and West gain share and the North, East and North-East lose (slides 12 and 13).\par\medskip
-\textbf{Demand features.} 49 drivers from official sources, 11 sized, as a layer outside the headline (slide 11); it replaces the new-loads scenario. The High growth preset lost its unofficial 100--300\,TWh add-on.}
+\textbf{Demand features.} 73 drivers from official sources, 11 sized, as a layer outside the headline (slide 11); it replaces the new-loads scenario. The High growth preset lost its unofficial 100--300\,TWh add-on.}
 }
 
 % =====================================================================  2
@@ -318,11 +318,12 @@ Fiscal year & P10 & Median & P90\\
 \evidence{NPP \cite{npp_dashboard,npp_18col}; population and GSDP \cite{organiser_dataset}; drivers \cite{un_wpp2024,un_wup2018}; \texttt{outputs/forecast\_national\_regional.csv}, \texttt{holdout.csv}, \texttt{core\_comparison.csv} \cite{e47_repo}; benchmark \cite{cea_nep2023} (Table 5.11); check uses \cite{ember_yearly,wb_wdi}.}
 \note{%
 \textbf{Message.} About 4,700\,TWh of utility generation in FY2047-48 (median 4,688, P10--P90 3,471--6,408), the country's total, 2,990\,TWh more than in FY2023-24. The band is wide because income growth over 24 years is uncertain (slide 10).\par\medskip
-\textbf{Reading the chart.} Black: NPP history FY2006-07 to FY2023-24. Open circles: FY2024-25 and FY2025-26 (holdout, slide 9). Red diamonds: CEA's own utility projections. Right edge: the cross-country model with its 90\% band, which uses Ember and World Bank data and therefore is used for justification only, never for estimation.}
+\textbf{Reading the chart.} Black: NPP history FY2006-07 to FY2023-24. Open circles: FY2024-25 and FY2025-26 (holdout, slide 9). Red diamonds: CEA's own utility projections. Right edge: the cross-country model with its 90\% band, which uses Ember and World Bank data and therefore is used for justification only, never for estimation.\par\medskip
+\textbf{CEA's 2047 figure.} CEA's 2047 road map (Oct 2025) estimates a 2046-47 energy requirement of 4,582\,BU (BU = TWh), measured before station auxiliary use, so it is not a like-for-like benchmark. Grossed up for auxiliary use and carried to FY2047-48 at CEA's own growth rate, it is about 4,980 to 5,080\,TWh, 6 to 8\% above our 4,688\,TWh median and well inside our P10--P90 range (3,471--6,408).}
 \end{frame}
 \note{%
 \textbf{Continued.}\par\medskip
-\textbf{CEA benchmarks, generation only.} NEP 2022-32 gross generation (Table 5.11): 2,666\,TWh in FY2031-32 against our median 2,378 ($-$11\%; CEA lies between our P75 2,550 and P90 2,719). CEA's 2026 review, as reported in the press (secondary, not on the slide): gross generation 3,596\,BU in FY2035-36 against our 2,879 ($-$20\%; between our P90 3,453 and P95 3,641). CEA's Electric Power Survey figures are energy requirement, a consumption-side measure, so they are context only and never compared with our generation.\par\medskip
+\textbf{CEA benchmarks, generation only.} NEP 2022-32 gross generation (Table 5.11): 2,666\,TWh in FY2031-32 against our median 2,378 ($-$11\%; CEA lies between our P75 2,550 and P90 2,719). CEA's National Generation Adequacy Plan (19 Mar 2026; Fig.~4.3, PDF p.~42; secondary, not on the slide): gross generation 3,596\,BU in FY2035-36 against our 2,879 ($-$20\%; between our P90 3,453 and P95 3,641). CEA's Electric Power Survey figures are energy requirement, a consumption-side measure, so they are context only and never compared with our generation.\par\medskip
 \textbf{Why the check is lower.} It carries rich-country saturation into India (elasticity 0.44--0.57 at India's income). Its median sits inside our band, 3.4\% below our median, although its scope (total generation, calendar years) is wider than NPP's.\par\medskip
 \textbf{Likely questions.}\par
 \qa{What happened to your 6,000\,TWh?}{It was our pre-data hypothesis at registration. It lies between our P75 (5,516) and P90 (6,408).}
@@ -454,7 +455,7 @@ Damped trend & 2.2 & 4.8 & 6.5 & 7.1 & 6.9\\
 \end{tikzpicture}\par
 \vspace{1.2mm}
 {\fontsize{7.4}{8.9}\selectfont
-\textbf{\color{navy}Demand features, outside the headline.} 49 drivers listed from official sources (secondary); 11 are sized beyond the historical trend. Features central gives \textbf{5,810\,TWh} (+23.9\%); core and features drawn jointly, P50 5,769 (P5--P95 4,225--8,121). Never added to the headline.\par}
+\textbf{\color{navy}Demand features, outside the headline.} 73 drivers listed from official sources (secondary); 11 are sized beyond the historical trend. Features central gives \textbf{5,810\,TWh} (+23.9\%); core and features drawn jointly, P50 5,765 (P5--P95 4,222--8,118). Never added to the headline.\par}
 \column{\gB\textwidth}
 \vspace{0.5mm}
 \stat{87.5\%}{of the growth to FY2047-48 comes from income per person; population adds 14.8\%}{}
@@ -477,20 +478,21 @@ First-difference estimate & 4,366 & $-$6.9\%\\
 \evidence{\texttt{outputs/growth\_decomposition\_2047.csv}, \texttt{sensitivity\_2047.csv}, \texttt{feature\_scenarios\_2047.csv}; catalogue \texttt{docs/demand\_features.md} \cite{e47_repo}; primary: NPP \cite{npp_dashboard}, Renewable India \cite{organiser_dataset}; secondary: population path \cite{un_wpp2024}, feature sizes (official) \cite{niti_2026_overview,niti_2026_power,cea_general_review_2025,cea_nep2023}.}
 \note{%
 \textbf{Message.} The panel asked whether income is the only factor. It is the largest, not the only one: on the central path income per person carries 87.5\% of the growth in log terms, population 14.8\% and urbanisation beyond what income brings 4.8\%; the fading of the high base-year residual (+0.072) takes back 7.2\%. The parts add up exactly (test \texttt{decomposition\_adds\_up}).\par\medskip
-\textbf{Evidence.} \texttt{growth\_decomposition\_2047.csv}: income 0.870 log points ($\beta$ 0.835 $\times$ the change of ln GSDP per person), population 0.148 (UN WPP 2024 medium), urbanisation 0.048 ($\gamma$ 1.0, $\kappa$ 0.093), model error $-$0.072, total 0.994 = ln(4,589 / 1,698). Elasticity rows: \texttt{sensitivity\_2047.csv}, each a full rerun of the 4.2 million draws.}
+\textbf{Evidence.} \texttt{growth\_decomposition\_2047.csv}: income 0.870 log points ($\beta$ 0.835 $\times$ the change of ln GSDP per person), population 0.148 (UN WPP 2024 medium), urbanisation 0.048 ($\gamma$ 1.0, $\kappa$ 0.093), model error $-$0.072, total 0.994 = ln(4,589 / 1,698). Elasticity rows: \texttt{sensitivity\_2047.csv}, each a full rerun of the 4.2 million draws.\par\medskip
+\textbf{Context rows.} 50 of the 73 demand drivers are listed as context only, among them factors from official energy conferences (Ministry of Power and CEA conferences, India Energy Week, ISA, COP28, G20, IEA); 2 are excluded by the ruling (captive generation and captive reactors).}
 \end{frame}
 \note{%
 \textbf{Continued.}\par\medskip
 \textbf{Likely questions.}\par
 \qa{Why split the central path and not the median?}{The median is a quantile of 4.2 million futures, not one path, so it cannot be split into parts. The central path uses the medium drivers and mean income growth and lands at 4,589\,TWh, 2\% below the median. It ignores the elasticity shift and window controls, which the sensitivity rows cover instead.}
 \qa{How much does the elasticity matter?}{One standard error moves the median by $-$6.5\% or +7.0\%; each choice of window or method stays within $\pm$7\%, well inside the P10--P90 band (3,471--6,408). Income growth itself moves it by $-$24\% to +31\% (slide 10).}
-\qa{Why not add electric vehicles, data centres and cooling?}{The part that grew with income is already in the elasticity. Only the part beyond the trend is a feature, from official sources: transport 512--525\,TWh, data centres 356--698 (the high is the Ministry of Power's 26.3\,GW of AI load by 2031-32, 230\,TWh a year, continued), space cooling 0--252 in FY2047-48; telecom, devices and chip fabs sit inside the trend. It stays in the layer, outside the headline.}}
+\qa{Why not add electric vehicles, data centres and cooling?}{The part that grew with income is already in the elasticity. Only the part beyond the trend is a feature, from official sources: transport 512--525\,TWh, data centres 356--698 (the high is our extrapolation of an official 2031-32 figure, the Ministry of Power's 26.3\,GW of AI load, 230\,TWh a year; not an official 2047 figure), space cooling 0--252 in FY2047-48; telecom, devices and chip fabs sit inside the trend. It stays in the layer, outside the headline.}}
 \note{%
 \textbf{Continued.}\par\medskip
-\textbf{Demand features} (\texttt{feature\_scenarios\_2047.csv}; catalogue \texttt{docs/demand\_features.md}). 49 drivers: 7 in the core, 3 existing drivers or settings, 11 layer rows, 1 excluded by the ruling (captive), 27 context. Each layer row is a signed TWh change to FY2047-48 generation beyond the trend, from an official source (secondary); T\&D losses count only as an upper bound (0 at central). P50: Features central 5,810, Electrification high 6,828, Efficiency and distributed 5,076, Climate stress 6,063, All upside 6,855, All downside 4,865\,TWh; joint 5,769 (P5 4,225, P95 8,121). It replaces the new-loads scenario (green hydrogen only).\par\medskip
+\textbf{Demand features} (\texttt{feature\_scenarios\_2047.csv}; catalogue \texttt{docs/demand\_features.md}). 73 drivers: 7 in the core, 3 existing drivers or settings, 11 layer rows, 2 excluded by the ruling (captive), 50 context. Each layer row is a signed TWh change to FY2047-48 generation beyond the trend, from an official source (secondary); T\&D losses count only as an upper bound (0 at central). P50: Features central 5,810, Electrification high 6,828, Efficiency and distributed 5,042, Climate stress 6,086, All upside 6,879, All downside 4,831\,TWh; joint 5,765 (P5 4,222, P95 8,118). It replaces the new-loads scenario (green hydrogen only).\par\medskip
 \textbf{Likely questions, continued.}\par
 \qa{Is green hydrogen grid electricity?}{Only in part: the row takes half of it from the grid at 50\,kWh per kg, so 138--682\,TWh (central 230).}
-\qa{Does the plan cope with the features?}{Nearly: at the joint P50 (5,769\,TWh) it leaves about 9\,TWh unmet; planned for the joint P90 (7,506) it leaves 1,738\,TWh unmet, against 639 at the headline P90.}}
+\qa{Does the plan cope with the features?}{Nearly: at the joint P50 (5,765\,TWh) it leaves about 5.5\,TWh unmet; planned for the joint P90 (7,503) it leaves 1,734\,TWh unmet, against 639 at the headline P90.}}
 
 % ===================================================================== 12
 \begin{frame}[label=s12]{Income is used state by state; the elasticity is national}
@@ -828,7 +830,7 @@ No feasible robust plan below about \textbf{2,780\,TWh}: the coal floor (647\,TW
 \end{frame}
 
 % ===================================================================== 18
-\begin{frame}[label=s18]{The engine: a million futures in 11.2 milliseconds}
+\begin{frame}[label=s18]{The engine: a million futures in 11.0 milliseconds}
 \begin{columns}[T,onlytextwidth]
 \column{\gA\textwidth}
 \begin{tikzpicture}
@@ -839,25 +841,25 @@ No feasible robust plan below about \textbf{2,780\,TWh}: the coal floor (647\,TW
   point meta=explicit symbolic,
   title={Same draws, same seed, three devices}]
   % outputs/timings.csv (1 thread: scaled from a 1/16 run)
-  \addplot[fill=muted!60,draw=white] coordinates {(20600,cpu1) [20.6 s]};
-  \addplot[fill=navy3,draw=white] coordinates {(2345,cpu16) [2.35 s]};
-  \addplot[fill=good,draw=white] coordinates {(11.2,gpu) [11.2 ms]};
+  \addplot[fill=muted!60,draw=white] coordinates {(19626,cpu1) [19.6 s]};
+  \addplot[fill=navy3,draw=white] coordinates {(2173,cpu16) [2.17 s]};
+  \addplot[fill=good,draw=white] coordinates {(10.97,gpu) [11.0 ms]};
 \end{axis}
 \end{tikzpicture}
 \column{\gB\textwidth}
 \vspace{1mm}
-\stat{209$\times$}{faster than 16 CPU threads in this run (1,837$\times$ faster than one thread); timings vary with machine load}{}
+\stat{198$\times$}{faster than 16 CPU threads in this run (1,789$\times$ faster than one thread); timings vary with machine load}{}
 \vspace{2mm}
 {\fontsize{8.5}{10.5}\selectfont
 \textbf{\color{navy}Why it matters.} The jury can move any assumption and see the full uncertainty and the regional plan recomputed in seconds.\par\vspace{1.5mm}
 \textbf{\color{navy}Trustworthy.} A counter-based generator gives each future identical inputs on CPU and GPU; a parity test confirms agreement within 0.2\%.}
 \end{columns}
-\evidence{Measured on an RTX 3070 Ti Laptop GPU and an i7-12650H, run of 21 Nov 2026, \texttt{outputs/timings.csv} \cite{e47_repo}; Philox generator \cite{salmon2011parallel}.}
+\evidence{Measured on an RTX 3070 Ti Laptop GPU and an i7-12650H, run of 22 Nov 2026, \texttt{outputs/timings.csv} \cite{e47_repo}; Philox generator \cite{salmon2011parallel}.}
 \note{%
 \textbf{Message.} The expensive part is uncertainty: millions of independent futures, each a 24-year path with a 34-state split. They are independent, so one GPU thread per future fits naturally.\par\medskip
-\textbf{Evidence.} \texttt{timings.csv}: GPU 11.2\,ms, 16 threads 2,345\,ms, one thread 20,600\,ms (scaled from a 1/16 run): 209$\times$ and 1,837$\times$. The full forecast uses 4,194,304 futures.\par\medskip
+\textbf{Evidence.} \texttt{timings.csv}: GPU 10.97\,ms, 16 threads 2,173\,ms, one thread 19,626\,ms (scaled from a 1/16 run): 198$\times$ and 1,789$\times$. The full forecast uses 4,194,304 futures.\par\medskip
 \textbf{Optimisations.} Inputs in constant memory (broadcast to a warp); the model choice is shared by each group of 32 futures, so warps never diverge; machine code for the exact GPU; histograms by atomic add; CPU path with thread-private histograms and a parallel merge.\par\medskip
-\textbf{Honesty.} Timings vary with background load from run to run: the 16-thread CPU time was 2.2\,s at the midpoint, 4.15\,s on 19 Nov, and 2.26 and 2.35\,s in two runs on 21 Nov, while the GPU took 7.7 to 11.2\,ms. Quote the GPU time, not the ratio, if pressed. The CUDA kernel passes the Compute Sanitizer memory, initialisation, race and synchronisation checks with no errors.}
+\textbf{Honesty.} Timings vary with background load from run to run: the 16-thread CPU time was 2.2\,s at the midpoint, 4.15\,s on 19 Nov, 2.26 and 2.35\,s in two runs on 21 Nov, and 2.17\,s on 22 Nov, while the GPU took 7.7 to 11.2\,ms. Quote the GPU time, not the ratio, if pressed. The CUDA kernel passes the Compute Sanitizer memory, initialisation, race and synchronisation checks with no errors.}
 \end{frame}
 
 % ===================================================================== 19
@@ -878,13 +880,14 @@ Data: requirement and mix evidence\par\vspace{2mm}
 \textbf{\color{navy}One-click presets}\par\vspace{1mm}
 Core: India-only (primary), cross-country (check)\\
 Growth: base, high, low; demand features\\
-Policy: base, low carbon, robust, energy security}
+Policy: base, low carbon, robust, energy security, nuclear mission}
 \end{columns}
 \evidence{Native C++ application (Dear ImGui, ImPlot, OpenGL), same engine as all results; screenshot \texttt{docs/img/1\_national\_forecast.png} \cite{e47_repo}.}
 \note{%
 \textbf{Demo script (2 minutes).} (1) Show the fan chart with NPP history and the CEA diamonds. (2) Move income growth by 1.5 points and watch the 2047 median move by about a quarter. (3) Switch the core to the cross-country check and back. (4) Switch the policy preset from Base to Robust and point to CO$_2$ and cost; then plan for P90 and point to unmet energy. (5) Open the data tab: ``Requirement evidence'' (growth decomposition, state table, state panel check, demand features) and ``Mix evidence'' (mix sensitivities, committed builds, gas peaking hours). The ``Demand features (official, outside headline)'' selector adds a named feature scenario on top of the forecast.\par\medskip
 \textbf{If asked to break it.} Choose Low growth with the Robust policy and plan for P05: the dashboard shows that no feasible plan exists and names the levers (coal floor, gas kept for peaking, non-fossil minimum), instead of showing numbers.\par\medskip
-\textbf{Fallback.} If screen sharing lags, use the images in \texttt{docs/img/}.}
+\textbf{Fallback.} If screen sharing lags, use the images in \texttt{docs/img/}.\par\medskip
+\textbf{Nuclear mission} (official option): robust plus a 539.6\,TWh nuclear floor (CEA road map: 90.588\,GW $\times$ 0.68 $\times$ 8.76); 239\,Mt less CO$_2$ for 1.5\,bn USD/yr more. Robust stays the recommendation.}
 \end{frame}
 
 % ===================================================================== 20
@@ -980,7 +983,7 @@ Costs 2047; corridors & IEA India LCOE, SECI tenders, real 2024 USD; 2$\times$ 2
 \note{Every row is adjustable in the dashboard and documented with its source. The rows from ``Base mix'' down shape only the mix; all their sources except NPP are secondary. Hydro's 346\,TWh is 70\% of the identified potential in every region except the West, whose FY2023-24 output already exceeds it and is kept. Build limits come from published additions (CEA NEP 2022-32, CEA December 2024, NITI Aayog 2026, DAE); NPP national record increases are a fallback and cross-check only. Under the organisers' ruling of 16 Nov, $\gamma$ is the team's judgment, and state population starts from the dataset's 2024 level and grows at UN India growth plus the state's own 2019--24 offset, in the grid region NPP reports it under.}
 \end{frame}
 
-\begin{frame}[label=b3]{Backup: twelve futures, four policies}
+\begin{frame}[label=b3]{Backup: fifteen futures, five policies}
 {\fontsize{7.0}{8.6}\selectfont
 \renewcommand{\arraystretch}{1.08}
 \setlength{\tabcolsep}{4pt}
@@ -992,6 +995,7 @@ Base & Base & 4,688 & 70.0\% & 1,367 & 213 & 0 & 1,471 & 0\\
 Base & Low carbon & 4,688 & 82.1\% & 816 & 191 & 0 & 1,493 & 0\\
 Base & \textbf{Robust} & 4,688 & \textbf{79.9\%} & \textbf{891} & \textbf{176} & \textbf{0} & \textbf{639} & 0\\
 Base & Energy security & 4,688 & 70.0\% & 1,367 & 214 & 0 & 1,471 & 0\\
+Base & Nuclear mission & 4,688 & 85.1\% & 653 & 178 & 0 & 639 & 0\\
 High growth & Base & 6,580 & 70.1\% & 1,407 & 236 & 1,643 & 4,172 & 0\\
 High growth & Robust & 6,580 & 75.0\% & 1,375 & 253 & 812 & 3,341 & 0\\
 Low growth & Base & 3,377 & 77.1\% & 754 & 127 & 0 & 0 & \down{infeasible}\\
@@ -1000,9 +1004,9 @@ Low growth & Robust & 3,377 & 79.4\% & 653 & 125 & 0 & 0 & \down{infeasible}\\
 \end{tabular}}
 \vspace{2mm}
 {\fontsize{8}{9.8}\selectfont\color{ink2}High growth: income growth 1.5 points above history, urban share +3 points; no new-loads add-on (demand features stay outside the headline). Low growth: 1.5 points below, urban share $-$2 points. At P05 (Low growth: 2,306\,TWh) the coal floor and the gas kept for peaking exceed the fossil allowance. Cost (bn USD, real 2024), CO$_2$ and non-fossil share are at the median requirement; at P90 the robust plan costs 253 against the base plan's 236\,bn USD/yr.\par}
-\evidence{\texttt{outputs/presets.csv} (all twelve combinations; columns \texttt{unserved\_at\_p90\_twh}, \texttt{cost\_at\_p90\_busd}, \texttt{unserved\_at\_p05\_twh}) \cite{e47_repo}.}
-\note{In the base scenario every policy meets the median. At the median the robust policy is the cheapest and the low-carbon policy emits least (816\,Mt). The robust policy has the smallest P90 shortfall, though at P90 it costs 253 against the base policy's 236\,bn USD/yr. Under low growth every policy meets even the P90, and the low-carbon policy is cheapest and cleanest (118\,bn USD, 440\,Mt). Under high growth no preset meets the median: 6,580\,TWh needs the land and build-rate levers pushed well beyond the robust settings. Energy security under high growth is infeasible at P90. Since 21 Nov High growth has no unofficial add-on (it gave 6,785\,TWh).\par\medskip
-\textbf{Known limit.} At the Low growth scenario's P05 (2,306\,TWh) the Base, Robust and Energy security policies have no feasible plan; Low carbon (coal floor 35\%) does. The robust coal floor (647\,TWh) and gas (51\,TWh) are fixed in TWh, while the non-fossil minimum is a share: below about (647 + 51) / 0.25 $\approx$ 2,790\,TWh of generation they exceed the fossil allowance; bisection finds 2,780\,TWh (test \texttt{robust\_low\_requirement\_limit}). Every policy is feasible at the Base scenario's P05 (3,190\,TWh) and at every scenario's median.}
+\evidence{\texttt{outputs/presets.csv} (all fifteen combinations; columns \texttt{unserved\_at\_p90\_twh}, \texttt{cost\_at\_p90\_busd}, \texttt{unserved\_at\_p05\_twh}) \cite{e47_repo}.}
+\note{In the base scenario every policy meets the median. At the median the robust policy is the cheapest and nuclear mission emits least (653\,Mt). Robust and nuclear mission have the smallest P90 shortfall, though at P90 robust costs 253 against the base policy's 236\,bn USD/yr. Under low growth every policy meets even the P90, and the low-carbon policy is cheapest and cleanest (118\,bn USD, 440\,Mt). Under high growth no preset meets the median: 6,580\,TWh needs the land and build-rate levers pushed well beyond the robust settings. Energy security under high growth is infeasible at P90. Since 21 Nov High growth has no unofficial add-on (it gave 6,785\,TWh).\par\medskip
+\textbf{Known limit.} At the Low growth scenario's P05 (2,306\,TWh) the Base, Robust, Energy security and Nuclear mission policies have no feasible plan; Low carbon (coal floor 35\%) does. The robust coal floor (647\,TWh) and gas (51\,TWh) are fixed in TWh, while the non-fossil minimum is a share: below about (647 + 51) / 0.25 $\approx$ 2,790\,TWh of generation they exceed the fossil allowance; bisection finds 2,780\,TWh (test \texttt{robust\_low\_requirement\_limit}). Every policy is feasible at the Base scenario's P05 (3,190\,TWh) and at every scenario's median.}
 \end{frame}
 
 \begin{frame}[label=b4]{Backup: data limits and hurdles we work around}

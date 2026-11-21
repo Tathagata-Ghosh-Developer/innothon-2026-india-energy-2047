@@ -1304,6 +1304,11 @@
       </details>
     </figure>
 
+    <div class="callout" style="margin-block: var(--space-l)">
+      <h3 class="callout__title" id="nuclear-mission-title">An official option: the Nuclear Energy Mission</h3>
+      <p>The Union Budget 2025-26 set a goal of 100 GW of nuclear capacity by 2047, and CEA's road map sets out how. Leaving out the captive small reactors, which sit outside NPP utility generation, its reactors give <span class="num">{{plan.nuclear_mission.central.floor_twh|0}} TWh</span> a year ({{plan.nuclear_mission.central.utility_gw|1}} GW at a capacity factor of {{plan.nuclear_mission.central.cuf|r2}}). Planned with that much nuclear, the recommended plan reaches <span class="num">{{plan.nuclear_mission.central.nonfossil_pct|1}}%</span> non-fossil and <span class="num">{{plan.nuclear_mission.central.co2_mt|0}} Mt</span> of CO₂ for <span class="num">{{plan.nuclear_mission.central.cost_busd|1}} bn USD</span> a year (real 2024 USD), against {{plan.nonfossil_pct|1}}%, {{plan.co2_mt|0}} Mt and {{plan.cost_busd|1}} bn USD without it. It is a policy choice, not our default: choose "Nuclear mission" in the dashboard to see it region by region.</p>
+    </div>
+
     <section id="land" aria-labelledby="land-title">
       <h3 class="sub-title" id="land-title">Land and storage the plan needs</h3>
       <p class="lead">The plan is run hour by hour through a year of National Power Portal hourly generation to size storage, and its solar and wind are converted to land area.</p>

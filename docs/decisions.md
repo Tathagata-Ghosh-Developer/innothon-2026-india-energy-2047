@@ -79,6 +79,7 @@ The linear program shows whether a least-cost system agrees.
 **Choice.** Policy settings are expressed as shares of 2047 generation: the non-fossil share, the nuclear share and the coal ceiling.
 The dashboard exposes them as sliders.
 Capacity targets (500 GW non-fossil by 2030, 100 GW nuclear by 2047) appear only as labelled context and never enter a calculation.
+Since 22 November 2026 (D15) the 100 GW nuclear target enters one optional policy, "Nuclear mission", as a floor on generation, never as capacity: the mission's utility reactors in CEA's road map, 90.588 GW x CUF 0.68 x 8.76 = 539.6 TWh. The recommended plan has no such floor.
 
 Resource potentials published in GW are converted to annual generation potential (TWh per year) with sourced capacity factors.
 That conversion is labelled wherever it appears.
@@ -622,3 +623,111 @@ How the numbers moved, step by step:
   - New `features`: catalogue validation, the scenario totals, the T&D treatment, the joint quantiles within the All downside to All upside envelope, and the headline unchanged with the layer at Core. R30 changed its expected counts to 49 rows (27 context).
   - `mc_parity` checks the feature draws on the CPU and the GPU; `regions` adds `convergence_base_skips_repeats`; `allocation` checks the CEA tables (2 percent above 4 percent above 6 percent) and the inflation default.
 - With the price base alone, every default-plan output was byte-identical. With the feature layer, every output except `timings.csv` was byte-identical. R25 left the national forecast rows byte-identical.
+
+## D15. Official conferences and the Nuclear Energy Mission (2026-11-22)
+
+**Why.**
+
+- **India's own nuclear target was never tested in the plan.** The Union Budget 2025-26 (paras 61-62) commits to "at least 100 GW of nuclear energy by 2047", and CEA's road map to that goal (released on 11 October 2025) lists the units. The Robust plan keeps only the committed reactors, 133.1 TWh (2.8 percent of generation), about a quarter of the mission's utility reactors. The Base and Energy security policies cap nuclear at 10 percent of the requirement, 468.8 TWh at the median, below the mission. Nothing in the model asked what building the announced fleet would do to cost and CO2.
+- **The catalogue was built from ministry documents, not from the conferences where targets are set.** The D14 catalogue drew on reports and replies in Parliament. Ministers announce and reaffirm targets at conferences (the Ministry of Power's conferences with State ministers, the Bharat Electricity Summit, India Energy Week, COP and G20 meetings), so a review of the official outcome texts from 2023 to 2026 checked whether any factor was missing.
+- **CEA has now published 2047 estimates.** The road map is the only official document found with CEA estimates dated 2047 for both the requirement and the mix: an energy requirement for 2046-47, a capacity mix and a non-fossil share of generation. The Q&A notes still said that CEA had published no 2047 figure.
+
+The rules do not change. The headline is estimated on the two challenge datasets; every new figure is official and labelled secondary; installed capacity and consumption are never forecast metrics, and a GW figure appears only with its explicit conversion to TWh; requirement (consumption-side) figures are context.
+
+**What changed** (commit 8800881).
+
+- **A fifth policy preset, "Nuclear mission"** (`src/pipeline/presets.hpp`; `PolicySettings::nuclear_mission` and `nuclear_floor_twh` in `src/allocation/allocate.hpp`).
+  - It is the Robust policy plus one LP row: national nuclear generation at least a floor. The LP sites the floor within each region's nuclear bound (the siting key of reactor units).
+  - The floor is the mission's utility reactors in 2047 from CEA's road map, Table 6.3 (100,648 MW), less the captive Bharat Small Reactors (5,060 MW) and BSMR units (5,000 MW) that the organisers' ruling excludes: 90.588 GW x CUF 0.68 x 8.76 = 539.6 TWh (R31, R32).
+  - Low case: NPCIL's 54 GW (DAE, Lok Sabha USQ 2783, 17.12.2025) x 0.68 x 8.76 = 321.7 TWh. High case: the 90.588 GW at the road map's achievable PLF of 0.80 = 634.8 TWh, above the national nuclear build cap of 627.1 TWh, so it is reported as infeasible (R33).
+  - The inputs are `data/external/techno_economic/nuclear_mission.csv` (secondary): one row per case with its MW, the captive MW left out, the CUF, the source and its page. The CEA URL returned 404 on 22 Nov 2026, and the Internet Archive copy was read.
+  - The Robust policy's 15 percent nuclear share limit never cuts the floor; the build cap does (R34).
+  - `outputs/presets.csv` now holds 3 growth scenarios x 5 policies. `outputs/sensitivity_mix.csv` gains `nuclear_mission_low` and `nuclear_mission_high`: 10 cases, 20 solves. `site_summary.json` gains `plan.nuclear_mission`. The dashboard's policy buttons wrap to fit five presets.
+  - Apart from the new rows and the feature outputs below, every output is byte-identical to the previous run, except `timings.csv`: the default plans do not change.
+- **Demand features: 73 rows** (`data/external/demand_features.csv`; `data/external/SOURCES.md`, section 11; [demand_features.md](demand_features.md)).
+  - 24 new rows: 23 context rows from official conferences, missions and texts, and the captive small reactors (`captive_nuclear_bsr_bsmr`), excluded by the organisers' ruling. Counts: core 7, driver 3, layer 11, excluded by rule 2, context 50 (R36).
+  - Two layer highs are raised from Indian official sources (R35): storage round-trip losses 150.1 to 173.6 TWh (CEA's 2047 storage in the road map) and cross-border imports 15.3 to 49.3 TWh (the Prime Minister's target of importing 10,000 MW from Nepal).
+  - Three rows gain revised text (`national_efficiency_targets`, `cross_border_exports`, `data_centres`), and 15 rows gain conference citations with no value change. The data-centre row now says plainly that its high (697.8 TWh) is our extrapolation of an official 2031-32 figure (the Ministry of Power's 26.3 GW), not an official 2047 figure.
+  - The layer stays 11 rows, and the headline does not move.
+- **`data/external/policy_targets.csv`** gains the CEA road map's 2047 estimates (13 rows): the 2046-47 and 2049-50 requirement and peak as context (R37), the non-fossil share of generation ("about 2/3rd"), and the capacity mix with each source's TWh conversion. It also gains CEA's National Generation Adequacy Plan (NGAP) total, 3,596 BU of gross generation in FY2035-36, which the Q&A notes had attributed to press reports.
+- **Docs.** "CEA has published no 2047 figure" is replaced: CEA's road map gives a 2046-47 energy requirement of 4,582 BU, which is consumption-side and so not compared as a benchmark, and a 2047 capacity mix; there is still no CEA 2047 generation total.
+
+**The Nuclear mission is a policy option, not the recommendation.** Robust stays the recommended plan, because the numbers do not argue otherwise:
+
+- **The trade.** At the median requirement the Nuclear mission plan costs 1.49 bn USD a year more than Robust (177.65 against 176.16, real 2024 USD) for 238.7 Mt less CO2 (652.7 against 891.3 Mt): about 6.2 USD per tonne on average.
+- **A CO2 cap gets the same cut for less.** The cost-CO2 trade-off of the Robust plan (`outputs/pareto_2047.csv`) reaches the same 652.7 Mt, and the same 85.1 percent non-fossil, for 0.45 bn USD a year (highest marginal abatement cost 4.04 USD per tonne). The mission therefore costs 1.04 bn USD a year more than the least-cost route to the same emissions. Both stop at 652.7 Mt because coal reaches its floor (647.4 TWh).
+- **Nothing at P90.** Planned for the P90 requirement, Robust already runs nuclear at the build cap (627.1 TWh), so both policies leave 639.5 TWh unmet at 252.96 bn USD a year.
+- **Most costly where demand is lowest.** In the Low growth scenario the floor costs 9.06 bn USD a year more (133.76 against 124.70) and cuts no CO2 (652.7 Mt in both, because coal is already at its floor). In the High growth scenario the floor does not bind, and the two plans are the same.
+- What the annual least-cost plan does not price is the mission's case: firm output around the clock and fuel diversity. The storage the mission plan needs was not back-calculated (limits below).
+
+**Rulings** (R31 onwards).
+
+| Ruling | Decision | What it costs if wrong |
+| --- | --- | --- |
+| R31 | Captive reactors are left out of the floor. The road map's 100,648 MW includes 5,060 MW of Bharat Small Reactors and 5,000 MW of BSMR "for captive uses" (Table 5.3 note; DAE, Lok Sabha USQ 2783, answers (c) and (d)); captive generation is outside NPP utility generation by the organisers' ruling. The units are listed as the excluded row `captive_nuclear_bsr_bsmr` | If the small reactors sell to the grid, the floor is 100.648 GW x 0.68 x 8.76 = 599.5 TWh, 59.9 TWh more and still under the 627.1 TWh build cap; that case was not solved. If they replace industries' grid purchases, NPP generation falls by 59.9 to 70.5 TWh (CUF 0.68 to 0.80), which no scenario includes |
+| R32 | The floor's CUF is 0.68, CEA NEP 2022-32's nuclear availability (Annexure 5.1), the same as the nuclear build limits and the committed-build floor | At the normative PLF of new PHWRs (72.5 percent) the floor would be 575.3 TWh; at the fleet's PLF of about 79 percent in 2024-25, 626.9 TWh, just under the cap; at the road map's achievable 80 percent, 634.8 TWh (R33). The central case can understate the mission's energy by up to 95.2 TWh. Only 0.68 and 0.80 were solved |
+| R33 | The high case (634.8 TWh) is reported as infeasible against the national nuclear build cap (627.1 TWh: the starting level plus the published high-case additions at CUF 0.68), not cut to fit | The cap credits each published GW at 0.68, while the high case runs the same reactors at 0.80. If the fleet does reach 0.80, the cap understates what it can generate, and a feasible plan 95.2 TWh above the central case goes unreported. The gap is only 7.7 TWh |
+| R34 | The floor overrides the nuclear share limit: where the floor is above nuclear_max x the requirement (a low requirement), the floor is the limit. The build cap is never overridden | In the Low growth scenario (3,377 TWh) 15 percent is 506.6 TWh, below the floor. With the ruling, nuclear is 15.9 percent of generation and the plan costs 9.06 bn USD a year more than Robust for no CO2 cut. If the share limit should bind, that plan is either infeasible or holds 33 TWh less nuclear |
+| R35 | Two layer highs are raised from Indian official sources: storage round-trip losses to 173.6 TWh (the road map's 2047 storage, 702.9 GWh of pumped storage and 1,983.9 GWh of energy storage read as batteries, one cycle a day) and cross-border imports to 49.3 TWh (Bhutan's 4,956 MW from the NEP plus the Prime Minister's 10,000 MW Nepal target, at PLF 0.40) | Storage: partial cycling, or storage built for reserves, would lower the high; at 150.1 Climate stress and All upside fall back by 23.5 TWh (to 6,063 and 6,855). Imports: the Nepal target has no schedule or contract; at 15.3 All downside and Efficiency and distributed rise back by 34.0 TWh (to 4,865 and 5,076). The joint P50 would be 5,769 instead of 5,765 TWh, and the Robust plan's unmet energy at the joint P50 8.9 instead of 5.5 TWh |
+| R36 | Factors from official conferences and texts are context rows only: none gives an India figure in TWh beyond the trend. Global figures (COP28's 11,000 GW of renewables, COP29's 1,500 GW of storage, the IEA's 945 TWh of data centres in 2030) are not scaled to India | A real effect may be missing from the layer, so the All downside to All upside envelope may be too narrow. The largest candidates move the mix, not the requirement: biomass co-firing at 5 percent of coal output would count about 45 TWh of the Robust plan's coal (893 TWh) as non-fossil and cut about 43 Mt; the Brahmaputra plan's 65 GW is 205.0 TWh of North-Eastern hydro against about 120 in the model; NGAP's firm share is 63.7 percent against the model's 45 percent. On the requirement side the EU CBAM and fossil-fuel subsidy reform would raise it and Mission LiFE would lower it, none by an official amount |
+| R37 | CEA's requirement figures (4,582 BU for 2046-47, 5,173 BU for 2049-50, peaks of 697 and 777 GW) are context, not a benchmark: they are measured ex-bus, without the stations' own auxiliary use, while the forecast is gross generation. The road map's capacity mix is converted to TWh at the model's CUFs as context for the mix | If the 4,582 BU were the benchmark, CEA's figure after the gross-up (below) would be 6 to 8 percent above our median for the same year, inside our P10-P90 range. On the road map's own 2024-25 base (1,573 BU, below the actual 1,694 BU) CEA's path may be low; rebased on the actual, it gives about 5,475 TWh for FY2047-48, 16.8 percent above our median and below our P75 (5,516) |
+
+**Effect on results** (before: the run of 6f19e6e, whose copies are in `docs/beamer/data/`; after: `outputs/` of 8800881; Base growth scenario, median requirement, real 2024 USD).
+
+| Quantity | Before D15 | After |
+| --- | --- | --- |
+| FY2047-48 national P5 / P50 / P95 | 3,190 / 4,688 / 7,021 TWh | unchanged |
+| Policy presets; `presets.csv` rows | 4; 12 | 5 (Nuclear mission added); 15 |
+| Robust plan (recommended): non-fossil, CO2, cost, unmet at the median and at P90 | 79.9%, 891.3 Mt, 176.16 bn USD/yr, 0 and 639.5 TWh | unchanged |
+| Nuclear mission plan: non-fossil, CO2, cost, unmet at the median and at P90 | none | 85.1%, 652.7 Mt, 177.65 bn USD/yr, 0 and 639.5 TWh |
+| Nuclear in the plan; share of generation | 133.1 TWh; 2.8% (Robust) | Nuclear mission: 539.6 TWh; 11.5% |
+| Nuclear by region, N / W / S / E / NE, TWh | Robust: 51.6 / 24.0 / 57.5 / 0 / 0 | Nuclear mission: 179.5 / 173.4 / 114.0 / 72.7 / 0 |
+| Change against Robust by source, TWh (median) | | nuclear +406.5; coal -245.8 (to its floor, 647.4); offshore wind -113.4 (to 0); hydro -44.2; firmed RE -116.5; onshore wind +116.5; solar and gas unchanged |
+| Eastern Region net imports | 155.3 TWh (Robust) | 328.3 TWh (Nuclear mission): its coal falls to its floor |
+| Mission low case (54 GW, 321.7 TWh): non-fossil, CO2, cost | none | 83.9%, 709.1 Mt, 176.41 bn USD/yr; unmet 0 and 639.5 TWh |
+| Mission high case (634.8 TWh) | none | infeasible: above the 627.1 TWh nuclear build cap |
+| Mix sensitivity cases; solves | 8; 16 | 10; 20 |
+| Demand-feature rows: core / driver / layer / excluded / context | 49: 7 / 3 / 11 / 1 / 27 | 73: 7 / 3 / 11 / 2 / 50 |
+| Layer highs: storage round-trip losses; cross-border imports | 150.1; 15.3 TWh | 173.6; 49.3 TWh |
+| Named scenarios, FY2047-48 P50 | Features central 5,810; Electrification high 6,828; Efficiency and distributed 5,076; Climate stress 6,063; All upside 6,855; All downside 4,865 TWh | 5,810; 6,828; 5,042; 6,086; 6,879; 4,831 TWh |
+| Joint distribution P5 / P50 / P90 / P95 | 4,225 / 5,769 (+23.1%) / 7,506 / 8,121 TWh | 4,222 / 5,765 (+23.0%) / 7,503 / 8,118 TWh |
+| Robust plan unmet at the joint P50; at the joint P90 | 8.9 TWh; 1,738 TWh | 5.5 TWh; 1,734 TWh |
+| CEA 2047 figures in the docs | "CEA has published no 2047 figure" | the road map's 2046-47 requirement (context) and 2047 capacity mix (converted to TWh, context) |
+
+**CEA's 2047 requirement, if a juror asks** (context, not a benchmark).
+CEA's 2047 road map (October 2025) estimates a 2046-47 energy requirement of 4,582 BU (1 BU = 1 TWh). It is a requirement figure, measured ex-bus, without the stations' own auxiliary use, so it is not a like-for-like generation benchmark.
+Grossed up for auxiliary use it is about 4,790 to 4,880 TWh for 2046-47: 4,582 / (1 - 0.0615), the FY2023-24 auxiliary rate in CEA's General Review 2025, gives 4,882; 4,582 / (1 - 0.0428), the 2047 rate of the `auxiliary_consumption` row, gives 4,787.
+That is 6 to 8 percent above our median for the same year (4,524 TWh) and well inside our P10-P90 range for it (3,384 to 6,119).
+Carried one more year at CEA's own growth from 2046-47 to 2049-50 ((5,173 / 4,582)^(1/3), 4.1 percent a year), it is about 4,980 to 5,080 TWh for FY2047-48, 6 to 8 percent above our 4,688 TWh median and inside our P10-P90 range (3,471 to 6,408).
+The road map's only statement about 2047 generation is a share: "about 2/3rd" non-fossil, below every policy preset's floor (70 to 80 percent).
+
+**Conferences and texts reviewed** (official outcome texts only; the press and think tanks only to locate documents; full list in [demand_features.md](demand_features.md), section 9).
+
+- India: the National Conference of Power Ministers of States and UTs (12 Nov 2024); the five Regional Power Conferences of 2025 (Gangtok, Mumbai, Bengaluru, Chandigarh, Patna); the Bharat Electricity Summit 2026 and its ministerial meeting (19-22 Mar 2026); the CEA and MoP brainstorming session on the power sector in 2047 (14-15 Oct 2024); CEA's 52nd Foundation Day (11 Oct 2025), where the road map and the Brahmaputra hydro master plan were released; the Ministry of Power's press conference of 10 Jun 2025; India Energy Week 2025 and 2026; the International Solar Alliance's eighth Assembly (Oct 2025); the 4th RE-INVEST (Sep 2024); the Union Budgets 2025-26 and 2026-27; and replies in Parliament (DAE, Ministry of Heavy Industries, Ministry of Power).
+- International: COP28 (decision 1/CMA.5 and the presidency pledges), COP29 (the declarations and pledges letter), COP30 (decisions 1/CMA.7 to 3/CMA.7 and the Belém 4X pledge) and COP31 (no adopted decision as of 21 Nov 2026); the G20 in New Delhi (2023), Brazil (2024), South Africa (2025) and the United States (2026); the G7 Critical Minerals Action Plan (2025); the Clean Energy Ministerial and Mission Innovation (2024 to 2026); the IEA ministerials of 2024 and 2026, its Global Conferences on Energy Efficiency (2023 to 2026) and its Energy and AI report (intergovernmental, secondary); the IRENA Assemblies of 2025 and 2026; the EU CBAM (Regulation (EU) 2023/956 and the 2025 proposal) and the India-EU FTA (Jan 2026); India's NDC 2031-35.
+
+**Rejected.**
+
+- The Nuclear mission as the recommended plan: a CO2 cap reaches the same CO2 for 1.04 bn USD a year less, and the mission adds nothing at P90.
+- Counting the captive small reactors in the floor (R31).
+- Cutting the high case to fit under the build cap: it would hide that the case exceeds the published build cap at the planning CUF (R33).
+- Scaling global pledges to India (R36), and the interim nuclear milestones (22 GW by 2032, 47 GW by 2037, 67 GW by 2042) that appear only in ministerial remarks reported by the press, not in a DAE answer.
+- CEA's 2046-47 requirement as a benchmark (R37).
+
+**Limits.**
+
+- The storage and land of the Nuclear mission plan were not back-calculated: `outputs/storage_land_2047.csv` covers the Base and Robust plans only.
+- The floor is for 2047 only and ignores the road map's commissioning path; the model solves 2047, not the years before it.
+- Siting follows the model's nuclear siting key. The road map leaves 52,540 MW (313.0 TWh at CUF 0.68) without an identified site, and the Ministry of Power's calls for a nuclear plant in every State and at retired coal sites are not modelled; the North-Eastern Region gets none.
+- Nuclear's station auxiliary use (8.78 percent) is above solar's (1.94 percent). Moving about 406 TWh to nuclear adds about 28 TWh of auxiliary energy, which the annual balance does not see.
+- The extra nuclear is priced at the IEA WEO 2025 cost interpolated to 2047, a single published path; the CEA cost basis also keeps the IEA nuclear cost, because the NEP gives none.
+- No "CEA road map mix" policy (about two-thirds non-fossil, 1,210 to 1,340 TWh of coal, at least 916 TWh of wind, at most 14 TWh of gas) was built; the road map's mix is context only.
+- Some texts could not be read: CEA's transmission plan to 2035-36 and the Brahmaputra master plan (404 or a stub page; only the PIB totals are used), part of PIB (automated access refused; ministry copies were read), IRENA (indexed pages only) and the CEM17 outcomes (none found). COP31's decisions were not yet posted.
+- The road map's 2024-25 requirement (1,573 BU) is below the Ministry of Power's actual 1,694 BU, so its 2046-47 figure may rest on a low base (R37).
+- The data-centre high remains our extrapolation of an official 2031-32 figure (the Ministry of Power's 26.3 GW), not an official 2047 figure (R30).
+- **The road map is read from an archived copy.** CEA's own link (`cea.nic.in/wp-content/uploads/notification/2025/10/Roadmap_Final_30062025.pdf`) returned "not found" on 22 November 2026, and no live official copy was found; the figures come from the Internet Archive copy cited in `nuclear_mission.csv`, and PIB Release ID 2177769 records the road map's release on 11 October 2025. Every value used was re-checked page by page against that copy on 22 November 2026: Table 6.3 (PDF p. 50: cumulative 1,00,648 MW, BSR 5,060 MW, BSMR 5,000 MW), Table 5.3 and its note "Includes BSR/BSMR/SMR for captive uses" (PDF p. 41), Table 5.2 (PDF p. 40: 4,582 BU in 2046-47, 5,173 BU in 2049-50) and paragraph 11.1.3.1 (c) on the 80 percent PLF (PDF p. 77). If CEA republishes the road map, the link should be replaced and the values checked again.
+
+**Checks** (`tests/`; the suite still has nine tests).
+
+- `test_allocation` gains checks for the floor: the three cases load from the file with their TWh, and a missing, duplicate or unknown case, a captive MW not below the total, a CUF above 1 or a low case above the central throws; the four existing presets have no floor and reproduce their cost and CO2; a 450 TWh floor is met and sited within the regional bounds; the mission's floor holds at a requirement where it exceeds the share limit; a floor 5 TWh above the build cap is flagged infeasible and one 5 TWh below is solved; a negative or non-numeric floor throws; the preset is listed; the mix sensitivity has ten cases in order.
+- `test_features` expects 73 rows, 50 of them context and 2 excluded by rule.

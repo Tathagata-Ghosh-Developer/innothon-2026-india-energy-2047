@@ -27,6 +27,10 @@ The scope is the country's total NPP utility generation, and the headline is tha
 > Placeholder years no longer set a state's convergence base year: the convergence speed falls from 0.0208 to 0.0021, and the regional split changes a lot.
 > A demand-feature layer from official sources (49 drivers catalogued, 11 quantified) gives named scenarios and a joint distribution outside the headline (section 1.6; [demand_features.md](demand_features.md)); it replaces the new-loads scenario. Later on 21 November the data-centre high was raised with the Ministry of Power's projection of AI data-centre load, and five AI and digital loads were listed as context (D14, ruling R30).
 > The decks and Q&A notes were updated to this run after the final evaluation; the talk script and the midpoint slide keep the numbers presented then. D14 records every change.
+>
+> **Update, 22 November 2026** ([decisions.md](decisions.md), D15).
+> A fifth policy preset, Nuclear mission, adds India's Nuclear Energy Mission to the Robust policy as a floor on nuclear generation: the utility reactors of CEA's road map to 100 GW by 2047, 539.6 TWh (section 3.9). It is a policy option, not the recommendation; the Robust plan and the headline do not change.
+> The demand-feature catalogue grows to 73 drivers after a review of official energy conferences and texts, and two layer highs are raised from Indian official sources (section 1.6). CEA's 2047 road map estimates are added as context (sections 1.4 and 3.9).
 
 ![National forecast](img/1_national_forecast.png)
 
@@ -102,8 +106,9 @@ Setting an elasticity decline of 0.2 per unit of ln income in the India model gi
 **CEA benchmarks (generation only).**
 
 - The CEA National Electricity Plan 2022-32 projects gross generation of 2,666 TWh for FY2031-32. Our median for FY2031-32 is 2,378 TWh, 11 percent lower; CEA's figure lies between our P75 (2,550) and P90 (2,719).
-- CEA's 2026 review gives about 3,596 BU of gross generation for 2035-36 (press reports; the document is not public). Our median for FY2035-36 is 2,879 TWh, 19.9 percent lower; CEA's figure is close to our P95 (3,641).
+- CEA's National Generation Adequacy Plan 2026-27 to 2035-36 (19 March 2026, public) gives 3,596 BU of gross generation for 2035-36 (Fig. 4.3, PDF p. 42). Our median for FY2035-36 is 2,879 TWh, 19.9 percent lower; CEA's figure is close to our P95 (3,641).
 - CEA's energy requirement projections (the Electric Power Surveys, for example 2,474 BU for FY2031-32) are consumption-side and ex-bus, so they are context only and never a benchmark for generation.
+- CEA's road map to 100 GW of nuclear by 2047 (released 11 October 2025) gives an energy requirement of 4,582 BU for 2046-47 (Table 5.2, PDF p. 40) and a 2047 capacity mix (Table 5.3); there is still no CEA 2047 generation total. The requirement is ex-bus, without the stations' own auxiliary use, so it is context, not a benchmark ([decisions.md](decisions.md), D15, ruling R37). For context only, grossed up for auxiliary use it is 4,787 to 4,882 TWh for 2046-47 (4,582 / (1 - 0.0428), the 2047 auxiliary rate of the `auxiliary_consumption` feature row, to 4,582 / (1 - 0.0615), the FY2023-24 rate in CEA's General Review 2025), 6 to 8 percent above our 2046-47 median (4,524 TWh) and inside our P10-P90 range for that year (3,384 to 6,119). Carried to FY2047-48 at CEA's own growth from 2046-47 to 2049-50 (4.1 percent a year) it is 4,984 to 5,084 TWh, 6 to 8 percent above our 4,688 TWh median. The road map's 2024-25 base (1,573 BU) is below the actual 1,694 BU; rebased on the actual, the FY2047-48 figure would be about 5,475 TWh (+16.8 percent), still below our P75 (5,516). Its capacity mix, converted to TWh, is compared with the plans in section 3.9.
 
 The registration-form figure of 6,000 TWh was a pre-data estimate; it lies between our P75 (5,516) and P90 (6,408).
 
@@ -127,8 +132,8 @@ The elasticity is estimated for India as a whole; its sensitivities are in secti
 
 ### 1.6 Demand features (a separate layer, outside the headline)
 
-Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 49 drivers. Every quantified size comes from an official source (secondary); six unquantified rows have no external source.
-7 are estimated in the core forecast, 3 are existing drivers or settings, 1 is excluded by the organisers' ruling (captive generation) and 27 are context.
+Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 73 drivers (49 before the official-conference review of 22 November 2026, D15). Every quantified size comes from an official source (secondary); six unquantified rows have no external source.
+7 are estimated in the core forecast, 3 are existing drivers or settings, 2 are excluded by the organisers' ruling (captive generation, and the captive small reactors of the nuclear mission) and 50 are context.
 The other 11 are quantified as signed TWh adjustments to FY2047-48 generation, beyond the historical trend, and form a layer that is never the headline (`outputs/feature_scenarios_2047.csv`):
 
 | Scenario | Adjustment, TWh | P5 | P50 | P95 | P50 vs headline |
@@ -136,18 +141,19 @@ The other 11 are quantified as signed TWh adjustments to FY2047-48 generation, b
 | Core (headline) | 0 | 3,190 | 4,688 | 7,021 | |
 | Features central | +1,122.4 | 4,313 | 5,810 | 8,143 | +23.9% |
 | Electrification high | +2,140.6 | 5,331 | 6,828 | 9,161 | +45.7% |
-| Efficiency and distributed | +388.6 | 3,579 | 5,076 | 7,409 | +8.3% |
-| Climate stress | +1,374.7 | 4,565 | 6,063 | 8,395 | +29.3% |
-| All upside | +2,167.5 | 5,358 | 6,855 | 9,188 | +46.2% |
-| All downside | +177.3 | 3,368 | 4,865 | 7,198 | +3.8% |
-| Joint (core draws plus independent feature draws) | drawn | 4,225 | 5,769 | 8,121 | +23.1% |
+| Efficiency and distributed | +354.6 | 3,545 | 5,042 | 7,375 | +7.6% |
+| Climate stress | +1,398.2 | 4,589 | 6,086 | 8,419 | +29.8% |
+| All upside | +2,191.0 | 5,381 | 6,879 | 9,212 | +46.7% |
+| All downside | +143.3 | 3,334 | 4,831 | 7,164 | +3.1% |
+| Joint (core draws plus independent feature draws) | drawn | 4,222 | 5,765 | 8,118 | +23.0% |
 
 TWh in FY2047-48.
 
 - Every combination of feature levels lies between All downside and All upside.
 - T&D losses may already be inside the trend, so they count only as an upper bound: 0 at central, up to -476 TWh in the downside scenarios.
-- The data-centre high (697.8 TWh beyond the trend) continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (230.4 TWh a year as average load) to FY2047-48; low and central are NITI Aayog's (356.2 and 397.1). AI compute, telecom networks, consumer electronics, semiconductor manufacturing and digital public infrastructure are listed as context: inside data centres or the trend, or with no official figure (D14, ruling R30). Before R30, Electrification high was 6,528 TWh, All upside 6,555 and the joint median 5,668 (P5 4,130, P95 8,017).
-- The Robust plan leaves 8.9 TWh of the joint median (5,769 TWh) unmet; before R30 it met the joint median in full. Planned for the joint P90 (7,506 TWh) it leaves 1,738 TWh unmet, against 639 TWh at the headline P90.
+- Since 22 November 2026 (D15, ruling R35) the storage round-trip losses high is 173.6 TWh (150.1 before; CEA's 2047 storage in the nuclear road map) and the cross-border imports high 49.3 TWh (15.3 before; the Prime Minister's target of importing 10,000 MW from Nepal). Before that, Efficiency and distributed was 5,076 TWh, Climate stress 6,063, All upside 6,855, All downside 4,865 and the joint median 5,769 (P5 4,225, P95 8,121). The 24 new rows from official conferences and texts are context only: none gives an India figure in TWh beyond the trend.
+- The data-centre high (697.8 TWh beyond the trend) is our extrapolation of an official 2031-32 figure, not an official 2047 figure: it continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (230.4 TWh a year as average load) to FY2047-48; low and central are NITI Aayog's (356.2 and 397.1). AI compute, telecom networks, consumer electronics, semiconductor manufacturing and digital public infrastructure are listed as context: inside data centres or the trend, or with no official figure (D14, ruling R30). Before R30, Electrification high was 6,528 TWh, All upside 6,555 and the joint median 5,668 (P5 4,130, P95 8,017).
+- The Robust plan leaves 5.5 TWh of the joint median (5,765 TWh) unmet (8.9 TWh at 5,769 before D15; none before R30). Planned for the joint P90 (7,503 TWh) it leaves 1,734 TWh unmet (1,738 at 7,506 before D15), against 639 TWh at the headline P90.
 - The plan is stress-tested at the headline P90 (6,408 TWh), which is 1,720 TWh above the median.
 
 ## 2. Regional requirement
@@ -314,7 +320,7 @@ Land for solar is the binding constraint (`outputs/p90_levers.csv`, unmet TWh):
 
 Faster building alone does not close the gap: twice the published high-case limits still leaves 217 TWh unmet.
 Usable solar land (rooftop, agri-PV, canal-top and floating solar) does: 45 percent of the potential meets the P90 already at the published high-case limits, for about 258 billion USD a year (244 billion with 55 percent).
-These levers were tested at the headline P90 only; at the core-plus-features joint P90 (7,506 TWh) the Robust plan leaves 1,738 TWh unmet (section 1.6).
+These levers were tested at the headline P90 only; at the core-plus-features joint P90 (7,503 TWh) the Robust plan leaves 1,734 TWh unmet (section 1.6).
 
 ### 3.4 Scenario and policy presets
 
@@ -326,19 +332,23 @@ Each scenario preset is crossed with each policy preset ([assumptions_and_uncert
 | Base | Low carbon | 4,688 | 82.1% | 17.9% | 816 | 191 | 0 | 1,493 |
 | Base | **Robust** | 4,688 | **79.9%** | **19.0%** | **891** | **176** | **0** | **639** |
 | Base | Energy security | 4,688 | 70.0% | 30.0% | 1,367 | 214 | 0 | 1,471 |
+| Base | Nuclear mission | 4,688 | 85.1% | 13.8% | 653 | 178 | 0 | 639 |
 | High growth | Base | 6,580 | 70.1% | 28.8% | 1,407 | 236 | 1,643 | 4,172 |
 | High growth | Robust | 6,580 | 75.0% | 24.1% | 1,375 | 253 | 812 | 3,341 |
+| High growth | Nuclear mission | 6,580 | 75.0% | 24.1% | 1,375 | 253 | 812 | 3,341 |
 | Low growth | Base | 3,377 | 77.1% | 22.9% | 754 | 127 | 0 | 0 |
 | Low growth | Robust | 3,377 | 79.4% | 19.1% | 653 | 125 | 0 | 0 |
+| Low growth | Nuclear mission | 3,377 | 79.4% | 19.1% | 653 | 134 | 0 | 0 |
 
 Costs are in real 2024 USD.
 In the base scenario every policy meets the median; they differ in cost, CO2 and the shortfall at P90.
-The Robust policy is the cheapest and leaves the smallest P90 shortfall; the Low carbon policy emits least.
+The Robust policy is the cheapest and leaves the smallest P90 shortfall; the Nuclear mission policy (since 22 November 2026, section 3.9) emits least, for 1.49 billion USD a year more than Robust, and the Low carbon policy next.
+In the High growth scenario the nuclear floor does not bind (Robust already runs nuclear at its build cap), so the two plans are the same; in the Low growth scenario it costs 9.1 billion USD a year more than Robust and cuts no CO2, because coal is already at its floor.
 Since 21 November the High growth preset has no fixed new-loads add-on (it had 100 to 300 TWh without an official source, about 200 TWh at the median); its median is 6,580 TWh, against 6,785 TWh in the run presented on 21 November. Demand features enter only through the feature scenarios (section 1.6).
 
 **Stress test at the 5th percentile** (`outputs/presets.csv`, columns `unserved_at_p05_twh` and `cost_at_p05_busd`).
 Every policy has a feasible plan at the Base scenario's P05 (3,190 TWh) and at every scenario's median.
-At the Low growth scenario's P05 (2,306 TWh), the Base, Robust and Energy security policies have no feasible plan; Low carbon has one (86.1 billion USD a year).
+At the Low growth scenario's P05 (2,306 TWh), the Base, Robust, Energy security and Nuclear mission policies have no feasible plan; Low carbon has one (86.1 billion USD a year).
 The reason is a known limit ([decisions.md](decisions.md), D13): the coal floor (for Robust, 50 percent of each region's FY2023-24 coal, 647 TWh) and the gas kept for peaking (51 TWh) are fixed in TWh, while the non-fossil minimum (75 percent) is a share of generation.
 Below about (647 + 51) / 0.25 = 2,794 TWh of generation the two floors exceed the fossil allowance; the lowest feasible requirement found by bisection is 2,780 TWh.
 The Base policy's bound is about 2,590 TWh and Energy security's about 3,020 TWh. The dashboard explains the infeasible state and names the levers: the coal floor, the gas kept for peaking and the non-fossil minimum.
@@ -486,6 +496,8 @@ The price base did not move it; the Jammu and Kashmir deflation and the new conv
 | NIWE 120 m wind potential | 75.0% | 23.9% | 1,113 | 182.5 | 0 | 1,052 |
 | Low-case build limits | 75.0% | 23.4% | 739 | 152.5 | 1,540 | 3,260 |
 | Central-case build limits | 79.8% | 19.2% | 898 | 176.2 | 0 | 710 |
+| Nuclear mission floor, low case (NPCIL's 54 GW: 321.7 TWh) | 83.9% | 15.0% | 709 | 176.4 | 0 | 639 |
+| Nuclear mission floor, high case (90.588 GW at PLF 0.80: 634.8 TWh) | infeasible | | | | | |
 
 Costs are in real 2024 USD.
 
@@ -493,6 +505,67 @@ Costs are in real 2024 USD.
 - The CEA cost basis is now on the same price base as the IEA basis, real 2024 USD ([methodology.md](methodology.md), sections 6.1 and 7), so the two cost levels can be compared: 202.6 against 176.2 billion USD a year. With CEA's dearer solar the plan stops at the 75 percent non-fossil minimum and coal rises to 23.9 percent. The inflation used to make the CERC WACC real changes only the cost (182.1 to 225.2 billion USD across the RBI band), not the mix.
 - Before 21 November the CEA basis applied nominal CERC rates to real 2021-22 capital costs and cost 250.3 billion USD a year, a level that could not be compared with the IEA basis ([decisions.md](decisions.md), D14).
 - On the central-case build limits the Robust plan still meets the median, and leaves 71 TWh more unmet at P90 than on the high case.
+- The two nuclear mission rows (since 22 November 2026) bracket the Nuclear mission preset (section 3.9). The high case is infeasible because its floor (634.8 TWh) is above the national nuclear build cap (627.1 TWh); it is reported, not cut ([decisions.md](decisions.md), D15, ruling R33). The file now has 10 cases and 20 solves.
+
+### 3.9 Policy option: the Nuclear Energy Mission
+
+The Union Budget 2025-26 commits to at least 100 GW of nuclear by 2047, and CEA's road map to that goal lists the units.
+The Robust plan keeps only the committed reactors (133.1 TWh, 2.8 percent of generation), so a fifth policy preset, **Nuclear mission**, asks what building the announced fleet would do ([decisions.md](decisions.md), D15; [methodology.md](methodology.md), section 6.1).
+It is the Robust policy plus a national nuclear floor: the road map's 2047 fleet (Table 6.3, 100,648 MW) less the captive Bharat Small Reactors (5,060 MW) and BSMR units (5,000 MW) that the organisers' ruling on captive generation excludes, 90.588 GW x CUF 0.68 x 8.76 = **539.6 TWh** (`data/external/techno_economic/nuclear_mission.csv`, secondary).
+GW enter only through this explicit conversion to TWh; installed capacity is never a forecast metric.
+
+**It is a policy option, not the recommendation.** Robust stays the recommended plan.
+
+At the median requirement (4,688 TWh; `outputs/presets.csv`, `outputs/sensitivity_mix.csv`, `site_summary.json` `plan.nuclear_mission`; real 2024 USD):
+
+| Plan | Nuclear floor | Nuclear, TWh (share) | Non-fossil | Coal | CO2 (Mt) | Cost at median (bn USD/yr) | Unmet at median / P90 (TWh) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **Robust (recommended)** | committed builds only | 133.1 (2.8%) | **79.9%** | **19.0%** | **891.3** | **176.16** | **0 / 639.5** |
+| Nuclear mission, low case | 321.7 TWh (NPCIL's 54 GW) | 321.7 (6.8%) | 83.9% | 15.0% | 709.1 | 176.41 | 0 / 639.5 |
+| Nuclear mission (central) | 539.6 TWh (90.588 GW) | 539.6 (11.5%) | 85.1% | 13.8% | 652.7 | 177.65 | 0 / 639.5 |
+| Nuclear mission, high case | 634.8 TWh (PLF 0.80) | infeasible: above the 627.1 TWh nuclear build cap | | | | | |
+| Robust with a CO2 cap at 652.7 Mt (section 3.5) | none | 8.1% of generation | 85.1% | 13.8% | 652.7 | 176.60 | 0 / - |
+
+- **The trade.** The Nuclear mission plan costs 1.49 billion USD a year more than Robust (177.65 against 176.16) for 238.7 Mt less CO2 (652.7 against 891.3 Mt): about 6.2 USD per tonne on average.
+- **A CO2 cap gets the same cut for less.** The Robust plan under a CO2 cap reaches the same 652.7 Mt and the same 85.1 percent non-fossil for 0.45 billion USD a year (section 3.5), so the mission costs 1.04 billion USD a year more than the least-cost route to the same emissions. Both stop at 652.7 Mt because coal reaches its floor.
+- **Nothing changes at P90.** Planned for the P90 requirement (6,408 TWh), Robust already runs nuclear at the build cap (627.1 TWh), so both leave 639.5 TWh unmet, at 252.96 billion USD a year.
+- **By scenario** (section 3.4). In High growth the floor does not bind and the plans are the same. In Low growth (3,377 TWh) the floor is above the 15 percent share limit (506.6 TWh) and overrides it (ruling R34): nuclear is 15.9 percent of generation, and the plan costs 133.76 against 124.70 billion USD a year with no CO2 cut, because coal is already at its floor (652.7 Mt in both).
+- The mission's case rests on what an annual least-cost plan does not price: firm output around the clock and fuel diversity. Its storage need was not back-calculated.
+
+What the floor displaces, against the Robust plan at the median (TWh; printed by `energy2047`, shares in `outputs/presets.csv`):
+
+| Source | Robust | Nuclear mission | Change |
+| --- | --- | --- | --- |
+| Nuclear | 133.1 | 539.6 | +406.5 |
+| Coal | 893.2 | 647.4 | -245.8 (to its floor, 50 percent of FY2023-24) |
+| Firmed RE | 686.0 | 569.5 | -116.5 |
+| Offshore wind | 113.4 | 0 | -113.4 |
+| Onshore wind | 84.2 | 200.7 | +116.5 |
+| Hydro | 346.1 | 301.9 | -44.2 |
+| Solar | 2,390.2 | 2,390.2 | 0 |
+| Gas | 51.1 | 51.1 | 0 |
+| Total generation | 4,697.2 | 4,700.3 | +3.1 (more corridor losses) |
+
+Nuclear by region, TWh (Northern / Western / Southern / Eastern / North-Eastern): Robust 51.6 / 24.0 / 57.5 / 0 / 0; Nuclear mission 179.5 / 173.4 / 114.0 / 72.7 / 0 (low case 158.2 / 33.2 / 57.5 / 72.7 / 0).
+The LP sites the floor within each region's nuclear bound, which follows the reactor units in the pipeline. The Eastern Region's coal falls to its floor, so its net imports rise from 155.3 to 328.3 TWh (`outputs/presets.csv`, column `eastern_net_export_twh`).
+
+**CEA's 2047 road map as context** (`data/external/policy_targets.csv`; capacity converted at the model's CUFs, GW x CUF x 8.76; each is an upper bound, because together they come to 5,587.6 TWh, more than the requirement):
+
+| Source | CEA 2047 capacity | Converted, TWh (CUF) | Robust plan, TWh | Nuclear mission plan, TWh |
+| --- | --- | --- | --- | --- |
+| Solar | 1,186.8 GW | 2,287.2 (0.22) | 2,390.2 | 2,390.2 |
+| Wind (on- and offshore) | 434.9 GW | 915.9 to 1,047.7 (0.2404 to 0.275) | 197.6, plus part of the firmed RE | 200.7, plus part of the firmed RE |
+| Coal | 235.3 GW | 1,209.9 to 1,339.8 (0.587 to 0.65) | 893.2 | 647.4 |
+| Nuclear | 100 GW, of which 90.588 GW utility | 595.7, or 539.6 for the utility reactors (0.68) | 133.1 | 539.6 |
+| Large hydro | 99 GW | 312.2 (0.36) | 346.1 (with small hydro) | 301.9 (with small hydro) |
+| Biomass | 23 GW | 120.9 (0.60) | 0 | 0 |
+| Gas | 10.4 GW | 14.0 (0.1536) | 51.1 | 51.1 |
+| Storage | 475.7 GW, 2,686.8 GWh | losses 173.6 at one cycle a day (the storage feature's high) | back-calculated: 448 GW, 3,048 GWh (section 3.6) | not back-calculated |
+| Non-fossil share of generation | "about 2/3rd" | 66.7% | 79.9% | 85.1% |
+
+- CEA's own 2047 non-fossil share of generation (about two-thirds) is below every policy preset's floor (70 to 80 percent); one-third fossil at our median would be 1,562.6 TWh, above the model's national coal ceiling (1,424.4 TWh).
+- CEA's mix has far more wind and coal and far less gas than either plan; its storage is close to the Robust plan's back-calculation.
+- The road map's 2046-47 requirement (4,582 BU) is ex-bus and is context, not a benchmark (section 1.4).
 
 ## 4. Sensitivity
 
@@ -545,9 +618,9 @@ More usable solar land (35 percent) is also the largest cost saving, 213 to 177 
 
 | Run | 1,048,576 scenarios | Scenarios per second |
 | --- | --- | --- |
-| CPU, 1 thread | 20.60 s | 51,000 |
-| CPU, 16 threads (OpenMP) | 2.35 s | 447,000 |
-| GPU, RTX 3070 Ti Laptop (CUDA) | 11.2 ms | 94 million |
+| CPU, 1 thread | 19.63 s | 53,000 |
+| CPU, 16 threads (OpenMP) | 2.17 s | 483,000 |
+| GPU, RTX 3070 Ti Laptop (CUDA) | 11.0 ms | 96 million |
 
 These are from `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
 The India-only core fits in under 0.2 s at start-up (2,000 block-bootstrap replicates in a few milliseconds); the default 4.2 million scenarios are four times the table's count.

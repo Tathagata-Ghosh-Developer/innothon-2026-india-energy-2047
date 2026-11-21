@@ -247,22 +247,23 @@ On the central path ln income per person rises by 1.04, so each 0.01 of elastici
 The elasticity learns only what is in the 2006-2024 history.
 Drivers that the history does not carry, or carries only in part, form a separate layer that is never the headline ([decisions.md](decisions.md), D14; the full catalogue is [demand_features.md](demand_features.md)).
 
-**Catalogue.** `data/external/demand_features.csv` lists 49 drivers of FY2047-48 utility generation. Every quantified size comes from an official source (secondary); six unquantified rows name no external source (three where no official figure was found, three that point to the model's own runs). Each row has a sign, a treatment and an overlap flag against the trend:
+**Catalogue.** `data/external/demand_features.csv` lists 73 drivers of FY2047-48 utility generation (49 before the official-conference review of 22 November 2026, D15). Every quantified size comes from an official source (secondary); six unquantified rows name no external source (three where no official figure was found, three that point to the model's own runs). Each row has a sign, a treatment and an overlap flag against the trend:
 
 | Treatment | Rows | Meaning |
 | --- | --- | --- |
 | Core | 7 | Estimated in the headline (population, income, the pandemic dummy, and four efficiency programmes realised inside the history) |
 | Driver | 3 | An existing setting or uncertainty (urbanisation prior, elasticity decline, model error for heat years) |
 | Layer | 11 | A signed TWh adjustment outside the headline |
-| Excluded by rule | 1 | Captive generation (organisers' ruling of 16 November 2026) |
-| Context | 27 | Not quantified: no official figure, inside the trend or another row, or supply-side only (AI compute, telecom, devices, semiconductor manufacturing and digital public infrastructure among them) |
+| Excluded by rule | 2 | Captive generation, and the captive small reactors of the nuclear mission (organisers' ruling of 16 November 2026) |
+| Context | 50 | Not quantified: no official figure, inside the trend or another row, or supply-side only (AI compute, telecom, devices, semiconductor manufacturing and digital public infrastructure among them, and 23 factors from official conferences and texts, such as the CEA 2047 capacity mix, the Nuclear Energy Mission, biomass co-firing, CCUS and the EU CBAM) |
 
 **Layer rows.** Each of the 11 has a low, central and high size in TWh of FY2047-48 generation, already reduced to its part beyond the trend and grossed up to generation (`src/pipeline/demand_features.hpp` reads and validates the file):
 
 - lowering generation: T&D losses, auxiliary consumption, cross-border imports, rooftop solar, PM-KUSUM C pump solarisation and efficiency beyond trend;
 - raising generation: storage round-trip losses, transport electrification, green hydrogen, data centres and space cooling.
 
-The data-centre high continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (read as average load, x 8.76 = 230.4 TWh) linearly to FY2047-48, a stated extrapolation (ruling R30).
+The data-centre high is our extrapolation of an official 2031-32 figure, not an official 2047 figure: it continues the Ministry of Power's 26.3 GW of AI data-centre load by 2031-32 (read as average load, x 8.76 = 230.4 TWh) linearly to FY2047-48 (ruling R30).
+Since 22 November 2026 two highs come from newer Indian official sources (ruling R35): storage round-trip losses 173.6 TWh (150.1 before; CEA's 2047 storage in its 100 GW nuclear road map) and cross-border imports 49.3 TWh (15.3 before; the Prime Minister's target of importing 10,000 MW from Nepal).
 
 **How a row is applied** (ruling R22).
 
@@ -278,7 +279,7 @@ The data-centre high continues the Ministry of Power's 26.3 GW of AI data-centre
 
 **Regions** (ruling R23). The kernel splits total generation, add-on included, by each draw's regional shares, so features are spread in proportion to each region's requirement. No official regional split of the features exists.
 
-**Results** (`outputs/feature_scenarios_2047.csv`): Features central 5,810 TWh (+23.9 percent), All downside 4,865, All upside 6,855, joint P50 5,769 (P5 4,225, P95 8,121). Every combination of feature levels lies between All downside (+177.3 TWh) and All upside (+2,167.5 TWh). The headline stays 4,688 TWh.
+**Results** (`outputs/feature_scenarios_2047.csv`): Features central 5,810 TWh (+23.9 percent), All downside 4,831, All upside 6,879, joint P50 5,765 (P5 4,222, P95 8,118). Every combination of feature levels lies between All downside (+143.3 TWh) and All upside (+2,191.0 TWh). The headline stays 4,688 TWh. Before D15: All downside 4,865, All upside 6,855, joint P50 5,769.
 
 The earlier new-loads scenario (`new_loads_published`, green hydrogen only, with a think-tank central value) is retired; `data/external/new_loads.csv` is kept as an archive and is no longer read.
 
@@ -447,9 +448,9 @@ The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and 
 
 | Run | 1,048,576 scenarios |
 | --- | --- |
-| CPU, 1 thread | 20.60 s |
-| CPU, 16 threads | 2.35 s |
-| GPU, RTX 3070 Ti Laptop | 11.2 ms |
+| CPU, 1 thread | 19.63 s |
+| CPU, 16 threads | 2.17 s |
+| GPU, RTX 3070 Ti Laptop | 11.0 ms |
 
 From `outputs/timings.csv` of the current run (the single-thread time is scaled from a 1/16 run). Timings vary by run and machine load.
 
@@ -484,7 +485,8 @@ Two allocation methods then meet it.
 | Coal ceiling | National coal at most 110 percent of FY2023-24; regional coal at most 150 percent |
 | Gas | Each region at most the national gas cap x its FY2023-24 share of gas; a national gas minimum (the gas kept for peaking) in the Robust policy |
 | Firm generation | At least 45 percent nationally and 25 percent in each region |
-| Policy shares | Non-fossil share at least 70 percent; gas at most 5 percent; nuclear at most 10 percent of the requirement, sited by reactor units in the pipeline |
+| Policy shares | Non-fossil share at least 70 percent; gas at most 5 percent; nuclear at most 10 percent of the requirement, sited by reactor units in the pipeline (never below the nuclear floor) |
+| Nuclear floor (optional) | National nuclear generation at least a floor in TWh; off by default, 539.6 TWh in the Nuclear mission policy (below) |
 | Build limits | Each source group's 2047 generation at most its starting level plus `build_accel` x the published additions to 2047 (below) |
 | Corridors | Flow at most 2 x the 2032 plan x 60 percent utilisation; losses of 3.1 to 4.2 percent |
 | CO2 cap (optional) | National CO2 at most a cap in Mt per year; off by default (section 6.5) |
@@ -505,6 +507,16 @@ Two allocation methods then meet it.
 - The floors apply in every policy, because committed capacity is exogenous to an expansion plan. They are first fitted inside the national build cap and the nuclear share limit, and capped at each region's bound; nothing is cut at the default or Robust settings. They ignore commissioning dates.
 
 **Gas kept for peaking.** `gas_min_twh_share` (default 0) sets a national gas minimum as a share of the gas fleet floor (51.07 TWh, FY2020-21). The Robust policy keeps all of it (share 1.0), for peaking and as a bridge for variable renewables. The regional gas bounds above site it by the FY2023-24 gas shares: Western 38 percent, North-Eastern 31 percent, Northern 23 percent.
+
+**Nuclear floor: the Nuclear Energy Mission** (since 22 November 2026; [decisions.md](decisions.md), D15, rulings R31 to R34).
+
+- **The row.** `PolicySettings` gains `nuclear_min_twh` (a floor in TWh a year) and `nuclear_mission` (a case of the mission); the floor is the larger of the two (`nuclear_floor_twh` in `src/allocation/allocate.cpp`). It is one LP row: nuclear generation summed over the regions is at least the floor. The LP sites it within each region's nuclear bound, which follows the siting key of reactor units. Both are off by default, so the four earlier policies are unchanged.
+- **The floor's size** (`data/external/techno_economic/nuclear_mission.csv`, secondary). Each case is energy, never capacity: utility MW / 1000 x CUF x 8.76.
+  - Central: the 2047 fleet of CEA's road map to 100 GW (Table 6.3, 100,648 MW) less the captive Bharat Small Reactors (5,060 MW) and BSMR units (5,000 MW), which the organisers' ruling on captive generation excludes: 90.588 GW x 0.68 x 8.76 = 539.6 TWh. The CUF 0.68 is CEA NEP 2022-32's nuclear availability, the same as the nuclear build limits and the committed floor.
+  - Low: NPCIL's 54 GW of the mission (DAE, Lok Sabha USQ 2783) x 0.68 x 8.76 = 321.7 TWh.
+  - High: the 90.588 GW at the road map's achievable PLF of 0.80 = 634.8 TWh.
+- **Share limit and build cap.** The nuclear share limit (nuclear_max x the requirement) never cuts the floor: where the floor is higher, as at a low requirement, the floor becomes the limit. The national nuclear build cap does: a floor above the national nuclear limit (the build cap, or the sum of the regional bounds) is not cut, and the solve returns infeasible with a status that names both. The high case (634.8 TWh) is above the cap at the published high case (627.1 TWh), so it is reported as infeasible.
+- **The policy.** The "Nuclear mission" preset is the Robust policy plus the central floor (`src/pipeline/presets.hpp`). The low and high cases are rows of the mix sensitivity (section 6.6). The floor is checked in `tests/test_allocation.cpp` (results: [results.md](results.md), section 3.9).
 
 **Objective:** minimise generation cost plus carbon price times emissions.
 
@@ -653,6 +665,9 @@ Each case is solved at the median and at the P90 requirement; `outputs/sensitivi
 | `solar_potential_nise2014` | NISE 2014 technical solar potential instead of NISE 2025 ground-mounted |
 | `wind_120m` | NIWE onshore wind potential at 120 m instead of 150 m |
 | `build_low`, `build_central` | Published build limits, low or central case, instead of the high case |
+| `nuclear_mission_low`, `nuclear_mission_high` | The Nuclear Energy Mission floor at its low case (321.7 TWh) or high case (634.8 TWh, above the build cap, so reported as infeasible); the central case is the Nuclear mission preset (section 6.1) |
+
+Ten cases in all, each solved at the median and the P90: 20 solves (16 before 22 November 2026).
 
 **Known limit: low requirements.** The coal floor and the gas kept for peaking are fixed in TWh, while the non-fossil minimum is a share of generation.
 Below about (coal floor + gas minimum) / (1 - non-fossil minimum) of generation the LP has no feasible plan: about 2,794 TWh for the Robust policy, (647 + 51) / 0.25 (test `robust_low_requirement_limit` finds 2,780 TWh by bisection).

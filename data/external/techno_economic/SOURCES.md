@@ -1,7 +1,7 @@
 # Techno-economic parameters: sources and extraction notes
 
 This folder holds the techno-economic inputs for the 2047 generation allocation model.
-All files were downloaded or read on **2026-11-15**, except `build_limits.csv`, `cea_costs.csv` and the CEA v22 rows of `emission_factors.csv`, which were read on **2026-11-18**, and `cea_cost_basis.csv`, read on **2026-11-19**.
+All files were downloaded or read on **2026-11-15**, except `build_limits.csv`, `cea_costs.csv` and the CEA v22 rows of `emission_factors.csv`, which were read on **2026-11-18**, `cea_cost_basis.csv`, read on **2026-11-19**, and `nuclear_mission.csv`, read on **2026-11-22**.
 Every source in this folder is **secondary**: the project's primary sources are only NPP and the Renewable India dataset (`docs/data_audit.md`).
 Every value traces to a document that was fetched and read; nothing was filled from memory.
 Where a value could not be found, the cell is blank and the gap is listed under "Not found" at the end.
@@ -43,6 +43,7 @@ Capacity factors themselves are ratios of energy to capacity and are provided on
 | `existing_fleet_generation.csv` | 45 | Coal retirement list, coal fleet base, under-construction coal and its commissioning schedule, life-extension plan |
 | `transmission.csv` | 61 | Inter-regional transfer capability by corridor (current and planned), regional transmission losses, T&D loss |
 | `nuclear_pipeline.csv` | 25 | Nuclear plants under construction, sanctioned and planned, with state, region and expected commissioning; 100 GW target |
+| `nuclear_mission.csv` | 3 | The Nuclear Energy Mission floor in 2047, low, central and high: the mission's MW (NPCIL's 54 GW; CEA's road map to 100 GW), the captive MW left out and the CUF that turns them into a floor on generation |
 | `offshore_wind.csv` | 36 | Offshore potential, zones, targets, auction trajectory, VGF scheme |
 | `policy_targets.csv` | 93 | National targets and official projections, each marked capacity-, generation- or emissions-based |
 | `land_use.csv` | 6 | Land-use intensity of solar PV and onshore wind (MNRE norm, NREL studies) for the land back-calculation |
@@ -265,6 +266,39 @@ The CEA URL now fails; the file came from the Internet Archive (snapshot 2025080
 Regional transmission losses in 2023-24 were NR 3.15%, WR 3.12%, SR 3.46%, ER 4.24% and NER 3.89% of the energy available in each region.
 All-India losses in transformation, transmission, distribution and unaccounted energy were 17.63% of net energy available, and power-station auxiliary consumption was 6.15% of gross generation.
 These two figures convert gross generation to energy delivered.
+
+---
+
+## nuclear_mission.csv
+
+Added on 2026-11-22 (`docs/decisions.md`, D15). Status: secondary.
+Columns: `case, total_mw_2047, captive_mw_excluded, cuf, source_name, source_url, source_location, notes`.
+One row per case of the Nuclear Energy Mission floor: `low`, `central` and `high`.
+Capacity enters only as a floor on generation: energy (TWh) = (`total_mw_2047` - `captive_mw_excluded`) / 1000 x `cuf` x 8.76, our computation, given in each row's `notes`.
+The model reads the file (`read_nuclear_mission` in `src/allocation/inputs.cpp`) and uses a case only when a policy sets `nuclear_mission`: the Nuclear mission preset takes `central`, and the mix sensitivity takes `low` and `high`.
+The loader rejects a missing, duplicate or unknown case, a total that is not positive, captive MW outside [0, total), a CUF outside (0, 1] and energy that does not rise from low to central to high.
+
+| case | total MW 2047 | captive MW left out | CUF | TWh | Source of the MW |
+| --- | --- | --- | --- | --- | --- |
+| low | 54,000 | 0 | 0.68 | 321.7 | DAE, Lok Sabha USQ 2783 (17.12.2025), answer (b): NPCIL "will be contributing 54 GW by 2047" |
+| central | 100,648 | 10,060 | 0.68 | 539.6 | CEA road map, Table 6.3 "Technology wise expected installed capacity in 2047", printed p. 25 (PDF p. 50) |
+| high | 100,648 | 10,060 | 0.80 | 634.8 | As central; PLF from para 11.1.3.1 (c), printed p. 52 (PDF p. 77) |
+
+**CEA, "Road Map for Achieving the Goal of 100 GW of Nuclear Capacity by 2047".** A committee report constituted by the Ministry of Power's OM of 27.02.2025, signed 27.06.2025 and released on 11.10.2025 at CEA's 52nd Foundation Day (PIB Release ID 2177769).
+The CEA URL `https://cea.nic.in/wp-content/uploads/notification/2025/10/Roadmap_Final_30062025.pdf` returned 404 on 2026-11-22; the Internet Archive copy `https://web.archive.org/web/20260722212703/https://cea.nic.in/wp-content/uploads/notification/2025/10/Roadmap_Final_30062025.pdf` (140 pages) was read, and it is the `source_url`.
+Used:
+
+* Table 6.3 (printed p. 25, PDF p. 50): 1,00,648 MW cumulative in 2047, of which Bharat Small Reactors (BSR) 5,060 MW and BSMR 5,000 MW.
+* The note to Table 5.3 (printed p. 16, PDF p. 41): the 100 GW "Includes BSR/BSMR/SMR for captive uses".
+* Para 11.1.3.1 (c) (printed p. 52, PDF p. 77): "Enhancing Normative PLF to 80% from present norm of 72.5%"; "it should be possible to achieve PLF of 80% in new PHWR units"; "The normative PLF for PWR is already 80%"; an actual fleet PLF of "about 79%" in 2024-25.
+
+**Captive units left out.** The organisers' ruling of 16 Nov 2026 puts captive generation outside NPP utility generation. BSR 5,060 MW + BSMR 5,000 MW = 10,060 MW are captive by the road map's own note and by DAE, Lok Sabha USQ 2783, answers (c) and (d) (BSMR-200 and SMR-55 "can be deployed as captive plant"; Bharat Small Reactors offered to industries "as captive plants"). Utility capacity: 90,588 MW. The low case (NPCIL's PHWR and LWR fleet) has no captive units.
+
+**CUF.** 0.68 is the CEA NEP 2022-32 nuclear availability (Annexure 5.1, printed p. 5.28, PDF p. 154), the CUF of the nuclear rows of `build_limits.csv` and of the committed floor, so the floor and the build cap use one factor. The high case uses the road map's achievable PLF of 0.80. Because the build cap credits each published GW at 0.68, the high case (634.8 TWh) lies above the cap at the published high case (627.1 TWh), and the model reports that plan as infeasible rather than cut the floor.
+
+**The mission itself.** Union Budget 2025-26, Budget Speech, Part A, paras 61-62, printed p. 11 (PDF p. 15), `https://www.indiabudget.gov.in/budget2025-26/doc/budget_speech.pdf`: "Development of at least 100 GW of nuclear energy by 2047 is essential for our energy transition efforts."
+
+**DAE, Lok Sabha Unstarred Question 2783, answered 17.12.2025.** URL: `https://cdnbbsr.s3waas.gov.in/s35b8e4fd39d9786228649a8a8bec4e008/uploads/2026/04/202604202139435244.pdf`. Answer (b), PDF p. 1, gives NPCIL's 54 GW; answers (c) and (d) give the captive small reactors.
 
 ---
 
@@ -586,7 +620,7 @@ The CEA General Review 2025, the CEA Growth book and the Ember files used for `c
 * The NTPC, NHPC and SJVN own-auction result sheets (only SECI sheets were used, plus the NVVN and RVUNL storage orders).
 * The CEA CO2 Baseline Database workbook for v21 (the user guide was used).
 * A TWh figure for the electricity need of the Green Hydrogen Mission.
-* The CEA "Roadmap for achieving 100 GW nuclear by 2047" (October 2025), which returned "page not found" and was blocked in the web archive, so there is no year-wise or state-wise path to 100 GW.
+* The CEA "Roadmap for achieving 100 GW nuclear by 2047" (October 2025) was not found when this folder was built. It was read on 2026-11-22 from an Internet Archive copy (the CEA URL returned 404) and is the source of `nuclear_mission.csv`; the model uses only its 2047 fleet (Table 6.3), and the build limits keep their straight line to 100 GW.
 * A discount rate, WACC or fuel price in the CEA NEP 2022-32, so those columns of `cea_costs.csv` are blank (see that section). The CEA cost basis takes them from CERC, a CEA report and the RBI instead (`cea_cost_basis.csv`).
 * A published coal landed price and GCV for new plants. The CEA coal fuel cost is therefore the variable-cost range of the existing fleet (CEA optimal mix report), not heat rate x landed price / GCV.
 * Explicit annual build limits for any source before 2030 other than the CEA solar and wind limits, and any published rate for coal, gas and biomass after 2031-32. `build_limits.csv` uses the NEP plan rates (block additions divided by 5) where no limit is published, and holds the NEP rates to 2047 for coal, gas and biomass.

@@ -7,3 +7,5 @@ solar_potential_nise2014,75,23.45,772.041,181.25,3122.2,1402.8
 wind_120m,75,23.91,1113.39,182.48,1052.2,0
 build_low,75,23.38,738.548,152.48,3260.2,1540
 build_central,79.75,19.16,897.917,176.17,710.46,0
+nuclear_mission_low,83.89,15.02,709.149,176.41,639.47,0
+nuclear_mission_high,infeasible,infeasible,infeasible,infeasible,infeasible,infeasible

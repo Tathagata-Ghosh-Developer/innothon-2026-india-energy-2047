@@ -478,11 +478,11 @@
   "features": {
     "note": "Outside the headline: the core forecast plus a signed adjustment in TWh for FY2047-48, ramped linearly from the base year and split across the regions by their share of the requirement. Official sources (secondary). T&D losses are an upper bound that may already be inside the trend: 0 at central.",
     "counts": {
-      "total": 49,
-      "context": 27,
+      "total": 73,
+      "context": 50,
       "core": 7,
       "driver": 3,
-      "excluded_rule": 1,
+      "excluded_rule": 2,
       "layer": 11
     },
     "catalogue": [
@@ -601,10 +601,25 @@
         "overlap": "no",
         "low": 72.2,
         "central": 150.1,
-        "high": 150.1,
+        "high": 173.6,
         "upper_bound": "no",
-        "range": "72.2 to 150.1 TWh (central 150.1)",
-        "source": "Ministry of Power, National Framework for Promoting Energy Storage Systems (Aug 2023) | CEA, National Generation Adequacy Plan (2026-27 to 2035-36), 19 Mar 2026 | CEA, National Electricity Plan (Vol I Generation) 2022-32, Gazette 18.05.2023"
+        "range": "72.2 to 173.6 TWh (central 150.1)",
+        "source": "Ministry of Power, National Framework for Promoting Energy Storage Systems (Aug 2023) | CEA, National Generation Adequacy Plan (2026-27 to 2035-36), 19 Mar 2026 | CEA, National Electricity Plan (Vol I Generation) 2022-32, Gazette 18.05.2023 | CEA, Road Map for Achieving the Goal of 100 GW of Nuclear Capacity by 2047 (MoP committee report, 27.06.2025; released 11.10.2025, PIB Release ID 2177769) | UNFCCC, COP29 Declarations and Pledges Letter (16 Oct 2024) | IEA, 2024 IEA Ministerial Communique (14 Feb 2024) (intergovernmental, secondary) | UNFCCC, Decisions 1/CMA.7 to 3/CMA.7 (FCCC/PA/CMA/2025/19/Add.1, 30 Mar 2026)"
+      },
+      {
+        "name": "storage_vgf_and_colocation",
+        "label": "Storage VGF and co-location",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), 11 years of the power sector, 10.06.2025 (Release ID 2135450) | PIB (Ministry of Power), steps to add energy storage capacity, 03.02.2026 (Release ID 2222473) | PIB (Ministry of Power), Development and Deployment of Energy Storage Capacities, 18.12.2025 (Release ID 2205959) | PIB (Ministry of Power), Brainstorming Session on the Indian Power Sector Scenario 2047, 14.10.2024 (Release ID 2064702)"
       },
       {
         "name": "cross_border_imports",
@@ -616,10 +631,10 @@
         "overlap": "partial",
         "low": 10.9,
         "central": 13.1,
-        "high": 15.3,
+        "high": 49.3,
         "upper_bound": "no",
-        "range": "10.9 to 15.3 TWh (central 13.1)",
-        "source": "CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | CEA, National Electricity Plan (Vol I Generation) 2022-32, Gazette 18.05.2023 | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+        "range": "10.9 to 49.3 TWh (central 13.1)",
+        "source": "CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | CEA, National Electricity Plan (Vol I Generation) 2022-32, Gazette 18.05.2023 | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | PMO (PMIndia), Press Statement by PM during the visit of Prime Minister of Nepal, 01.06.2023 | G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | UNFCCC, Decisions 1/CMA.7 to 3/CMA.7 (FCCC/PA/CMA/2025/19/Add.1, 30 Mar 2026)"
       },
       {
         "name": "cross_border_exports",
@@ -634,7 +649,157 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24)"
+        "source": "CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | PIB (Ministry of Power), Bharat Electricity Summit 2026 inaugurated, 19.03.2026 (Release ID 2242673) | PIB (President's Secretariat), Eighth Session of the ISA Assembly, 28.10.2025 (Release ID 2183262) | G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | UNFCCC, Decisions 1/CMA.7 to 3/CMA.7 (FCCC/PA/CMA/2025/19/Add.1, 30 Mar 2026)"
+      },
+      {
+        "name": "cea_2047_capacity_mix",
+        "label": "CEA 2047 capacity mix",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "CEA, Road Map for Achieving the Goal of 100 GW of Nuclear Capacity by 2047 (MoP committee report, 27.06.2025; released 11.10.2025, PIB Release ID 2177769)"
+      },
+      {
+        "name": "nuclear_energy_mission",
+        "label": "Nuclear energy mission",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Union Budget 2025-26, Budget Speech, Part A paras 61-62 | DAE, Lok Sabha Unstarred Question 2783, 17.12.2025 | DAE, Lok Sabha Unstarred Question 5368, 25.03.2026 | PIB Explainer, SHANTI Bill/Act 2025 (19.12.2025) | CEA, Road Map for Achieving the Goal of 100 GW of Nuclear Capacity by 2047 (MoP committee report, 27.06.2025; released 11.10.2025, PIB Release ID 2177769) | CEA, National Generation Adequacy Plan (2026-27 to 2035-36), 19 Mar 2026 | PIB (Ministry of Power), Conference of Power Ministers of States & UTs, 12.11.2024 (Release ID 2072871) | PIB (Ministry of Power), Southern Regional Power Conference, Bengaluru, 23.05.2025 (Release ID 2130769) | PIB (Ministry of Power), Northern Regional Power Conference, Chandigarh, 06.06.2025 (Release ID 2134584) | PIB (Ministry of Power), Eastern Regional Power Conference, Patna, 24.06.2025 (Release ID 2139257)"
+      },
+      {
+        "name": "coal_pipeline_2035",
+        "label": "Coal pipeline to 2035",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), parliamentary reply on power supply and capacity addition, 16.03.2026 (Release ID 2240743) | CEA, National Generation Adequacy Plan (2026-27 to 2035-36), 19 Mar 2026 | PIB (Ministry of Power), Conference of Power Ministers of States & UTs, 12.11.2024 (Release ID 2072871)"
+      },
+      {
+        "name": "biomass_cofiring_mandate",
+        "label": "Biomass co-firing mandate",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Ministry of Power, Annual Report 2025-26 | PIB (Ministry of Power), National Mission on use of Biomass in coal based thermal power plants (SAMARTH), 2021 (Release ID 1721473)"
+      },
+      {
+        "name": "ccus_energy_penalty",
+        "label": "CCUS energy penalty",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Union Budget 2026-27, Budget Speech, 01.02.2026, para 38 | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | Clean Energy Ministerial, CEM16 Outcomes Document (Busan, Aug 2025) | India's Nationally Determined Contribution 2031-2035 (UNFCCC, Apr 2026) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+      },
+      {
+        "name": "brahmaputra_hydro_master_plan",
+        "label": "Brahmaputra hydro master plan",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), CEA celebrates its 52nd Foundation Day, 11.10.2025 (Release ID 2177769)"
+      },
+      {
+        "name": "transmission_plan_2035_36",
+        "label": "Transmission plan to 2035-36",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), Bharat Electricity Summit 2026 inaugurated; National Resource Adequacy Plan and Transmission Plan for Integration of over 900 GW Non-Fossil Fuel Capacity by 2035-36 released, 19.03.2026 (Release ID 2242673) | PIB (Ministry of Power), 11 years of the power sector, 10.06.2025 (Release ID 2135450) | PIB (Ministry of Power), Brainstorming Session on the Indian Power Sector Scenario 2047, 14.10.2024 (Release ID 2064702)"
+      },
+      {
+        "name": "resource_adequacy_framework",
+        "label": "Resource adequacy framework",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), Guidelines for Resource Adequacy Planning Framework, 28.06.2023 (Release ID 1936026) | CEA, National Generation Adequacy Plan (2026-27 to 2035-36), 19 Mar 2026 | PIB (Ministry of Power), North-Eastern Regional Power Conference, Gangtok, 26.04.2025 (Release ID 2124537) | PIB (Ministry of Power), Western Regional Power Conference, Mumbai, 13.05.2025 (Release ID 2128438) | PIB (Ministry of Power), Southern Regional Power Conference, Bengaluru, 23.05.2025 (Release ID 2130769) | PIB (Ministry of Power), Northern Regional Power Conference, Chandigarh, 06.06.2025 (Release ID 2134584) | PIB (Ministry of Power), Eastern Regional Power Conference, Patna, 24.06.2025 (Release ID 2139257) | PIB (Ministry of Power), Bharat Electricity Summit 2026 ministerial meeting, 22.03.2026 (Release ID 2243591)"
+      },
+      {
+        "name": "re_invest_2024_commitments",
+        "label": "RE-INVEST 2024 commitments",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (MNRE), 4th RE-INVEST drew investment commitments worth Rs 32.45 lakh crore, 17.09.2024 (Release ID 2055789)"
+      },
+      {
+        "name": "critical_minerals_supply_chain",
+        "label": "Critical minerals supply chain",
+        "group": "supply_side",
+        "group_label": "Supply side and system",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | G7 Critical Minerals Action Plan (Kananaskis, 17 Jun 2025), endorsed by India | G20 South Africa Summit: Leaders' Declaration (Johannesburg, 22-23 Nov 2025) | IEA, 2026 IEA Ministerial Chair's Summary (19 Feb 2026) (intergovernmental, secondary) | Ministry of Mines, Cabinet approves National Critical Mineral Mission (PIB, 29 Jan 2025; Cabinet release PIB Release ID 2097308) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Critical Mineral Assessment: Demand and Supply (Vol. 10)"
       },
       {
         "name": "rooftop_solar",
@@ -697,6 +862,21 @@
         "source": "MNRE, Comprehensive guidelines for implementation of PM-KUSUM (file dated 17.01.2024) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
       },
       {
+        "name": "pm_kusum_2",
+        "label": "PM-KUSUM 2.0",
+        "group": "distributed",
+        "group_label": "Distributed and behind-the-meter generation",
+        "sign": -1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "MNRE, PM-KUSUM scheme page"
+      },
+      {
         "name": "captive_generation",
         "label": "Captive generation",
         "group": "distributed",
@@ -710,6 +890,21 @@
         "upper_bound": "no",
         "range": "not quantified",
         "source": "CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+      },
+      {
+        "name": "captive_nuclear_bsr_bsmr",
+        "label": "Captive nuclear (BSR, BSMR)",
+        "group": "distributed",
+        "group_label": "Distributed and behind-the-meter generation",
+        "sign": -1,
+        "in_model": "excluded_rule",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "DAE, Lok Sabha Unstarred Question 2783, 17.12.2025 | CEA, Road Map for Achieving the Goal of 100 GW of Nuclear Capacity by 2047 (MoP committee report, 27.06.2025; released 11.10.2025, PIB Release ID 2177769)"
       },
       {
         "name": "ujala_led_lighting",
@@ -784,7 +979,7 @@
         "high": 125.3,
         "upper_bound": "no",
         "range": "0.0 to 125.3 TWh (central 0.0)",
-        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | G20 Energy Transitions Ministerial Meeting Outcome Statement (Foz do Iguacu, 4 Oct 2024) | IEA, Outcome Statement of the 10th Annual Global Conference on Energy Efficiency (Brussels, 13 Jun 2025) (intergovernmental, secondary) | IEA, Outcome Statement of the 11th Annual Global Conference on Energy Efficiency, the Montreal Action Plan (Montreal, 29-30 Jun 2026) (intergovernmental, secondary)"
       },
       {
         "name": "national_efficiency_targets",
@@ -799,7 +994,37 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "PMO, National Statement by the PM at COP26 (1 Nov 2021); India Updated First NDC (Aug 2022) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+        "source": "PMO, National Statement by the PM at COP26 (1 Nov 2021); India Updated First NDC (Aug 2022) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | India's Nationally Determined Contribution 2031-2035 (UNFCCC, Apr 2026; approved by the Union Cabinet, PIB Release ID 2245209, 25 Mar 2026)"
+      },
+      {
+        "name": "smart_metering_rdss",
+        "label": "Smart metering (RDSS)",
+        "group": "efficiency",
+        "group_label": "Efficiency",
+        "sign": -1,
+        "in_model": "context",
+        "overlap": "yes",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), DISCOMs record positive PAT, 18.01.2026 (Release ID 2215761) | PIB (Ministry of Power), RDSS aims to reduce AT&C losses to 12-15% (Release ID 1779726) | PIB (Ministry of Power), Southern Regional Power Conference, Bengaluru, 23.05.2025 (Release ID 2130769) | PIB (Ministry of Power), Eastern Regional Power Conference, Patna, 24.06.2025 (Release ID 2139257)"
+      },
+      {
+        "name": "sustainable_lifestyles_life",
+        "label": "Sustainable lifestyles (Mission LiFE)",
+        "group": "efficiency",
+        "group_label": "Efficiency",
+        "sign": -1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "G20 New Delhi Leaders' Declaration (9-10 Sep 2023) and G20 High-Level Principles on Lifestyles for Sustainable Development (Varanasi, 12 Jun 2023) | Clean Energy Ministerial, CEM15 Outcomes Document (Oct 2024) | Clean Energy Ministerial, CEM16 Outcomes Document (Busan, Aug 2025) | India's Nationally Determined Contribution 2031-2035 (UNFCCC, Apr 2026)"
       },
       {
         "name": "transport_electrification",
@@ -814,7 +1039,22 @@
         "high": 525.2,
         "upper_bound": "no",
         "range": "511.9 to 525.2 TWh (central 511.9)",
-        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Transport (Vol. 3) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Transport (Vol. 3) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, All India Electricity Statistics: General Review 2025 (data for FY2023-24) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | IEA, COP30 Belem Sustainable Fuels Pledge (tracking page) (intergovernmental, secondary)"
+      },
+      {
+        "name": "ev_sales_targets",
+        "label": "EV sales targets",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Ministry of Heavy Industries, Lok Sabha Unstarred Question 4155, answered 19.08.2025"
       },
       {
         "name": "green_hydrogen",
@@ -829,7 +1069,22 @@
         "high": 682.3,
         "upper_bound": "no",
         "range": "137.9 to 682.3 TWh (central 230.4)",
-        "source": "MNRE, National Green Hydrogen Mission (January 2023) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+        "source": "MNRE, National Green Hydrogen Mission (January 2023) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | UNFCCC, COP29 Declarations and Pledges Letter (16 Oct 2024) | IEA, COP30 Belem Sustainable Fuels Pledge (tracking page) (intergovernmental, secondary)"
+      },
+      {
+        "name": "green_hydrogen_hubs",
+        "label": "Green hydrogen hubs",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB Backgrounder, Unlocking India's Green Hydrogen Production Potential, 12.11.2025"
       },
       {
         "name": "data_centres",
@@ -844,7 +1099,22 @@
         "high": 697.8,
         "upper_bound": "no",
         "range": "356.2 to 697.8 TWh (central 397.1)",
-        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026 | MeitY, Rajya Sabha reply of 07.08.2026 (PIB Release ID 2298108) | MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022)"
+        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero: An Overview (Vol. 1) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026 | MeitY, Rajya Sabha reply of 07.08.2026 (PIB Release ID 2298108) | MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | CEA, Report of the 20th Electric Power Survey of India, Volume I (Nov 2022) | IEA, 2026 IEA Ministerial Chair's Summary (19 Feb 2026) (intergovernmental, secondary) | IEA, Outcome Statement of the 11th Annual Global Conference on Energy Efficiency, the Montreal Action Plan (Montreal, 29-30 Jun 2026) (intergovernmental, secondary) | IEA, Energy and AI (Apr 2025), Energy demand from AI (intergovernmental, secondary) | UNFCCC, COP29 Declarations and Pledges Letter (16 Oct 2024)"
+      },
+      {
+        "name": "data_centre_tax_holiday_2047",
+        "label": "Data-centre tax holiday to 2047",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Union Budget 2026-27, Budget Speech, 01.02.2026, paras 130-131"
       },
       {
         "name": "ai_compute_gpus",
@@ -859,7 +1129,7 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | PIB Backgrounder, India's AI Moment: 20,000 additional GPUs (17.02.2026, Release ID 2229397) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026"
+        "source": "MeitY, Rajya Sabha reply of 13.03.2026 (PIB Release ID 2239616) | PIB Backgrounder, India's AI Moment: 20,000 additional GPUs (17.02.2026, Release ID 2229397) | Ministry of Power, Rajya Sabha Unstarred Question No. 956, answered 27.07.2026 | IEA, 2026 IEA Ministerial Chair's Summary (19 Feb 2026) (intergovernmental, secondary) | IEA, Outcome Statement of the 11th Annual Global Conference on Energy Efficiency, the Montreal Action Plan (Montreal, 29-30 Jun 2026) (intergovernmental, secondary) | IEA, Energy and AI (Apr 2025), Energy demand from AI (intergovernmental, secondary) | UNFCCC, COP29 Declarations and Pledges Letter (16 Oct 2024)"
       },
       {
         "name": "telecom_networks",
@@ -934,7 +1204,7 @@
         "high": 252.3,
         "upper_bound": "no",
         "range": "0.0 to 252.3 TWh (central 0.0)",
-        "source": "MoEFCC Ozone Cell, India Cooling Action Plan (March 2019) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5)"
+        "source": "MoEFCC Ozone Cell, India Cooling Action Plan (March 2019) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | UN News, Global Cooling Pledge at COP28 (Dec 2023) | IEA, Outcome Statement of the 10th Annual Global Conference on Energy Efficiency (Brussels, 13 Jun 2025) (intergovernmental, secondary) | Clean Energy Ministerial, CEM16 Outcomes Document (Busan, Aug 2025)"
       },
       {
         "name": "electric_cooking",
@@ -949,7 +1219,7 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5)"
+        "source": "NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Buildings (Vol. 5) | G20 Energy Transitions Ministerial Meeting Outcome Statement (Foz do Iguacu, 4 Oct 2024) | G20 Energy Transitions Working Group Ministerial Meeting Chair's Statement (KwaZulu-Natal, 10 Oct 2025) | The White House, G20 Energy Abundance Ministerial Concludes with Four Consensus Outcomes (Houston, 16 Sep 2026) | UNFCCC, Decisions 1/CMA.7 to 3/CMA.7 (FCCC/PA/CMA/2025/19/Add.1, 30 Mar 2026) | Clean Energy Ministerial, CEM16 Outcomes Document (Busan, Aug 2025)"
       },
       {
         "name": "railway_traction",
@@ -1009,7 +1279,7 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "Ministry of Steel, Greening the Steel Sector in India: Roadmap and Action Plan (Sept 2024) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+        "source": "Ministry of Steel, Greening the Steel Sector in India: Roadmap and Action Plan (Sept 2024) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | Clean Energy Ministerial, CEM15 Outcomes Document (Oct 2024) | Ministry of Steel, Green Steel Taxonomy for India (released 12 Dec 2024, notified 23 Dec 2024)"
       },
       {
         "name": "agriculture_pumping",
@@ -1040,6 +1310,21 @@
         "upper_bound": "no",
         "range": "not quantified",
         "source": "MoEFCC Ozone Cell, India Cooling Action Plan (March 2019)"
+      },
+      {
+        "name": "electricity_share_of_energy_2047",
+        "label": "Electricity share of energy in 2047",
+        "group": "electrification",
+        "group_label": "Electrification and new loads",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (NITI Aayog), launch of Scenarios Towards Viksit Bharat and Net Zero reports, 10.02.2026 (Release ID 2226010)"
       },
       {
         "name": "warming_cooling_degree_days",
@@ -1117,6 +1402,21 @@
         "source": "Team model outputs and docs (not an external source)"
       },
       {
+        "name": "energy_security_fuel_price_shock",
+        "label": "Energy security and fuel-price shocks",
+        "group": "shocks",
+        "group_label": "Shocks",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "IEA, 2026 IEA Ministerial Chair's Summary (19 Feb 2026) (intergovernmental, secondary) | IEA, Outcome Statement of the 11th Annual Global Conference on Energy Efficiency, the Montreal Action Plan (Montreal, 29-30 Jun 2026) (intergovernmental, secondary) | The White House, G20 Energy Abundance Ministerial Concludes with Four Consensus Outcomes (Houston, 16 Sep 2026) | G20 Energy Transitions Working Group Ministerial Meeting Chair's Statement (KwaZulu-Natal, 10 Oct 2025)"
+      },
+      {
         "name": "electricity_tariffs",
         "label": "Electricity tariffs",
         "group": "prices_policy",
@@ -1147,6 +1447,51 @@
         "source": "No official source found"
       },
       {
+        "name": "time_of_day_tariffs",
+        "label": "Time-of-day tariffs",
+        "group": "prices_policy",
+        "group_label": "Prices and policy",
+        "sign": -1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (Ministry of Power), Electricity (Rights of Consumers) Amendment Rules 2023: ToD tariff and smart metering, 23.06.2023 (Release ID 1934673)"
+      },
+      {
+        "name": "fossil_fuel_subsidy_phaseout",
+        "label": "Fossil-fuel subsidy phase-out",
+        "group": "prices_policy",
+        "group_label": "Prices and policy",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "partial",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | G20 New Delhi Leaders' Declaration (9-10 Sep 2023)"
+      },
+      {
+        "name": "lng_and_energy_independence",
+        "label": "LNG and energy independence",
+        "group": "prices_policy",
+        "group_label": "Prices and policy",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "PIB (PMO), PM addresses India Energy Week 2026, 27.01.2026 (Release ID 2218984)"
+      },
+      {
         "name": "carbon_market_ccts",
         "label": "Carbon market (CCTS)",
         "group": "prices_policy",
@@ -1159,7 +1504,22 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "Ministry of Power, Carbon Credit Trading Scheme 2023, Notification S.O. 2825(E), 28 Jun 2023"
+        "source": "Ministry of Power, Carbon Credit Trading Scheme 2023, Notification S.O. 2825(E), 28 Jun 2023 | Ministry of Commerce and Industry, India-EU Free Trade Agreement Concluded (PIB, 27 Jan 2026)"
+      },
+      {
+        "name": "eu_cbam_steel_aluminium",
+        "label": "EU CBAM (steel, aluminium)",
+        "group": "prices_policy",
+        "group_label": "Prices and policy",
+        "sign": 1,
+        "in_model": "context",
+        "overlap": "no",
+        "low": null,
+        "central": null,
+        "high": null,
+        "upper_bound": "no",
+        "range": "not quantified",
+        "source": "Regulation (EU) 2023/956 of 10 May 2023 establishing a carbon border adjustment mechanism | European Commission proposal amending Regulation (EU) 2023/956 as regards downstream goods and anti-circumvention (procedure 2025/0419(COD), 17 Dec 2025) | Ministry of Commerce and Industry, India-EU Free Trade Agreement Concluded (PIB, 27 Jan 2026) | Ministry of Steel, Green Steel Taxonomy for India (released 12 Dec 2024, notified 23 Dec 2024)"
       },
       {
         "name": "net_zero_2070",
@@ -1174,7 +1534,7 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "PMO, National Statement by the PM at COP26 (1 Nov 2021); India Updated First NDC (Aug 2022) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7)"
+        "source": "PMO, National Statement by the PM at COP26 (1 Nov 2021); India Updated First NDC (Aug 2022) | NITI Aayog (Feb 2026), Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | IEA, 2024 IEA Ministerial Communique (14 Feb 2024) (intergovernmental, secondary) | UNFCCC, Decisions 1/CMA.7 to 3/CMA.7 (FCCC/PA/CMA/2025/19/Add.1, 30 Mar 2026)"
       },
       {
         "name": "rpo_rco_trajectory",
@@ -1189,7 +1549,7 @@
         "high": null,
         "upper_bound": "no",
         "range": "not quantified",
-        "source": "Ministry of Power, Notification S.O. 4617(E), 20 Oct 2023 (renewable consumption obligation)"
+        "source": "Ministry of Power, Notification S.O. 4617(E), 20 Oct 2023 (renewable consumption obligation) | UNFCCC, Decision 1/CMA.5, Outcome of the first global stocktake (FCCC/PA/CMA/2023/16/Add.1, 15 Mar 2024) | G20 New Delhi Leaders' Declaration (9-10 Sep 2023) | G20 South Africa Summit: Leaders' Declaration (Johannesburg, 22-23 Nov 2025)"
       },
       {
         "name": "trend_carryover_losses_deficit",
@@ -1327,32 +1687,32 @@
           "key": "efficiency_distributed",
           "name": "Efficiency and distributed",
           "description": "Every feature that lowers generation at its high value (T&D losses included, at their upper bound); the rest at central.",
-          "adjustment_twh": 388.600,
-          "p05_twh": 3578.996,
-          "p50_twh": 5076.401,
-          "p95_twh": 7409.177,
-          "change_twh": 388.626,
-          "change_pct": 8.290,
+          "adjustment_twh": 354.600,
+          "p05_twh": 3545.010,
+          "p50_twh": 5042.413,
+          "p95_twh": 7375.219,
+          "change_twh": 354.638,
+          "change_pct": 7.565,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1453.330
+              "p50_twh": 1443.604
             },
             {
               "name": "Western",
-              "p50_twh": 1381.729
+              "p50_twh": 1372.499
             },
             {
               "name": "Southern",
-              "p50_twh": 1286.414
+              "p50_twh": 1277.754
             },
             {
               "name": "Eastern",
-              "p50_twh": 790.262
+              "p50_twh": 784.952
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 163.123
+              "p50_twh": 162.030
             }
           ]
         },
@@ -1360,32 +1720,32 @@
           "key": "climate_stress",
           "name": "Climate stress",
           "description": "Space cooling and storage round-trip losses at their high values; the rest at central.",
-          "adjustment_twh": 1374.700,
-          "p05_twh": 4565.045,
-          "p50_twh": 6062.528,
-          "p95_twh": 8395.304,
-          "change_twh": 1374.753,
-          "change_pct": 29.326,
+          "adjustment_twh": 1398.200,
+          "p05_twh": 4588.641,
+          "p50_twh": 6086.015,
+          "p95_twh": 8418.804,
+          "change_twh": 1398.239,
+          "change_pct": 29.827,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1735.713
+              "p50_twh": 1742.460
             },
             {
               "name": "Western",
-              "p50_twh": 1650.216
+              "p50_twh": 1656.624
             },
             {
               "name": "Southern",
-              "p50_twh": 1536.657
+              "p50_twh": 1542.630
             },
             {
               "name": "Eastern",
-              "p50_twh": 944.333
+              "p50_twh": 948.009
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 194.840
+              "p50_twh": 195.596
             }
           ]
         },
@@ -1393,32 +1753,32 @@
           "key": "all_upside",
           "name": "All upside",
           "description": "Every feature that raises generation at its high value and every one that lowers it at its low value (T&D losses at 0).",
-          "adjustment_twh": 2167.500,
-          "p05_twh": 5357.983,
-          "p50_twh": 6855.284,
-          "p95_twh": 9188.024,
-          "change_twh": 2167.508,
-          "change_pct": 46.237,
+          "adjustment_twh": 2191.000,
+          "p05_twh": 5381.387,
+          "p50_twh": 6878.787,
+          "p95_twh": 9211.560,
+          "change_twh": 2191.012,
+          "change_pct": 46.739,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1962.744
+              "p50_twh": 1969.473
             },
             {
               "name": "Western",
-              "p50_twh": 1866.083
+              "p50_twh": 1872.502
             },
             {
               "name": "Southern",
-              "p50_twh": 1737.966
+              "p50_twh": 1743.939
             },
             {
               "name": "Eastern",
-              "p50_twh": 1068.335
+              "p50_twh": 1072.004
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 220.350
+              "p50_twh": 221.106
             }
           ]
         },
@@ -1426,32 +1786,32 @@
           "key": "all_downside",
           "name": "All downside",
           "description": "Every feature that raises generation at its low value and every one that lowers it at its high value (T&D losses at their upper bound).",
-          "adjustment_twh": 177.300,
-          "p05_twh": 3367.636,
-          "p50_twh": 4865.109,
-          "p95_twh": 7197.881,
-          "change_twh": 177.334,
-          "change_pct": 3.783,
+          "adjustment_twh": 143.300,
+          "p05_twh": 3333.675,
+          "p50_twh": 4831.110,
+          "p95_twh": 7163.811,
+          "change_twh": 143.334,
+          "change_pct": 3.058,
           "regions": [
             {
               "name": "Northern",
-              "p50_twh": 1392.825
+              "p50_twh": 1383.106
             },
             {
               "name": "Western",
-              "p50_twh": 1324.209
+              "p50_twh": 1314.955
             },
             {
               "name": "Southern",
-              "p50_twh": 1232.770
+              "p50_twh": 1224.164
             },
             {
               "name": "Eastern",
-              "p50_twh": 757.271
+              "p50_twh": 751.968
             },
             {
               "name": "North-Eastern",
-              "p50_twh": 156.329
+              "p50_twh": 155.237
             }
           ]
         }
@@ -1559,32 +1919,32 @@
         "key": "efficiency_distributed",
         "name": "Efficiency and distributed",
         "description": "Every feature that lowers generation at its high value (T&D losses included, at their upper bound); the rest at central.",
-        "adjustment_twh": 388.600,
-        "p05_twh": 3578.996,
-        "p50_twh": 5076.401,
-        "p95_twh": 7409.177,
-        "change_twh": 388.626,
-        "change_pct": 8.290,
+        "adjustment_twh": 354.600,
+        "p05_twh": 3545.010,
+        "p50_twh": 5042.413,
+        "p95_twh": 7375.219,
+        "change_twh": 354.638,
+        "change_pct": 7.565,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1453.330
+            "p50_twh": 1443.604
           },
           {
             "name": "Western",
-            "p50_twh": 1381.729
+            "p50_twh": 1372.499
           },
           {
             "name": "Southern",
-            "p50_twh": 1286.414
+            "p50_twh": 1277.754
           },
           {
             "name": "Eastern",
-            "p50_twh": 790.262
+            "p50_twh": 784.952
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 163.123
+            "p50_twh": 162.030
           }
         ]
       },
@@ -1592,32 +1952,32 @@
         "key": "climate_stress",
         "name": "Climate stress",
         "description": "Space cooling and storage round-trip losses at their high values; the rest at central.",
-        "adjustment_twh": 1374.700,
-        "p05_twh": 4565.045,
-        "p50_twh": 6062.528,
-        "p95_twh": 8395.304,
-        "change_twh": 1374.753,
-        "change_pct": 29.326,
+        "adjustment_twh": 1398.200,
+        "p05_twh": 4588.641,
+        "p50_twh": 6086.015,
+        "p95_twh": 8418.804,
+        "change_twh": 1398.239,
+        "change_pct": 29.827,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1735.713
+            "p50_twh": 1742.460
           },
           {
             "name": "Western",
-            "p50_twh": 1650.216
+            "p50_twh": 1656.624
           },
           {
             "name": "Southern",
-            "p50_twh": 1536.657
+            "p50_twh": 1542.630
           },
           {
             "name": "Eastern",
-            "p50_twh": 944.333
+            "p50_twh": 948.009
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 194.840
+            "p50_twh": 195.596
           }
         ]
       },
@@ -1625,32 +1985,32 @@
         "key": "all_upside",
         "name": "All upside",
         "description": "Every feature that raises generation at its high value and every one that lowers it at its low value (T&D losses at 0).",
-        "adjustment_twh": 2167.500,
-        "p05_twh": 5357.983,
-        "p50_twh": 6855.284,
-        "p95_twh": 9188.024,
-        "change_twh": 2167.508,
-        "change_pct": 46.237,
+        "adjustment_twh": 2191.000,
+        "p05_twh": 5381.387,
+        "p50_twh": 6878.787,
+        "p95_twh": 9211.560,
+        "change_twh": 2191.012,
+        "change_pct": 46.739,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1962.744
+            "p50_twh": 1969.473
           },
           {
             "name": "Western",
-            "p50_twh": 1866.083
+            "p50_twh": 1872.502
           },
           {
             "name": "Southern",
-            "p50_twh": 1737.966
+            "p50_twh": 1743.939
           },
           {
             "name": "Eastern",
-            "p50_twh": 1068.335
+            "p50_twh": 1072.004
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 220.350
+            "p50_twh": 221.106
           }
         ]
       },
@@ -1658,32 +2018,32 @@
         "key": "all_downside",
         "name": "All downside",
         "description": "Every feature that raises generation at its low value and every one that lowers it at its high value (T&D losses at their upper bound).",
-        "adjustment_twh": 177.300,
-        "p05_twh": 3367.636,
-        "p50_twh": 4865.109,
-        "p95_twh": 7197.881,
-        "change_twh": 177.334,
-        "change_pct": 3.783,
+        "adjustment_twh": 143.300,
+        "p05_twh": 3333.675,
+        "p50_twh": 4831.110,
+        "p95_twh": 7163.811,
+        "change_twh": 143.334,
+        "change_pct": 3.058,
         "regions": [
           {
             "name": "Northern",
-            "p50_twh": 1392.825
+            "p50_twh": 1383.106
           },
           {
             "name": "Western",
-            "p50_twh": 1324.209
+            "p50_twh": 1314.955
           },
           {
             "name": "Southern",
-            "p50_twh": 1232.770
+            "p50_twh": 1224.164
           },
           {
             "name": "Eastern",
-            "p50_twh": 757.271
+            "p50_twh": 751.968
           },
           {
             "name": "North-Eastern",
-            "p50_twh": 156.329
+            "p50_twh": 155.237
           }
         ]
       }
@@ -1749,9 +2109,9 @@
         "feature": "cross_border_imports",
         "label": "Cross border imports",
         "level": "high",
-        "adjustment_twh": -15.300,
-        "p50_twh": 4672.518,
-        "change_twh": -15.257
+        "adjustment_twh": -49.300,
+        "p50_twh": 4638.507,
+        "change_twh": -49.268
       },
       {
         "feature": "rooftop_solar",
@@ -1868,48 +2228,48 @@
     ],
     "joint": {
       "description": "Core draws plus independent feature draws: each feature triangular (low, central, high) times its sign; T&D losses uniform from 0 to their upper bound.",
-      "p05_twh": 4225.379,
-      "p10_twh": 4518.671,
-      "p50_twh": 5768.819,
-      "p90_twh": 7506.089,
-      "p95_twh": 8120.981,
-      "mean_twh": 5919.066,
-      "change_p50_twh": 1081.044,
-      "change_p50_pct": 23.061,
-      "features_p05_twh": 735.816,
-      "features_p50_twh": 1072.151,
-      "features_p95_twh": 1431.275,
-      "features_mean_twh": 1076.124,
+      "p05_twh": 4221.621,
+      "p10_twh": 4514.935,
+      "p50_twh": 5765.325,
+      "p90_twh": 7502.713,
+      "p95_twh": 8117.710,
+      "mean_twh": 5915.569,
+      "change_p50_twh": 1077.550,
+      "change_p50_pct": 22.986,
+      "features_p05_twh": 731.465,
+      "features_p50_twh": 1068.694,
+      "features_p95_twh": 1428.523,
+      "features_mean_twh": 1072.615,
       "regions": [
         {
           "name": "Northern",
-          "p50_twh": 1651.550
+          "p50_twh": 1650.576
         },
         {
           "name": "Western",
-          "p50_twh": 1570.231
+          "p50_twh": 1569.282
         },
         {
           "name": "Southern",
-          "p50_twh": 1461.962
+          "p50_twh": 1461.064
         },
         {
           "name": "Eastern",
-          "p50_twh": 898.232
+          "p50_twh": 897.691
         },
         {
           "name": "North-Eastern",
-          "p50_twh": 185.378
+          "p50_twh": 185.269
         }
       ]
     },
     "p90_plan": {
       "policy": "Robust",
-      "requirement_twh": 7506.089,
+      "requirement_twh": 7502.713,
       "status": "optimal",
-      "robust_unmet_twh": 1737.578,
-      "joint_p50_twh": 5768.819,
-      "joint_p50_unmet_twh": 8.861,
+      "robust_unmet_twh": 1734.202,
+      "joint_p50_twh": 5765.325,
+      "joint_p50_unmet_twh": 5.474,
       "core_p90_twh": 6407.984,
       "core_robust_unmet_twh": 639.473,
       "note": "Least-cost Robust plan planned for the core + features joint P90 (and P50), against the core P90. Unmet is requirement the plan cannot serve; null = infeasible."
@@ -1996,6 +2356,26 @@
       "cost_busd": 176.172,
       "unmet_median_twh": 0.000,
       "unmet_p90_twh": 710.456
+    },
+    "nuclear_mission_low": {
+      "description": "Nuclear Energy Mission floor, low case: NPCIL's share of the mission (DAE) at the CEA NEP CUF, captive reactors left out",
+      "status": "optimal",
+      "nonfossil_pct": 83.894,
+      "coal_pct": 15.019,
+      "co2_mt": 709.149,
+      "cost_busd": 176.406,
+      "unmet_median_twh": 0.000,
+      "unmet_p90_twh": 639.473
+    },
+    "nuclear_mission_high": {
+      "description": "Nuclear Energy Mission floor, high case: the CEA road map's utility reactors (captive BSR and BSMR left out) at its achievable PLF",
+      "status": "infeasible",
+      "nonfossil_pct": null,
+      "coal_pct": null,
+      "co2_mt": null,
+      "cost_busd": null,
+      "unmet_median_twh": null,
+      "unmet_p90_twh": null
     }
   },
   "regions": {
@@ -2564,6 +2944,50 @@
       "levers_build_accel": 1.000,
       "levers_build_case": "high",
       "levers_unmet_twh": 0.000
+    },
+    "nuclear_mission": {
+      "policy": "Robust",
+      "central_preset": "Nuclear mission",
+      "note": "Robust policy with national nuclear generation >= the floor: the mission's utility reactors in 2047 x CUF x 8.76 (data/external/techno_economic/nuclear_mission.csv); captive BSR and BSMR units left out by the organisers' ruling. Median requirement; unmet at P90 = the same policy planned for the P90. Cost in real 2024 USD. Nuclear share of the plan's generation.",
+      "low": {
+        "utility_gw": 54.000,
+        "cuf": 0.68,
+        "floor_twh": 321.667,
+        "status": "optimal",
+        "nonfossil_pct": 83.894,
+        "co2_mt": 709.149,
+        "cost_busd": 176.406,
+        "nuclear_twh": 321.667,
+        "nuclear_share_pct": 6.847,
+        "unmet_median_twh": 0.000,
+        "unmet_p90_twh": 639.473
+      },
+      "central": {
+        "utility_gw": 90.588,
+        "cuf": 0.68,
+        "floor_twh": 539.615,
+        "status": "optimal",
+        "nonfossil_pct": 85.139,
+        "co2_mt": 652.654,
+        "cost_busd": 177.646,
+        "nuclear_twh": 539.615,
+        "nuclear_share_pct": 11.480,
+        "unmet_median_twh": 0.000,
+        "unmet_p90_twh": 639.473
+      },
+      "high": {
+        "utility_gw": 90.588,
+        "cuf": 0.80,
+        "floor_twh": 634.841,
+        "status": "infeasible: nuclear floor 634.8 TWh is above the national nuclear limit 627.1 TWh (build cap 627.1 TWh, high case x 1.00; regional bounds 703.2 TWh)",
+        "nonfossil_pct": null,
+        "co2_mt": null,
+        "cost_busd": null,
+        "nuclear_twh": null,
+        "nuclear_share_pct": null,
+        "unmet_median_twh": null,
+        "unmet_p90_twh": null
+      }
     },
     "tradeoff": {
       "co2_first_mt": 891.317,

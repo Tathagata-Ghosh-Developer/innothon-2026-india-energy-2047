@@ -111,7 +111,9 @@ Is it credible? We held back two years the model never saw, 2024-25 and 2025-26.
 
 *(cut if short)* In rolling backtests from seven start years, the average error is 2.0 percent one year ahead and 6.4 percent five years ahead.
 
-Our benchmark compares generation with generation. CEA's National Electricity Plan projects 2,666 terawatt-hours of gross generation in 2031-32. Our median for that year is 2,378, 11 percent lower, and CEA's figure lies between our 75th percentile, 2,550, and our 90th, 2,719. So it sits inside our range. CEA has published no figure for twenty forty-seven.
+Our benchmark compares generation with generation. CEA's National Electricity Plan projects 2,666 terawatt-hours of gross generation in 2031-32. Our median for that year is 2,378, 11 percent lower, and CEA's figure lies between our 75th percentile, 2,550, and our 90th, 2,719. So it sits inside our range.
+
+*(cut if short)* For twenty forty-seven, CEA's road map of October 2025 estimates an energy requirement of 4,582 billion units, that is terawatt-hours, in 2046-47. It is a requirement figure, measured before the power stations' auxiliary use, so it is not a like-for-like benchmark; grossed up for auxiliary use and carried on to 2047-48 at CEA's own growth rate, it is about 4,980 to 5,080 terawatt-hours, 6 to 8 percent above our median of 4,688 and well inside our 80 percent range, 3,471 to 6,408.
 
 Now the chart on the right: what drives the growth. On the central path, income per person carries 87.5 percent of the growth, population 14.8 percent, and urbanisation beyond what income brings 4.8 percent. The fading of the unusually high 2023-24 level takes back 7.2 percent: that year sat above the fitted line, and the model lets the gap fade. So income is the largest driver, but not the only one.
 
@@ -161,7 +163,7 @@ Two: the plan is stress-tested at the 90th percentile, because a plan sized only
 
 Three: realistic limits. Each source grows only as fast as CEA, NITI Aayog and the Department of Atomic Energy publish. Existing fleets start at their best NPP year, and reactors and dams already under construction are floors. That is why nuclear is 133 terawatt-hours and hydro at least 185.
 
-Four: one engine. The same C++20 code runs CUDA on a GPU, OpenMP on CPUs and WebAssembly in your browser. Every future gets the same random inputs on CPU and GPU, and an automated parity test checks them. A million futures take 11.2 milliseconds on a laptop GPU, against 2.35 seconds on 16 CPU threads.
+Four: one engine. The same C++20 code runs CUDA on a GPU, OpenMP on CPUs and WebAssembly in your browser. Every future gets the same random inputs on CPU and GPU, and an automated parity test checks them. A million futures take 10.97 milliseconds on a laptop GPU, against 2.17 seconds on 16 CPU threads.
 
 *(cut if short)* The GPU figure is the kernel time, and all timings vary with machine load.
 
@@ -191,7 +193,7 @@ The dashboard is built with Dear ImGui and ImPlot. The same code compiles to Web
 
 - Tabs: "National forecast", "Regional requirement", "2047 generation mix", "Models and backtest", "Uncertainty and sensitivity", "Data and assumptions".
 - Sidebar, under "Scenario": the buttons "Base", "High growth", "Low growth"; below them, the drop-down "Demand features (official, outside headline)".
-- Sidebar, under "Policy and planning": the buttons "Base", "Low carbon", "Robust", "Energy security".
+- Sidebar, under "Policy and planning": the buttons "Base", "Low carbon", "Robust", "Energy security", "Nuclear mission".
 - The slider "Plan for requirement quantile" sits under "Scenario", above "Scenarios (2^n)".
 
 **Watch out for two "Base" buttons.** Every "Base" click in this demo is the one under "Scenario". The "Base" under "Policy and planning" would replace the Robust plan.
@@ -292,4 +294,5 @@ To close: in twenty forty-seven India will need about 2.8 times today's generati
 - **The P90 lever** (questions 28 and 29 in [final_qa.md](final_qa.md)). On "2047 generation mix", drag "Plan for requirement quantile" to P90: about 639 TWh of unmet requirement appears. Then drag the "solar" slider under "Usable resource (solar / wind / hydro)" from 35 to 45 percent: unmet falls to zero in the full run (the browser should show zero or close to it). Say that this plan, at P90, costs about 258 billion dollars a year, and never compare it with the median plan's 176. To return, click "Robust" under "Policy and planning", then "Base" under "Scenario".
 - **The evidence views.** "Data and assumptions" tab, then "Requirement evidence" (growth decomposition, state table, state panel check, demand features) or "Mix evidence" (mix sensitivities, committed builds, gas peaking hours). The mix sensitivities are solved when the view opens, so allow a few seconds.
 - **Income growth by hand.** Drag "Income growth per person, to 2030" down or up by 1.5 points; the twenty forty-seven median moves by about a quarter (3,568 or 6,163 TWh in the full run). "Reset scenario" brings it back.
-- **The demand features.** Under "Scenario", open the drop-down "Demand features (official, outside headline)" and choose "Features central": the median rises to about 5,810 TWh, labelled outside the headline (the joint draws give 5,769). "Reset scenario" brings it back.
+- **The demand features.** Under "Scenario", open the drop-down "Demand features (official, outside headline)" and choose "Features central": the median rises to about 5,810 TWh, labelled outside the headline (the joint draws give 5,765). "Reset scenario" brings it back.
+- **The Nuclear mission.** On "2047 generation mix", click "Nuclear mission" under "Policy and planning": the Robust policy plus a nuclear floor of 539.6 TWh, the utility reactors of CEA's road map to 2047 (90.588 GW × CUF 0.68 × 8.76; captive BSR and BSMR left out). Say that it is an official option: about 85.1 percent non-fossil, 653 million tonnes of CO2 and 177.65 billion dollars a year, against Robust's 79.9, 891 and 176.16, so 239 million tonnes less for 1.5 billion dollars a year more; at P90 it leaves the same 639 TWh unmet, and Robust stays our recommendation. To return, click "Robust" under "Policy and planning".

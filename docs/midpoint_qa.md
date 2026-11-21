@@ -114,18 +114,20 @@ Our median for FY2031-32 is 2,382 TWh, 11% lower; CEA's figure lies between our 
 - Our scope is NPP utility generation, without captive plants.
 - Our path is estimated on NPP generation to FY2023-24 and checked on the FY2024-25 and FY2025-26 holdout (errors −3.3% and +0.5%).
 
-CEA has published no 2047 figure.
+For 2047, CEA's road map to 100 GW of nuclear (released 11 October 2025) gives a 2046-47 energy requirement of 4,582 BU, which is consumption-side and so not compared as a benchmark, and a 2047 capacity mix; there is still no CEA 2047 generation figure ([decisions.md](decisions.md), D15).
+
+*If asked about CEA's 2047 figure (current run, 22 Nov 2026):* CEA's 2047 road map (October 2025) estimates a 2046-47 energy requirement of 4,582 BU (BU = TWh). It is a requirement figure, measured ex-bus, without the stations' own auxiliary use, so it is not a like-for-like generation benchmark. Grossed up for auxiliary use (4,582 / (1 − 0.0615), today's rate, or 4,582 / (1 − 0.0428), a 2047 mix) it is about 4,790 to 4,880 TWh: 6 to 8% above our median for the same year (4,524) and well inside our P10-P90 range for it (3,384 to 6,119). Carried one more year at CEA's own growth it is about 4,980 to 5,080 TWh, again 6 to 8% above our FY2047-48 median of 4,688 and inside our P10-P90 (3,471 to 6,408).
 
 *Context only, not a benchmark:* the 20th Electric Power Survey projects an energy requirement (consumption-side) of 2,474 BU for FY2031-32; it is not comparable with generation.
 
-**11b. CEA's 2026 review gives about 3,596 BU of gross generation for 2035-36. You are about 20% lower. Why?**
+**11b. CEA's 2026 adequacy plan gives 3,596 BU of gross generation for 2035-36. You are about 20% lower. Why?**
 Our median for FY2035-36 is 2,884 TWh, 19.8% below CEA's 3,596 BU of gross generation. That figure sits at our 95th percentile (3,634), so it is inside our range, at the high end.
 
 - CEA's projections have run high before: its 18th demand survey forecast an energy requirement (consumption-side) of 1,905 BU for 2021-22 against an actual 1,376 (38% high), and the 19th was 12 to 14% high by 2020-22.
 - Our scope is NPP utility generation, without captive plants.
 - Our path is checked on actual NPP generation up to FY2025-26 (the holdout).
 
-*If pressed:* the 2026 review figures come from press reports; the CEA document itself is not public yet. The about 3,365 BU quoted in the same reports is CEA's energy requirement, a consumption-side figure, so we do not compare our generation with it.
+*If pressed:* both figures are in CEA's public National Generation Adequacy Plan 2026-27 to 2035-36 (19 March 2026): 3,596 BU of gross generation in Fig. 4.3 (PDF p. 42). The 3,365 BU in the same plan (Executive Summary, PDF p. 7) is CEA's energy requirement, a consumption-side figure, so we do not compare our generation with it.
 
 **11c. Your 5th percentile (3,217 TWh) is below every published 2047 figure. Is that credible?**
 Published studies report central cases, not tails. Our 5th percentile is the slow-growth future: income per person growing 1.5 points a year slower than the central path gives about 24% less. We show it so the plan is tested against both ends, not because we expect it.
