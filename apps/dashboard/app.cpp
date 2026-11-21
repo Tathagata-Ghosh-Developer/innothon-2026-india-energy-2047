@@ -144,10 +144,12 @@ void App::launch() {
   const ScenarioControls c = sc_;
   const PolicySettings p = pol_;
   const int core = core_;
-  job_ = std::async(std::launch::async, [pl, c, p, core] {
+  const std::string note = layer_note();
+  job_ = std::async(std::launch::async, [pl, c, p, core, note] {
     Timer t;
     Job j;
     j.core = core;
+    j.layer_note = note;
     j.forecast = pl->forecast(c);
     j.strategy = pl->strategy(j.forecast, c, p);
     // Evidence tables (data tab). The decomposition and the state table belong to the India
@@ -175,6 +177,51 @@ void App::launch() {
     j.total_ms = t.ms();
     return j;
   });
+}
+
+void App::load_features() {
+  if (features_for_ == pl_) return;
+  features_for_ = pl_;
+  features_.clear();
+  features_error_.clear();
+  try {
+    features_ = pl_->demand_features();
+    for (int k = 0; k < kScenarioCount; ++k) {
+      const Scenario s = static_cast<Scenario>(k);
+      feature_totals_[k] = s == Scenario::kJoint ? kNaN : scenario_total(features_, s).total;
+    }
+    // The joint feature total alone, from the kernel's own random stream (2^16 draws).
+    const std::vector<double> t = sample_joint_totals(joint_distribution(features_), sc_.seed, 1u << 16);
+    joint_q_[0] = quantile(t, 0.05);
+    joint_q_[1] = quantile(t, 0.50);
+    joint_q_[2] = quantile(t, 0.95);
+  } catch (const std::exception& e) {
+    features_.clear();
+    features_error_ = e.what();
+  }
+}
+
+std::string App::layer_note() const {
+  char b[320];
+  if (feature_scenario_ > 0 && feature_scenario_ < kScenarioCount) {
+    const Scenario s = static_cast<Scenario>(feature_scenario_);
+    if (s == Scenario::kJoint)
+      std::snprintf(b, sizeof b,
+                    "Demand-feature scenario '%s', outside the headline: core draws plus independent feature draws "
+                    "(feature total alone P5 %.0f, P50 %.0f, P95 %.0f TWh in 2047).",
+                    scenario_name(s), joint_q_[0], joint_q_[1], joint_q_[2]);
+    else
+      std::snprintf(b, sizeof b,
+                    "Demand-feature scenario '%s', outside the headline: the core forecast %+.0f TWh in 2047.",
+                    scenario_name(s), feature_totals_[feature_scenario_]);
+    return b;
+  }
+  if (sc_.addon_lo != 0 || sc_.addon_hi != 0 || !sc_.feature_draws.empty()) {
+    std::snprintf(b, sizeof b, "Add-on of %.0f to %.0f TWh in 2047, outside the headline.", sc_.addon_lo,
+                  std::max(sc_.addon_lo, sc_.addon_hi));
+    return b;
+  }
+  return "";
 }
 
 void App::stat_card(const char* label, const std::string& value, const char* note, float width) {
@@ -290,34 +337,48 @@ void App::sidebar() {
         sc_.draws = draws;
         sc_.use_gpu = gpu;
         presets[i].apply(sc_);
+        feature_scenario_ = sc_.addon_lo == 0 && sc_.addon_hi == 0 ? 0 : -1;
         dirty_ = true;
       }
       ImGui::SetItemTooltip("%s", presets[i].description.c_str());
     }
-    // Base plus the published new loads absent from the historical series: the add-on
-    // comes from data/external/new_loads.csv, so it is read from the loaded pipeline.
-    if (new_loads_for_ != pl_) {
-      new_loads_for_ = pl_;
-      try {
-        new_loads_ = pl_->new_loads();
-        new_loads_desc_ = new_loads_description(new_loads_);
-      } catch (const std::exception& e) {
-        new_loads_.clear();
-        new_loads_desc_ = std::string("Not available: ") + e.what();
+    // Demand-feature scenarios (data/external/demand_features.csv, read from the loaded
+    // pipeline): each sets only the add-on (or the joint feature draws) on top of the
+    // settings above, outside the headline.
+    load_features();
+    ImGui::TextUnformatted(kFeaturesPresetName);
+    ImGui::BeginDisabled(features_.empty());
+    const char* preview = feature_scenario_ >= 0 ? scenario_name(static_cast<Scenario>(feature_scenario_))
+                                                  : "Custom add-on (sliders below)";
+    if (ImGui::BeginCombo("##features", preview)) {
+      for (int k = 0; k < kScenarioCount; ++k) {
+        const Scenario s = static_cast<Scenario>(k);
+        const bool selected = k == feature_scenario_;
+        if (ImGui::Selectable(scenario_name(s), selected)) {
+          apply_feature_scenario(sc_, features_, s);
+          feature_scenario_ = k;
+          dirty_ = true;
+        }
+        char tip[512];
+        if (s == Scenario::kJoint)
+          std::snprintf(tip, sizeof tip, "%s Feature total alone: P5 %.0f, P50 %.0f, P95 %.0f TWh in 2047.",
+                        scenario_description(s), joint_q_[0], joint_q_[1], joint_q_[2]);
+        else
+          std::snprintf(tip, sizeof tip, "%s Adds %+.0f TWh in 2047.", scenario_description(s), feature_totals_[k]);
+        ImGui::SetItemTooltip("%s", tip);
+        if (selected) ImGui::SetItemDefaultFocus();
       }
-    }
-    ImGui::BeginDisabled(new_loads_.empty());
-    if (ImGui::Button(kNewLoadsPresetName)) {
-      const uint64_t draws = sc_.draws;
-      const bool gpu = sc_.use_gpu;
-      sc_ = ScenarioControls{};
-      sc_.draws = draws;
-      sc_.use_gpu = gpu;
-      apply_new_loads(sc_, new_loads_);
-      dirty_ = true;
+      ImGui::EndCombo();
     }
     ImGui::EndDisabled();
-    ImGui::SetItemTooltip("%s", new_loads_desc_.c_str());
+    ImGui::SetItemTooltip("%s",
+                          features_.empty()
+                              ? ("Not available: " + features_error_).c_str()
+                              : "Official figures (secondary sources) as signed TWh in 2047, already cut to the part "
+                                "beyond the historical trend. A labelled layer on the core forecast, never the "
+                                "headline; ramped linearly from the base year and split across the regions by their "
+                                "share of the requirement. T&D losses are an upper bound that may already be inside "
+                                "the trend (0 at central). Table: Data and assumptions, Requirement evidence.");
   }
   const DriverData& d = pl_->drivers();
   double g0 = (sc_.g_start >= 0 ? sc_.g_start : d.g_hist_mean) + sc_.g_start_shift;
@@ -337,9 +398,19 @@ void App::sidebar() {
                    "Added to the UN WUP 2018 projection for 2047.");
   ImGui::TextUnformatted("Population band (x UN low-high)");
   dirty_ |= slider("##pop", &sc_.pop_band_scale, 0.0, 2.0, "%.2fx", 1, "Width of the population uncertainty relative to UN WPP 2024 low/high variants.");
-  ImGui::TextUnformatted("New loads in 2047 (TWh, low-high)");
-  dirty_ |= slider("##alo", &sc_.addon_lo, 0.0, 1000.0, "low %.0f", 1, "Loads absent from the historical series, such as green hydrogen electrolysis; end-use TWh, outside the headline.");
-  dirty_ |= slider("##ahi", &sc_.addon_hi, 0.0, 1500.0, "high %.0f", 1, nullptr);
+  ImGui::TextUnformatted("Add-on in 2047 (TWh, low-high)");
+  {
+    // Moving either slider leaves the feature scenarios: a custom add-on, no joint draws.
+    const char* tip = "Signed TWh added to the 2047 requirement, drawn uniformly between low and high and ramped "
+                      "linearly from the base year; outside the headline. The demand-feature scenarios above set it.";
+    bool moved = slider("##alo", &sc_.addon_lo, -1000.0, 2500.0, "low %.0f", 1, tip);
+    moved |= slider("##ahi", &sc_.addon_hi, -1000.0, 2500.0, "high %.0f", 1, tip);
+    if (moved) {
+      sc_.feature_draws.clear();
+      feature_scenario_ = -1;
+      dirty_ = true;
+    }
+  }
   if (india) {
     ImGui::TextUnformatted("Elasticity decline with income");
     dirty_ |= slider("##edec", &sc_.elasticity_decline, 0.0, 0.3, "%.2f per ln income", 1,
@@ -434,6 +505,7 @@ void App::sidebar() {
   if (ImGui::Button("Reset scenario")) {
     sc_ = ScenarioControls{};
     draws_log2_ = kDefaultDrawsLog2;
+    feature_scenario_ = 0;
     dirty_ = true;
   }
   ImGui::PopItemWidth();
@@ -465,6 +537,7 @@ void App::tab_forecast() {
   stat_card(("Increase over " + base_label).c_str(), buf,
             ("2047 median minus " + with_commas(h0.gen_twh) + " TWh generated in " + base_label).c_str(), w);
   if (india) help("Country total of utility generation, the scope of the National Power Portal (NPP) series.");
+  if (!cur_->layer_note.empty()) ImGui::TextColored(kAccent, "%s", cur_->layer_note.c_str());
 
   ImGui::Checkbox("Show model central paths", &show_models_);
   ImGui::SameLine();
@@ -523,10 +596,12 @@ void App::tab_forecast() {
     help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), an income path "
          "(real GSDP per person) with persistent and annual shocks, an income elasticity from a block bootstrap of "
          "India's own NPP and organiser data (two estimation windows), a literature urbanisation coefficient, and "
-         "optional new loads. Starts from FY2023-24; a model-error term starts at that year's gap to the fitted line and fades out (see Models).");
+         "an optional add-on (a demand-feature scenario, outside the headline). Starts from FY2023-24; a model-error "
+         "term starts at that year's gap to the fitted line and fades out (see Models).");
   else
     help("Each scenario combines a population path (UN WPP 2024), an urban-share path (UN WUP 2018), a GDP-per-capita "
-         "path with persistent and annual shocks, one of three models with bootstrap parameters, and optional new loads. "
+         "path with persistent and annual shocks, one of three models with bootstrap parameters, and an optional add-on "
+         "(a demand-feature scenario, outside the headline). "
          "Projections are anchored on India's observed 2025 generation.");
 }
 
@@ -1027,7 +1102,7 @@ void App::tab_sensitivity() {
     const std::vector<double> yr = ranks(y);
     const double my = mean(yr), sy = stdev(yr);
     const char* names[5] = {"Population path", "Urban share path", "GDP growth (persistent)", "Income convergence",
-                            "New loads"};
+                            "Add-on / feature draws"};
     const int idx[5] = {0, 1, 2, 3, 6};
     double r2[6];
     for (int k = 0; k < 5; ++k) {
@@ -1059,7 +1134,7 @@ void App::tab_sensitivity() {
       r2[5] = between / ((nk - 1) * sy * sy);
     }
     static const char* labels[6] = {"Population path", "Urban share path", "GDP growth (persistent)",
-                                    "Income convergence", "New loads", "Model choice"};
+                                    "Income convergence", "Add-on / feature draws", "Model choice"};
     if (ImPlot::BeginPlot("What drives 2047 uncertainty (rank R-squared, one input at a time)", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ph))) {
       const double ticks[6] = {0, 1, 2, 3, 4, 5};
       ImPlot::SetupAxes("Share of variance", nullptr, ImPlotAxisFlags_AutoFit, 0);
@@ -1145,7 +1220,7 @@ void App::tab_sensitivity() {
 
 void App::tab_data() {
   // Three views: the sources and derivation notes, then the tables behind the midpoint panel's
-  // questions on the requirement (drivers, states, new loads) and on the mix (published figures,
+  // questions on the requirement (drivers, states, demand features) and on the mix (published figures,
   // committed builds), computed for the current settings.
   if (ImGui::BeginTabBar("datatabs")) {
     static const char* names[3] = {"Sources and notes", "Requirement evidence", "Mix evidence"};
@@ -1222,9 +1297,14 @@ void App::data_sources() {
          "Nuclear siting key; committed floors (units under construction or sanctioned x CUF x 8.76)"},
         {"Large hydro under construction", "CEA hydro status (resource_potential.csv)",
          "Committed hydro floors (MW x CUF x 8.76)"},
+        {"Demand features for FY2047-48: 44 drivers, 11 quantified as signed TWh beyond the historical trend",
+         "CEA (General Review 2025, 20th EPS, NEP 2022-32, NGAP 2026); MoP; MNRE; MoEFCC (ICAP); BEE; NITI Aayog "
+         "2026 (secondary; data/external/demand_features.csv)",
+         "Demand-feature scenarios outside the headline: named scenarios, one at a time and joint draws"},
         {"New loads in 2050 (vehicles, green hydrogen, data centres, cooling, cooking)",
          "NITI Aayog 2026; TERI 2024; CEEW 2025; BloombergNEF 2026; IEA 2018 (secondary)",
-         "New-loads scenario outside the headline; only loads absent from the history are added"},
+         "Superseded by the demand features in this dashboard; kept for one sensitivity row of the command-line "
+         "tool"},
         {"Build limits by source, GW per year, FY2026-27 to FY2047-48 (low / central / high)",
          "CEA NEP 2022-32; CEA (Dec 2024); NITI Aayog (2026); DAE; MoP Annual Report 2025-26 (secondary)",
          "2047 build caps: GW per year x CUF x 8.76, summed from FY2024-25"},
@@ -1321,7 +1401,7 @@ void heading(ImFont* f, const char* text) {
 }  // namespace
 
 // The panel's questions on the requirement: what besides income drives it, how the national
-// elasticity is applied state by state, why it is not estimated on states, and new loads.
+// elasticity is applied state by state, why it is not estimated on states, and the demand features.
 void App::data_requirement() {
   const Job& j = *cur_;
   if (!j.evidence_error.empty())
@@ -1464,43 +1544,103 @@ void App::data_requirement() {
     }
   }
 
-  // 4. Published new loads: a scenario outside the headline.
-  heading(font_head_, "New loads (published estimates, outside the headline)");
-  if (new_loads_.empty()) {
-    help(new_loads_desc_.c_str());
-  } else {
-    help(new_loads_desc_.c_str());
-    const int ty = new_loads_.front().target_year, py = new_loads_.front().year;
-    const std::string lo = std::to_string(py) + " low / central / high", hi = std::to_string(ty) + " low / central / high";
-    if (begin_table("loads", {"Load", "Overlaps the history", "Added", lo.c_str(), hi.c_str()})) {
-      for (const NewLoad& l : new_loads_) {
-        ImGui::TableNextRow();
-        std::string name = l.load;
-        std::replace(name.begin(), name.end(), '_', ' ');
-        cell_text(name);
-        cell_text(l.overlaps);
-        cell_text(l.overlaps == "no" ? "yes" : "no (reported only)");
-        char b[96];
-        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", l.low_published, l.central_published, l.high_published);
-        cell_text(b);
-        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", l.low, l.central, l.high);
-        cell_text(b);
-      }
-      for (const bool all : {false, true}) {
-        const NewLoadTotals t = new_loads_total(new_loads_, all);
-        ImGui::TableNextRow();
-        cell_text(all ? "All loads (reference only, never added)" : "Add-on of the scenario");
-        cell_text(all ? "any" : "no");
-        cell_text(all ? "no" : "yes");
-        cell_text("");
-        char b[96];
-        std::snprintf(b, sizeof b, "%.0f / %.0f / %.0f TWh", t.low, t.central, t.high);
-        cell_text(b);
-      }
-      ImGui::EndTable();
+  // 4. Demand features (official figures): a labelled layer outside the headline.
+  heading(font_head_, "Demand features (official sources, outside the headline)");
+  load_features();
+  if (features_.empty()) {
+    ImGui::TextColored(ImVec4(1, 0.4f, 0.4f, 1), "Not available: %s", features_error_.c_str());
+    return;
+  }
+  {
+    const FeatureCounts n = count_features(features_);
+    const auto count = [&](const char* k) {
+      const auto it = n.by_in_model.find(k);
+      return it == n.by_in_model.end() ? 0 : it->second;
+    };
+    char b[1024];
+    std::snprintf(b, sizeof b,
+                  "%d drivers of the FY2047-48 requirement (data/external/demand_features.csv, official sources, "
+                  "secondary): %d estimated in the core forecast, %d uncertainties or settings of it, %d quantified in "
+                  "the feature layer, %d excluded by the organisers' ruling and %d context only. Layer values are "
+                  "signed TWh in FY2047-48, already cut to the part beyond the historical trend and on a generation "
+                  "basis. T&D losses overlap the trend, so their value is an upper bound (0 at central). Every "
+                  "adjustment is split across the regions by their share of the requirement: no official regional "
+                  "split exists, so where a feature sits is context only. Choose a scenario in the sidebar to run it.",
+                  n.total, count("core"), count("driver"), count("layer"), count("excluded_rule"), count("context"));
+    help(b);
+  }
+  if (begin_table("featscen", {"Feature scenario", "Adds in 2047 (TWh)", "What it sets"})) {
+    for (int k = 0; k < kScenarioCount; ++k) {
+      const Scenario s = static_cast<Scenario>(k);
+      ImGui::TableNextRow();
+      ImGui::TableNextColumn();
+      if (k == feature_scenario_)
+        ImGui::TextColored(kAccent, "%s (selected)", scenario_name(s));
+      else
+        ImGui::TextUnformatted(scenario_name(s));
+      char b[96];
+      if (s == Scenario::kJoint)
+        std::snprintf(b, sizeof b, "P5 %+.0f, P50 %+.0f, P95 %+.0f (drawn)", joint_q_[0], joint_q_[1], joint_q_[2]);
+      else
+        std::snprintf(b, sizeof b, "%+.1f", feature_totals_[k]);
+      cell_text(b);
+      cell_text(scenario_description(s));
     }
-    help("End-use electricity, not grossed up for losses; the add-on assumes grid supply. Use the 'New loads' scenario "
-         "button to run it.");
+    ImGui::EndTable();
+  }
+  const auto wrapped_tooltip = [](const std::string& text) {
+    if (text.empty() || !ImGui::BeginItemTooltip()) return;
+    ImGui::PushTextWrapPos(ImGui::GetFontSize() * 36.0f);
+    ImGui::TextUnformatted(text.c_str());
+    ImGui::PopTextWrapPos();
+    ImGui::EndTooltip();
+  };
+  const auto in_model_label = [](const std::string& m) {
+    if (m == "core") return "core forecast (estimated)";
+    if (m == "driver") return "core forecast (uncertainty or setting)";
+    if (m == "layer") return "feature layer";
+    if (m == "excluded_rule") return "excluded (organisers' ruling)";
+    return "context (not quantified)";
+  };
+  std::vector<std::string> groups;  // in catalogue order
+  for (const DemandFeature& x : features_)
+    if (std::find(groups.begin(), groups.end(), x.group) == groups.end()) groups.push_back(x.group);
+  if (begin_table("featcat",
+                  {"Feature (hover: notes)", "Sign", "In the model", "Overlaps the trend",
+                   "2047 low / central / high (TWh)", "Source (hover: all)"},
+                  ImGui::GetTextLineHeightWithSpacing() * 18)) {
+    for (const std::string& grp : groups) {
+      ImGui::TableNextRow();
+      ImGui::TableNextColumn();
+      ImGui::TextColored(kAccent, "%s", feature_group_label(grp).c_str());
+      for (const DemandFeature& x : features_) {
+        if (x.group != grp) continue;
+        ImGui::TableNextRow();
+        cell_text(feature_label(x.feature));
+        wrapped_tooltip(x.notes);
+        cell_text(x.sign > 0 ? "+1 raises" : "-1 lowers");
+        cell_text(in_model_label(x.in_model));
+        cell_text(x.overlap);
+        char b[160];
+        if (!x.layer())
+          std::snprintf(b, sizeof b, "not quantified");
+        else if (x.upper_bound_only())
+          std::snprintf(b, sizeof b, "0 / 0 / %.1f: upper bound, may already be inside the trend (listed %.1f / %.1f)",
+                        x.high, x.low, x.central);
+        else
+          std::snprintf(b, sizeof b, "%.1f / %.1f / %.1f", x.low, x.central, x.high);
+        cell_text(b);
+        // First source in the cell; every source in the tooltip.
+        const size_t cut = x.source_name.find(" | ");
+        int more = 0;
+        for (size_t p = x.source_name.find(" | "); p != std::string::npos; p = x.source_name.find(" | ", p + 3)) ++more;
+        cell_text(more ? x.source_name.substr(0, cut) + " (+" + std::to_string(more) + " more)" : x.source_name);
+        std::string all = x.source_name;
+        for (size_t p = all.find(" | "); p != std::string::npos; p = all.find(" | ", p + 1)) all.replace(p, 3, "\n");
+        wrapped_tooltip(all);
+      }
+    }
+    ImGui::EndTable();
   }
 }
 

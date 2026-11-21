@@ -49,6 +49,7 @@ class App {
     Bounds bounds;                          // committed nuclear and hydro floors, gas bounds
     std::array<double, kTechs> national_hi{};  // national upper bound by source (national_upper_bound_twh)
     std::string evidence_error;             // why a table above is missing
+    std::string layer_note;  // the add-on or feature scenario outside the headline; empty for the headline
     double total_ms = 0;
   };
   // The mix sensitivity (12 LP solves): computed only while the mix evidence view is open, on a
@@ -85,10 +86,16 @@ class App {
 
   ScenarioControls sc_;
   PolicySettings pol_;
-  // Published new loads of the active pipeline, for the new-loads preset (read once per pipeline).
-  const Pipeline* new_loads_for_ = nullptr;
-  std::vector<NewLoad> new_loads_;
-  std::string new_loads_desc_;
+  // Demand-feature catalogue of the active pipeline (official figures, outside the headline),
+  // read once per pipeline, with each named scenario's adjustment and the joint feature total.
+  void load_features();
+  std::string layer_note() const;  // the add-on or feature scenario of sc_, for the job
+  const Pipeline* features_for_ = nullptr;
+  std::vector<DemandFeature> features_;
+  std::string features_error_;
+  std::array<double, kScenarioCount> feature_totals_{};  // signed TWh in 2047; NaN for the joint
+  double joint_q_[3] = {0, 0, 0};                         // P5, P50, P95 of the joint feature total alone
+  int feature_scenario_ = 0;  // selected feature scenario (Scenario); -1 = a custom add-on
   bool dirty_ = true;
   std::future<Job> job_;
   std::shared_ptr<Job> cur_;
