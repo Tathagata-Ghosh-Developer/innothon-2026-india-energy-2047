@@ -169,7 +169,7 @@ BEA's API needs a registration key, so the published flat file was used.
 URL `https://www.federalreserve.gov/monetarypolicy/files/FOMC_LongerRunGoals.pdf`, fetched and read on 2026-11-21; raw copy `raw/us_fed/FOMC_LongerRunGoals.pdf`.
 Page 1, fourth paragraph: "The Committee reaffirms its judgment that inflation at the rate of 2 percent, as measured by the annual change in the price index for personal consumption expenditures, is most consistent over the longer run with the Federal Reserve's statutory maximum employment and price stability mandates."
 Row `us_fomc_inflation_goal_pce`, period 2026 (the year of the latest reaffirmation), value 2.
-The goal is stated for the PCE price index, not the GDP deflator. The model uses it only to extend the US GDP deflator past 2025 and for the information-only nominal USD outlook (`site_summary.json`, `nominal_outlook`); no headline cost uses it.
+The goal is stated for the PCE price index, not the GDP deflator. The model uses it only to extend the US GDP deflator past 2025 and for the information-only nominal USD outlook (`outputs/site_summary.json`, `plan.nominal_outlook`); no headline cost uses it.
 
 ## 7. Price basis of the organiser dataset's GSDP
 

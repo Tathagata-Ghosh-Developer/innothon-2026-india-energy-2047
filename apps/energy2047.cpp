@@ -1029,6 +1029,28 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     }
     j.num("nonfossil_pct", 100 * a.nonfossil_share()).num("co2_mt", a.co2_mt).num("cost_busd", a.cost_busd);
     j.num("unmet_twh", total(a.unserved)).num("generation_twh", a.total_twh);
+    // Information only: the plan's annual cost in nominal money of the target year at the
+    // inflation goals. Every headline cost stays in real 2024 USD (core/price_base.hpp).
+    {
+      const PriceBase& pb = pl.price_base();
+      const double inr_lakh_crore = pb.nominal_inr_from_real_usd(a.cost_busd * 1e9, target) / 1e12;
+      const double usd_bn = pb.nominal_usd_from_real_usd(a.cost_busd, target);
+      j.obj("nominal_outlook").str("label", "Information only: nominal money of " + std::to_string(target) +
+                                                ". The headline cost is real 2024 USD.");
+      j.num("real_2024_busd", a.cost_busd).integer("year", target);
+      j.num("inr_lakh_crore", inr_lakh_crore).num("usd_bn", usd_bn);
+      j.num("inr_per_usd_2024", pb.inr_per_usd(kPriceBaseRatePeriod), 4);
+      j.num("india_inflation_pct", 100 * pb.inflation_target()).num("us_inflation_pct", 100 * pb.us_inflation_goal());
+      j.str("method",
+            "INR: real 2024 USD x Rs per USD (RBI calendar-2024 average) x (1 + RBI CPI target)^(year - 2024); USD: real "
+            "2024 USD x (1 + FOMC longer-run goal, PCE price index)^(year - 2024). 1 lakh crore = 10^12 rupees. Sources: "
+            "data/external/macro/price_indices.csv (secondary).");
+      j.end();
+      std::printf("nominal outlook (information only; Robust plan %.2f bn USD/yr in real 2024 USD): %d money Rs %.1f "
+                  "lakh crore at %.0f%% a year (RBI target) or USD %.1f bn at %.0f%% a year (FOMC goal)\n",
+                  a.cost_busd, target, inr_lakh_crore, 100 * pb.inflation_target(), usd_bn,
+                  100 * pb.us_inflation_goal());
+    }
     j.num("scale_pct", a.total_twh > 0 ? 100 * mix.front().twh / a.total_twh : 1.0).arr("mix");
     for (const Share& m : mix)
       j.obj().str("key", m.g->key).str("label", m.g->label).str("note", m.g->note).num("twh", m.twh).num(

@@ -167,6 +167,16 @@ double PriceBase::inr_per_usd(const std::string& period) const {
   return it->second;
 }
 
+double PriceBase::nominal_inr_from_real_usd(double usd_2024, int year) const {
+  if (year < kPriceBaseYear) throw std::invalid_argument("nominal outlook: year before the price base year");
+  return usd_2024 * inr_per_usd(kPriceBaseRatePeriod) * std::pow(1.0 + target_, year - kPriceBaseYear);
+}
+
+double PriceBase::nominal_usd_from_real_usd(double usd_2024, int year) const {
+  if (year < kPriceBaseYear) throw std::invalid_argument("nominal outlook: year before the price base year");
+  return usd_2024 * std::pow(1.0 + us_goal_, year - kPriceBaseYear);
+}
+
 GsdpPriceBasis GsdpPriceBasis::load(const std::string& path, const PriceBase& prices) {
   const CsvTable t = CsvTable::read(path);
   const size_t cs = t.col("state"), cy = t.col("from_year"), cb = t.col("basis"), cn = t.col("note");

@@ -4,6 +4,8 @@
 //  3. inr_to_usd_known: RBI reference-rate averages, calendar and fiscal year.
 //  4. beyond_data_uses_target: a year past the published series is extended at the RBI
 //     CPI target (India) or the FOMC goal (US), and the extension is noted.
+//  4b. nominal_outlook_known: real 2024 USD in nominal 2047 INR and USD at the inflation
+//     goals (information only).
 //  5. jk_deflated: the challenge dataset's Jammu and Kashmir GSDP (current prices from
 //     2012) deflated to constant 2011-12 prices; the loader then sees real growth only.
 //  6. default_plan_unchanged_by_price_base: the IEA costs are already real 2024 USD, so the
@@ -103,6 +105,17 @@ void beyond_data_uses_target(const PriceBase& pb) {
   std::string us;
   const double u = pb.usd_rebase(100.0, 2025, 2027, &us);
   check(std::abs(u - 100.0 * 1.02 * 1.02) < 1e-9 && !us.empty(), "US deflator past 2025: x 1.02 a year, noted");
+}
+
+// Information only: a real 2024 USD amount in nominal 2047 money at the inflation goals.
+void nominal_outlook_known(const PriceBase& pb) {
+  std::printf("nominal_outlook_known\n");
+  const double inr = pb.nominal_inr_from_real_usd(1.0, 2047), usd = pb.nominal_usd_from_real_usd(1.0, 2047);
+  std::printf("    1 USD (real 2024) = Rs %.4f or USD %.6f in 2047 money\n", inr, usd);
+  check(std::abs(inr - 83.6693 * std::pow(1.04, 23)) < 1e-9, "INR: x 83.6693 (RBI, 2024) x 1.04^23 (RBI target, 2024 to 2047)");
+  check(std::abs(usd - std::pow(1.02, 23)) < 1e-12, "USD: x 1.02^23 (FOMC goal, 2024 to 2047)");
+  check(pb.nominal_usd_from_real_usd(5.0, 2024) == 5.0, "2024: unchanged");
+  check(throws([&] { return pb.nominal_inr_from_real_usd(1.0, 2023); }), "a year before 2024: error");
 }
 
 void jk_deflated(const std::string& root, const PriceBase& pb, const fs::path& tmp) {
@@ -233,6 +246,7 @@ int main(int argc, char** argv) {
     deflate_known(pb);
     inr_to_usd_known(pb);
     beyond_data_uses_target(pb);
+    nominal_outlook_known(pb);
     jk_deflated(root, pb, fs::temp_directory_path() / "e47_test_price_base");
     default_plan_unchanged_by_price_base(root);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);

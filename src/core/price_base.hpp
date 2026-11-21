@@ -72,6 +72,13 @@ class PriceBase {
   // FOMC longer-run inflation goal (PCE price index), fraction (0.02).
   double us_inflation_goal() const { return us_goal_; }
 
+  // Information only, never a headline cost: a real 2024 USD amount in nominal money of
+  // `year` (>= 2024) at the inflation goals.
+  //   INR: x the RBI calendar-2024 rate x (1 + RBI CPI target)^(year - 2024)
+  //   USD: x (1 + FOMC goal)^(year - 2024)
+  double nominal_inr_from_real_usd(double usd_2024, int year) const;
+  double nominal_usd_from_real_usd(double usd_2024, int year) const;
+
   // First and last published year of an India index (fiscal start years) and of the US deflator.
   int inr_first(Index idx = Index::kGdpDeflator) const;
   int inr_last(Index idx = Index::kGdpDeflator) const;
