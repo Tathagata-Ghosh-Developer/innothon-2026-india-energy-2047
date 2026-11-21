@@ -40,6 +40,13 @@ double cap_of(const std::vector<BuildCap>& caps, int s) {
   return kHighsInf;
 }
 
+// National nuclear share limit, TWh: nuclear_max x the total requirement, raised to the nuclear
+// floor where that is higher. The floor is policy (the official programme); the share limits what
+// the LP may add above it, so it never cuts the floor. With no floor it is nuclear_max x req.
+double nuclear_share_limit(const PolicySettings& p, double total_req, double floor) {
+  return std::max(p.nuclear_max * total_req, floor);
+}
+
 }  // namespace
 
 double AllocationResult::nonfossil_share() const {
@@ -84,14 +91,28 @@ double gas_min_twh(const AllocationInputs& in, const PolicySettings& p) {
   return std::min(p.gas_min_twh_share * in.fleet_floor_twh[kGas], cap_of(build_caps(in, p), kGas));
 }
 
+double nuclear_floor_twh(const AllocationInputs& in, const PolicySettings& p) {
+  if (!(std::isfinite(p.nuclear_min_twh) && p.nuclear_min_twh >= 0.0))
+    throw std::invalid_argument("nuclear_min_twh must be a finite TWh value of 0 or more");
+  if (p.nuclear_mission == kMissionNone) return p.nuclear_min_twh;
+  if (p.nuclear_mission < 0 || p.nuclear_mission >= kMissionCases)
+    throw std::invalid_argument("nuclear_mission must be -1 (none), 0 (low), 1 (central) or 2 (high)");
+  const double mission = in.nuclear_mission[p.nuclear_mission].twh;
+  if (!(mission > 0))
+    throw std::invalid_argument(std::string("nuclear_mission: no TWh for the ") + mission_case_name(p.nuclear_mission) +
+                                " case (nuclear_mission.csv not loaded)");
+  return std::max(p.nuclear_min_twh, mission);
+}
+
 Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const std::array<double, kRegions>& req) {
   Bounds b;
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
+  const double nuc_limit = nuclear_share_limit(p, total_req, nuclear_floor_twh(in, p));
   double units = 0;
   for (double u : in.nuclear_units) units += u;
   // Committed builds raise the nuclear and hydro floors. They are part of the published
   // additions, so together they fit within the national build cap of the source (nuclear also
-  // within its national share limit): fit[s] is the share of the committed TWh that does.
+  // within its national share limit, nuc_limit): fit[s] is the share of the committed TWh that does.
   const std::vector<BuildCap> caps = build_caps(in, p);
   std::array<double, kTechs> fit{};
   double base_gas = 0;
@@ -103,7 +124,7 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
       committed += in.committed_twh[r][s];
     }
     double room = cap_of(caps, s);
-    if (s == kNuclear) room = std::min(room, p.nuclear_max * total_req);
+    if (s == kNuclear) room = std::min(room, nuc_limit);
     fit[s] = committed > 0 ? std::clamp((room - base) / committed, 0.0, 1.0) : 0.0;
   }
   const double gas_cap = cap_of(caps, kGas);
@@ -118,7 +139,7 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
     // Gas: no published additions, so each region keeps its share of the existing fleet's cap.
     lo[kGas] = 0;
     hi[kGas] = base_gas > 0 && gas_cap < kHighsInf ? gas_cap * base[kGas] / base_gas : kHighsInf;
-    hi[kNuclear] = std::max(base[kNuclear], p.nuclear_max * total_req * (units > 0 ? in.nuclear_units[r] / units : 0));
+    hi[kNuclear] = std::max(base[kNuclear], nuc_limit * (units > 0 ? in.nuclear_units[r] / units : 0));
     hi[kHydro] = std::max(base[kHydro], p.hydro_frac * pot[kHydro]);
     for (int s : {kNuclear, kHydro}) {
       const double add = std::min(fit[s] * in.committed_twh[r][s], hi[s] - base[s]);
@@ -152,7 +173,8 @@ double national_upper_bound_twh(const AllocationInputs& in, const PolicySettings
     if (ub == inf) break;
   }
   ub = std::min(ub, cap_of(build_caps(in, p), s));
-  if (s == kNuclear) ub = std::min(ub, p.nuclear_max * std::accumulate(req.begin(), req.end(), 0.0));
+  if (s == kNuclear)
+    ub = std::min(ub, nuclear_share_limit(p, std::accumulate(req.begin(), req.end(), 0.0), nuclear_floor_twh(in, p)));
   if (s == kCoal) {
     double base_coal = 0;
     for (int r = 0; r < kRegions; ++r) base_coal += in.base_twh[r][kCoal];
@@ -211,9 +233,32 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   const int ubase = kRegions * kTechs + 2 * nc;  // unserved energy variables
   const int nvar = ubase + kRegions;
   const double gas_min = gas_min_twh(in, p);  // throws on a share outside [0, 1]
+  const double nuc_floor = nuclear_floor_twh(in, p);  // throws on a negative floor or an unknown case
   const Bounds b = make_bounds(in, p, req);
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
   const RegionTech unit_cost = cost_table(in, p);
+  const std::vector<BuildCap> caps = build_caps(in, p);
+
+  // A nuclear floor above the national nuclear limit cannot be met. It is policy, so it is not
+  // cut: the plan is reported infeasible with both numbers. The share limit is never below the
+  // floor (nuclear_share_limit), so the limit is the build cap or the summed regional bounds.
+  if (nuc_floor > 0) {
+    double regional = 0;
+    for (int r = 0; r < kRegions; ++r) regional += b.hi[r][kNuclear];
+    const double cap = cap_of(caps, kNuclear);
+    const double limit = std::min(regional, cap);
+    if (nuc_floor > limit + 1e-9 * std::max(1.0, limit)) {
+      AllocationResult res;
+      res.requirement = req;
+      char msg[256];
+      std::snprintf(msg, sizeof msg,
+                    "infeasible: nuclear floor %.1f TWh is above the national nuclear limit %.1f TWh (build cap %.1f "
+                    "TWh, %s case x %.2f; regional bounds %.1f TWh)",
+                    nuc_floor, limit, cap, build_case_name(p.build_case), p.build_accel, regional);
+      res.status = msg;
+      return res;
+    }
+  }
 
   std::vector<double> cost(nvar, 0.0), lo(nvar, 0.0), hi(nvar, kHighsInf);
   for (int r = 0; r < kRegions; ++r)
@@ -263,7 +308,8 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   const int firm_nat = rb.add(p.firm_national * total_req, kHighsInf);
   const int nonfossil = rb.add(0.0, kHighsInf);     // sum(nonfossil) - nf * G >= 0
   const int gas = rb.add(-kHighsInf, 0.0);          // sum(gas) - gmax * G <= 0
-  const int nuclear = rb.add(-kHighsInf, p.nuclear_max * total_req);
+  // Nuclear: the national floor (if any) <= sum(nuclear) <= the share limit (never below the floor).
+  const int nuclear = rb.add(nuc_floor > 0 ? nuc_floor : -kHighsInf, nuclear_share_limit(p, total_req, nuc_floor));
   for (int r = 0; r < kRegions; ++r)
     for (int s = 0; s < kTechs; ++s) {
       const int v = gvar(r, s);
@@ -282,7 +328,6 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   // National build limits: max(existing-fleet floor, FY2023-24 generation) + build_accel x the
   // published additions to 2047 (build_caps). Firmed RE is solar and wind with storage, so it
   // shares their cap.
-  const std::vector<BuildCap> caps = build_caps(in, p);
   std::vector<int> cap_rows;
   for (const BuildCap& c : caps) {
     const int row = rb.add(-kHighsInf, c.cap_twh);
@@ -496,6 +541,7 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
   constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
   const int nrow = ns + 1;  // + requirement uncertainty
   (void)gas_min_twh(in, base);  // an invalid setting throws here, not inside the parallel region
+  (void)nuclear_floor_twh(in, base);
   std::vector<TornadoRow> rows(nrow);
   auto label = [](const char* fmt, double v) {
     char b[32];
@@ -560,6 +606,16 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
       {"wind_120m", "onshore wind potential: NIWE 120 m instead of 150 m", [](PolicySettings& p) { p.wind_height = 120; }},
       {"build_low", "published build limits: low case", [](PolicySettings& p) { p.build_case = kBuildLow; }},
       {"build_central", "published build limits: central case", [](PolicySettings& p) { p.build_case = kBuildCentral; }},
+      // Nuclear Energy Mission floor, low and high cases of nuclear_mission.csv (TWh read with the
+      // inputs); the Nuclear mission preset is the central case. Captive reactors left out.
+      {"nuclear_mission_low",
+       "Nuclear Energy Mission floor, low case: NPCIL's share of the mission (DAE) at the CEA NEP CUF, captive "
+       "reactors left out",
+       [](PolicySettings& p) { p.nuclear_mission = kMissionLow; }},
+      {"nuclear_mission_high",
+       "Nuclear Energy Mission floor, high case: the CEA road map's utility reactors (captive BSR and BSMR left out) "
+       "at its achievable PLF",
+       [](PolicySettings& p) { p.nuclear_mission = kMissionHigh; }},
   };
   constexpr int ns = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
   std::vector<MixSensitivityRow> rows(ns);
@@ -574,6 +630,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
     (void)potential_twh(in, rows[i].policy, 0, kWind);
     (void)build_caps(in, rows[i].policy);
     (void)gas_min_twh(in, rows[i].policy);
+    (void)nuclear_floor_twh(in, rows[i].policy);
   }
 #pragma omp parallel for schedule(dynamic)
   for (int k = 0; k < 2 * ns; ++k) {

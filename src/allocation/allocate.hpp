@@ -20,7 +20,7 @@ enum SolarPotentialSet : int { kSolarNise2025, kSolarNise2014 };  // ground-moun
 struct PolicySettings {
   double nonfossil_min = 0.70;     // minimum non-fossil share of national generation
   double gas_max = 0.05;           // maximum gas share
-  double nuclear_max = 0.10;       // maximum nuclear share
+  double nuclear_max = 0.10;       // maximum nuclear share (of the requirement; never below the nuclear floor)
   double coal_floor = 0.60;        // regional coal >= floor x base-year coal (existing young fleet)
   double coal_cap = 1.10;          // national coal <= cap x base-year coal (no coal beyond pipeline)
   double coal_regional_max = 1.50; // regional coal <= this x its base-year coal (fleet and pithead siting)
@@ -65,6 +65,17 @@ struct PolicySettings {
   // the cap and every region is held at its FY2023-24 share of the fleet floor; the LP chooses gas
   // sites only below share 1. A gas_max too low to hold it makes the LP infeasible.
   double gas_min_twh_share = 0.0;
+  // National nuclear floor (nuclear_floor_twh): one LP row, nuclear summed over the regions >= the
+  // floor; the LP sites it within each region's nuclear bound (the siting key, make_bounds).
+  // nuclear_min_twh is a floor in TWh a year (0 = none); nuclear_mission picks a case of the
+  // Nuclear Energy Mission (kMissionNone = none), whose TWh come from nuclear_mission.csv
+  // (AllocationInputs::nuclear_mission), so no preset holds a TWh literal. The floor is the larger
+  // of the two. The nuclear_max share never cuts it: where the floor is above nuclear_max x the
+  // requirement (a low requirement), the floor is the share limit. The national nuclear build cap
+  // does: a floor above the national nuclear limit (build cap or summed regional bounds) is not
+  // cut, and solve_least_cost returns ok = false with a status that names both.
+  double nuclear_min_twh = 0.0;
+  int nuclear_mission = kMissionNone;
 
   bool operator==(const PolicySettings&) const = default;
 };
@@ -72,6 +83,11 @@ struct PolicySettings {
 // National gas minimum of the policy, TWh: gas_min_twh_share x the gas fleet floor, at most the
 // national gas build cap. Throws std::invalid_argument if the share is not in [0, 1].
 double gas_min_twh(const AllocationInputs& in, const PolicySettings& p);
+
+// National nuclear floor of the policy, TWh: max(nuclear_min_twh, the TWh of the nuclear_mission
+// case); 0 when neither is set. Throws std::invalid_argument on a negative or non-finite
+// nuclear_min_twh, an unknown case, or a case with no TWh (inputs not loaded).
+double nuclear_floor_twh(const AllocationInputs& in, const PolicySettings& p);
 
 // Expected inflation of the CEA basis under the policy: p.cea_inflation if set, otherwise the
 // RBI CPI target of the inputs (AllocationInputs::cea_inflation_target).
@@ -109,8 +125,10 @@ struct AllocationResult {
 // Bounds actually used for each region and source (after policy fractions). Nuclear and hydro:
 // lo = FY2023-24 base + committed builds (AllocationInputs::committed_twh). Committed plants are
 // part of the published additions, so the committed TWh of a source is first cut to fit its
-// national build cap (and, for nuclear, the nuclear_max share of the requirement), then each
-// region's floor to its regional bound hi. Gas: hi = the national gas build cap x the region's
+// national build cap (and, for nuclear, the nuclear share limit), then each region's floor to its
+// regional bound hi. Nuclear hi = max(FY2023-24 base, the share limit x the region's share of
+// reactor units); the share limit is nuclear_max x the requirement, or the nuclear floor
+// (nuclear_floor_twh) where that is higher. Gas: hi = the national gas build cap x the region's
 // FY2023-24 share of gas (no published gas additions: gas comes from the existing fleet).
 struct Bounds {
   RegionTech lo{}, hi{};
@@ -123,7 +141,8 @@ Bounds make_bounds(const AllocationInputs& in, const PolicySettings& p, const st
 //   the sum of its regional bounds (make_bounds hi; for firmed RE, which has no bound of its
 //   own, the sum of the regional solar and wind bounds it shares),
 //   the national build cap of its group (build_caps; solar, onshore wind and firmed RE share one),
-//   for nuclear, nuclear_max x the total requirement, and for coal, coal_cap x base-year coal.
+//   for nuclear, the share limit (nuclear_max x the total requirement, or the nuclear floor where
+//   that is higher), and for coal, coal_cap x base-year coal.
 // The gas_max share limits gas as a share of total generation, which the LP chooses, so it is
 // not a TWh bound and is left out. +infinity if nothing bounds s. Throws on an unknown source.
 double national_upper_bound_twh(const AllocationInputs& in, const PolicySettings& p,
@@ -194,8 +213,11 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
 // Cases, in order: base; cost_basis_cea (CEA NEP cost basis, real WACC at the RBI target of 4
 // percent); cost_basis_cea_pi2 and cost_basis_cea_pi6 (the same at 2 and 6 percent, the RBI
 // tolerance band); solar_potential_nise2014; wind_120m; build_low and build_central
-// (build_case low and central; the Robust preset, the usual base, is already on the high case). Each case is solved at `requirement` and at
-// `requirement_p90`. Solves run in parallel.
+// (build_case low and central; the Robust preset, the usual base, is already on the high case);
+// nuclear_mission_low and nuclear_mission_high (the low and high cases of the Nuclear Energy
+// Mission floor, nuclear_mission.csv; the Nuclear mission preset is the central case). Each case
+// is solved at `requirement` and at `requirement_p90`; a case whose nuclear floor is above the
+// national nuclear limit comes back ok = false with the reason. Solves run in parallel.
 struct MixSensitivityRow {
   std::string name, description;
   PolicySettings policy;
@@ -206,7 +228,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
                                                const std::array<double, kRegions>& requirement,
                                                const std::array<double, kRegions>& requirement_p90);
 // Everything one mix_sensitivity call reads, to cache its rows (CachedTask in core/cached_task.hpp):
-// the dashboard runs the 16 solves only while its mix evidence view is open, and again only when
+// the dashboard runs the 20 solves only while its mix evidence view is open, and again only when
 // one of these changes. `inputs` is compared by address: a pipeline's inputs never change.
 struct MixSensitivityKey {
   const AllocationInputs* inputs = nullptr;

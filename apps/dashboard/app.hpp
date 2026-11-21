@@ -52,7 +52,7 @@ class App {
     std::string layer_note;  // the add-on or feature scenario outside the headline; empty for the headline
     double total_ms = 0;
   };
-  // The mix sensitivity (16 LP solves): computed only while the mix evidence view is open, on a
+  // The mix sensitivity (20 LP solves): computed only while the mix evidence view is open, on a
   // worker thread, and again only when the inputs change.
   struct MixEvidence {
     std::vector<MixSensitivityRow> rows;  // the current policy with one published figure changed

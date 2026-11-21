@@ -51,6 +51,18 @@ inline const std::vector<ScenarioPreset>& scenario_presets() {
 // outside the headline forecast.
 inline constexpr const char* kFeaturesPresetName = "Demand features (official, outside headline)";
 
+// Settings of the Robust policy preset (shared with the Nuclear mission preset, which adds a floor).
+inline void apply_robust_policy(PolicySettings& p) {
+  p.nonfossil_min = 0.75;
+  p.solar_land = 0.35;
+  p.wind_land = 0.30;
+  p.transfer_scale = 3.0;
+  p.nuclear_max = 0.15;
+  p.build_case = kBuildHigh;
+  p.coal_floor = 0.50;
+  p.gas_min_twh_share = 1.0;
+}
+
 inline const std::vector<PolicyPreset>& policy_presets() {
   static const std::vector<PolicyPreset> v = {
       {"Base", "Default settings (docs/assumptions_and_uncertainty.md).", [](PolicySettings&) {}},
@@ -73,16 +85,7 @@ inline const std::vector<PolicyPreset>& policy_presets() {
        "peaking and as a bridge for variable renewables, each region within its FY2023-24 share of gas. Meeting the "
        "P90 also needs 45% of the solar potential usable; the published high-case build rates are then enough "
        "(outputs/p90_levers.csv).",
-       [](PolicySettings& p) {
-         p.nonfossil_min = 0.75;
-         p.solar_land = 0.35;
-         p.wind_land = 0.30;
-         p.transfer_scale = 3.0;
-         p.nuclear_max = 0.15;
-         p.build_case = kBuildHigh;
-         p.coal_floor = 0.50;
-         p.gas_min_twh_share = 1.0;
-       }},
+       apply_robust_policy},
       {"Energy security",
        "Each region 40% self-firm, national firm 55%, corridors only at the 2032 plan, gas at most 2%, coal floor 70%.",
        [](PolicySettings& p) {
@@ -91,6 +94,18 @@ inline const std::vector<PolicyPreset>& policy_presets() {
          p.transfer_scale = 1.0;
          p.gas_max = 0.02;
          p.coal_floor = 0.70;
+       }},
+      // The floor's TWh are read from data/external/techno_economic/nuclear_mission.csv with the
+      // inputs (AllocationInputs::nuclear_mission); the preset only picks the central case.
+      {"Nuclear mission",
+       "Robust plus the Nuclear Energy Mission (Union Budget 2025-26, paras 61-62: at least 100 GW of nuclear by "
+       "2047) as a floor on national nuclear generation: the utility reactors of CEA's road map to 100 GW by 2047 "
+       "(Table 6.3) at the CEA NEP CUF, central case of nuclear_mission.csv. The road map's captive reactors (BSR "
+       "and BSMR) are left out: captive generation is outside utility generation by the organisers' ruling. The 15% "
+       "nuclear share never cuts the floor; the nuclear build cap does (the plan is then infeasible).",
+       [](PolicySettings& p) {
+         apply_robust_policy(p);
+         p.nuclear_mission = kMissionCentral;
        }},
   };
   return v;

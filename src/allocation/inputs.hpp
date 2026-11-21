@@ -56,6 +56,28 @@ std::vector<BuildLimitRow> read_build_limits(const std::string& csv_path);
 double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int build_case, int from_year,
                            int to_year);
 
+// Cases of the Nuclear Energy Mission floor (nuclear_mission.csv; PolicySettings::nuclear_mission).
+enum MissionCase : int { kMissionNone = -1, kMissionLow, kMissionCentral, kMissionHigh, kMissionCases };
+const char* mission_case_name(int k);  // "low", "central", "high"
+
+// One case of data/external/techno_economic/nuclear_mission.csv (secondary): the nuclear
+// capacity its source gives for 2047, less the captive reactors inside it (captive generation is
+// outside NPP utility generation by the organisers' ruling), as energy: utility MW / 1000 x CUF x
+// 8.76. Capacity-based by design, like build_limits.csv; installed capacity is never forecast.
+struct NuclearMissionCase {
+  double total_mw = 0;    // 2047 nuclear capacity of the case's source, MW
+  double captive_mw = 0;  // captive units inside total_mw, left out, MW
+  double cuf = 0;         // capacity utilisation factor (PLF), fraction
+  double twh = 0;         // utility_mw() / 1000 x cuf x 8.76
+  std::string source;     // source_name of the row
+  double utility_mw() const { return total_mw - captive_mw; }
+};
+
+// Reads nuclear_mission.csv: one row per case (low, central, high). Throws std::runtime_error on
+// a missing, duplicate or unknown case, a total that is not positive, captive MW outside
+// [0, total), a CUF outside (0, 1], or TWh that do not rise from low to central to high.
+std::array<NuclearMissionCase, kMissionCases> read_nuclear_mission(const std::string& csv_path);
+
 // CEA station-weighted average emission rates (CO2 Baseline Database, tCO2/MWh net) of the
 // latest period in emission_factors.csv. Only rows with basis "actual" and a fiscal-year
 // period ("2025-26") count, so a projected row is never used. Rows of other metrics and fuels
@@ -132,6 +154,10 @@ struct AllocationInputs {
   std::array<double, kRegions> committed_nuclear_mw{}, committed_hydro_mw{};
   double committed_nuclear_cuf = 0, committed_hydro_cuf = 0;
   RegionTech committed_twh{};  // kNuclear and kHydro entries only, TWh a year
+  // Nuclear Energy Mission floor by case (nuclear_mission.csv): national 2047 nuclear generation
+  // of the mission's utility reactors, TWh. Used only when a policy sets nuclear_mission
+  // (allocate.hpp, nuclear_floor_twh); the presets hold no TWh of their own.
+  std::array<NuclearMissionCase, kMissionCases> nuclear_mission{};
   std::vector<Corridor> corridors;
 
   // National build limits for 2047 (allocate.cpp, build_caps). Each source's 2047 generation

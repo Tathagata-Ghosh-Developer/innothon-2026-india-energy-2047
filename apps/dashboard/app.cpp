@@ -448,9 +448,19 @@ void App::sidebar() {
   ImGui::TextUnformatted("Policy and planning");
   if (font_head_) ImGui::PopFont();
   {
+    // One button per preset; a button that would run past the sidebar starts a new line.
     const auto& presets = policy_presets();
+    const ImGuiStyle& style = ImGui::GetStyle();
+    const float avail = ImGui::GetContentRegionAvail().x;
+    float line = 0;
     for (size_t i = 0; i < presets.size(); ++i) {
-      if (i) ImGui::SameLine();
+      const float w = ImGui::CalcTextSize(presets[i].name.c_str()).x + 2 * style.FramePadding.x;
+      if (i && line + style.ItemSpacing.x + w <= avail) {
+        ImGui::SameLine();
+        line += style.ItemSpacing.x + w;
+      } else {
+        line = w;
+      }
       if (ImGui::Button((presets[i].name + "##pol").c_str())) {
         pol_ = PolicySettings{};
         presets[i].apply(pol_);
@@ -1297,9 +1307,10 @@ void App::data_sources() {
          "Nuclear siting key; committed floors (units under construction or sanctioned x CUF x 8.76)"},
         {"Large hydro under construction", "CEA hydro status (resource_potential.csv)",
          "Committed hydro floors (MW x CUF x 8.76)"},
-        {"Demand features for FY2047-48: 49 drivers, 11 quantified as signed TWh beyond the historical trend",
-         "CEA (General Review 2025, 20th EPS, NEP 2022-32, NGAP 2026); MoP; MNRE; MoEFCC (ICAP); BEE; MeitY; TRAI; DoT; NITI Aayog "
-         "2026 (secondary; data/external/demand_features.csv)",
+        {"Demand features for FY2047-48: 73 drivers, 11 quantified as signed TWh beyond the historical trend",
+         "CEA (General Review 2025, 20th EPS, NEP 2022-32, NGAP 2026, 2047 nuclear road map); MoP; MNRE; DAE; MoEFCC (ICAP); "
+         "BEE; MeitY; TRAI; DoT; Union Budget; NITI Aayog 2026; UNFCCC, G20 and IEA texts "
+         "(secondary; data/external/demand_features.csv)",
          "Demand-feature scenarios outside the headline: named scenarios, one at a time and joint draws"},
         {"New loads in 2050 (vehicles, green hydrogen, data centres, cooling, cooking)",
          "NITI Aayog 2026; TERI 2024; CEEW 2025; BloombergNEF 2026; IEA 2018 (secondary)",

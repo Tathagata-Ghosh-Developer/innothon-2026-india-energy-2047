@@ -180,6 +180,43 @@ double published_build_twh(const std::vector<BuildLimitRow>& rows, int tech, int
   return twh;
 }
 
+const char* mission_case_name(int k) {
+  static const char* n[kMissionCases] = {"low", "central", "high"};
+  return k >= 0 && k < kMissionCases ? n[k] : "?";
+}
+
+std::array<NuclearMissionCase, kMissionCases> read_nuclear_mission(const std::string& path) {
+  const CsvTable t = CsvTable::read(path);
+  const size_t ck = t.col("case"), ct = t.col("total_mw_2047"), cc = t.col("captive_mw_excluded"), cu = t.col("cuf");
+  std::array<NuclearMissionCase, kMissionCases> out{};
+  std::array<bool, kMissionCases> seen{};
+  for (size_t r = 0; r < t.rows(); ++r) {
+    const std::string& name = t.str(r, ck);
+    const std::string where = path + " row " + std::to_string(r + 2) + " (" + name + ")";
+    int k = -1;
+    for (int i = 0; i < kMissionCases; ++i)
+      if (name == mission_case_name(i)) k = i;
+    if (k < 0) throw std::runtime_error("nuclear mission: unknown case in " + where);
+    if (seen[k]) throw std::runtime_error("nuclear mission: duplicate case in " + where);
+    seen[k] = true;
+    NuclearMissionCase& m = out[k];
+    m.total_mw = t.num(r, ct);
+    m.captive_mw = t.num(r, cc);
+    m.cuf = t.num(r, cu);
+    if (!(m.total_mw > 0)) throw std::runtime_error("nuclear mission: total MW must be positive in " + where);
+    if (!(m.captive_mw >= 0 && m.captive_mw < m.total_mw))
+      throw std::runtime_error("nuclear mission: captive MW must be in [0, total) in " + where);
+    if (!(m.cuf > 0 && m.cuf <= 1)) throw std::runtime_error("nuclear mission: CUF must be a fraction in (0, 1] in " + where);
+    m.twh = m.utility_mw() / 1000.0 * m.cuf * kHoursTWhPerGW;
+    if (t.has("source_name")) m.source = t.str(r, t.col("source_name"));
+  }
+  for (int k = 0; k < kMissionCases; ++k)
+    if (!seen[k]) throw std::runtime_error(std::string("nuclear mission: no ") + mission_case_name(k) + " case in " + path);
+  if (out[kMissionLow].twh > out[kMissionCentral].twh || out[kMissionCentral].twh > out[kMissionHigh].twh)
+    throw std::runtime_error("nuclear mission: TWh must rise from low to central to high in " + path);
+  return out;
+}
+
 StationEmissionFactors read_station_emission_factors(const std::string& path) {
   const CsvTable t = CsvTable::read(path);
   if (!t.has("basis")) throw std::runtime_error("emission factors: no basis column in " + path);
@@ -1137,6 +1174,24 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
         fiscal_label(in.base_year).c_str(), uc, sanctioned, recent, fiscal_label(in.base_year).c_str(),
         recent_names.empty() ? "none" : recent_names.c_str(), nuc_by.c_str(), in.committed_nuclear_cuf, nuc_twh,
         hydro_uc_as_of.c_str(), hydro_mw, hydro_by.c_str(), in.committed_hydro_cuf, hydro_twh));
+  }
+
+  // 7c. Nuclear Energy Mission floor (secondary): the mission's 2047 utility reactors as energy,
+  //     MW / 1000 x CUF x 8.76, by case. Applied only by a policy that sets nuclear_mission.
+  {
+    in.nuclear_mission = read_nuclear_mission(root + "/" + "data/external/techno_economic/nuclear_mission.csv");
+    const auto& m = in.nuclear_mission;
+    in.notes.push_back(strf(
+        "Nuclear Energy Mission floor (Secondary: data/external/techno_economic/nuclear_mission.csv; Union Budget "
+        "2025-26 paras 61-62, at least 100 GW by 2047), used only by a policy with a mission case (the Nuclear "
+        "mission preset: central): national nuclear generation >= utility MW / 1000 x CUF x 8.76. Captive reactors "
+        "are left out (organisers' ruling: captive generation is outside NPP utility generation). Low %.0f MW "
+        "(%s) x %.2f = %.1f TWh; central %.0f MW less %.0f MW captive BSR and BSMR = %.0f MW (%s) x %.2f = %.1f "
+        "TWh; high %.0f MW x %.2f (the road map's achievable PLF) = %.1f TWh.",
+        m[kMissionLow].utility_mw(), m[kMissionLow].source.c_str(), m[kMissionLow].cuf, m[kMissionLow].twh,
+        m[kMissionCentral].total_mw, m[kMissionCentral].captive_mw, m[kMissionCentral].utility_mw(),
+        m[kMissionCentral].source.c_str(), m[kMissionCentral].cuf, m[kMissionCentral].twh, m[kMissionHigh].utility_mw(),
+        m[kMissionHigh].cuf, m[kMissionHigh].twh));
   }
 
   // 8. Inter-regional corridors: transfer capability planned for March 2032 and regional losses.

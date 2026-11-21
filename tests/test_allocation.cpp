@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <fstream>
 #include <future>
+#include <limits>
 #include <map>
 #include <numeric>
 #include <stdexcept>
@@ -751,11 +752,11 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
   check(std::abs(solve_least_cost(in, PolicySettings{}, req).cost_busd - default_cost_before) < 1e-9,
         "default plan cost unchanged after the cases");
   const char* names[] = {"base",      "cost_basis_cea", "cost_basis_cea_pi2", "cost_basis_cea_pi6", "solar_potential_nise2014",
-                         "wind_120m", "build_low",      "build_central"};
-  bool named = rows.size() == 8;
+                         "wind_120m", "build_low",      "build_central",      "nuclear_mission_low", "nuclear_mission_high"};
+  bool named = rows.size() == 10;
   for (size_t i = 0; named && i < rows.size(); ++i) named &= rows[i].name == names[i];
-  check(named, "eight cases in order: base, cost_basis_cea (_pi2, _pi6), solar_potential_nise2014, wind_120m, build_low, "
-               "build_central");
+  check(named, "ten cases in order: base, cost_basis_cea (_pi2, _pi6), solar_potential_nise2014, wind_120m, build_low, "
+               "build_central, nuclear_mission_low, nuclear_mission_high");
   if (!named) return check.fails;
   auto with = [&](void (*f)(PolicySettings&)) {
     PolicySettings p = robust_before;
@@ -784,14 +785,24 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
         "build_central: build_case central only");
   check(robust_before.build_case == kBuildHigh && !(rows[7].policy == rows[0].policy),
         "Robust is on the high case, so build_central differs from base");
+  check(rows[8].policy == with([](PolicySettings& p) { p.nuclear_mission = kMissionLow; }) &&
+            rows[9].policy == with([](PolicySettings& p) { p.nuclear_mission = kMissionHigh; }),
+        "nuclear_mission_low and _high: the Nuclear Energy Mission case only");
+  // Every case solves at the median and the P90, except a nuclear floor above the national
+  // nuclear build cap of the policy, which is reported as infeasible with its reason, not cut.
+  const double nuclear_cap = cap_with(build_caps(in, robust), kNuclear)->cap_twh;
   bool ok = true;
   for (const MixSensitivityRow& r : rows) {
-    ok &= r.plan.ok && r.plan_p90.ok;
-    std::printf("  %-26s non-fossil %5.1f%%  coal %5.1f%%  CO2 %7.1f Mt  cost %7.2f bn USD  P90 unmet %7.1f TWh\n",
+    const bool over = nuclear_floor_twh(in, r.policy) > nuclear_cap;
+    for (const AllocationResult* a : {&r.plan, &r.plan_p90})
+      ok &= over ? !a->ok && a->status.find("nuclear floor") != std::string::npos : a->ok;
+    std::printf("  %-26s non-fossil %5.1f%%  coal %5.1f%%  CO2 %7.1f Mt  cost %7.2f bn USD  P90 unmet %7.1f TWh %s\n",
                 r.name.c_str(), 100 * r.plan.nonfossil_share(), 100 * r.plan.share(kCoal), r.plan.co2_mt,
-                r.plan.cost_busd, r.plan_p90.unserved_total());
+                r.plan.cost_busd, r.plan_p90.unserved_total(), r.plan.ok ? "" : r.plan.status.c_str());
   }
-  check(ok, "every case solves at the median and the P90 requirement");
+  check(ok, "every case solves at the median and the P90 (a nuclear floor above the build cap: flagged infeasible)");
+  check(rows[8].plan.ok && rows[8].plan.national[kNuclear] >= in.nuclear_mission[kMissionLow].twh - 1e-6,
+        "nuclear_mission_low: solved, nuclear at least the low floor");
   check(std::abs(rows[0].plan.cost_busd - direct.cost_busd) < 1e-9 && std::abs(rows[0].plan.co2_mt - direct.co2_mt) < 1e-9,
         "base row = the policy solved directly");
   double cea_cost = 0, cea2_cost = 0, cea6_cost = 0;
@@ -1314,6 +1325,252 @@ int national_upper_bound(const AllocationInputs& in, const std::array<double, kR
   return check.fails;
 }
 
+// Nuclear Energy Mission floor (nuclear_mission.csv, secondary): each case is the 2047 nuclear
+// capacity of its source less the captive reactors (outside NPP utility generation by the
+// organisers' ruling) x its CUF x 8.76. Low: NPCIL's 54 GW (DAE, Lok Sabha USQ 2783); central:
+// the CEA road map's 100,648 MW (Table 6.3) less BSR 5,060 MW and BSMR 5,000 MW, at the CEA NEP
+// CUF of the nuclear build limits; high: the same fleet at the road map's achievable PLF of 80%.
+int nuclear_mission_from_data(const std::string& root, const std::string& tmp_dir, const AllocationInputs& in) {
+  Checker check;
+  std::printf("nuclear_mission_from_data\n");
+  const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/nuclear_mission.csv");
+  std::map<std::string, size_t> row;
+  for (size_t i = 0; i < t.rows(); ++i) row[t.str(i, t.col("case"))] = i;
+  const bool three = t.rows() == 3 && row.count("low") && row.count("central") && row.count("high");
+  check(three, "three cases in the file: low, central, high");
+  if (!three) return check.fails;
+  bool same = true;
+  for (int k = 0; k < kMissionCases; ++k) {
+    const size_t i = row.at(mission_case_name(k));
+    const double total = t.num(i, t.col("total_mw_2047")), captive = t.num(i, t.col("captive_mw_excluded"));
+    const double cuf = t.num(i, t.col("cuf"));
+    const double twh = (total - captive) / 1000.0 * cuf * 8.76;
+    const NuclearMissionCase& m = in.nuclear_mission[k];
+    std::printf("  %-8s (%6.0f - %5.0f captive) MW = %6.0f MW x CUF %.2f x 8.76 = %6.1f TWh (loaded %.4f)\n",
+                mission_case_name(k), total, captive, total - captive, cuf, twh, m.twh);
+    same &= m.total_mw == total && m.captive_mw == captive && m.cuf == cuf && std::abs(m.twh - twh) < 1e-9 &&
+            m.utility_mw() == total - captive && !m.source.empty();
+  }
+  check(same, "loaded cases = the file: (total MW - captive MW) / 1000 x CUF x 8.76, with a source");
+  const NuclearMissionCase &lo = in.nuclear_mission[kMissionLow], &c = in.nuclear_mission[kMissionCentral],
+                           &hi = in.nuclear_mission[kMissionHigh];
+  check(c.total_mw == 100648 && c.captive_mw == 5060 + 5000 && c.utility_mw() == 90588,
+        "central: CEA road map 100,648 MW less captive BSR 5,060 and BSMR 5,000 MW = 90,588 MW");
+  check(lo.total_mw == 54000 && lo.captive_mw == 0, "low: NPCIL's 54 GW, no captive units");
+  check(hi.total_mw == c.total_mw && hi.captive_mw == c.captive_mw && hi.cuf == 0.80,
+        "high: the central utility fleet at the road map's achievable PLF of 80%");
+  const double nep_cuf = lowest_build_cuf(in, kNuclear);
+  check(nep_cuf == 0.68 && lo.cuf == nep_cuf && c.cuf == nep_cuf,
+        "low and central: CUF 0.68, the CUF of the nuclear rows of build_limits.csv (CEA NEP)");
+  check(std::abs(lo.twh - 321.7) < 0.05 && std::abs(c.twh - 539.6) < 0.05 && std::abs(hi.twh - 634.8) < 0.05,
+        "321.7, 539.6 and 634.8 TWh");
+  bool note = false;
+  for (const std::string& n : in.notes)
+    note |= n.find("nuclear_mission.csv") != std::string::npos && n.find("captive") != std::string::npos &&
+            n.find("Secondary") != std::string::npos;
+  check(note, "provenance note: the file, the captive units left out, labelled secondary");
+
+  // Malformed files stop the load with a message.
+  const std::string path = tmp_dir + "/e47_nuclear_mission_test.csv";
+  auto throws = [&](const std::string& body) {
+    {
+      std::ofstream o(path);
+      o << "case,total_mw_2047,captive_mw_excluded,cuf,source_name\n" << body;
+    }
+    try {
+      read_nuclear_mission(path);
+    } catch (const std::runtime_error&) {
+      return true;
+    }
+    return false;
+  };
+  const std::string low = "low,54000,0,0.68,a\n", central = "central,100648,10060,0.68,b\n",
+                    high = "high,100648,10060,0.80,c\n";
+  check(!throws(low + central + high), "a well-formed file loads");
+  check(throws(low + central), "a missing case: error");
+  check(throws(low + central + high + "central,100648,10060,0.68,b\n"), "a duplicate case: error");
+  check(throws(low + central + high + "extra,1,0,0.5,d\n"), "an unknown case: error");
+  check(throws(low + "central,100648,100648,0.68,b\n" + high), "captive units not below the total: error");
+  check(throws(low + central + "high,100648,10060,1.2,c\n"), "a CUF above 1: error");
+  check(throws("low,200000,0,0.68,a\n" + central + high), "low above central: error");
+  std::filesystem::remove(path);
+  return check.fails;
+}
+
+// The national nuclear floor (PolicySettings::nuclear_min_twh and nuclear_mission): one LP row,
+// nuclear summed over the regions >= the floor, sited by the LP within each region's bound.
+// Default 0: no floor, so the default plans do not change, and a floor that cannot bind leaves
+// a plan as it was. The nuclear_max share never cuts the floor (where the floor is higher, it is
+// the share limit), but the national nuclear build cap does: a floor above the cap is reported
+// infeasible with its reason, never cut.
+int nuclear_floor_respected(const AllocationInputs& in, const std::array<double, kRegions>& req) {
+  Checker check;
+  std::printf("nuclear_floor_respected\n");
+  const PolicySettings defaults, robust = robust_preset();
+  check(defaults.nuclear_min_twh == 0 && defaults.nuclear_mission == kMissionNone && nuclear_floor_twh(in, defaults) == 0,
+        "default: no nuclear floor");
+  bool none = true;
+  for (const auto& pp : policy_presets()) {
+    PolicySettings p;
+    pp.apply(p);
+    if (pp.name != "Nuclear mission") none &= nuclear_floor_twh(in, p) == 0;
+  }
+  check(none, "Base, Low carbon, Robust and Energy security: no nuclear floor");
+  const double total = std::accumulate(req.begin(), req.end(), 0.0);
+  auto with_floor = [](PolicySettings p, double twh) {
+    p.nuclear_min_twh = twh;
+    return p;
+  };
+  auto committed = [&](const PolicySettings& p) {
+    const Bounds b = make_bounds(in, p, req);
+    double s = 0;
+    for (int r = 0; r < kRegions; ++r) s += b.lo[r][kNuclear];
+    return s;
+  };
+
+  // A floor below the regional lower bounds (FY2023-24 + committed builds) cannot bind.
+  for (const auto& [name, p] : {std::pair<const char*, PolicySettings>{"Base", defaults}, {"Robust", robust}}) {
+    const AllocationResult a = solve_least_cost(in, p, req);
+    const AllocationResult f = solve_least_cost(in, with_floor(p, committed(p) - 1.0), req);
+    char what[160];
+    std::snprintf(what, sizeof what, "%s: a floor below its committed nuclear leaves cost and CO2 unchanged (1e-6)", name);
+    check(a.ok && f.ok && std::abs(f.cost_busd - a.cost_busd) < 1e-6 && std::abs(f.co2_mt - a.co2_mt) < 1e-6, what);
+  }
+
+  // A binding floor: Robust's own nuclear is its committed floor; ask for more.
+  const AllocationResult r0 = solve_least_cost(in, robust, req);
+  const double ask = 450.0;
+  const PolicySettings p450 = with_floor(robust, ask);
+  const AllocationResult a450 = solve_least_cost(in, p450, req);
+  const Bounds b450 = make_bounds(in, p450, req);
+  bool within = a450.ok;
+  for (int r = 0; within && r < kRegions; ++r)
+    within = a450.gen[r][kNuclear] >= b450.lo[r][kNuclear] - 1e-6 && a450.gen[r][kNuclear] <= b450.hi[r][kNuclear] + 1e-6;
+  std::printf("  Robust nuclear %.1f TWh; with a %.0f TWh floor %.1f TWh, cost %.3f -> %.3f bn USD\n",
+              r0.national[kNuclear], ask, a450.national[kNuclear], r0.cost_busd, a450.cost_busd);
+  check(r0.ok && r0.national[kNuclear] < ask, "Robust alone generates less nuclear than the test floor");
+  check(a450.ok && a450.national[kNuclear] >= ask - 1e-6, "floor 450 TWh: solved, national nuclear >= 450 TWh");
+  check(within, "floor 450 TWh: each region within its nuclear bounds (siting key)");
+  check(a450.ok && a450.cost_busd >= r0.cost_busd - 1e-9 && a450.nonfossil_share() >= robust.nonfossil_min - 1e-6,
+        "floor 450 TWh: cost not below Robust's, non-fossil minimum held");
+
+  // The mission case comes from the data; the floor is the larger of the two settings.
+  PolicySettings mission = robust;
+  mission.nuclear_mission = kMissionCentral;
+  const double central = in.nuclear_mission[kMissionCentral].twh;
+  check(nuclear_floor_twh(in, mission) == central && nuclear_floor_twh(in, with_floor(mission, 600)) == 600 &&
+            nuclear_floor_twh(in, with_floor(mission, 100)) == central,
+        "floor = max(nuclear_min_twh, the mission case's TWh from nuclear_mission.csv)");
+  const AllocationResult am = solve_least_cost(in, mission, req);
+  check(am.ok && am.national[kNuclear] >= central - 1e-6, "mission central at the test requirement: nuclear >= floor");
+
+  // Below the share: at 0.7x the floor is above nuclear_max x the requirement; the floor sets the limit.
+  std::array<double, kRegions> r07 = req;
+  for (double& x : r07) x *= 0.7;
+  const AllocationResult a07 = solve_least_cost(in, mission, r07);
+  char what[200];
+  std::snprintf(what, sizeof what, "0.7x: floor %.1f TWh above %.0f%% x %.0f TWh = %.1f; solved at the floor (%.1f TWh)",
+                central, 100 * mission.nuclear_max, 0.7 * total, mission.nuclear_max * 0.7 * total,
+                a07.ok ? a07.national[kNuclear] : 0.0);
+  check(central > mission.nuclear_max * 0.7 * total && a07.ok && a07.national[kNuclear] >= central - 1e-6 &&
+            a07.national[kNuclear] <= central + 1e-6,
+        what);
+  check(national_upper_bound_twh(in, mission, r07, kNuclear) >= central - 1e-9,
+        "0.7x: national nuclear bound not below the floor (the share never cuts it)");
+
+  // Above the build cap: reported infeasible with the reason, not cut.
+  const double cap = cap_with(build_caps(in, robust), kNuclear)->cap_twh;
+  const AllocationResult over = solve_least_cost(in, with_floor(robust, cap + 5), req);
+  const AllocationResult under = solve_least_cost(in, with_floor(robust, cap - 5), req);
+  std::printf("  nuclear build cap (high case) %.1f TWh; floor +5: %s\n", cap, over.status.c_str());
+  check(!over.ok && over.status.find("nuclear floor") != std::string::npos, "floor 5 TWh above the cap: infeasible, flagged");
+  check(under.ok && under.national[kNuclear] >= cap - 5 - 1e-6, "floor 5 TWh below the cap: solved");
+  PolicySettings low_case = mission;
+  low_case.build_case = kBuildLow;
+  const AllocationResult al = solve_least_cost(in, low_case, req);
+  check(!al.ok && al.status.find("nuclear floor") != std::string::npos,
+        "mission central on the low build case (cap below the floor): infeasible, flagged");
+
+  // Invalid settings.
+  auto throws = [&](const PolicySettings& p) {
+    try {
+      solve_least_cost(in, p, req);
+    } catch (const std::invalid_argument&) {
+      return true;
+    }
+    return false;
+  };
+  PolicySettings bad3 = robust, bad_neg = robust;
+  bad3.nuclear_mission = 3;
+  bad_neg.nuclear_mission = -2;
+  check(throws(with_floor(robust, -1)) && throws(with_floor(robust, std::nan(""))) &&
+            throws(with_floor(robust, std::numeric_limits<double>::infinity())) && throws(bad3) && throws(bad_neg),
+        "negative or non-finite floor, or unknown mission case: error");
+  return check.fails;
+}
+
+// The "Nuclear mission" policy preset: Robust plus the central mission floor, feasible at the
+// Base scenario's median requirement. The floor fits the nuclear build cap of the preset's build
+// case, whose year accounting is max(existing-fleet floor, FY2023-24) + the published additions
+// of the 24 build years FY2024-25 to FY2047-48, and the nuclear_max share at the median.
+int nuclear_mission_preset_at_median(const std::string& root) {
+  Checker check;
+  std::printf("nuclear_mission_preset_at_median\n");
+  const PolicyPreset* preset = nullptr;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Nuclear mission") preset = &pp;
+  check(preset != nullptr, "policy preset 'Nuclear mission' listed");
+  if (!preset) return check.fails;
+  PolicySettings p;
+  preset->apply(p);
+  PolicySettings want = robust_preset();
+  want.nuclear_mission = kMissionCentral;
+  check(p == want, "Nuclear mission = the Robust settings + the central mission floor, nothing else");
+  const std::string& d = preset->description;
+  check(d.find("captive") != std::string::npos && d.find("Budget 2025-26") != std::string::npos &&
+            d.find("Table 6.3") != std::string::npos,
+        "description: source (Union Budget 2025-26, CEA road map Table 6.3) and captive units left out");
+
+  const Pipeline pl(root, CoreModel::kIndia);
+  const AllocationInputs& in = pl.allocation_inputs();
+  ScenarioControls c;  // Base scenario, median requirement
+  c.draws = 1u << 18;
+  c.use_gpu = false;
+  const ForecastResult f = pl.forecast(c);
+  const StrategyResult s = pl.strategy(f, c, p);
+  const StrategyResult sr = pl.strategy(f, c, robust_preset());
+  const double req = std::accumulate(s.requirement.begin(), s.requirement.end(), 0.0);
+  const double floor = nuclear_floor_twh(in, p);
+  check(floor == in.nuclear_mission[kMissionCentral].twh, "floor: the central case of nuclear_mission.csv");
+
+  const BuildCap* cap = cap_with(build_caps(in, p), kNuclear);
+  const double start = std::max(in.national_last_twh[kNuclear], in.fleet_floor_twh[kNuclear]);
+  const double add = published_build_twh(in.build_limits, kNuclear, p.build_case, in.rate_last_year, 2047);
+  std::printf("  nuclear cap (%s case) = max(fleet floor %.1f, FY2023-24 %.1f) + additions FY2024-25..FY2047-48 %.1f TWh "
+              "(%.2f GW x 0.68 x 8.76) = %.1f TWh; floor %.1f TWh\n",
+              build_case_name(p.build_case), in.fleet_floor_twh[kNuclear], in.national_last_twh[kNuclear], add,
+              add / (0.68 * 8.76), cap ? cap->cap_twh : 0.0, floor);
+  check(in.rate_last_year == 2023 && p.target_year == 2047 && cap && std::abs(cap->cap_twh - (start + add)) < 1e-9 * cap->cap_twh,
+        "cap = max(fleet floor, FY2023-24) + published additions of the 24 build years FY2024-25 to FY2047-48");
+  check(cap && floor <= cap->cap_twh, "central floor within the nuclear build cap of the preset's build case");
+  check(floor <= p.nuclear_max * req,
+        "central floor within the nuclear_max share at the Base median (" + std::to_string(100 * floor / req) + "%)");
+
+  const AllocationResult& a = s.least_cost;
+  const AllocationResult& r = sr.least_cost;
+  std::printf("  Base median %.0f TWh | Robust: nuclear %.1f TWh, non-fossil %.1f%%, CO2 %.1f Mt, cost %.2f bn USD | "
+              "Nuclear mission: nuclear %.1f TWh, non-fossil %.1f%%, CO2 %.1f Mt, cost %.2f bn USD\n",
+              req, r.national[kNuclear], 100 * r.nonfossil_share(), r.co2_mt, r.cost_busd, a.national[kNuclear],
+              100 * a.nonfossil_share(), a.co2_mt, a.cost_busd);
+  check(a.ok && a.unserved_total() < 1e-6, "Nuclear mission at the Base median: feasible, requirement met");
+  check(a.ok && cap && a.national[kNuclear] >= floor - 1e-6 && a.national[kNuclear] <= cap->cap_twh + 1e-6,
+        "nuclear between the floor and the cap");
+  ScenarioControls c90 = c;
+  c90.requirement_quantile = 0.9;
+  check(pl.strategy(f, c90, p).least_cost.ok, "Nuclear mission planned for the P90: solved");
+  return check.fails;
+}
+
 // The dashboard's mix sensitivity cache (CachedTask keyed by MixSensitivityKey): nothing runs until
 // the view asks, the cached rows equal a direct call, the same inputs never solve again, a changed
 // input runs again, a run for an older key finishes before the next starts, and a failure is cached.
@@ -1451,6 +1708,9 @@ int main(int argc, char** argv) {
     fails += plan_vectors_add_up(in, req);
     fails += robust_low_requirement_limit(in, req);
     fails += national_upper_bound(in, req);
+    fails += nuclear_mission_from_data(root, std::filesystem::temp_directory_path().string(), in);
+    fails += nuclear_floor_respected(in, req);
+    fails += nuclear_mission_preset_at_median(root);
     fails += mix_sensitivity_cached(in, req);
 
     PolicySettings p;

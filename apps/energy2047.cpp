@@ -154,6 +154,15 @@ struct SiteSummary {
   PanelFit panel;
   StatePanelData panel_data;
   std::vector<MixSensitivityRow> mix_sensitivity;  // Robust preset copies (sensitivity_mix.csv)
+  // Nuclear Energy Mission floor (nuclear_mission.csv) on the Robust policy, by case (low, central,
+  // high), at the median and planned for the P90 (the requirements of mix_sensitivity). Low and
+  // high are the sensitivity_mix.csv rows; central is the Nuclear mission preset.
+  struct MissionCase {
+    double floor_twh = kNaN;
+    AllocationResult plan, plan_p90;
+  };
+  std::array<MissionCase, kMissionCases> nuclear_mission;
+  bool nuclear_mission_ok = false;  // every case filled
   // Demand-feature layer, outside the headline (demand_features_catalogue.csv,
   // feature_scenarios_2047.csv).
   std::vector<DemandFeature> features;
@@ -1362,6 +1371,29 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.num("levers_solar_land_pct", 100 * s.levers_solar_land).num("levers_build_accel", s.levers_build_accel);
     j.str("levers_build_case", build_case_name(s.levers_build_case));
     j.num("levers_unmet_twh", s.levers_unserved).end();
+    // Nuclear Energy Mission floor on the Robust policy (nuclear_mission.csv): low and high are the
+    // sensitivity_mix.csv rows, central the Nuclear mission preset. null = infeasible (status says why).
+    if (s.nuclear_mission_ok) {
+      const AllocationInputs& in = pl.allocation_inputs();
+      j.obj("nuclear_mission").str("policy", "Robust").str("central_preset", "Nuclear mission");
+      j.str("note", "Robust policy with national nuclear generation >= the floor: the mission's utility reactors in "
+                    "2047 x CUF x 8.76 (data/external/techno_economic/nuclear_mission.csv); captive BSR and BSMR "
+                    "units left out by the organisers' ruling. Median requirement; unmet at P90 = the same policy "
+                    "planned for the P90. Cost in real 2024 USD. Nuclear share of the plan's generation.");
+      for (int k = 0; k < kMissionCases; ++k) {
+        const SiteSummary::MissionCase& m = s.nuclear_mission[k];
+        const NuclearMissionCase& d = in.nuclear_mission[k];
+        const AllocationResult& mp = m.plan;
+        j.obj(mission_case_name(k)).num("utility_gw", d.utility_mw() / 1000.0).num("cuf", d.cuf, 2);
+        j.num("floor_twh", m.floor_twh).str("status", mp.ok ? "optimal" : mp.status);
+        j.num("nonfossil_pct", mp.ok ? 100 * mp.nonfossil_share() : kNaN).num("co2_mt", mp.ok ? mp.co2_mt : kNaN);
+        j.num("cost_busd", mp.ok ? mp.cost_busd : kNaN).num("nuclear_twh", mp.ok ? mp.national[kNuclear] : kNaN);
+        j.num("nuclear_share_pct", mp.ok ? 100 * mp.share(kNuclear) : kNaN);
+        j.num("unmet_median_twh", mp.ok ? mp.unserved_total() : kNaN);
+        j.num("unmet_p90_twh", m.plan_p90.ok ? m.plan_p90.unserved_total() : kNaN).end();
+      }
+      j.end();
+    }
     // Cost-CO2 trade-off of the recommended plan (epsilon-constraint sweep on CO2).
     // Points are measured from the least-cost plan: CO2 avoided and extra cost.
     {
@@ -2000,6 +2032,50 @@ int main(int argc, char** argv) {
                     r.name.c_str(), a.ok ? 100 * a.nonfossil_share() : 0.0, a.ok ? 100 * a.share(kCoal) : 0.0,
                     a.ok ? a.co2_mt : 0.0, a.ok ? a.cost_busd : 0.0, a.ok ? a.unserved_total() : -1.0,
                     r.plan_p90.ok ? r.plan_p90.unserved_total() : -1.0, r.description.c_str());
+        if (!a.ok) std::printf("  %-26s %s\n", "", a.status.c_str());
+      }
+      // Nuclear Energy Mission floor on the Robust policy, by case: low and high from the rows
+      // above, central from the Nuclear mission preset at the same requirements.
+      const AllocationInputs& in = pl.allocation_inputs();
+      int filled = 0;
+      for (const MixSensitivityRow& r : rows)
+        for (int k : {kMissionLow, kMissionHigh})
+          if (r.name == std::string("nuclear_mission_") + mission_case_name(k)) {
+            site.nuclear_mission[k] = {nuclear_floor_twh(in, r.policy), r.plan, r.plan_p90};
+            ++filled;
+          }
+      for (const auto& pp : policy_presets())
+        if (pp.name == "Nuclear mission") {
+          PolicySettings ps;
+          pp.apply(ps);
+          site.nuclear_mission[kMissionCentral] = {nuclear_floor_twh(in, ps), solve_least_cost(in, ps, req),
+                                                   solve_least_cost(in, ps, req90)};
+          ++filled;
+        }
+      site.nuclear_mission_ok = filled == kMissionCases;
+      const AllocationResult& r0 = rows.front().plan;      // Robust at the median
+      const AllocationResult& r90 = rows.front().plan_p90;  // Robust planned for the P90
+      std::printf("nuclear mission floor (Robust policy; change against Robust by source, TWh; regional nuclear):\n");
+      for (int k = 0; k < kMissionCases; ++k) {
+        const SiteSummary::MissionCase& m = site.nuclear_mission[k];
+        for (int q = 0; q < 2; ++q) {
+          const AllocationResult& a = q == 0 ? m.plan : m.plan_p90;
+          const AllocationResult& b = q == 0 ? r0 : r90;
+          std::printf("  %-8s floor %6.1f TWh, %s: ", mission_case_name(k), m.floor_twh, q == 0 ? "median" : "P90   ");
+          if (!a.ok || !b.ok) {
+            std::printf("%s\n", a.ok ? "Robust infeasible" : a.status.c_str());
+            continue;
+          }
+          std::printf("nuclear %.1f TWh (%.1f%%) | non-fossil %.1f%% | CO2 %.1f Mt | cost %.2f bn USD | unmet %.1f |",
+                      a.national[kNuclear], 100 * a.share(kNuclear), 100 * a.nonfossil_share(), a.co2_mt, a.cost_busd,
+                      a.unserved_total());
+          for (int t = 0; t < kTechs; ++t)
+            if (std::abs(a.national[t] - b.national[t]) >= 0.05)
+              std::printf(" %s %+.1f", tech_key(t), a.national[t] - b.national[t]);
+          std::printf(" | nuclear by region:");
+          for (int g = 0; g < kRegions; ++g) std::printf(" %s %.1f", region_name(g), a.gen[g][kNuclear]);
+          std::printf("\n");
+        }
       }
     }
     {
