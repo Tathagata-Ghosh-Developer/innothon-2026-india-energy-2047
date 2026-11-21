@@ -7,6 +7,8 @@ Animations: each slide fades in and builds by itself within about 3 seconds, so 
 Questions and answers: [final_qa.md](final_qa.md).
 The jury scores innovation, technical implementation, usability, impact, and the quality of the presentation and demonstration.
 
+**Who presents.** Ayush Kumar and Sai Anirudh Guttapati cannot attend because of exams. Tathagata Ghosh presents their slides (2 and 4) and runs the whole demo alone, clicking and speaking. Devendra Umbrajkar (slide 3) and Gaurav Choudhary (slides 5 and 6a) keep their parts.
+
 Every number below matches `outputs/*.csv`, `outputs/site_summary.json` and the deck.
 
 ## Before the session
@@ -21,7 +23,7 @@ Every number below matches `outputs/*.csv`, `outputs/site_summary.json` and the 
   - the PDF, [deck/India_Energy_2047_The_Losers.pdf](deck/India_Energy_2047_The_Losers.pdf);
   - the native dashboard, already loaded: `"%USERPROFILE%\.e47build_core\apps\e47_dashboard.exe" "<repo folder>"`. It runs the full 4.2 million futures, so its numbers match the slides;
   - the screenshots in [img/](img/) (`1_national_forecast.png`, `2_regional_requirement.png`, `3_generation_mix_2047.png`), if both dashboards fail.
-- **Screen sharing:** Tathagata shares his whole screen (not one window), so he can switch between the slideshow and the browser with Alt+Tab without re-sharing. Sai Anirudh has the PDF open, ready to share at once if Tathagata's connection drops.
+- **Screen sharing:** Tathagata shares his whole screen (not one window), so he can switch between the slideshow and the browser with Alt+Tab without re-sharing. Gaurav has the PDF open, ready to share at once if Tathagata's connection drops.
 - **The repository is public** (made public on 20 Nov at the organisers' request). Slide 1 shows the GitHub link. Say: "The code, data provenance and documentation are public on GitHub."
 - **Check the organisers' reply** to our 17 November clarification on published figures in the mix. If it has arrived, update question 2 of [final_qa.md](final_qa.md) and the last paragraph of slide 2 before we start.
 - **Mute when not speaking.** Each speaker ends with the hand-over line, so there is no gap.
@@ -34,17 +36,17 @@ Every number below matches `outputs/*.csv`, `outputs/site_summary.json` and the 
 
 ## Speakers and timing
 
-Swap names freely; the script does not depend on who speaks.
+Three speakers. Ayush Kumar and Sai Anirudh Guttapati are absent (exams), so Tathagata presents slides 2 and 4.
 
 | # | Slide | Speaker | Time | Clock at end | Wall clock at end |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Title and the headline number | Tathagata Ghosh | 2:00 | 2:00 | 11:12:00 |
-| 2 | Pipeline and data rules | Sai Anirudh Guttapati | 2:30 | 4:30 | 11:14:30 |
+| 2 | Pipeline and data rules | Tathagata Ghosh | 2:30 | 4:30 | 11:14:30 |
 | 3 | Forecast, holdout and drivers | Devendra Umbrajkar | 3:00 | 7:30 | 11:17:30 |
-| 4 | Regional mix and corridors | Ayush Kumar | 3:00 | 10:30 | 11:20:30 |
+| 4 | Regional mix and corridors | Tathagata Ghosh | 3:00 | 10:30 | 11:20:30 |
 | 5 | Five innovations | Gaurav Choudhary | 2:00 | 12:30 | 11:22:30 |
 | 6a | The engine (talk) | Gaurav Choudhary | 1:00 | 13:30 | 11:23:30 |
-| 6b | Live demo | Tathagata Ghosh clicks, Gaurav Choudhary narrates | 4:00 | 17:30 | 11:27:30 |
+| 6b | Live demo | Tathagata Ghosh (clicks and speaks) | 4:00 | 17:30 | 11:27:30 |
 | 7 | Impact, recommendations, close | Tathagata Ghosh | 2:30 | 20:00 | 11:30:00 |
 | | Questions | Owners in [final_qa.md](final_qa.md) | 10:00 | 30:00 | 11:40:00 |
 
@@ -53,13 +55,13 @@ There is no spare time in the 20 minutes.
 - **Checkpoints:** slide 4 starts by 7:30, slide 6 by 12:30, the demo by 13:30 and slide 7 by 17:30.
 - **If you are more than 20 seconds behind a checkpoint,** drop the sentences marked *(cut if short)*. Together they save about 2 minutes.
 - **In the demo,** drop step 5 (the landing-page map) first.
-- **The next speaker keeps time** for the current one and holds up a hand at 30 seconds to go.
+- **Timekeeping:** Devendra keeps time for Tathagata and Gaurav; Gaurav keeps time for Devendra. The timekeeper holds up a hand at 30 seconds to go.
 
 ## 1. Title and the headline number (Tathagata Ghosh, 2:00, ends at 2:00)
 
 *Cursor:* the title; then the big "4,703 TWh"; then the "P10 to P90" line under it; then the row of regional medians. At "Robust plan", move to the "The Robust plan" box on the right; at the end, the live-dashboard link at the bottom.
 
-Good morning. We are team The Losers from the Indian Institute of Science, Bengaluru: Ayush, Devendra, Sai Anirudh, Gaurav, and I am Tathagata.
+Good morning. We are team The Losers from the Indian Institute of Science, Bengaluru: Ayush, Devendra, Sai Anirudh, Gaurav, and I am Tathagata. Ayush and Sai Anirudh have exams today, so I will present their slides.
 
 The challenge asks two things. How much electricity must India generate in twenty forty-seven, nationally and region by region, allowing for population growth and urbanisation? And how should each region produce it, from coal, hydro, solar, wind, nuclear and natural gas? We measure energy generated, in terawatt-hours. We never forecast installed capacity or consumption.
 
@@ -71,13 +73,13 @@ To meet it, we recommend what we call the Robust plan. It is led by solar. It ke
 
 *(cut if short)* All of this is live at india-energy-2047.vercel.app, and we will show it on slide 6. The code and documentation are public on GitHub, at the link on this slide.
 
-*Hand-over:* Sai Anirudh will now show how one pipeline turns two datasets into these numbers.
+*Transition (no hand-over; Tathagata continues):* Next, how one pipeline turns two datasets into these numbers.
 
-## 2. Pipeline and data rules (Sai Anirudh Guttapati, 2:30, ends at 4:30)
+## 2. Pipeline and data rules (Tathagata Ghosh, 2:30, ends at 4:30)
 
 *Cursor:* steps 1, 2 and 3 on the top row, resting on the 0.83; then steps 4, 5 and 6 on the second row. At "the rules", move to the "Source hierarchy" box: PRIMARY, then SECONDARY; then "Rule compliance".
 
-Thank you. This slide is our pipeline in six steps, and the rules it follows.
+This slide is our pipeline in six steps, and the rules it follows.
 
 Step one matters most. The twenty forty-seven requirement is estimated only on the two primary datasets the organisers gave us: generation from the National Power Portal, 2006-07 to 2023-24, and state population and GSDP from the Renewable India dataset.
 
@@ -117,9 +119,9 @@ And income growth decides where in the range we land. If income per person grows
 
 That is why we plan against the whole range, not one number, why we test every plan at the 90th percentile, and why the dashboard lets you move income growth yourself.
 
-*Hand-over:* Ayush will now take the national total to the regions and the mix.
+*Hand-over:* Tathagata will now take the national total to the regions and the mix.
 
-## 4. Regional mix and corridors (Ayush Kumar, 3:00, ends at 10:30)
+## 4. Regional mix and corridors (Tathagata Ghosh, 3:00, ends at 10:30)
 
 *Cursor:* the bars from left to right: North, West, South, East, North-East, resting on each region's label as you name it. At "corridors", the flow box on the right. At "India generates", the line at the bottom.
 
@@ -175,7 +177,9 @@ The dashboard is built with Dear ImGui and ImPlot. The same code compiles to Web
 
 *Hand-over:* Tathagata, over to the dashboard.
 
-## 6b. Live demo (Tathagata Ghosh clicks, Gaurav Choudhary narrates, 4:00, ends at 17:30)
+## 6b. Live demo (Tathagata Ghosh clicks and speaks, 4:00, ends at 17:30)
+
+**One person.** Tathagata does every click and says every "Say" line. Gaurav does not speak in the demo. Use each "Recomputing..." wait to say the next line.
 
 **Starting state:** the app tab is loaded, on the "National forecast" tab, with the Base scenario, the Robust policy and "Plan for requirement quantile" at P50.
 
@@ -246,7 +250,7 @@ Why this holds: 647 + 51 = 698 TWh of fixed fossil generation. At 75 percent non
 ### Step 7. Back to Base (0:15, 17:15 to 17:30)
 
 - **Click:** "Base" under "Scenario". This also resets the quantile to P50; the policy stays Robust. Wait until the cards show 79.5 percent again.
-- **Say:** "Back to Base, and the plan is feasible again. It is all at india-energy-2047.vercel.app for you to try. Tathagata will close."
+- **Say:** "Back to Base, and the plan is feasible again. It is all at india-energy-2047.vercel.app for you to try. Now, to close."
 - **Click:** Alt+Tab to the slideshow and go to slide 7.
 
 ### If the dashboard is slow or fails
@@ -260,7 +264,7 @@ Why this holds: 647 + 51 = 698 TWh of fixed fossil generation. At 75 percent non
 
 *Cursor:* the four small charts from left to right; rest on the words "at the median" under the first three and "at P90" under the fourth. Then the three numbers in the middle (19,990 km², 3,044 GWh, 912 to 653 Mt); then down "What we recommend"; then the "Known limits" line.
 
-Thank you, Gaurav. Here is the impact. At the median requirement, the Robust plan reaches 79.5 percent non-fossil instead of 70, emits 912 million tonnes of CO2 instead of 1,374, and costs 178 instead of 215 billion dollars a year.
+Here is the impact. At the median requirement, the Robust plan reaches 79.5 percent non-fossil instead of 70, emits 912 million tonnes of CO2 instead of 1,374, and costs 178 instead of 215 billion dollars a year.
 
 The fourth chart is a separate solve, at the 90th-percentile requirement of 6,400 terawatt-hours. There the Robust plan leaves 633 terawatt-hours unmet instead of 1,463. At that level it costs more than the Base plan, 253 against 236 billion dollars a year, because it generates more.
 
