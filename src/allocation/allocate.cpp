@@ -51,10 +51,15 @@ double AllocationResult::nonfossil_share() const {
 
 double AllocationResult::unserved_total() const { return std::accumulate(unserved.begin(), unserved.end(), 0.0); }
 
+double cea_inflation_used(const AllocationInputs& in, const PolicySettings& p) {
+  return p.cea_inflation.value_or(in.cea_inflation_target);
+}
+
 RegionTech cost_table(const AllocationInputs& in, const PolicySettings& p) {
-  if (!(p.cea_inflation > -1.0)) throw std::invalid_argument("cea_inflation must be above -100 percent");
+  const double inflation = cea_inflation_used(in, p);
+  if (!(inflation > -1.0)) throw std::invalid_argument("cea_inflation must be above -100 percent");
   if (p.cost_basis == kCostIEA) return in.cost;
-  if (p.cost_basis == kCostCEA) return cea_cost_table(in, p.cea_inflation);
+  if (p.cost_basis == kCostCEA) return cea_cost_table(in, inflation);
   throw std::invalid_argument("cost_basis must be 0 (IEA) or 1 (CEA)");
 }
 
@@ -539,10 +544,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
       {"cost_basis_cea",
        "CEA NEP 2022-32 cost basis in real 2024 USD (CERC WACC made real at the RBI target, 4%; CEA and CERC fuel; "
        "MoSPI GDP deflator; RBI 2024 rate); nuclear and gas at IEA",
-       [](PolicySettings& p) {
-         p.cost_basis = kCostCEA;
-         p.cea_inflation = 0.04;
-       }},
+       [](PolicySettings& p) { p.cost_basis = kCostCEA; }},  // inflation: the RBI target of the inputs
       {"cost_basis_cea_pi2", "the same CEA cost basis with the CERC WACC made real at 2% inflation (RBI lower tolerance)",
        [](PolicySettings& p) {
          p.cost_basis = kCostCEA;

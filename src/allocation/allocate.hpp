@@ -3,6 +3,7 @@
 // transparent resource-score allocation. Both meet the same regional
 // requirements; their difference shows what cost minimisation adds.
 #include <array>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -49,9 +50,11 @@ struct PolicySettings {
   // Published-figure sensitivities (outputs/sensitivity_mix.csv); the defaults are the main run.
   int cost_basis = kCostIEA;                 // kCostIEA: IEA WEO 2025; kCostCEA: CEA NEP inputs (inputs.hpp)
   // Expected inflation (fraction) that makes the nominal CERC WACC of the CEA basis real (Fisher
-  // relation, cea_cost_table). Default: the RBI CPI target, 4 percent (price_indices.csv); the
-  // RBI tolerance band (2 and 6 percent) gives the sensitivity rows. The IEA basis ignores it.
-  double cea_inflation = 0.04;
+  // relation, cea_cost_table). Unset by default: the RBI CPI target read with the inputs
+  // (AllocationInputs::cea_inflation_target, from price_indices.csv), so the target is held in
+  // that file only; cea_inflation_used gives the value in force. The RBI tolerance band (2 and
+  // 6 percent) gives the sensitivity rows. The IEA basis ignores it.
+  std::optional<double> cea_inflation;
   int solar_potential_set = kSolarNise2025;  // kSolarNise2025 or kSolarNise2014
   int wind_height = 150;                     // NIWE potential at 150 m (default) or 120 m
   // Gas kept for peaking and as a bridge for variable renewables (gas_min_twh): national gas
@@ -70,9 +73,13 @@ struct PolicySettings {
 // national gas build cap. Throws std::invalid_argument if the share is not in [0, 1].
 double gas_min_twh(const AllocationInputs& in, const PolicySettings& p);
 
+// Expected inflation of the CEA basis under the policy: p.cea_inflation if set, otherwise the
+// RBI CPI target of the inputs (AllocationInputs::cea_inflation_target).
+double cea_inflation_used(const AllocationInputs& in, const PolicySettings& p);
+
 // Cost table of the policy's cost basis, real 2024 USD/MWh by region and source: the IEA table,
-// or the CEA table at the policy's cea_inflation. Throws std::invalid_argument on an unknown
-// basis or a cea_inflation of -100 percent or below.
+// or the CEA table at cea_inflation_used. Throws std::invalid_argument on an unknown basis or an
+// inflation of -100 percent or below.
 RegionTech cost_table(const AllocationInputs& in, const PolicySettings& p);
 // Generation potential (TWh a year) of source s in region r under the policy's solar set and
 // wind height; other sources: AllocationInputs::potential_twh. Throws on an unknown set or height.

@@ -615,8 +615,24 @@ int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
         "nominal pre-tax WACC = 0.70 x 10.71% + 0.30 x 16.96% = 12.585% (CERC)");
   check(std::abs(wacc - 0.0825481) < 1e-7 && std::abs(in.cea_wacc - wacc) < 1e-15,
         "real pre-tax WACC = 1.12585 / 1.04 - 1 = 8.255% (Fisher at the RBI target)");
-  check(in.cea_inflation_target == 0.04 && PolicySettings{}.cea_inflation == in.cea_inflation_target,
-        "default inflation = the RBI CPI target read from the file, 4%");
+  check(in.cea_inflation_target == 0.04 && !PolicySettings{}.cea_inflation.has_value() &&
+            cea_inflation_used(in, PolicySettings{}) == in.cea_inflation_target,
+        "default inflation = the RBI CPI target read from the file, 4% (no literal in PolicySettings)");
+  {
+    // The default follows the loaded target: inputs with another target give the CEA table at
+    // that target, and a value set on the policy still wins.
+    AllocationInputs other = in;
+    other.cea_inflation_target = 0.06;
+    PolicySettings cea;
+    cea.cost_basis = kCostCEA;
+    PolicySettings set = cea;
+    set.cea_inflation = 0.04;
+    const RegionTech t_default = cost_table(other, cea), t6 = cea_cost_table(in, 0.06), t_set = cost_table(other, set);
+    bool follows = cea_inflation_used(other, cea) == 0.06 && cea_inflation_used(other, set) == 0.04;
+    for (int r = 0; r < kRegions; ++r)
+      for (int k = 0; k < kTechs; ++k) follows &= t_default[r][k] == t6[r][k] && t_set[r][k] == in.cost_cea[r][k];
+    check(follows, "default inflation taken from the inputs: a 6% target gives the 6% table; a set value wins");
+  }
   check(in.cea_inr_per_usd == inr, "Rs 83.6693 per USD (RBI, calendar-2024 average)");
   const double cap = pb.deflate_inr(1.0, "2021-22", "2024-25");
   check(std::abs(cap - 175.923 / 157.087) < 1e-12 && in.cea_capex_deflator == cap,
@@ -747,9 +763,9 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
     return p;
   };
   check(rows[0].policy == robust_before, "base: the policy as passed");
-  check(robust_before.cea_inflation == 0.04 &&
+  check(!robust_before.cea_inflation.has_value() && cea_inflation_used(in, rows[1].policy) == 0.04 &&
             rows[1].policy == with([](PolicySettings& p) { p.cost_basis = kCostCEA; }),
-        "cost_basis_cea: cost_basis only (inflation stays at the 4% default)");
+        "cost_basis_cea: cost_basis only (inflation stays at the default, the RBI target, 4%)");
   check(rows[2].policy == with([](PolicySettings& p) {
           p.cost_basis = kCostCEA;
           p.cea_inflation = 0.02;
