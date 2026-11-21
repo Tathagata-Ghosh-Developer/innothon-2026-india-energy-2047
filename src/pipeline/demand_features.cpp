@@ -25,6 +25,15 @@ bool one_of(const std::string& v, const char* const (&list)[N]) {
   return false;
 }
 
+// "green_hydrogen" -> "Green hydrogen".
+std::string plain_label(const std::string& key) {
+  std::string s = key;
+  for (char& c : s)
+    if (c == '_') c = ' ';
+  if (!s.empty()) s[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[0])));
+  return s;
+}
+
 template <size_t N>
 std::string joined(const char* const (&list)[N]) {
   std::string s;
@@ -132,11 +141,31 @@ std::string feature_group_label(const std::string& group) {
   };
   for (const auto& [k, v] : labels)
     if (group == k) return v;
-  std::string s = group;
-  for (char& c : s)
-    if (c == '_') c = ' ';
-  if (!s.empty()) s[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[0])));
-  return s;
+  return plain_label(group);
+}
+
+std::string feature_label(const std::string& feature) {
+  static const std::pair<const char*, const char*> labels[] = {
+      {"income_real_gdp", "Income (real GDP)"},
+      {"sectoral_structure_gva", "Sectoral structure (GVA)"},
+      {"t_and_d_losses", "T&D losses"},
+      {"storage_round_trip_losses", "Storage round-trip losses"},
+      {"pm_kusum_c_pump_solarisation", "PM-KUSUM C pump solarisation"},
+      {"pm_kusum_a_decentralised_plants", "PM-KUSUM A decentralised plants"},
+      {"pm_kusum_b_standalone_pumps", "PM-KUSUM B standalone pumps"},
+      {"ujala_led_lighting", "UJALA LED lighting"},
+      {"pat_scheme", "PAT scheme"},
+      {"ecbc_buildings_and_others", "ECBC buildings and others"},
+      {"industrial_electrification_green_steel", "Industrial electrification (green steel)"},
+      {"warming_cooling_degree_days", "Warming (cooling degree days)"},
+      {"carbon_market_ccts", "Carbon market (CCTS)"},
+      {"rpo_rco_trajectory", "RPO and RCO trajectory"},
+      {"trend_carryover_losses_deficit", "Trend carry-over (losses, deficit)"},
+      {"household_access_supply_hours", "Household access and supply hours"},
+  };
+  for (const auto& [k, v] : labels)
+    if (feature == k) return v;
+  return plain_label(feature);
 }
 
 const char* scenario_key(Scenario s) {
@@ -270,8 +299,8 @@ std::vector<FeatureDraw> joint_distribution(const std::vector<DemandFeature>& fe
     d.push_back(x);
   }
   if (d.size() > static_cast<size_t>(kMaxFeatures))
-    throw std::runtime_error("joint_distribution: " + std::to_string(d.size()) + " layer rows, the kernel takes at most " +
-                             std::to_string(kMaxFeatures));
+    throw std::runtime_error("joint_distribution: " + std::to_string(d.size()) +
+                             " layer rows, the kernel takes at most " + std::to_string(kMaxFeatures));
   return d;
 }
 

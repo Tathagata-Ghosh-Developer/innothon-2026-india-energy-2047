@@ -65,6 +65,8 @@ FeatureCounts count_features(const std::vector<DemandFeature>& features);
 
 // Display label of a catalogue group ("supply_side" -> "Supply side and system").
 std::string feature_group_label(const std::string& group);
+// Display label of a feature ("t_and_d_losses" -> "T&D losses").
+std::string feature_label(const std::string& feature);
 
 // Named feature scenarios (ruling R24). Each named scenario except kJoint is the core
 // forecast plus a constant TWh adjustment, ramped linearly from the base year to the

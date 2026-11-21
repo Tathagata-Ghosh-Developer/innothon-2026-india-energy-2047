@@ -97,6 +97,24 @@ void write_strategy(const fs::path& out, const AllocationInputs& in, const Strat
   }
 }
 
+// One run of the demand-feature layer (feature_scenarios_2047.csv): the 2047 requirement
+// with a named feature scenario, one feature alone, or the joint draws, on the default controls.
+struct FeatureRun {
+  std::string section;  // named, one_at_a_time or joint
+  std::string key, name, feature, level, note;
+  double adjustment = kNaN;   // constant TWh added in the target year (NaN for the joint draws)
+  std::array<double, 8> q{};  // national p05 p10 p25 p50 p75 p90 p95 mean, target year
+  std::array<double, kRegions> region_p50{};
+};
+
+// The Robust plan at the joint (core + features) requirement, against the core P90.
+struct FeaturePlanTest {
+  double joint_p90 = kNaN, joint_p50 = kNaN, core_p90 = kNaN;
+  bool ok_p90 = false, ok_p50 = false, ok_core = false;
+  double unmet_p90 = kNaN, unmet_p50 = kNaN, unmet_core = kNaN;  // TWh; NaN when infeasible
+  std::string status_p90;
+};
+
 // Numbers shown on the landing page (web/landing.html). They are collected from the
 // same in-memory results that write the CSV files and written to
 // outputs/site_summary.json by write_site_summary(); the web build renders the page from it.
@@ -137,6 +155,13 @@ struct SiteSummary {
   StatePanelData panel_data;
   std::vector<NewLoad> new_loads;               // new_loads_2047.csv
   std::vector<MixSensitivityRow> mix_sensitivity;  // Robust preset copies (sensitivity_mix.csv)
+  // Demand-feature layer, outside the headline (demand_features_catalogue.csv,
+  // feature_scenarios_2047.csv).
+  std::vector<DemandFeature> features;
+  std::vector<FeatureRun> feature_runs;  // named, one at a time, joint
+  double joint_features_q[3] = {kNaN, kNaN, kNaN};  // P5 P50 P95 of the joint feature total alone
+  double joint_features_mean = kNaN;
+  FeaturePlanTest feature_plan;
 };
 
 // Storage and land back-calculated from the least-cost plan: Base and Robust policy
@@ -752,6 +777,216 @@ std::pair<double, double> nice_axis(double top) {
   return {std::ceil(top / step) * step, step};
 }
 
+// How a catalogue row enters the 2047 requirement (demand_features_catalogue.csv).
+std::string feature_rule(const DemandFeature& x) {
+  if (x.layer())
+    return x.upper_bound_only()
+               ? "feature layer, upper bound that may already be inside the trend: 0 at central and low, its high "
+                 "value in the downside scenarios, sign x uniform(0, high) in the joint draws"
+               : "feature layer, applied as given: central at its central value, sign x triangular(low, central, "
+                 "high) in the joint draws";
+  if (x.in_model == "core") return "estimated in the core forecast";
+  if (x.in_model == "driver") return "an uncertainty or setting of the core forecast";
+  if (x.in_model == "excluded_rule") return "excluded by the organisers' ruling of 16 November 2026";
+  return "context only, not quantified (the notes give the reason)";
+}
+
+std::string feature_range(const DemandFeature& x) {
+  if (!x.layer()) return "not quantified";
+  char b[160];
+  if (x.upper_bound_only())
+    std::snprintf(b, sizeof b, "0 to %.1f TWh (upper bound; central 0)", x.high);
+  else
+    std::snprintf(b, sizeof b, "%.1f to %.1f TWh (central %.1f)", x.low, x.high, x.central);
+  return b;
+}
+
+// outputs/demand_features_catalogue.csv and outputs/feature_scenarios_2047.csv: the
+// demand-feature layer (data/external/demand_features.csv, official sources, secondary).
+// Every run uses the default controls c (same seed and draws as the headline) with the
+// feature layer as the add-on; the headline itself never changes. Rows of the scenario file:
+//   named          the core and the six named scenarios (constant adjustments, ruling R24);
+//   one_at_a_time  each layer row alone, at its central value and at the end of its range
+//                  farthest from it (extreme_level);
+//   joint          core draws plus independent feature draws;
+//   p90_plan       the Robust plan at the core P90 and at the joint P50 and P90 (unmet TWh).
+void write_features(const fs::path& out, const Pipeline& pl, const ScenarioControls& c, const ForecastResult& f,
+                    SiteSummary& site) {
+  const std::vector<DemandFeature> features = pl.demand_features();
+  site.features = features;
+  const FeatureCounts n = count_features(features);
+  std::printf("demand features (official, outside the headline): %d rows:", n.total);
+  for (const auto& [k, v] : n.by_in_model) std::printf(" %s %d", k.c_str(), v);
+  std::printf("\n  not in the layer, by group:");
+  for (const auto& [g, by] : n.not_layer_by_group) {
+    std::printf(" %s (", g.c_str());
+    bool first = true;
+    for (const auto& [k, v] : by) std::printf("%s%s %d", first ? "" : ", ", k.c_str(), v), first = false;
+    std::printf(")");
+  }
+  std::printf("\n");
+
+  {
+    CsvWriter w((out / "demand_features_catalogue.csv").string());
+    for (const char* h : {"feature", "label", "group", "group_label", "sign", "in_model", "overlap_history", "twh_low",
+                          "twh_central", "twh_high", "twh_range_2047", "treatment", "source"})
+      w.field(h);
+    w.endrow();
+    for (const DemandFeature& x : features) {
+      w.field(x.feature).field(feature_label(x.feature)).field(x.group).field(feature_group_label(x.group));
+      w.field(x.sign > 0 ? "+1" : "-1").field(x.in_model).field(x.overlap);
+      if (x.layer())
+        w.field(x.low, 6).field(x.central, 6).field(x.high, 6);
+      else
+        w.field("not quantified").field("not quantified").field("not quantified");
+      w.field(feature_range(x)).field(feature_rule(x)).field(x.source_name);
+      w.endrow();
+    }
+  }
+
+  const size_t last = f.years.size() - 1;
+  const auto run = [&](const ScenarioControls& s, FeatureRun r) {
+    const ForecastResult x = pl.forecast(s);
+    const size_t t = x.years.size() - 1;
+    for (int k = 0; k < 8; ++k) r.q[k] = x.quant.q[0][t][k];
+    for (int g = 0; g < kRegions; ++g) r.region_p50[g] = x.quant.q[1 + g][t][3];
+    site.feature_runs.push_back(r);
+    return x;
+  };
+  const std::string upper = "T&D losses: an upper bound that may already be inside the trend";
+  // Named scenarios, Core first.
+  for (int k = 0; k < kScenarioCount; ++k) {
+    const Scenario s = static_cast<Scenario>(k);
+    if (s == Scenario::kJoint) continue;
+    ScenarioControls sc = c;
+    apply_feature_scenario(sc, features, s);
+    FeatureRun r;
+    r.section = "named";
+    r.key = scenario_key(s);
+    r.name = scenario_name(s);
+    r.adjustment = scenario_total(features, s).total;
+    r.note = scenario_description(s);
+    run(sc, r);
+  }
+  // One at a time: each layer row alone at central and at its extreme.
+  for (const DemandFeature& x : features) {
+    if (!x.layer()) continue;
+    for (const FeatureLevel l : {FeatureLevel::kCentral, extreme_level(x)}) {
+      const double v = layer_value(x, l);
+      ScenarioControls sc = c;
+      sc.addon_lo = sc.addon_hi = v == 0 ? 0.0 : x.sign * v;
+      FeatureRun r;
+      r.section = "one_at_a_time";
+      r.key = x.feature + "_" + level_name(l);
+      r.name = feature_label(x.feature) + " at " + level_name(l);
+      r.feature = x.feature;
+      r.level = level_name(l);
+      r.adjustment = sc.addon_lo;
+      r.note = x.upper_bound_only() ? upper + " (0 at central)" : feature_range(x);
+      run(sc, r);
+    }
+  }
+  // Joint draws.
+  ScenarioControls joint = c;
+  apply_feature_scenario(joint, features, Scenario::kJoint);
+  const std::vector<FeatureDraw> d = joint_distribution(features);
+  {
+    const std::vector<double> tot = sample_joint_totals(d, c.seed, 1u << 20);
+    site.joint_features_q[0] = quantile(tot, 0.05);
+    site.joint_features_q[1] = quantile(tot, 0.50);
+    site.joint_features_q[2] = quantile(tot, 0.95);
+    site.joint_features_mean = mean(tot);
+  }
+  FeatureRun jr;
+  jr.section = "joint";
+  jr.key = scenario_key(Scenario::kJoint);
+  jr.name = scenario_name(Scenario::kJoint);
+  char b[512];
+  std::snprintf(b, sizeof b,
+                "%s Feature total alone: P5 %.1f, P50 %.1f, P95 %.1f, mean %.1f TWh (%zu independent draws per "
+                "scenario).",
+                scenario_description(Scenario::kJoint), site.joint_features_q[0], site.joint_features_q[1],
+                site.joint_features_q[2], site.joint_features_mean, d.size());
+  jr.note = b;
+  const ForecastResult fj = run(joint, jr);
+
+  // P90 plan test: the Robust plan at the core P90 and at the joint P50 and P90.
+  PolicySettings robust;
+  for (const auto& pp : policy_presets())
+    if (pp.name == "Robust") pp.apply(robust);
+  const auto plan = [&](const ForecastResult& fr, const ScenarioControls& s, double q, bool& ok, double& unmet,
+                        std::string* status) {
+    ScenarioControls sq = s;
+    sq.requirement_quantile = q;
+    const StrategyResult st = pl.strategy(fr, sq, robust);
+    ok = st.least_cost.ok;
+    unmet = ok ? st.least_cost.unserved_total() : kNaN;
+    if (status) *status = ok ? "optimal" : st.least_cost.status;
+  };
+  FeaturePlanTest& pt = site.feature_plan;
+  const int tl = static_cast<int>(last);
+  pt.core_p90 = f.mc.quantile(f.inputs, 0, tl, 0.9);
+  pt.joint_p50 = fj.mc.quantile(fj.inputs, 0, tl, 0.5);
+  pt.joint_p90 = fj.mc.quantile(fj.inputs, 0, tl, 0.9);
+  plan(f, c, 0.9, pt.ok_core, pt.unmet_core, nullptr);
+  plan(fj, joint, 0.5, pt.ok_p50, pt.unmet_p50, nullptr);
+  plan(fj, joint, 0.9, pt.ok_p90, pt.unmet_p90, &pt.status_p90);
+
+  CsvWriter w((out / "feature_scenarios_2047.csv").string());
+  for (const char* h : {"section", "scenario", "name", "feature", "level", "adjustment_twh", "p05", "p10", "p50", "p90",
+                        "p95", "change_p50_twh", "change_p50_pct", "northern_p50", "western_p50", "southern_p50",
+                        "eastern_p50", "north_eastern_p50", "robust_unmet_twh", "note"})
+    w.field(h);
+  w.endrow();
+  const double core_p50 = site.feature_runs.front().q[3];
+  for (const FeatureRun& r : site.feature_runs) {
+    w.field(r.section).field(r.key).field(r.name).field(r.feature).field(r.level);
+    w.field(r.adjustment, 6);
+    for (int k : {0, 1, 3, 5, 6}) w.field(r.q[k], 6);
+    w.field(r.q[3] - core_p50, 6).field(100 * (r.q[3] / core_p50 - 1), 4);
+    for (double v : r.region_p50) w.field(v, 6);
+    w.field("").field(r.note);
+    w.endrow();
+  }
+  const auto plan_row = [&](const char* key, const char* name, int col, double req, bool ok, double unmet,
+                            const std::string& note) {
+    w.field("p90_plan").field(key).field(name).field("").field("").field("");
+    for (int k = 0; k < 5; ++k) k == col ? w.field(req, 6) : w.field("");
+    for (int k = 0; k < 2 + kRegions; ++k) w.field("");
+    ok ? w.field(unmet, 6) : w.field("infeasible");
+    w.field(note);
+    w.endrow();
+  };
+  plan_row("core_p90", "Robust plan at the core P90", 3, pt.core_p90, pt.ok_core, pt.unmet_core,
+           "Robust policy, least cost, planned for the core forecast's P90 (the headline stress test)");
+  plan_row("joint_p50", "Robust plan at the joint P50", 2, pt.joint_p50, pt.ok_p50, pt.unmet_p50,
+           "Robust policy, least cost, planned for the core + features joint P50 (outside the headline)");
+  plan_row("joint_p90", "Robust plan at the joint P90", 3, pt.joint_p90, pt.ok_p90, pt.unmet_p90,
+           "Robust policy, least cost, planned for the core + features joint P90 (outside the headline)");
+
+  std::printf("feature scenarios %d (national TWh P5 / P50 / P95; change of the P50 against Core):\n", f.years[last]);
+  for (const FeatureRun& r : site.feature_runs) {
+    if (r.section == "one_at_a_time") continue;
+    char add[32];
+    if (std::isfinite(r.adjustment))
+      std::snprintf(add, sizeof add, "add %+8.1f", r.adjustment);
+    else
+      std::snprintf(add, sizeof add, "%-12s", "draws");
+    std::printf("  %-28s %s | %6.0f %6.0f %6.0f | %+6.0f\n", r.name.c_str(), add, r.q[0], r.q[3], r.q[6],
+                r.q[3] - core_p50);
+  }
+  const FeatureRun& jl = site.feature_runs.back();
+  std::printf("  joint: P5 %.0f P10 %.0f P50 %.0f P90 %.0f P95 %.0f TWh | feature total alone P5 %.0f P50 %.0f P95 "
+              "%.0f TWh\n",
+              jl.q[0], jl.q[1], jl.q[3], jl.q[5], jl.q[6], site.joint_features_q[0], site.joint_features_q[1],
+              site.joint_features_q[2]);
+  std::printf("  P90 plan test (Robust): core P90 %.0f TWh unmet %s | joint P50 %.0f TWh unmet %s | joint P90 %.0f "
+              "TWh unmet %s\n",
+              pt.core_p90, pt.ok_core ? std::to_string(std::lround(pt.unmet_core)).c_str() : "infeasible", pt.joint_p50,
+              pt.ok_p50 ? std::to_string(std::lround(pt.unmet_p50)).c_str() : "infeasible", pt.joint_p90,
+              pt.ok_p90 ? std::to_string(std::lround(pt.unmet_p90)).c_str() : "infeasible");
+}
+
 // outputs/site_summary.json: every number on the landing page (see SiteSummary).
 void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastResult& f, const SiteSummary& s) {
   const fs::path path = out / "site_summary.json";
@@ -940,6 +1175,77 @@ void write_site_summary(const fs::path& out, const Pipeline& pl, const ForecastR
     j.str("note", "Outside the headline. End-use electricity, not grossed up for losses, if supplied from the grid; "
                   "loads the income elasticity already carries in part are reported, never added (all-loads total is "
                   "a reference only).");
+    j.end();
+  }
+
+  // Demand-feature layer (demand_features_catalogue.csv, feature_scenarios_2047.csv): official
+  // figures as signed TWh in the target year, a labelled layer on top of the headline.
+  if (!s.features.empty() && !s.feature_runs.empty()) {
+    const FeatureCounts n = count_features(s.features);
+    const FeatureRun& core = s.feature_runs.front();
+    j.obj("features");
+    j.str("note", "Outside the headline: the core forecast plus a signed adjustment in TWh for " + fy_label(target) +
+                      ", ramped linearly from the base year and split across the regions by their share of the "
+                      "requirement. Official sources (secondary). T&D losses are an upper bound that may already be "
+                      "inside the trend: 0 at central.");
+    j.obj("counts").integer("total", n.total);
+    for (const auto& [k, v] : n.by_in_model) j.integer(k.c_str(), v);
+    j.end();
+    j.arr("catalogue");
+    for (const DemandFeature& x : s.features) {
+      j.obj().str("name", x.feature).str("label", feature_label(x.feature)).str("group", x.group);
+      j.str("group_label", feature_group_label(x.group)).integer("sign", x.sign).str("in_model", x.in_model);
+      j.str("overlap", x.overlap).num("low", x.layer() ? x.low : kNaN, 1);
+      j.num("central", x.layer() ? x.central : kNaN, 1).num("high", x.layer() ? x.high : kNaN, 1);
+      j.str("upper_bound", x.layer() && x.upper_bound_only() ? "yes" : "no").str("range", feature_range(x));
+      j.str("source", x.source_name).end();
+    }
+    j.end();
+    const auto regions = [&](const FeatureRun& r) {
+      j.arr("regions");
+      for (int g = 0; g < kRegions; ++g) j.obj().str("name", region_name(g)).num("p50_twh", r.region_p50[g]).end();
+      j.end();
+    };
+    const auto named = [&](const FeatureRun& r, const char* key) {
+      j.obj(key).str("key", r.key).str("name", r.name).str("description", r.note).num("adjustment_twh", r.adjustment);
+      j.num("p05_twh", r.q[0]).num("p50_twh", r.q[3]).num("p95_twh", r.q[6]);
+      j.num("change_twh", r.q[3] - core.q[3]).num("change_pct", 100 * (r.q[3] / core.q[3] - 1));
+      regions(r);
+      j.end();
+    };
+    j.obj("scenarios").arr("list");
+    for (const FeatureRun& r : s.feature_runs)
+      if (r.section == "named") named(r, nullptr);
+    j.end();
+    for (const FeatureRun& r : s.feature_runs)
+      if (r.section == "named") named(r, r.key.c_str());
+    j.end();
+    j.arr("one_at_a_time");
+    for (const FeatureRun& r : s.feature_runs) {
+      if (r.section != "one_at_a_time") continue;
+      j.obj().str("feature", r.feature).str("label", feature_label(r.feature)).str("level", r.level);
+      j.num("adjustment_twh", r.adjustment).num("p50_twh", r.q[3]).num("change_twh", r.q[3] - core.q[3]).end();
+    }
+    j.end();
+    for (const FeatureRun& r : s.feature_runs) {
+      if (r.section != "joint") continue;
+      j.obj("joint").str("description", scenario_description(Scenario::kJoint));
+      j.num("p05_twh", r.q[0]).num("p10_twh", r.q[1]).num("p50_twh", r.q[3]).num("p90_twh", r.q[5]);
+      j.num("p95_twh", r.q[6]).num("mean_twh", r.q[7]);
+      j.num("change_p50_twh", r.q[3] - core.q[3]).num("change_p50_pct", 100 * (r.q[3] / core.q[3] - 1));
+      j.num("features_p05_twh", s.joint_features_q[0]).num("features_p50_twh", s.joint_features_q[1]);
+      j.num("features_p95_twh", s.joint_features_q[2]).num("features_mean_twh", s.joint_features_mean);
+      regions(r);
+      j.end();
+    }
+    const FeaturePlanTest& pt = s.feature_plan;
+    j.obj("p90_plan").str("policy", "Robust").num("requirement_twh", pt.joint_p90);
+    j.str("status", pt.ok_p90 ? "optimal" : pt.status_p90).num("robust_unmet_twh", pt.unmet_p90);
+    j.num("joint_p50_twh", pt.joint_p50).num("joint_p50_unmet_twh", pt.unmet_p50);
+    j.num("core_p90_twh", pt.core_p90).num("core_robust_unmet_twh", pt.unmet_core);
+    j.str("note", "Least-cost Robust plan planned for the core + features joint P90 (and P50), against the core P90. "
+                  "Unmet is requirement the plan cannot serve; null = infeasible.");
+    j.end();
     j.end();
   }
 
@@ -1567,6 +1873,9 @@ int main(int argc, char** argv) {
         std::printf("  %-24s %6.0f %6.0f %6.0f\n", k.name.c_str(), q[0], q[3], q[6]);
       }
     }
+    // Demand-feature layer (official figures), outside the headline: catalogue, named
+    // scenarios, one at a time, joint draws and the P90 plan test.
+    write_features(out, pl, c, f, site);
 
     // Cross-country panel core, same scenario settings: an independent check used for
     // justification, not for estimation (organisers' ruling of 16 November 2026).

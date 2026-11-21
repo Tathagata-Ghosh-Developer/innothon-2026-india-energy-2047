@@ -121,10 +121,15 @@ void features_load_and_validate(const fs::path& root, const fs::path& tmp) {
       rest_blank = rest_blank && std::isnan(x.low) && std::isnan(x.central) && std::isnan(x.high);
   }
   check(layer_ok && rest_blank, "layer rows: signed, 0 <= low <= central <= high; other rows not quantified");
-  const auto td = std::find_if(f.begin(), f.end(), [](const DemandFeature& x) { return x.feature == "t_and_d_losses"; });
+  const auto td =
+      std::find_if(f.begin(), f.end(), [](const DemandFeature& x) { return x.feature == "t_and_d_losses"; });
   check(td != f.end() && td->upper_bound_only() && td->layer_central() == 0 && td->layer_low() == 0 &&
             td->layer_high() == td->high,
         "t_and_d_losses (overlap yes): an upper bound, layer low and central 0");
+  check(feature_label("t_and_d_losses") == "T&D losses" && feature_label("green_hydrogen") == "Green hydrogen" &&
+            feature_group_label("supply_side") == "Supply side and system" &&
+            feature_group_label("new_group") == "New group",
+        "display labels of features and groups");
 
   const fs::path dir = tmp / "bad_rows";
   fs::remove_all(dir);
@@ -194,8 +199,8 @@ void scenario_totals_known(const fs::path& root, const std::vector<DemandFeature
       {Scenario::kAllDownside, total([](const RawRow& r) { return r.sign > 0 ? 'l' : 'h'; })},
   };
   const ScenarioAdjustment central = scenario_total(f, Scenario::kFeaturesCentral);
-  std::printf("    Features central %.3f TWh; sum of sign x central over rows without overlap %.3f TWh\n", central.total,
-              central_direct);
+  std::printf("    Features central %.3f TWh; sum of sign x central over rows without overlap %.3f TWh\n",
+              central.total, central_direct);
   check(near(central.total, central_direct), "Features central = sum of sign x central over non-'yes' layer rows");
   check(central.parts.size() == 11, "Features central: one part per layer row");
   for (const auto& [s, v] : want) {
@@ -242,7 +247,8 @@ void scenario_totals_known(const fs::path& root, const std::vector<DemandFeature
 
 void all_downside_includes_overlap_rows(const std::vector<DemandFeature>& f) {
   std::printf("all_downside_includes_overlap_rows\n");
-  const auto td = std::find_if(f.begin(), f.end(), [](const DemandFeature& x) { return x.feature == "t_and_d_losses"; });
+  const auto td =
+      std::find_if(f.begin(), f.end(), [](const DemandFeature& x) { return x.feature == "t_and_d_losses"; });
   if (td == f.end()) {
     check(false, "t_and_d_losses in the catalogue");
     return;
@@ -268,7 +274,8 @@ void all_downside_includes_overlap_rows(const std::vector<DemandFeature>& f) {
       lo += x.sign > 0 ? x.layer_low() : -x.layer_high();
       hi += x.sign > 0 ? x.layer_high() : -x.layer_low();
     }
-  check(near(scenario_total(f, Scenario::kAllDownside).total, lo) && near(scenario_total(f, Scenario::kAllUpside).total, hi),
+  check(near(scenario_total(f, Scenario::kAllDownside).total, lo) &&
+            near(scenario_total(f, Scenario::kAllUpside).total, hi),
         "all downside / all upside = the lowest / highest sum of layer values");
 }
 
@@ -311,7 +318,8 @@ void joint_quantiles_bracket(const Pipeline& pl, const std::vector<DemandFeature
   // R23: the adjustment is split by each region's share of the requirement.
   double sc = 0, sf = 0, worst = 0;
   for (int g = 0; g < kRegions; ++g) sc += core.region_p50[g], sf += central.region_p50[g];
-  for (int g = 0; g < kRegions; ++g) worst = std::max(worst, std::abs(core.region_p50[g] / sc - central.region_p50[g] / sf));
+  for (int g = 0; g < kRegions; ++g)
+    worst = std::max(worst, std::abs(core.region_p50[g] / sc - central.region_p50[g] / sf));
   std::printf("    regional median shares, features central vs core: largest gap %.4f\n", worst);
   check(worst < 0.005, "regional shares unchanged by a constant adjustment (within 0.005)");
 
@@ -324,8 +332,8 @@ void joint_quantiles_bracket(const Pipeline& pl, const std::vector<DemandFeature
   mean /= s.size();
   for (double v : s) var += (v - mean) * (v - mean);
   const double se = std::sqrt(var / (s.size() - 1) / s.size());
-  std::printf("    joint feature total: mean %.2f (stated %.2f, s.e. %.2f), range %.1f to %.1f in [%.1f, %.1f] TWh\n", mean,
-              joint_mean(d), se, mn, mx, lo, hi);
+  std::printf("    joint feature total: mean %.2f (stated %.2f, s.e. %.2f), range %.1f to %.1f in [%.1f, %.1f] TWh\n",
+              mean, joint_mean(d), se, mn, mx, lo, hi);
   check(d.size() == 11, "joint: one draw per layer row");
   bool td_uniform = false;
   for (size_t k = 0, j = 0; k < f.size(); ++k)
