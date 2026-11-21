@@ -481,7 +481,7 @@ std::string fy_label(int y);  // "FY2023-24"; defined below
 // generation per person against the national figure. Sections: data (sources), fit,
 // spread (summary), state (one row per matched state), note (what was left out).
 void write_state_panel_check(const fs::path& out, const fs::path& root, const Pipeline& pl, SiteSummary& site) {
-  const StatePanelData d = state_panel_data(root.string(), &pl.gsdp_basis());  // GSDP on constant 2011-12 prices
+  const StatePanelData d = state_panel_data(root.string(), pl.gsdp_basis());  // GSDP on constant 2011-12 prices
   const PanelFit f = fe_slope(d.obs);
   site.panel = f;
   site.panel_data = d;
@@ -1600,9 +1600,11 @@ int main(int argc, char** argv) {
     }
     std::printf("damped trend: alpha %.3f beta %.3f phi %.3f sigma %.4f level %.3f trend %.4f\n", fit.damped.alpha,
                 fit.damped.beta, fit.damped.phi, fit.damped.sigma, fit.damped.level, fit.damped.trend);
-    std::printf("GDP pc growth %d-%d: mean %.4f sd %.4f rho %.2f | convergence lambda %.4f (se %.4f)\n",
+    std::printf("GDP pc growth %d-%d: mean %.4f sd %.4f rho %.2f | convergence lambda %.4f (se %.4f; %d states, %d "
+                "with a base year after %d, mean span %.2f years)\n",
                 drv.g_hist_from, drv.g_hist_to, drv.g_hist_mean, drv.g_hist_sd, drv.g_hist_rho,
-                fit.convergence.lambda, fit.convergence.lambda_se);
+                fit.convergence.lambda, fit.convergence.lambda_se, fit.convergence.n_states,
+                fit.convergence.n_late_base, fit.convergence.year0, fit.convergence.mean_span);
     std::printf("states %zu (challenge dataset %d); WPP medium %d %.0f M -> 2047 %.0f M; urban (WUP) %.3f -> %.3f\n",
                 drv.states.size(), drv.state_pop_year, drv.base_year, drv.wpp_med.front() / 1e6,
                 drv.wpp_med.back() / 1e6, drv.wup_base, drv.wup.back());

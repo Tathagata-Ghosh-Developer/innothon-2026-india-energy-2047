@@ -32,27 +32,28 @@ struct IndiaSeries {
   std::vector<double> gpc_growth;      // ln growth of GSDP per person, year t over t-1 (obs[1..])
   int organiser_first = 0, organiser_last = 0;
   int stale_pairs_skipped = 0;         // state-year pairs whose GSDP was copied unchanged (not used for income growth)
-  int gsdp_current_corrected = 0;      // dataset state-years at current prices deflated to 2011-12 prices (GsdpOptions::basis)
+  int gsdp_current_corrected = 0;      // dataset state-years at current prices deflated to 2011-12 prices (basis)
   int income_excluded_pairs = 0;       // state-year pairs left out of income growth (GsdpOptions::exclude_states)
 };
 
-// How load_india_series reads the challenge dataset's GSDP. The defaults read it as is.
-//   basis: states whose GSDP is at current prices from a given year (gsdp_price_basis.csv);
-//     their values are deflated to constant 2011-12 prices before any growth is taken. An
-//     inflation correction of a mis-based series, not new estimation data.
+// Optional settings of load_india_series. The default leaves no state out.
 //   exclude_states: states (any spelling normalize_state accepts) left out of national income
 //     growth; their population still counts in population growth. A sensitivity only.
 struct GsdpOptions {
-  const GsdpPriceBasis* basis = nullptr;
   std::vector<std::string> exclude_states;
 };
 
 // npp_csv: data/raw/npp/npp_national_generation_fy.csv
 // organiser_csv: data/raw/competition/renewable_energy_dataset.csv
 // urban_csv: data/external/urbanization.csv
+// basis (required): states whose GSDP is at current prices from a given year
+//   (gsdp_price_basis.csv; Pipeline::gsdp_basis()); their values are deflated to constant
+//   2011-12 prices before any growth is taken, an inflation correction of a mis-based series,
+//   not new estimation data. GsdpPriceBasis::none() reads the GSDP as is.
 // Uses fiscal years first..last that have NPP generation and organiser data.
 IndiaSeries load_india_series(const std::string& npp_csv, const std::string& organiser_csv,
-                              const std::string& urban_csv, int first, int last, const GsdpOptions& gsdp = {});
+                              const std::string& urban_csv, int first, int last, const GsdpPriceBasis& basis,
+                              const GsdpOptions& gsdp = {});
 
 // Income elasticity of generation per person, India only:
 //   ln e_t = a + beta x_t + c D2020_t + eps_t,  x = ln(y / 10)

@@ -8,9 +8,13 @@
 //     goals (information only).
 //  5. jk_deflated: the challenge dataset's Jammu and Kashmir GSDP (current prices from
 //     2012) deflated to constant 2011-12 prices; the loader then sees real growth only.
+//  5b. readers_apply_basis: on a synthetic dataset with one state at current prices,
+//     estimate_convergence and state_panel_data with the basis give what they give on the
+//     same dataset at constant prices; with GsdpPriceBasis::none() they do not.
 //  6. default_plan_unchanged_by_price_base: the IEA costs are already real 2024 USD, so the
 //     default plan at a fixed requirement is the plan of commit a314521 to the last digit.
 // Usage: test_price_base <repo_root>
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
@@ -21,7 +25,9 @@
 #include "core/csv.hpp"
 #include "core/price_base.hpp"
 #include "forecast/india.hpp"
+#include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
+#include "regional/convergence.hpp"
 
 using namespace e47;
 namespace fs = std::filesystem;
@@ -129,7 +135,7 @@ void jk_deflated(const std::string& root, const PriceBase& pb, const fs::path& t
   const double v = basis.constant_2011_12("Jammu And Kashmir", 2016, 124848.0);
   std::printf("    2016: 124,848 at current prices -> %.1f at 2011-12 prices (MoSPI constant 100,203, %+.2f%%)\n", v,
               100.0 * (v / 100203.0 - 1.0));
-  check(std::abs(v / 100203.0 - 1.0) < 0.05, "2016 within 5% of the MoSPI constant-price value 100,203");
+  check(std::abs(v / 100203.0 - 1.0) < 0.01, "2016 within 1% of the MoSPI constant-price value 100,203");
   check(std::abs(v - 124848.0 / 1.25052) < 1e-6, "divided by the national GDP deflator of FY2016-17 (125.052 / 100)");
   check(basis.constant_2011_12("Jammu And Kashmir", 2011, 78256.0) == 78256.0, "2011 (base year): unchanged");
   check(basis.constant_2011_12("Maharashtra", 2016, 1.0) == 1.0, "a state not listed: unchanged");
@@ -162,14 +168,12 @@ void jk_deflated(const std::string& root, const PriceBase& pb, const fs::path& t
     std::ofstream f(lst);
     f << "state,from_year,basis,note\nB,2012,current_prices,test row\n";
   }
-  const GsdpPriceBasis b2 = GsdpPriceBasis::load(lst.string(), pb);
-  GsdpOptions with;
-  with.basis = &b2;
-  const IndiaSeries raw = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014);
-  const IndiaSeries fixed = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, with);
+  const GsdpPriceBasis b2 = GsdpPriceBasis::load(lst.string(), pb), none = GsdpPriceBasis::none();
+  const IndiaSeries raw = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, none);
+  const IndiaSeries fixed = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, b2);
   GsdpOptions drop;
   drop.exclude_states = {"b"};
-  const IndiaSeries only_a = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, drop);
+  const IndiaSeries only_a = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, none, drop);
   bool real = fixed.gpc_growth.size() == 3, inflated = raw.gpc_growth.size() == 3, a_only = only_a.gpc_growth.size() == 3;
   for (size_t k = 0; k < 3 && real && inflated && a_only; ++k) {
     real &= std::abs(fixed.gpc_growth[k] - std::log(1.05)) < 1e-12;
@@ -188,6 +192,97 @@ void jk_deflated(const std::string& root, const PriceBase& pb, const fs::path& t
   const Pipeline pl(root, CoreModel::kIndia);
   std::printf("    pipeline: %d state-years deflated\n", pl.fitted().india.gsdp_current_corrected);
   check(pl.fitted().india.gsdp_current_corrected == 13, "pipeline: Jammu and Kashmir 2012-2024 (13 state-years) deflated");
+}
+
+// Synthetic repository: six states, 2006-2024, with real income per person growing at
+// different rates. In one copy every GSDP is at constant 2011-12 prices; in the other, Beta's
+// GSDP from 2012 is at current prices (x the GDP deflator), as Jammu and Kashmir's is in the
+// challenge dataset, and a basis file lists it. Both GSDP readers given the basis must see
+// the constant-price data exactly; given none(), they must see the inflation.
+void write_synthetic_repo(const fs::path& root, const PriceBase& pb, bool beta_current) {
+  const char* name[] = {"Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"};
+  const char* region[] = {"Northern", "Southern", "Eastern", "Western", "Northern", "Southern"};
+  const auto pop = [](int s, int y) { return 1e6 * (s + 1) * (1.0 + 0.01 * (y - 2006)); };
+  const auto ln_y = [](int s, int y) { return 3.0 + 0.3 * s + (0.06 - 0.005 * s) * (y - 2006); };  // thousand INR
+  fs::create_directories(root / "data/raw/competition");
+  fs::create_directories(root / "data/raw/npp");
+  {
+    std::ofstream f(root / "data/raw/competition/renewable_energy_dataset.csv", std::ios::binary);
+    f.precision(17);
+    f << "State,Year,Zone,Population,GSDP (crore INR)\n";
+    for (int s = 0; s < 6; ++s)
+      for (int y = 2006; y <= 2024; ++y) {
+        double gsdp = std::exp(ln_y(s, y)) * 1e3 * pop(s, y) / 1e7;  // crore INR at 2011-12 prices
+        if (beta_current && s == 1 && y >= 2012) gsdp *= pb.inr_index(y) / pb.inr_index(2011);
+        f << name[s] << "," << y << ",North," << pop(s, y) << "," << gsdp << "\n";
+      }
+  }
+  {
+    std::ofstream f(root / "data/raw/npp/npp_state_generation_fy.csv", std::ios::binary);
+    f.precision(17);
+    f << "fiscal_year,fy_start_year,region,state,source,generation_gwh,is_subtotal,partial\n";
+    for (int s = 0; s < 6; ++s)
+      for (int y = 2018; y <= 2023; ++y)  // ln kWh per person = 0.7 ln income per person + a state effect
+        f << y << "-" << (y + 1) % 100 << "," << y << "," << region[s] << "," << name[s] << ",coal_lignite,"
+          << std::exp(1.0 + 0.1 * s + 0.7 * ln_y(s, y)) * pop(s, y) / 1e6 << ",False,False\n";
+  }
+}
+
+void readers_apply_basis(const PriceBase& pb, const fs::path& tmp) {
+  std::printf("readers_apply_basis\n");
+  fs::remove_all(tmp);
+  const fs::path real = tmp / "constant", mixed = tmp / "current";
+  write_synthetic_repo(real, pb, false);
+  write_synthetic_repo(mixed, pb, true);
+  {
+    std::ofstream f(tmp / "basis.csv", std::ios::binary);
+    f << "state,from_year,basis,note\nBeta,2012,current_prices,synthetic\n";
+  }
+  const GsdpPriceBasis basis = GsdpPriceBasis::load((tmp / "basis.csv").string(), pb), none = GsdpPriceBasis::none();
+  const auto org = [](const fs::path& r) { return (r / "data/raw/competition/renewable_energy_dataset.csv").string(); };
+  const auto near = [](double a, double b) { return std::abs(a - b) < 1e-12 * std::max(1.0, std::abs(b)); };
+
+  // estimate_convergence
+  const ConvergenceResult c_real = estimate_convergence(org(real), 2006, 2024, 200, 7, none);
+  const ConvergenceResult c_fix = estimate_convergence(org(mixed), 2006, 2024, 200, 7, basis);
+  const ConvergenceResult c_raw = estimate_convergence(org(mixed), 2006, 2024, 200, 7, none);
+  const auto beta_rel = [](const ConvergenceResult& c) {
+    for (const StateIncome& si : c.states)
+      if (si.state == "beta") return si.ln_rel.at(2024);
+    return kNaN;
+  };
+  std::printf("    convergence: lambda constant prices %.6f | current, with basis %.6f | current, none %.6f; Beta "
+              "2024 relative income %.4f | %.4f | %.4f\n",
+              c_real.lambda, c_fix.lambda, c_raw.lambda, beta_rel(c_real), beta_rel(c_fix), beta_rel(c_raw));
+  check(c_fix.n_states == 6 && near(c_fix.slope, c_real.slope) && near(c_fix.lambda, c_real.lambda) &&
+            near(c_fix.lambda_se, c_real.lambda_se) && near(beta_rel(c_fix), beta_rel(c_real)),
+        "estimate_convergence with the basis = the constant-price data (slope, lambda, s.e., Beta)");
+  check(beta_rel(c_raw) - beta_rel(c_real) > 0.3 && std::abs(c_raw.slope - c_real.slope) > 1e-4,
+        "estimate_convergence with none(): Beta carries its inflation, the slope moves");
+
+  // state_panel_data and state_panel_check
+  const StatePanelData d_real = state_panel_data(real.string(), none);
+  const StatePanelData d_fix = state_panel_data(mixed.string(), basis);
+  const StatePanelData d_raw = state_panel_data(mixed.string(), none);
+  bool same = d_fix.obs.size() == d_real.obs.size() && d_raw.obs.size() == d_real.obs.size() && d_real.obs.size() == 36;
+  // Without the basis, Beta's ln income per person is too high by exactly ln(deflator / 100).
+  bool gap = true;
+  double raw_gap = 1e9;
+  for (size_t i = 0; same && i < d_real.obs.size(); ++i) {
+    const PanelObs &a = d_real.obs[i], &b = d_fix.obs[i], &c = d_raw.obs[i];
+    same &= a.state == b.state && a.year == b.year && near(b.ln_income_pc, a.ln_income_pc) && b.ln_gen_pc == a.ln_gen_pc;
+    if (a.state != "beta") continue;
+    gap &= std::abs(c.ln_income_pc - a.ln_income_pc - std::log(pb.inr_index(a.year) / pb.inr_index(2011))) < 1e-12;
+    raw_gap = std::min(raw_gap, c.ln_income_pc - a.ln_income_pc);
+  }
+  const PanelFit f_real = fe_slope(d_real.obs), f_fix = state_panel_check(mixed.string(), basis),
+                 f_raw = state_panel_check(mixed.string(), none);
+  std::printf("    state panel: slope constant prices %.6f | current, with basis %.6f | current, none %.6f; Beta "
+              "income gap without the basis >= %.4f log points\n",
+              f_real.slope, f_fix.slope, f_raw.slope, raw_gap);
+  check(same && near(f_fix.slope, f_real.slope), "state_panel_data / state_panel_check with the basis = the constant-price data");
+  check(gap && raw_gap > 0.25 && std::abs(f_raw.slope - f_real.slope) > 1e-4,
+        "state_panel_data with none(): Beta's income carries ln(deflator), the slope moves");
 }
 
 void default_plan_unchanged_by_price_base(const std::string& root) {
@@ -248,6 +343,7 @@ int main(int argc, char** argv) {
     beyond_data_uses_target(pb);
     nominal_outlook_known(pb);
     jk_deflated(root, pb, fs::temp_directory_path() / "e47_test_price_base");
+    readers_apply_basis(pb, fs::temp_directory_path() / "e47_test_gsdp_readers");
     default_plan_unchanged_by_price_base(root);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;

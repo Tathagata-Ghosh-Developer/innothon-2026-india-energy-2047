@@ -340,7 +340,7 @@ class Pipeline {
   std::string root_;
   PipelineOptions options_;
   PriceBase prices_;
-  GsdpPriceBasis gsdp_basis_;
+  GsdpPriceBasis gsdp_basis_ = GsdpPriceBasis::none();  // loaded in the constructor
   Fitted fit_;
   DriverData drv_;
   AllocationInputs alloc_in_;

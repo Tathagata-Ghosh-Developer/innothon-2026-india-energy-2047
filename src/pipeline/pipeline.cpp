@@ -219,11 +219,11 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates, PipelineOpt
     fit_.model_names = {"India elasticity + urban prior", "India elasticity, no urban term",
                         "Damped trend (benchmark)"};
     GsdpOptions gsdp;
-    gsdp.basis = &gsdp_basis_;
     gsdp.exclude_states = options_.income_exclude_states;
     fit_.india = load_india_series((r / "data/raw/npp/npp_national_generation_fy.csv").string(),
                                    (r / "data/raw/competition/renewable_energy_dataset.csv").string(),
-                                   (r / "data/external/urbanization.csv").string(), kIndiaFirst, kIndiaLast, gsdp);
+                                   (r / "data/external/urbanization.csv").string(), kIndiaFirst, kIndiaLast,
+                                   gsdp_basis_, gsdp);
     const IndiaSeries& s = fit_.india;
     last = s.obs.back().year;
     fit_.india_fit = fit_india(s, kIndiaEstFirst, last);
@@ -341,7 +341,7 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates, PipelineOpt
     fit_.boot = boot_for(ScenarioControls{});
   }
   fit_.convergence = estimate_convergence((r / "data/raw/competition/renewable_energy_dataset.csv").string(), 2006,
-                                          2024, 4000, 99, &gsdp_basis_);
+                                          2024, 4000, 99, gsdp_basis_);
 
   // 2. National drivers
   drv_.base_year = last;

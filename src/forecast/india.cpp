@@ -38,7 +38,8 @@ struct StateYear {
 }  // namespace
 
 IndiaSeries load_india_series(const std::string& npp_csv, const std::string& organiser_csv,
-                              const std::string& urban_csv, int first, int last, const GsdpOptions& gsdp) {
+                              const std::string& urban_csv, int first, int last, const GsdpPriceBasis& basis,
+                              const GsdpOptions& gsdp) {
   // 1. NPP national generation by fiscal year.
   std::map<int, IndiaObs> gen;
   {
@@ -74,8 +75,8 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
       const std::string& name = t.str(i, cs);
       const int year = static_cast<int>(y);
       StateYear v{p, g, g, true};
-      if (gsdp.basis && gsdp.basis->is_current(name, year)) {
-        v.gsdp = gsdp.basis->constant_2011_12(name, year, g);
+      if (basis.is_current(name, year)) {
+        v.gsdp = basis.constant_2011_12(name, year, g);
         ++s.gsdp_current_corrected;
       }
       v.in_income = std::find(excluded.begin(), excluded.end(), normalize_state(name)) == excluded.end();

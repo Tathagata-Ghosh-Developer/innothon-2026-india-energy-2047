@@ -13,6 +13,9 @@
 //  7. The new-loads scenario (outside the headline): only loads absent from the
 //     historical series (overlaps_history "no") enter the add-on, scaled from their
 //     published year to 2047, and the headline with no add-on is unchanged.
+//  8. Convergence base years (ruling R25): each state's long difference starts at its first
+//     GSDP year that is not part of a run of repeated values (a placeholder), so a
+//     placeholder never sets a state's starting relative income.
 // Usage: test_regions <repo_root>
 #include <algorithm>
 #include <cmath>
@@ -25,6 +28,7 @@
 #include <vector>
 
 #include "core/csv.hpp"
+#include "core/price_base.hpp"
 #include "forecast/state_panel.hpp"
 #include "pipeline/pipeline.hpp"
 #include "regional/convergence.hpp"
@@ -139,7 +143,9 @@ void shares(const Pipeline& pl, const Dataset& d) {
 // The regional rework must leave the national forecast as it was. Reference values:
 // the 2047 national quantiles of the model (CPU, 2^18 draws, default seed), updated on
 // 2026-11-21 for the Jammu and Kashmir GSDP price-basis correction (before it: P5 3214.085,
-// P50 4699.020, P95 7002.236); the tolerance allows for Monte Carlo noise only.
+// P50 4699.020, P95 7002.236). The convergence base years of ruling R25 left them unchanged to
+// the last digit (the national total does not depend on the regional split); the tolerance
+// allows for Monte Carlo noise only.
 void national_unchanged(const Pipeline& pl) {
   std::printf("national 2047 forecast unchanged by the regional split\n");
   ScenarioControls c;
@@ -288,8 +294,8 @@ void fe_slope_skips_unmatched(const fs::path& tmp) {
   }
   write_text(tmp / "data/raw/npp/npp_state_generation_fy.csv", npp);
 
-  const StatePanelData d = state_panel_data(tmp.string());
-  const PanelFit g = state_panel_check(tmp.string());
+  const StatePanelData d = state_panel_data(tmp.string(), GsdpPriceBasis::none());
+  const PanelFit g = state_panel_check(tmp.string(), GsdpPriceBasis::none());
   std::string names;
   for (const std::string& s : d.skipped) names += (names.empty() ? "" : ", ") + s;
   std::printf("    files: slope %.12f, n_obs %d, n_states %d, n_skipped %d (%s), stale %d, zero generation %d\n", g.slope,
@@ -332,6 +338,79 @@ void state_table_shares_sum(const Pipeline& pl) {
   char what[96];
   std::snprintf(what, sizeof what, "regional sums match the regional medians' shares within 0.02 (worst %.4f)", worst);
   check(worst < 0.02, what);
+}
+
+// Convergence base years on a synthetic dataset, then on the challenge dataset.
+//   Five states with data every year 2006-2024 and no repeats: base 2006.
+//   Pholder repeats one figure for 2006-2010: base 2011 (2010 still equals 2009).
+//   Pair repeats 2006 in 2007: base 2008.  Late starts in 2009: base 2009.
+//   Middle repeats 2015 in 2016: a run after the base year does not move it, base 2006.
+// The slope is the OLS slope of the per-year change on the starting relative income, each
+// state over its own span, and lambda = -ln(1 + slope S) / S with S the mean span.
+void convergence_base_skips_repeats(const Pipeline& pl, const fs::path& tmp) {
+  std::printf("convergence_base_skips_repeats\n");
+  fs::remove_all(tmp);
+  const fs::path file = tmp / "organiser.csv";
+  std::string data = "State,Year,Population,GSDP (crore INR)\n";
+  const auto add = [&](const std::string& st, int y, double pop, double gsdp) {
+    data += st + "," + std::to_string(y) + "," + num17(pop) + "," + num17(gsdp) + "\n";
+  };
+  // ln GSDP per person: richer states grow more slowly (convergence), so the slope is negative.
+  const auto g = [](int s, int y) { return std::exp(4.0 + 0.25 * s + (0.07 - 0.008 * s) * (y - 2006)); };
+  for (int s = 0; s < 5; ++s)
+    for (int y = 2006; y <= 2024; ++y) add("S" + std::to_string(s), y, 1e6 * (s + 1), g(s, y) * 1e6 * (s + 1));
+  for (int y = 2006; y <= 2024; ++y) {
+    add("Pholder", y, 2e6, (y <= 2010 ? 2.0 * g(1, 2011) : g(1, y)) * 2e6);  // placeholder: twice its 2011 level
+    add("Pair", y, 1e6, y <= 2007 ? g(2, 2006) * 1e6 : g(2, y) * 1e6);
+    if (y >= 2009) add("Late", y, 3e6, g(0, y) * 3e6);
+    add("Middle", y, 1e6, (y == 2016 ? g(3, 2015) : g(3, y)) * 1e6);
+  }
+  write_text(file, data);
+  const ConvergenceResult c = estimate_convergence(file.string(), 2006, 2024, 200, 5, GsdpPriceBasis::none());
+  std::map<std::string, int> base;
+  for (const StateIncome& si : c.states) base[si.state] = si.base_year;
+  std::printf("    base years: s0 %d, pholder %d, pair %d, late %d, middle %d; %d states, %d after 2006, mean span "
+              "%.4f\n",
+              base["s0"], base["pholder"], base["pair"], base["late"], base["middle"], c.n_states, c.n_late_base,
+              c.mean_span);
+  bool five = true;
+  for (int s = 0; s < 5; ++s) five &= base["s" + std::to_string(s)] == 2006;
+  check(five && base["middle"] == 2006, "no repeat before the end year: base 2006 (a later run does not move it)");
+  check(base["pholder"] == 2011, "2006-2010 repeat one figure: base 2011, never a placeholder year");
+  check(base["pair"] == 2008 && base["late"] == 2009, "2006 repeated in 2007: base 2008; data from 2009: base 2009");
+  check(c.n_states == 9 && c.n_late_base == 3 && std::abs(c.mean_span - (6 * 18 + 13 + 16 + 15) / 9.0) < 1e-12,
+        "9 states, 3 with a later base, mean span (6 x 18 + 13 + 16 + 15) / 9");
+  // The regression by hand over the base years.
+  std::vector<double> x, dy;
+  for (const StateIncome& si : c.states) {
+    if (si.base_year == 0) continue;
+    x.push_back(si.ln_rel.at(si.base_year));
+    dy.push_back((si.ln_rel.at(2024) - x.back()) / (2024 - si.base_year));
+  }
+  double mx = 0, my = 0, sxy = 0, sxx = 0;
+  for (size_t i = 0; i < x.size(); ++i) mx += x[i] / x.size(), my += dy[i] / x.size();
+  for (size_t i = 0; i < x.size(); ++i) sxy += (x[i] - mx) * (dy[i] - my), sxx += (x[i] - mx) * (x[i] - mx);
+  const double slope = sxy / sxx, lambda = -std::log(1 + slope * c.mean_span) / c.mean_span;
+  const auto pholder = std::find_if(c.states.begin(), c.states.end(), [](const StateIncome& si) { return si.state == "pholder"; });
+  std::printf("    slope %.9f (by hand %.9f), lambda %.6f (by hand %.6f); Pholder relative income 2006 %+.3f, 2011 %+.3f\n",
+              c.slope, slope, c.lambda, lambda, pholder->ln_rel.at(2006), pholder->ln_rel.at(2011));
+  check(std::abs(c.slope - slope) < 1e-12 && std::abs(c.lambda - lambda) < 1e-12 && c.lambda > 0,
+        "slope and lambda = the long differences from each state's base year");
+
+  // The challenge dataset: the placeholder runs of 2006-2010 are skipped, every state is in.
+  const ConvergenceResult& d = pl.fitted().convergence;
+  std::map<std::string, int> b;
+  for (const StateIncome& si : d.states) b[si.state] = si.base_year;
+  std::printf("    challenge dataset: jammu and kashmir %d, telangana %d, andaman and nicobar islands %d, lakshadweep "
+              "%d, nagaland %d, delhi %d, chandigarh %d, maharashtra %d; %d states, lambda %.4f (s.e. %.4f)\n",
+              b["jammu and kashmir"], b["telangana"], b["andaman and nicobar islands"], b["lakshadweep"], b["nagaland"],
+              b["delhi"], b["chandigarh"], b["maharashtra"], d.n_states, d.lambda, d.lambda_se);
+  check(b["jammu and kashmir"] == 2011 && b["telangana"] == 2011 && b["andaman and nicobar islands"] == 2011 &&
+            b["lakshadweep"] == 2011,
+        "Jammu and Kashmir, Telangana, Andaman and Nicobar, Lakshadweep: base 2011");
+  check(b["nagaland"] == 2008 && b["delhi"] == 2009 && b["chandigarh"] == 2013 && b["maharashtra"] == 2006,
+        "Nagaland 2008, Delhi 2009, Chandigarh 2013, the rest 2006");
+  check(d.n_states == 34 && d.n_late_base == 7, "34 states in the regression, 7 with a base year after 2006");
 }
 
 // New loads: a temporary file with one load of each overlap class. Only the "no" load
@@ -429,6 +508,7 @@ int main(int argc, char** argv) {
     population_consistent(pl);
     state_table_shares_sum(pl);
     new_loads_excludes_overlap(pl, fs::temp_directory_path() / "e47_test_new_loads");
+    convergence_base_skips_repeats(pl, fs::temp_directory_path() / "e47_test_convergence");
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;
   } catch (const std::exception& e) {

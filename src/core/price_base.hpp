@@ -107,9 +107,14 @@ struct GsdpBasisRow {
   std::string basis, note;
 };
 
+// The list of such states. Every reader of the dataset's GSDP (load_india_series,
+// estimate_convergence, state_panel_data, state_panel_check) takes a basis and has no
+// default, so no caller reads the mis-based values without choosing to: the model passes the
+// loaded file (Pipeline::gsdp_basis()); none() reads the GSDP as is (synthetic tests).
 class GsdpPriceBasis {
  public:
-  GsdpPriceBasis() = default;  // no corrections
+  // No corrections: every value is returned unchanged.
+  static GsdpPriceBasis none() { return GsdpPriceBasis(); }
   // Reads the list. Throws on a missing column, a basis other than "current_prices", a
   // from_year before 2011 (the dataset's 2011-12 base year), or a state listed twice.
   static GsdpPriceBasis load(const std::string& basis_csv, const PriceBase& prices);
@@ -121,6 +126,7 @@ class GsdpPriceBasis {
   const std::vector<GsdpBasisRow>& rows() const { return rows_; }
 
  private:
+  GsdpPriceBasis() = default;  // none() or load(): the choice is always explicit
   std::vector<GsdpBasisRow> rows_;
   PriceBase prices_;  // a copy: the deflator outlives the PriceBase it was loaded with
 };

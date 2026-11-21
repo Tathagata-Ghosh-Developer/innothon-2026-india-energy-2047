@@ -101,7 +101,7 @@ PanelFit fe_slope(const std::vector<PanelObs>& obs) {
   return f;
 }
 
-StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis* basis) {
+StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis& basis) {
   const fs::path root(repo_root);
   StatePanelData d;
   d.first_year = kFirst;
@@ -165,7 +165,7 @@ StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBas
       StateYear& v = org[s][static_cast<int>(y)];
       v.pop = p > 0 ? p : kNaN;
       v.gsdp_read = g > 0 ? g : kNaN;
-      v.gsdp = g > 0 && basis ? basis->constant_2011_12(t.str(i, cs), static_cast<int>(y), g) : v.gsdp_read;
+      v.gsdp = g > 0 ? basis.constant_2011_12(t.str(i, cs), static_cast<int>(y), g) : v.gsdp_read;
       if (y >= kFirst && p > 0) all_pop[static_cast<int>(y)] += p;
     }
   }
@@ -248,6 +248,8 @@ StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBas
   return d;
 }
 
-PanelFit state_panel_check(const std::string& repo_root) { return fe_slope(state_panel_data(repo_root).obs); }
+PanelFit state_panel_check(const std::string& repo_root, const GsdpPriceBasis& basis) {
+  return fe_slope(state_panel_data(repo_root, basis).obs);
+}
 
 }  // namespace e47

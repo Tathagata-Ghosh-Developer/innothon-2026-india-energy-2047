@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "core/csv.hpp"
+#include "core/price_base.hpp"
 #include "forecast/india.hpp"
 #include "pipeline/pipeline.hpp"
 
@@ -55,7 +56,8 @@ void stale_rows_are_ignored(const fs::path& tmp) {
     f << "state,year,value,source\n";
     for (int y : {2005, 2010, 2015}) f << "India," << y << ",30,World Urbanization Prospects 2018\n";
   }
-  const IndiaSeries s = load_india_series(npp.string(), org.string(), urb.string(), 2008, 2010);
+  const IndiaSeries s =
+      load_india_series(npp.string(), org.string(), urb.string(), 2008, 2010, GsdpPriceBasis::none());
   check(s.gpc_growth.size() == 2, "two growth years");
   const double want = std::log(1.1);
   check(s.gpc_growth.size() == 2 && std::abs(s.gpc_growth[0] - want) < 1e-9 && std::abs(s.gpc_growth[1] - want) < 1e-9,

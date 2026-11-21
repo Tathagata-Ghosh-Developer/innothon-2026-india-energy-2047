@@ -82,10 +82,11 @@ struct StatePanelData {
 // matched with normalize_state only (no fuzzy matching), so a name the dataset does not
 // have is skipped and reported, never assigned to another state. The dataset's 2024
 // GSDP is never read (the window ends at FY2023-24).
-// basis: the GSDP price-basis corrections (Pipeline::gsdp_basis()); nullptr reads GSDP as is.
-StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis* basis = nullptr);
+// basis (required): the GSDP price-basis corrections (Pipeline::gsdp_basis());
+// GsdpPriceBasis::none() reads the GSDP as is.
+StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis& basis);
 
-// fe_slope over state_panel_data(repo_root).obs.
-PanelFit state_panel_check(const std::string& repo_root);
+// fe_slope over state_panel_data(repo_root, basis).obs.
+PanelFit state_panel_check(const std::string& repo_root, const GsdpPriceBasis& basis);
 
 }  // namespace e47
