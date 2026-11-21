@@ -269,6 +269,7 @@
   .hero__line { display: block; }
   .hero__line--navy { color: var(--navy); }
   .hero__lead { max-inline-size: 38rem; margin-block: var(--space-m); font-size: 1.125rem; color: var(--ink-2); }
+  .hero__update { max-inline-size: 38rem; margin-block: 0 var(--space-m); padding: var(--space-xs) var(--space-s); background: var(--card-soft); border: 1px solid var(--line); border-inline-start: 4px solid var(--red); border-radius: var(--radius-m); color: var(--ink-2); font-size: var(--text-s); }
   .hero__facts { display: grid; gap: var(--space-s); margin-block-end: var(--space-m); padding: 0; list-style: none; }
   .fact { display: flex; gap: var(--space-s); align-items: flex-start; padding: var(--space-s); background: var(--card-soft); border: 1px solid var(--line); border-radius: var(--radius-m); }
   .fact .icon-box { inline-size: 2.5rem; block-size: 2.5rem; }
@@ -741,6 +742,7 @@
         <span class="pill pill--navy">Team The Losers, IISc Bengaluru</span>
         <span class="pill pill--red"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>Presented at the final evaluation, 21 Nov 2026</span>
       </div>
+      <p class="hero__update"><strong>Updated on 21 November 2026, after the final evaluation.</strong> Every cost is now in real 2024 USD, Jammu and Kashmir's income is corrected for inflation, the regional split is re-estimated, and 44 further demand drivers are shown outside the headline. The national median moved from 4,703 to <span class="num">{{national.p50|0}} TWh</span>; the largest regional changes are Southern, 1,068 to <span class="num">{{regions.list.2.p50_twh|0}}</span>, and Eastern, 840 to <span class="num">{{regions.list.3.p50_twh|0}} TWh</span>. The deck and slides are updated to match; <a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/decisions.md#d14-inflation-and-the-full-set-of-demand-drivers-2026-11-21">decision D14 lists every change</a>.</p>
       <h1 class="hero__title" id="hero-title">
         <span class="hero__line">India needs about <span class="num">{{national.p50|0}} TWh</span> in {{years.target_label}}.</span>
         <span class="hero__line hero__line--navy">Generated where each region is strongest.</span>
@@ -1655,6 +1657,7 @@
       <nav aria-labelledby="footer-docs">
         <h2 class="site-footer__title" id="footer-docs">Documents</h2>
         <ul class="site-footer__links">
+          <li><a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/deck/India_Energy_2047_The_Losers.pdf">Final evaluation deck (PDF)</a></li>
           <li><a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/main.pdf">Presentation slides (PDF)</a></li>
           <li><a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/reader.pdf">Reader's edition with notes (PDF)</a></li>
           <li><a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/beamer/midpoint.pdf">Midpoint slide (PDF)</a></li>

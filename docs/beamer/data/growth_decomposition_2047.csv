@@ -1,6 +1,6 @@
 part,description,log_points,share_of_total_pct
-population,ln(population FY2047-48 / FY2023-24): base-year population growing as UN WPP 2024 medium,0.147501,14.8
-income,"beta 0.828 x change of ln GSDP per person, less delta/2 x its square (elasticity decline delta 0.00)",0.871726,87.46
-urbanisation,gamma 1.00 x (change of urban share - kappa 0.092 x change of ln GSDP per person): urbanisation beyond the path income implies,0.0478263,4.8
-model_error,"expected residual in FY2047-48 minus the base-year residual +0.070 (AR(1), rho 0.51)",-0.0703687,-7.06
-total,"ln(central path FY2047-48 / FY2023-24) = ln(4600 / 1698 TWh); medium drivers, mean growth, full-sample parameters, no add-on",0.996685,100
+population,ln(population FY2047-48 / FY2023-24): base-year population growing as UN WPP 2024 medium,0.147501,14.84
+income,"beta 0.835 x change of ln GSDP per person, less delta/2 x its square (elasticity decline delta 0.00)",0.870349,87.54
+urbanisation,gamma 1.00 x (change of urban share - kappa 0.093 x change of ln GSDP per person): urbanisation beyond the path income implies,0.0480197,4.83
+model_error,"expected residual in FY2047-48 minus the base-year residual +0.072 (AR(1), rho 0.51)",-0.0716142,-7.2
+total,"ln(central path FY2047-48 / FY2023-24) = ln(4589 / 1698 TWh); medium drivers, mean growth, full-sample parameters, no add-on",0.994255,100

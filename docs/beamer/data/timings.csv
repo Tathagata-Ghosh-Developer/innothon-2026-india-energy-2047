@@ -1,4 +1,4 @@
 device,draws,ms,draws_per_second
-"CPU 1 thread (float), scaled from 1/16 run",1048576,19849.8,52825.4
-CPU 16 threads (float),1048576,4149.72,252686
-GPU NVIDIA GeForce RTX 3070 Ti Laptop GPU (float),1048576,7.75066,1.35289e+08
+"CPU 1 thread (float), scaled from 1/16 run",1048576,19987.2,52462.4
+CPU 16 threads (float),1048576,2261.1,463745
+GPU NVIDIA GeForce RTX 3070 Ti Laptop GPU (float),1048576,11.1985,9.36357e+07

@@ -2,6 +2,8 @@
 
 Status on 2026-11-19:
 
+> The numbers in this plan are those of the 20 November run that was rehearsed and presented. The current numbers are in [results.md](results.md); [decisions.md](decisions.md), D14, lists every change since.
+
 - The primary forecast uses only the two challenge datasets (National Power Portal and the Renewable India dataset); the cross-country model is an independent check used for justification only ([decisions.md](decisions.md), D10 and D12).
 - The organisers' written ruling of 16 Nov is applied: no captive layer, the regional split from the challenge data, the cross-country model and resource potentials for justification only, and the headline in total TWh ([decisions.md](decisions.md), D12).
 - The midpoint review (18 Nov, 6:00 PM slot) is done. The panel's five questions are answered with evidence in [midpoint_panel_answers.md](midpoint_panel_answers.md); the work behind the answers is [decisions.md](decisions.md), D13.

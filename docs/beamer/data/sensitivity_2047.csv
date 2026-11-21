@@ -1,15 +1,15 @@
 case,description,p05,p50,p95
-base,India elasticity with the excess-urbanisation prior,3217.45,4703.01,7002.3
-no_urban_term,gamma = 0: no urbanisation effect beyond income (UN population path still used),2950.02,4453.18,6870.95
+base,India elasticity with the excess-urbanisation prior,3190.5,4687.78,7020.57
+no_urban_term,gamma = 0: no urbanisation effect beyond income (UN population path still used),2922.46,4437.64,6891.89
 damped_trend,benchmark without drivers,2806.78,3603.77,4626.9
-elasticity_decline_0.2,elasticity falls 0.2 per unit of ln income,3089.05,4197.49,5643.49
-growth_plus_1.5,income growth 1.5 points above history,4191.99,6169.24,9314.91
-growth_minus_1.5,income growth 1.5 points below history,2454.94,3587.56,5285.65
-urban_plus_5,urban share 5 points above the UN path by 2047,3359.67,4953.98,7402.47
-pop_band_x2,population uncertainty doubled,3147.79,4694.14,7103.85
-beta_minus_1se,income elasticity lower by one OLS standard error (0.063) in every replicate,3093.74,4399.84,6378.96
-beta_plus_1se,income elasticity higher by one OLS standard error (0.063) in every replicate,3345.25,5027.03,7689.18
-beta_window_s1,elasticity from the FY2011-12 onward window only (one price base),3167.54,4582.99,6835.24
-beta_window_s3,elasticity from the FY2006-07 onward window only (spliced price bases),3278.19,4828.58,7139.82
-beta_first_difference,elasticity recentred on the first-difference estimate (shift -0.065 in every replicate),3090.52,4391.99,6363.11
-new_loads_published,"outside the headline: published new loads absent from the historical series (green_hydrogen), add-on 418-1237 TWh in 2047 (published values x 0.8889, linear from the base year); end-use electricity, not grossed up for losses; if supplied from the grid; loads that partly overlap the income elasticity not added (secondary sources)",3991.29,5536.99,7861.4
+elasticity_decline_0.2,elasticity falls 0.2 per unit of ln income,3068.93,4193.89,5670.68
+growth_plus_1.5,income growth 1.5 points above history,4165.73,6163.32,9363.62
+growth_minus_1.5,income growth 1.5 points below history,2428.55,3567.9,5286.07
+urban_plus_5,urban share 5 points above the UN path by 2047,3331.51,4938.05,7420.94
+pop_band_x2,population uncertainty doubled,3121.92,4679.04,7120.86
+beta_minus_1se,income elasticity lower by one OLS standard error (0.065) in every replicate,3067.53,4381.48,6384.1
+beta_plus_1se,income elasticity higher by one OLS standard error (0.065) in every replicate,3317.18,5015.54,7723.49
+beta_window_s1,elasticity from the FY2011-12 onward window only (one price base),3142.41,4570.87,6862.43
+beta_window_s3,elasticity from the FY2006-07 onward window only (spliced price bases),3248.23,4810.05,7151.24
+beta_first_difference,elasticity recentred on the first-difference estimate (shift -0.068 in every replicate),3061.22,4365.74,6351.93
+jk_excluded,"Jammu and Kashmir left out of national income growth instead of deflating its current-price GSDP (2012 onward) with the MoSPI GDP deflator; elasticity re-estimated: S1 beta 0.835, S3 beta 0.871",3176.62,4682.6,7036.81

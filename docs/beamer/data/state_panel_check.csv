@@ -1,22 +1,22 @@
 section,name,grid_region,years,gen_kwh_per_person,ratio_to_national,value,note
 data,generation,,,,,,"NPP state file (data/raw/npp/npp_state_generation_fy.csv): conventional stations only (CEA 18-column reports: coal and lignite, gas, diesel, nuclear, hydro), no renewables. Generation is recorded in the state where the plant stands, not where the power is used. Sources summed per state and year; subtotal and partial-year rows left out"
-data,population_and_gsdp,,,,,,"challenge dataset (data/raw/competition/renewable_energy_dataset.csv), years FY2018-19..FY2023-24; a GSDP equal to the year before is a placeholder and that state-year is left out; the 2024 GSDP is not used; names matched with normalize_state only"
-fit,slope,,,,,0.43412,"within (state fixed effects) OLS of ln(generation per person) on ln(GSDP per person), FY2018-19..FY2023-24. Diagnostic only, never used by the forecast"
-fit,se,,,,,0.241986,"conventional OLS s.e., n_obs - n_states - 1 degrees of freedom, not clustered by state"
+data,population_and_gsdp,,,,,,"challenge dataset (data/raw/competition/renewable_energy_dataset.csv), years FY2018-19..FY2023-24; a GSDP equal to the year before is a placeholder and that state-year is left out; the 2024 GSDP is not used; names matched with normalize_state only; GSDP at constant 2011-12 prices (states listed in data/external/macro/gsdp_price_basis.csv are at current prices and are deflated with the MoSPI GDP deflator, secondary)"
+fit,slope,,,,,0.522259,"within (state fixed effects) OLS of ln(generation per person) on ln(GSDP per person), FY2018-19..FY2023-24. Diagnostic only, never used by the forecast"
+fit,se,,,,,0.258182,"conventional OLS s.e., n_obs - n_states - 1 degrees of freedom, not clustered by state"
 fit,n_obs,,,,,188,state-years in the regression
 fit,n_states,,,,,32,states with at least one state-year in the regression
 fit,n_skipped,,,,,1,"ladakh: in the NPP state file, not in the challenge dataset; skipped, generation not assigned to any other state"
 fit,left_out_zero_generation,,,,,6,matched state-years with no generation in the NPP file
 fit,left_out_stale_gsdp,,,,,0,matched state-years with GSDP equal to the year before
 fit,left_out_no_data,,,,,0,matched state-years with no dataset population or GSDP
-fit,india_beta,,,,,0.827714,"the elasticity the forecast uses: national, NPP all-India generation (all sources) per person on GSDP per person, FY2011-12..FY2023-24"
+fit,india_beta,,,,,0.835405,"the elasticity the forecast uses: national, NPP all-India generation (all sources) per person on GSDP per person, FY2011-12..FY2023-24"
 spread,national_gen_kwh_per_person,,,,,979.172,"all NPP state rows (matched or not) over the dataset's total population, FY2018-19..FY2023-24 totals; same conventional-only basis as the states"
 spread,ratio_min,,,,,0.0826971,nagaland (states with generation)
 spread,ratio_max,,,,,15.8765,sikkim
 spread,sd_ln_ratio,,,,,1.13781,"s.d. across states of ln(state / national), states with generation"
 spread,states_without_generation,,,,,,goa
 spread,between_share_ln_gen,,,,,0.970711,share of the variance of ln(generation per person) in the regression sample that lies between states (absorbed by the state effects)
-spread,between_share_ln_income,,,,,0.98357,the same for ln(GSDP per person)
+spread,between_share_ln_income,,,,,0.985689,the same for ln(GSDP per person)
 state,andaman and nicobar islands,Eastern,6,418.909,0.42782,,
 state,andhra pradesh,Southern,6,1187.74,1.21301,,
 state,arunachal pradesh,North-Eastern,6,2173.77,2.22001,,

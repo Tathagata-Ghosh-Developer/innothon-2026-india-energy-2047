@@ -26,7 +26,7 @@ The scope is the country's total NPP utility generation, and the headline is tha
 > Jammu and Kashmir's GSDP, which the organiser dataset gives at current prices from 2012, is deflated with the MoSPI GDP deflator: the FY2047-48 median moves from 4,703 to 4,688 TWh.
 > Placeholder years no longer set a state's convergence base year: the convergence speed falls from 0.0208 to 0.0021, and the regional split changes a lot.
 > A demand-feature layer from official sources (44 drivers catalogued, 11 quantified) gives named scenarios and a joint distribution outside the headline (section 1.6; [demand_features.md](demand_features.md)); it replaces the new-loads scenario.
-> The decks and talk materials show the results presented on 21 November; D14 records every change since.
+> The decks and Q&A notes were updated to this run after the final evaluation; the talk script and the midpoint slide keep the numbers presented then. D14 records every change.
 
 ![National forecast](img/1_national_forecast.png)
 

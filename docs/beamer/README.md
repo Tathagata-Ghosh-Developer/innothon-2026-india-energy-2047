@@ -5,17 +5,18 @@ These two are the primary sources; every other source in the deck is secondary a
 The cross-country model (Ember and World Bank, 153 countries) appears only as an independent check on non-core data, used for justification and not for estimation.
 The deck follows the organisers' written ruling of 16 Nov 2026 (`docs/decisions.md`, D12): no captive layer, the regional split from the challenge data, and the headline as the country's total in TWh.
 For the final evaluation (21-22 Nov 2026) it adds the answers to the midpoint panel (`docs/decisions.md`, D13): what drives 2047 beyond income, income state by state, and the published figures that choose the mix.
+On 21 Nov 2026, after the final evaluation, `main.tex` and `reader.tex` were updated to the current model run (commit 982bdec; `docs/decisions.md`, D14): Jammu and Kashmir's GSDP deflated (median 4,703 to 4,688 TWh), convergence of state incomes 0.0021 a year instead of 0.0208, every cost in real 2024 USD, and the demand-feature layer in place of the new-loads scenario. The title slide carries the update date. The decks as presented on 21 Nov are in the git history (commit 982bdec and earlier).
 
 | File | Contents |
 | --- | --- |
 | `main.pdf` | Presentation, 36 pages: 20 slides (title and 19 content slides), 9 pages of references and 7 backup slides |
-| `reader.pdf` | Reader's edition, 75 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions and answers); 12 continuation note pages carry the longer notes of slides 5, 6, 7, 8, 11, 12, 14, 15 and 20 |
-| `midpoint.pdf`, `midpoint.png` | One 16:9 slide for the midpoint review of 18 Nov 2026: approach, findings, roadblocks (PNG rendered at 220 dpi). Kept as presented; its numbers are still current |
+| `reader.pdf` | Reader's edition, 79 pages: the same deck with a reader's note page after every slide (message, evidence, likely questions and answers); 16 continuation note pages carry the longer notes of slides 1, 4, 5, 6, 7, 8, 11 (two), 12 (two), 14 (two), 15 (two), 16 and 20 |
+| `midpoint.pdf`, `midpoint.png` | One 16:9 slide for the midpoint review of 18 Nov 2026: approach, findings, roadblocks (PNG rendered at 220 dpi). Kept as presented, a historical record; its numbers predate D14 |
 | `main.tex` | Deck source; `reader.tex` sets a flag and inputs it |
 | `midpoint.tex` | Midpoint slide source (same theme; columns in golden proportion 1 : phi : phi) |
 | `slide_alignment.tex`, `slide_novelty.tex` | ExxonMobil alignment and state-of-practice slides |
 | `beamerthemeIndia2047.sty` | Theme |
-| `refs_data.bib` | Data sources: the challenge datasets (NPP, Renewable India) first, then drivers, limits, the published figures of the mix (secondary) and the cross-country check data |
+| `refs_data.bib` | Data sources: the challenge datasets (NPP, Renewable India) first, then drivers, limits, the published figures of the mix, the price base (MoSPI GDP deflator, RBI exchange rate and inflation target; all secondary) and the cross-country check data |
 | `refs_web.bib` | ExxonMobil, government and agency web sources, and the official challenge page |
 | `refs_academic.bib` | Papers, each with a DOI checked on Crossref |
 | `research_notes.md` | Every quote used, verbatim, with page and URL; unverified items listed separately |
@@ -25,17 +26,17 @@ For the final evaluation (21-22 Nov 2026) it adds the answers to the midpoint pa
 
 | # | Slide | Main numbers from |
 | --- | --- | --- |
-| 1 | Title: 4,703 TWh median utility generation in FY2047-48 | `forecast_national_regional.csv`, `core_comparison.csv` |
+| 1 | Title: 4,688 TWh median utility generation in FY2047-48; update line (21 Nov, D14) | `forecast_national_regional.csv`, `core_comparison.csv` |
 | 2 | The answer on one page | `holdout.csv`, `sensitivity_2047.csv`, `growth_decomposition_2047.csv`, `presets.csv` |
 | 3 | Alignment with ExxonMobil's Global Outlook 2026 | `presets.csv` |
 | 4 | The core uses only the two challenge datasets | `india_fit.csv` |
 | 5 | Five advances over the state of practice | several |
 | 6 | Approach in six steps | `india_fit.csv` |
-| 7 | Why the elasticity is 0.83 | `india_fit.csv`, `sensitivity_2047.csv` |
+| 7 | Why the elasticity is 0.84 (0.835) | `india_fit.csv`, `sensitivity_2047.csv` |
 | 8 | Fan chart from NPP history, with the CEA plan and the cross-country check | `forecast_national_regional.csv`, `holdout.csv`, `core_comparison.csv` |
 | 9 | Backtest and holdout | `backtest.csv`, `backtest_horizon.csv`, `holdout.csv` |
 | 10 | Sensitivity: income growth dominates | `sensitivity_2047.csv` |
-| 11 | **New.** What drives 2047 beyond income: growth decomposition, elasticity sensitivities, new loads (outside the headline) | `growth_decomposition_2047.csv`, `sensitivity_2047.csv`, `new_loads_2047.csv` |
+| 11 | **New.** What drives 2047 beyond income: growth decomposition, elasticity sensitivities, demand features (outside the headline) | `growth_decomposition_2047.csv`, `sensitivity_2047.csv`, `feature_scenarios_2047.csv` |
 | 12 | **New.** Income is used state by state; the elasticity is national: state table, regional sums, state panel check | `state_income_2047.csv`, `state_panel_check.csv`, `forecast_national_regional.csv` |
 | 13 | Regional transfer gap | `data/raw/npp/npp_region_generation_fy.csv`, `strategy_2047_regions.csv`, `forecast_national_regional.csv` |
 | 14 | **New.** Published figures choose the mix: build limits, NPP fleet floors, potentials, CEA v22 factors, IEA vs CEA cost basis, mix sensitivities, the organisers' reply | `sensitivity_mix.csv`, `committed_builds_2047.csv`, `presets.csv`, `data/external/techno_economic/build_limits.csv`, `data/external/resource_potential.csv` |

@@ -522,7 +522,7 @@ The rules do not change:
 | R26 | The High growth preset's unofficial 100 to 300 TWh add-on is removed | The High growth rows drop by about 200 TWh (P50 6,780 to 6,580) |
 | R27 | The landing page reads `features.*` instead of the new-loads row, and the new-loads code is retired | None |
 | R28 | The base year is the first year that differs from both neighbours, not the literal "differs from the next year", which still lands on the Jammu and Kashmir 2010 placeholder | Under the literal reading lambda would be 0.0166 instead of 0.0021, and the regional shift would be smaller |
-| R29 | The presented decks (pptx and Beamer) and talk materials stay as presented on 21 Nov; the README and this entry record every change since | The decks' numbers differ from the outputs and the live site |
+| R29 | Revised later on 21 Nov: the final deck (pptx and PDF), the Beamer decks and the Q&A notes are updated to the current run, each with a dated line, and the landing page says what changed after the evaluation; the talk script and the midpoint slide keep the presented numbers | Jurors comparing the site with the deck they saw find different regional numbers; the dated lines and the landing note explain why |
 
 **Effect on results** (before: the 20 Nov run, as presented on 21 Nov; after: `outputs/` of commit 62c347f; GPU, 4,194,304 draws, default seed).
 
@@ -580,7 +580,7 @@ How the numbers moved, step by step:
 - Figures from TERI, CEEW, BloombergNEF and the IEA as feature sizes: they are not official Indian sources. Official figures replace them where one exists, and electric cooking, which has none, is a context row.
 - Correlated feature draws: no official source gives the correlations, so the draws are independent and say so.
 - The literal reading of R25 (R28).
-- Editing the presented decks (R29).
+- Keeping the presented numbers in the decks: the deck, the site and the repository would disagree (R29).
 
 **Known limits.**
 
@@ -602,7 +602,7 @@ How the numbers moved, step by step:
 - **Price base proxies.** FY2024-25 stands for 2024, because MoSPI publishes the deflator by fiscal year only, and it is paired with the calendar-2024 exchange rate. The FY2026-27 deflator for biomass is extended at the RBI target and is not an official figure. The CEA band rows (2 and 6 percent) are fixed in the code; only the default reads `price_indices.csv`.
 - **Nominal outlook.** The RBI target is notified only to FY2030-31; the outlook carries it to 2047. The FOMC goal is stated for the PCE price index, not the GDP deflator.
 - **Every feature scenario raises the requirement.** Even All downside adds 177 TWh, because transport (at least 512 TWh), data centres (at least 356) and hydrogen (at least 138) outweigh every row that lowers generation.
-- **The decks differ from the outputs** (R29).
+- **The talk script and the midpoint slide keep the presented numbers** (R29); the decks and Q&A notes match the outputs.
 
 **Checks.**
 

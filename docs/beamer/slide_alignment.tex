@@ -1,5 +1,5 @@
 % Slide 3: alignment with ExxonMobil's Global Outlook 2026 (quotes verified, see research_notes.md).
-% Our numbers: outputs/forecast_national_regional.csv and outputs/presets.csv (run of 19 Nov 2026).
+% Our numbers: outputs/forecast_national_regional.csv and outputs/presets.csv (run of 21 Nov 2026).
 \begin{columns}[T,onlytextwidth]
 \column{\gA\textwidth}
 {\fontsize{7.5}{9}\selectfont
@@ -8,13 +8,13 @@
 \textbf{\color{muted}ExxonMobil says} & \textbf{\color{navy}Our answer for India}\\[-1mm]
 \midrule
 \itshape ``\ldots the need for more energy \emph{and} lower emissions'' \cite{exxon_outlook_2026_summary}
-& Utility generation rises \textbf{2.77$\times$} by FY2047-48, while the robust plan emits \textbf{912\,Mt} CO$_2$ instead of 1,374.\\
+& Utility generation rises \textbf{2.76$\times$} by FY2047-48, while the robust plan emits \textbf{891\,Mt} CO$_2$ instead of 1,367.\\
 \itshape ``Growing global population and prosperity have been the biggest factors driving increased demand'' \cite{exxon_outlook_2026_intro}
 & Population and income per person drive our forecast, estimated on \textbf{India's own} generation and state data.\\
 \itshape ``\ldots no single pathway can be reasonably predicted'' \cite{exxon_outlook_2026_summary}
 & We simulate \textbf{4.2 million} futures and stress-test every plan at the \textbf{90th percentile}.\\
 \itshape ``Lead industry in innovations that advance modern living and a net-zero future'' \cite{exxon_who_we_are}
-& Coal still supplies \textbf{19.4\%} of 2047 generation in the robust plan, at large stations: a ready market for \textbf{carbon capture} \cite{exxon_ccs}.\\
+& Coal still supplies \textbf{19.0\%} of 2047 generation in the robust plan, at large stations: a ready market for \textbf{carbon capture} \cite{exxon_ccs}.\\
 \bottomrule
 \end{tabular}}
 \column{\gB\textwidth}
@@ -22,12 +22,12 @@
 \stat{$\approx$42\%}{of the world's energy-demand growth to 2050 comes from India in ExxonMobil's own projection}{}
 \vspace{2.5mm}
 {\fontsize{8}{9.8}\selectfont\color{ink}
-India's share of world energy demand rises from \textbf{7.5\%} to \textbf{11.2\%} by 2050 \cite{exxon_outlook_2026_data}. World electricity demand grows about 65\% by 2050 \cite{exxon_outlook_2026_summary}; India's utility generation requirement grows 177\% by FY2047-48.\par\vspace{1.5mm}
+India's share of world energy demand rises from \textbf{7.5\%} to \textbf{11.2\%} by 2050 \cite{exxon_outlook_2026_data}. World electricity demand grows about 65\% by 2050 \cite{exxon_outlook_2026_summary}; India's utility generation requirement grows 176\% by FY2047-48.\par\vspace{1.5mm}
 ExxonMobil's technology centres are in Bengaluru, as are we \cite{exxon_india_operations}.}
 \end{columns}
 \evidence{ExxonMobil Global Outlook 2026: executive summary pp.\,2 and 13, introduction, data workbook \cite{exxon_outlook_2026_summary,exxon_outlook_2026_intro,exxon_outlook_2026_data}; corporate vision \cite{exxon_who_we_are}; the 42\% share is our arithmetic on ExxonMobil's data file (31.0 of 73.3 quadrillion BTU of growth). Our numbers: \texttt{outputs/forecast\_national\_regional.csv}, \texttt{presets.csv} \cite{e47_repo}.}
 \note{%
 \textbf{Message.} The jury is from ExxonMobil. Their Outlook frames the challenge as ``more energy \emph{and} lower emissions'' and says that ``no single pathway can be reasonably predicted''. We answer both halves for India's electricity: a probability distribution instead of one path, and a plan tested against it.\par\medskip
-\textbf{Evidence.} Our side: median 4,703\,TWh in FY2047-48 vs 1,698\,TWh in FY2023-24 (2.77$\times$, +177\%); robust plan 912\,Mt vs base plan 1,374\,Mt CO$_2$ (CEA v22 factors: coal 0.971, gas 0.470\,t/MWh); robust coal share 19.4\% (\texttt{presets.csv}, run of 19 Nov 2026). ExxonMobil's side: India's energy demand rises from 46.6 to 77.6 quadrillion BTU (2025--2050) while world demand rises by 73.3; 31.0/73.3 $\approx$ 42\%. This is our arithmetic on their data, not their wording; say so if asked.\par\medskip
-\textbf{Likely question.} \qa{Why compare electricity growth with energy growth?}{We do not equate them: the 65\% is ExxonMobil's world electricity figure; India's 177\% is utility generation over a shorter horizon from a lower base.}
+\textbf{Evidence.} Our side: median 4,688\,TWh in FY2047-48 vs 1,698\,TWh in FY2023-24 (2.76$\times$, +176\%); robust plan 891\,Mt vs base plan 1,367\,Mt CO$_2$ (CEA v22 factors: coal 0.971, gas 0.470\,t/MWh); robust coal share 19.0\% (\texttt{presets.csv}, run of 21 Nov 2026). ExxonMobil's side: India's energy demand rises from 46.6 to 77.6 quadrillion BTU (2025--2050) while world demand rises by 73.3; 31.0/73.3 $\approx$ 42\%. This is our arithmetic on their data, not their wording; say so if asked.\par\medskip
+\textbf{Likely question.} \qa{Why compare electricity growth with energy growth?}{We do not equate them: the 65\% is ExxonMobil's world electricity figure; India's 176\% is utility generation over a shorter horizon from a lower base.}
 \textbf{All quotes} are verbatim and listed with page numbers in \texttt{docs/beamer/research\_notes.md}.}

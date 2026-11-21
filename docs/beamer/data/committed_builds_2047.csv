@@ -1,8 +1,8 @@
 policy,region,source,base_fy2023_24_twh,committed_mw,cuf,committed_twh,floor_twh,committed_cut_twh,upper_bound_twh,plan_twh
-Base,Northern,nuclear,9.9343,7000,0.68,41.6976,51.6319,0,121.63,121.63
-Base,Western,nuclear,15.6892,1400,0.68,8.33952,24.0288,0,170.281,170.281
-Base,Southern,nuclear,22.3139,5900,0.68,35.1451,57.459,0,129.738,129.738
-Base,Eastern,nuclear,0,0,0.68,0,0,0,48.6518,48.6518
+Base,Northern,nuclear,9.9343,7000,0.68,41.6976,51.6319,0,121.236,121.236
+Base,Western,nuclear,15.6892,1400,0.68,8.33952,24.0288,0,169.73,169.73
+Base,Southern,nuclear,22.3139,5900,0.68,35.1451,57.459,0,129.318,129.318
+Base,Eastern,nuclear,0,0,0.68,0,0,0,48.4942,48.4942
 Base,North-Eastern,nuclear,0,0,0.68,0,0,0,0,0
 Base,Northern,hydro,77.4168,6177.5,0.36,19.4814,96.8982,0,146.712,146.712
 Base,Western,hydro,18.3087,0,0.36,0,18.3087,0,18.3087,18.3087
@@ -14,10 +14,10 @@ Base,Western,gas,12.1559,0,0,0,0,0,19.5859,0
 Base,Southern,gas,2.20992,0,0,0,0,0,3.56068,0
 Base,Eastern,gas,0.33579,0,0,0,0,0,0.541034,0
 Base,North-Eastern,gas,9.72858,0,0,0,0,0,15.675,0
-Robust,Northern,nuclear,9.9343,7000,0.68,41.6976,51.6319,0,182.444,51.6319
-Robust,Western,nuclear,15.6892,1400,0.68,8.33952,24.0288,0,255.422,24.0288
-Robust,Southern,nuclear,22.3139,5900,0.68,35.1451,57.459,0,194.607,57.459
-Robust,Eastern,nuclear,0,0,0.68,0,0,0,72.9777,0
+Robust,Northern,nuclear,9.9343,7000,0.68,41.6976,51.6319,0,181.853,51.6319
+Robust,Western,nuclear,15.6892,1400,0.68,8.33952,24.0288,0,254.595,24.0288
+Robust,Southern,nuclear,22.3139,5900,0.68,35.1451,57.459,0,193.977,57.459
+Robust,Eastern,nuclear,0,0,0.68,0,0,0,72.7413,0
 Robust,North-Eastern,nuclear,0,0,0.68,0,0,0,0,0
 Robust,Northern,hydro,77.4168,6177.5,0.36,19.4814,96.8982,0,146.712,146.712
 Robust,Western,hydro,18.3087,0,0.36,0,18.3087,0,18.3087,18.3087

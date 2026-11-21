@@ -53,7 +53,7 @@ Two plans for 2047 (median requirement), built from the FY2023-24 regional mix (
 - Known limit: in the Low growth scenario, the Robust policy has no feasible plan at the 5th-percentile requirement (2,306 TWh), because its coal floor and the gas kept for peaking exceed its fossil allowance there ([docs/decisions.md](docs/decisions.md), D13).
 - Details are in [docs/results.md](docs/results.md). The answers to the midpoint panel's five questions are in [docs/midpoint_panel_answers.md](docs/midpoint_panel_answers.md).
 
-The decks and talk materials ([docs/beamer/](docs/beamer/), [docs/deck/](docs/deck/), and the talk and Q&A notes in `docs/`) show the results presented on 21 November 2026 (the 20 November run: a median of 4,703 TWh); [docs/decisions.md](docs/decisions.md), D14, records every change made since.
+The final deck and its PDF ([docs/deck/](docs/deck/)), the Beamer decks ([docs/beamer/](docs/beamer/)) and the Q&A notes were updated on 21 November 2026, after the final evaluation, to the current run. The talk script (`docs/final_talk.md`) and the midpoint slide keep the numbers presented then (the 20 November run: a median of 4,703 TWh). [docs/decisions.md](docs/decisions.md), D14, records every change.
 
 ## Compliance rule
 
@@ -99,7 +99,8 @@ Full details are in [docs/methodology.md](docs/methodology.md).
 | [docs/midpoint_panel_answers.md](docs/midpoint_panel_answers.md) | Answers to the five questions of the midpoint panel, with evidence and sources |
 | [docs/midpoint_qa.md](docs/midpoint_qa.md) | Questions and answers for the final evaluation |
 | [docs/team_plan.md](docs/team_plan.md) | Work plan to the final evaluation |
-| [docs/beamer/](docs/beamer/) | Presentation deck (LaTeX Beamer), reader's edition with notes, midpoint slide; as presented on 21 November (D14 records the changes since) |
+| [docs/deck/](docs/deck/) | Final evaluation deck (PowerPoint and PDF), updated to the current run on 21 November after the evaluation |
+| [docs/beamer/](docs/beamer/) | Presentation deck (LaTeX Beamer) and reader's edition with notes, updated to the current run on 21 November; the midpoint slide stays as presented on 18 November |
 | [docs/deployment.md](docs/deployment.md) | Native and WebAssembly builds, deployment |
 
 ## Build
