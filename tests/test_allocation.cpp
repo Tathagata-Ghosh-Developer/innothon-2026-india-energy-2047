@@ -19,6 +19,7 @@
 #include "allocation/allocate.hpp"
 #include "core/cached_task.hpp"
 #include "core/csv.hpp"
+#include "core/price_base.hpp"
 #include "core/stats.hpp"
 #include "pipeline/pipeline.hpp"
 #include "pipeline/presets.hpp"
@@ -578,7 +579,9 @@ int emission_factor_latest_period(const std::string& root, const std::string& tm
 }
 
 // CEA-basis levelised cost: CRF(wacc, life) x capex / (CUF x 8,760) + fixed O&M + fuel, in
-// Rs/kWh, then USD/MWh at the RBI rate. Known cases first, then the loaded table.
+// Rs/kWh, then USD/MWh. On the price base (real 2024 USD): rupees moved to FY2024-25 with the
+// GDP deflator, the calendar-2024 RBI rate, and the nominal CERC WACC made real (Fisher) at the
+// RBI target. Known cases first, then the loaded table rebuilt from the files.
 int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
   Checker check;
   std::printf("cea_lcoe_formula\n");
@@ -593,18 +596,36 @@ int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
 
   // Inputs read here from the files themselves.
   std::map<std::string, double> basis;
+  std::map<std::string, std::string> basis_year;
   {
     const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/cea_cost_basis.csv");
-    for (size_t i = 0; i < t.rows(); ++i) basis[t.str(i, t.col("parameter"))] = t.num(i, t.col("value"));
+    for (size_t i = 0; i < t.rows(); ++i) {
+      basis[t.str(i, t.col("parameter"))] = t.num(i, t.col("value"));
+      basis_year[t.str(i, t.col("parameter"))] = t.str(i, t.col("year_basis"));
+    }
   }
-  const double wacc = 0.01 * (basis["debt_share"] * 0.01 * basis["interest_rate"] +
-                              (1.0 - 0.01 * basis["debt_share"]) * basis["return_on_equity_pretax"]);
-  const double inr = basis["inr_per_usd"];
-  std::printf("  pre-tax WACC %.5f (loaded %.5f); Rs per USD %.4f (loaded %.4f)\n", wacc, in.cea_wacc, inr,
-              in.cea_inr_per_usd);
-  check(std::abs(wacc - 0.12585) < 1e-12 && std::abs(in.cea_wacc - wacc) < 1e-12,
-        "pre-tax WACC = 0.70 x 10.71% + 0.30 x 16.96% = 12.585% (CERC)");
-  check(inr == 74.5039 && in.cea_inr_per_usd == inr, "Rs 74.5039 per USD (RBI, FY2021-22 average)");
+  const PriceBase pb = PriceBase::load(root + "/data/external/macro/price_indices.csv");
+  const double nominal = 0.01 * (basis["debt_share"] * 0.01 * basis["interest_rate"] +
+                                 (1.0 - 0.01 * basis["debt_share"]) * basis["return_on_equity_pretax"]);
+  const double wacc = real_rate(nominal, 0.04);
+  const double inr = 83.6693;
+  std::printf("  pre-tax WACC nominal %.5f (loaded %.5f), real %.6f (loaded %.6f); Rs per USD %.4f (loaded %.4f)\n",
+              nominal, in.cea_wacc_nominal, wacc, in.cea_wacc, inr, in.cea_inr_per_usd);
+  check(std::abs(nominal - 0.12585) < 1e-12 && std::abs(in.cea_wacc_nominal - nominal) < 1e-12,
+        "nominal pre-tax WACC = 0.70 x 10.71% + 0.30 x 16.96% = 12.585% (CERC)");
+  check(std::abs(wacc - 0.0825481) < 1e-7 && std::abs(in.cea_wacc - wacc) < 1e-15,
+        "real pre-tax WACC = 1.12585 / 1.04 - 1 = 8.255% (Fisher at the RBI target)");
+  check(in.cea_inflation_target == 0.04 && PolicySettings{}.cea_inflation == in.cea_inflation_target,
+        "default inflation = the RBI CPI target read from the file, 4%");
+  check(in.cea_inr_per_usd == inr, "Rs 83.6693 per USD (RBI, calendar-2024 average)");
+  const double cap = pb.deflate_inr(1.0, "2021-22", "2024-25");
+  check(std::abs(cap - 175.923 / 157.087) < 1e-12 && in.cea_capex_deflator == cap,
+        "NEP capex (2021-22 prices) x 175.923 / 157.087 (GDP deflator FY2024-25 / FY2021-22)");
+  check(basis_year["coal_fuel_cost"] == "2021-22" && basis_year["biomass_fuel_price"] == "2026-27",
+        "fuel price years: coal 2021-22, biomass 2026-27");
+  const double bio_factor = pb.deflate_inr(1.0, "2026-27", "2024-25");
+  check(std::abs(bio_factor - 175.923 / (176.890 * 1.04)) < 1e-12,
+        "biomass FY2026-27 -> FY2024-25: FY2026-27 is FY2025-26 x 1.04 (RBI target, past the data)");
   struct Row {
     double capex, om, life, cuf;
   };
@@ -612,26 +633,30 @@ int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
   {
     const CsvTable t = CsvTable::read(root + "/data/external/techno_economic/cea_costs.csv");
     std::map<std::string, std::string> year;
+    bool price_year = true;
     for (size_t i = 0; i < t.rows(); ++i) {
+      price_year &= t.str(i, t.col("price_year")) == "2021-22";
       const std::string tech = t.str(i, t.col("tech")), y = t.str(i, t.col("year_basis"));
       if (year.count(tech) && year[tech] >= y) continue;
       year[tech] = y;
       nep[tech] = {t.num(i, t.col("capex_cr_per_mw")), t.num(i, t.col("fixed_om_pct")), t.num(i, t.col("life_years")),
                    t.num(i, t.col("cuf"))};
     }
+    check(price_year, "every NEP row is at 2021-22 prices (the 2029-30 solar row too)");
   }
   const Row& c = nep["coal"];
-  const double coal = cea_lcoe_rs_per_kwh(c.capex, c.om, c.life, c.cuf, basis["coal_fuel_cost"], wacc) * 1000.0 / inr;
+  const double coal =
+      cea_lcoe_rs_per_kwh(c.capex * cap, c.om, c.life, c.cuf, basis["coal_fuel_cost"] * cap, wacc) * 1000.0 / inr;
   const Row& s = nep["solar"];
-  const double solar = cea_lcoe_rs_per_kwh(s.capex, s.om, s.life, s.cuf, 0.0, wacc) * 1000.0 / inr;
+  const double solar = cea_lcoe_rs_per_kwh(s.capex * cap, s.om, s.life, s.cuf, 0.0, wacc) * 1000.0 / inr;
   std::printf("  coal %.4f USD/MWh (loaded %.4f); solar (Rs %.2f Cr/MW, the 2029-30 row) %.4f (loaded %.4f)\n", coal,
               in.cea_lcoe_usd_per_mwh[kCoal], s.capex, solar, in.cea_lcoe_usd_per_mwh[kSolar]);
   check(s.capex == 4.1, "solar uses the latest NEP row (Rs 4.1 Cr/MW, 2029-30)");
   check(std::abs(in.cea_lcoe_usd_per_mwh[kCoal] - coal) < 1e-9, "coal: NEP capex, O&M, life, CUF + CEA fuel 2.4 Rs/kWh");
   check(std::abs(in.cea_lcoe_usd_per_mwh[kSolar] - solar) < 1e-9, "solar: NEP capex, O&M, life, CUF, no fuel");
-  const double bio_fuel = 4200.0 / basis["biomass_gcv"] * basis["biomass_fuel_price"] / 1000.0;
+  const double bio_fuel = 4200.0 / basis["biomass_gcv"] * basis["biomass_fuel_price"] / 1000.0 * bio_factor;
   const Row& o = nep["bioenergy"];
-  const double bio = cea_lcoe_rs_per_kwh(o.capex, o.om, o.life, o.cuf, bio_fuel, wacc) * 1000.0 / inr;
+  const double bio = cea_lcoe_rs_per_kwh(o.capex * cap, o.om, o.life, o.cuf, bio_fuel, wacc) * 1000.0 / inr;
   check(std::abs(in.cea_lcoe_usd_per_mwh[kBio] - bio) < 1e-9, "bioenergy: fuel = 4200 kcal/kWh / 3100 kcal/kg x CERC price");
   bool flat = true, solar_scaled = true, kept = true;
   for (int r = 0; r < kRegions; ++r) {
@@ -644,24 +669,41 @@ int cea_lcoe_formula(const std::string& root, const AllocationInputs& in) {
   check(flat, "coal: one CEA-basis cost in every region");
   check(solar_scaled, "solar and wind: regional CUF scaling as in the IEA basis");
   check(kept, "nuclear and gas: no NEP capex, so they keep the IEA cost");
-  std::printf("  %-14s %10s %10s\n", "source", "IEA", "CEA");
+  // Inflation only changes the real WACC: the default table is the loaded one, a lower inflation
+  // (higher real WACC) raises every capital cost, a higher one lowers it.
+  const RegionTech t2 = cea_cost_table(in, 0.02), t4 = cea_cost_table(in, 0.04), t6 = cea_cost_table(in, 0.06);
+  bool same = true, order = true;
+  for (int r = 0; r < kRegions; ++r)
+    for (int k = 0; k < kTechs; ++k) {
+      same &= t4[r][k] == in.cost_cea[r][k];
+      if (!in.cea_from_iea[k]) order &= t2[r][k] > t4[r][k] && t4[r][k] > t6[r][k];
+      else order &= t2[r][k] == t4[r][k] && t4[r][k] == t6[r][k];
+    }
+  check(same, "cea_cost_table at the RBI target = the loaded CEA table");
+  check(order, "2% inflation costs more than 4%, 4% more than 6%; nuclear and gas (IEA) unchanged");
+  std::printf("  %-14s %10s %10s %10s %10s\n", "source", "IEA", "CEA pi 4%", "pi 2%", "pi 6%");
   for (int k = 0; k < kTechs; ++k) {
-    double iea = 0, cea = 0;
+    double iea = 0, cea = 0, c2 = 0, c6 = 0;
     for (int r = 0; r < kRegions; ++r) {
       iea += in.cost[r][k] / kRegions;
       cea += in.cost_cea[r][k] / kRegions;
+      c2 += t2[r][k] / kRegions;
+      c6 += t6[r][k] / kRegions;
     }
-    std::printf("  %-14s %10.2f %10.2f   USD/MWh, mean over regions%s\n", tech_key(k), iea, cea,
+    std::printf("  %-14s %10.2f %10.2f %10.2f %10.2f   USD/MWh, mean over regions%s\n", tech_key(k), iea, cea, c2, c6,
                 in.cea_from_iea[k] ? " (IEA kept)" : "");
   }
-  bool note = false, nominal = false;
+  bool note = false, real = false, old_caveat = false;
   for (const std::string& n : in.notes) {
     if (n.rfind("CEA cost basis", 0) != 0) continue;
     note |= n.find("nuclear and gas keep the IEA") != std::string::npos;
-    nominal |= n.find("level nominal annuity") != std::string::npos && n.find("real 2021-22") != std::string::npos;
+    real |= n.find("real 2024 USD") != std::string::npos && n.find("Fisher") != std::string::npos &&
+            n.find("not an official figure") != std::string::npos;
+    old_caveat |= n.find("level nominal annuity") != std::string::npos;
   }
   check(note, "provenance note flags nuclear and gas kept at IEA cost");
-  check(nominal, "provenance note discloses nominal CERC rates on real NEP capex");
+  check(real, "provenance note: real 2024 USD, Fisher WACC, the FY2026-27 deflator extension labelled");
+  check(!old_caveat, "the old nominal-on-real caveat is gone");
   return check.fails;
 }
 
@@ -692,10 +734,12 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
   check(robust_again == robust_before, "Robust preset unchanged");
   check(std::abs(solve_least_cost(in, PolicySettings{}, req).cost_busd - default_cost_before) < 1e-9,
         "default plan cost unchanged after the cases");
-  const char* names[] = {"base", "cost_basis_cea", "solar_potential_nise2014", "wind_120m", "build_low", "build_central"};
-  bool named = rows.size() == 6;
+  const char* names[] = {"base",      "cost_basis_cea", "cost_basis_cea_pi2", "cost_basis_cea_pi6", "solar_potential_nise2014",
+                         "wind_120m", "build_low",      "build_central"};
+  bool named = rows.size() == 8;
   for (size_t i = 0; named && i < rows.size(); ++i) named &= rows[i].name == names[i];
-  check(named, "six cases in order: base, cost_basis_cea, solar_potential_nise2014, wind_120m, build_low, build_central");
+  check(named, "eight cases in order: base, cost_basis_cea (_pi2, _pi6), solar_potential_nise2014, wind_120m, build_low, "
+               "build_central");
   if (!named) return check.fails;
   auto with = [&](void (*f)(PolicySettings&)) {
     PolicySettings p = robust_before;
@@ -703,14 +747,26 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
     return p;
   };
   check(rows[0].policy == robust_before, "base: the policy as passed");
-  check(rows[1].policy == with([](PolicySettings& p) { p.cost_basis = kCostCEA; }), "cost_basis_cea: cost_basis only");
-  check(rows[2].policy == with([](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }),
+  check(robust_before.cea_inflation == 0.04 &&
+            rows[1].policy == with([](PolicySettings& p) { p.cost_basis = kCostCEA; }),
+        "cost_basis_cea: cost_basis only (inflation stays at the 4% default)");
+  check(rows[2].policy == with([](PolicySettings& p) {
+          p.cost_basis = kCostCEA;
+          p.cea_inflation = 0.02;
+        }),
+        "cost_basis_cea_pi2: cost_basis and cea_inflation 2% only");
+  check(rows[3].policy == with([](PolicySettings& p) {
+          p.cost_basis = kCostCEA;
+          p.cea_inflation = 0.06;
+        }),
+        "cost_basis_cea_pi6: cost_basis and cea_inflation 6% only");
+  check(rows[4].policy == with([](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }),
         "solar_potential_nise2014: solar_potential_set only");
-  check(rows[3].policy == with([](PolicySettings& p) { p.wind_height = 120; }), "wind_120m: wind_height only");
-  check(rows[4].policy == with([](PolicySettings& p) { p.build_case = kBuildLow; }), "build_low: build_case low only");
-  check(rows[5].policy == with([](PolicySettings& p) { p.build_case = kBuildCentral; }),
+  check(rows[5].policy == with([](PolicySettings& p) { p.wind_height = 120; }), "wind_120m: wind_height only");
+  check(rows[6].policy == with([](PolicySettings& p) { p.build_case = kBuildLow; }), "build_low: build_case low only");
+  check(rows[7].policy == with([](PolicySettings& p) { p.build_case = kBuildCentral; }),
         "build_central: build_case central only");
-  check(robust_before.build_case == kBuildHigh && !(rows[5].policy == rows[0].policy),
+  check(robust_before.build_case == kBuildHigh && !(rows[7].policy == rows[0].policy),
         "Robust is on the high case, so build_central differs from base");
   bool ok = true;
   for (const MixSensitivityRow& r : rows) {
@@ -722,11 +778,19 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
   check(ok, "every case solves at the median and the P90 requirement");
   check(std::abs(rows[0].plan.cost_busd - direct.cost_busd) < 1e-9 && std::abs(rows[0].plan.co2_mt - direct.co2_mt) < 1e-9,
         "base row = the policy solved directly");
-  double cea_cost = 0;
+  double cea_cost = 0, cea2_cost = 0, cea6_cost = 0;
+  const RegionTech t2 = cea_cost_table(in, 0.02), t6 = cea_cost_table(in, 0.06);
   for (int r = 0; r < kRegions; ++r)
-    for (int s = 0; s < kTechs; ++s) cea_cost += rows[1].plan.gen[r][s] * in.cost_cea[r][s] * 1e-3;
+    for (int s = 0; s < kTechs; ++s) {
+      cea_cost += rows[1].plan.gen[r][s] * in.cost_cea[r][s] * 1e-3;
+      cea2_cost += rows[2].plan.gen[r][s] * t2[r][s] * 1e-3;
+      cea6_cost += rows[3].plan.gen[r][s] * t6[r][s] * 1e-3;
+    }
   check(std::abs(rows[1].plan.cost_busd - cea_cost) < 1e-9 * cea_cost, "cost_basis_cea: plan priced at the CEA-basis costs");
-  const Bounds b2 = make_bounds(in, rows[2].policy, req), b3 = make_bounds(in, rows[3].policy, req);
+  check(std::abs(rows[2].plan.cost_busd - cea2_cost) < 1e-9 * cea2_cost &&
+            std::abs(rows[3].plan.cost_busd - cea6_cost) < 1e-9 * cea6_cost,
+        "cost_basis_cea_pi2 and _pi6: plans priced at the CEA table of their own inflation");
+  const Bounds b2 = make_bounds(in, rows[4].policy, req), b3 = make_bounds(in, rows[5].policy, req);
   bool solar = true, wind = true;
   for (int r = 0; r < kRegions; ++r) {
     solar &= b2.hi[r][kSolar] == std::max(in.base_twh[r][kSolar], robust.solar_land * in.solar_potential_nise2014_twh[r]);
@@ -743,8 +807,9 @@ int sensitivity_from_copy(const AllocationInputs& in, const std::array<double, k
     return false;
   };
   check(throws([](PolicySettings& p) { p.cost_basis = 2; }) && throws([](PolicySettings& p) { p.wind_height = 100; }) &&
-            throws([](PolicySettings& p) { p.solar_potential_set = 2; }),
-        "unknown cost basis, wind height or solar set: error");
+            throws([](PolicySettings& p) { p.solar_potential_set = 2; }) &&
+            throws([](PolicySettings& p) { p.cea_inflation = -1.0; }),
+        "unknown cost basis, wind height or solar set, or inflation of -100%: error");
   return check.fails;
 }
 

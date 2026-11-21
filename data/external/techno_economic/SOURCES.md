@@ -117,6 +117,7 @@ Columns: `technology, cost_metric, year, value_low, value_central, value_high, u
 Raw copies of every document are in `raw/lcoe/` (subfolders `seci`, `pib`, `nuclear`, `coal`, `gas`, `hydro`, `cerc`, `cea`, `iea`, `state_bess`, `mop`).
 Every computed value (capacity-weighted means, crore per MW, paise to rupees, rupees to lakh) is stated in the `notes` column of its row.
 Tariffs are nominal and in the year of discovery unless the row says otherwise; no currency or price-year conversion was applied.
+The model uses rupee tariffs only as ratios to the new-coal tariffs (hydro, bioenergy, the round-the-clock premium), which are inflation-neutral, so it converts none of them; the IEA rows are already in real 2024 USD, the model's price base (`data/external/macro/`). The model checks the IEA unit and would rebase any other price year with the US GDP deflator.
 
 **SECI e-reverse auction result sheets (seci.co.in).**
 For each tender we downloaded the one-page result sheet linked from the SECI "Tenders Results" page (`https://seci.co.in/tenders/results`, then the tender-detail page).
@@ -484,6 +485,7 @@ Columns: `tech, capex_cr_per_mw, fixed_om_pct, life_years, cuf, fuel_cost_rs_per
   The costs are at the 2021-22 price level: "All the Capex figures are on actual basis at the cost level of 2021-22 i.e., inflation is not considered while calculating capex" (Annexure 5.1, PDF page 156).
 * Units: `capex_cr_per_mw` in Rs crore per MW; `fixed_om_pct` is fixed O&M per year as a percentage of capex; `life_years` is the annexure's "Amortization/Life time" column; `cuf` is a fraction; `heat_rate` is in MCal/MWh (equal to kcal/kWh) at maximum loading; `fuel_cost_rs_per_kwh` in Rs per kWh; `wacc_pct` in percent.
 * `year_basis` is the year a value applies. Solar has a 2021-22 row (Rs 4.5 crore per MW) and a 2029-30 row (Rs 4.1 crore per MW), both at 2021-22 prices, from the annexure footnote.
+* `price_year` is the price level of the money values in the row: 2021-22 for every row, per the annexure note quoted above (so the 2029-30 solar row is a 2029-30 cost at 2021-22 prices). The column was added on 2026-11-21 for the price base (next section); the model deflates each row from its `price_year`.
 * Coal fixed O&M is printed as Rs 19.54 lakh per MW; 2.34 percent is our conversion (0.1954 / 8.34).
 * Ranges printed in the annexure are entered as our midpoints, and `source_location` says so: hydro capex 6-20 (13), pumped storage capex 3-8 (5.5), candidate coal heat rate 2060-2125 (2092.5) and existing gas heat rate 2000-2900 (2450).
 * CUF: solar 22 percent (reply to comment 21.21); coal 58.7 percent (Table 5.14, 2031-32); nuclear 68 percent and biomass 60 percent (Annexure 5.1 availability); onshore wind, hydro and gas are NEP-implied ratios of generation to capacity (Tables 5.7, 5.8, 5.11 and 5.12); offshore wind is the mean of the two regional values (WR 36.47, SR 57.49). The same values are used in `build_limits.csv`.
@@ -511,7 +513,7 @@ The model (`src/allocation/inputs.cpp`, section 5b) computes, for each source wi
 
     cost (Rs/kWh) = CRF(WACC, life) x capex / (CUF x 8,760) + fixed O&M + fuel,   CRF(r, n) = r / (1 - (1 + r)^-n)
 
-with capex, O&M, life and CUF from `cea_costs.csv` (the latest `year_basis` row, so solar uses its 2029-30 capex of Rs 4.1 crore per MW), and converts it to USD/MWh at the rupee-dollar rate below.
+with capex, O&M, life and CUF from `cea_costs.csv` (the latest `year_basis` row, so solar uses its 2029-30 capex of Rs 4.1 crore per MW), and converts it to USD/MWh on the model's price base, real 2024 USD (see "Conversion to real 2024 USD" below).
 Solar and onshore wind are then scaled by regional CUF in the same way as the IEA costs.
 Nuclear and gas have no NEP capex (Section 5.6.8 of the NEP), so they keep their IEA cost in the CEA basis.
 Firmed RE is the CEA-basis solar cost plus the same round-the-clock premium as in the IEA basis.
@@ -539,14 +541,21 @@ The price level matches the NEP capex (2021-22).
 URL `https://www.rbi.org.in/Scripts/PublicationsView.aspx?id=23958` (read 2026-11-19).
 US dollar, 2021-22 annual average: **Rs 74.5039 per USD**. The 2025-26 average is 88.3071 and is not used.
 The table notes say the rates are RBI reference rates from May 2012, and FBIL began publishing the reference rates on 10 July 2018.
-FY2021-22 is used because the NEP capex and the CEA coal variable cost are at 2021-22 prices.
 The RBI file server refused a scripted download of the table (it returned a bot-check page), so there is no raw copy; the values were read from the table page on the RBI site.
+Since 2026-11-21 this row is reference only (`used` = `no`): the CEA basis is converted at the calendar-2024 rate instead (next paragraph).
 
-Price-level caveats, also stated in the model's provenance note:
+**Conversion to real 2024 USD** (since 2026-11-21; indices, rates and targets in `data/external/macro/price_indices.csv`, documented in `data/external/macro/SOURCES.md`, all official and secondary).
+The CEA basis is on the same price base as the IEA WEO 2025 costs, real 2024 USD, so the two bases can be compared directly.
+The model (`src/allocation/inputs.cpp`, section 5b, with `src/core/price_base.hpp`) converts each input from its own price year:
 
-* The CEA basis is in USD at 2021-22 prices and the 2021-22 exchange rate. It is not converted to 2024 USD, the price year of the IEA basis.
-* The biomass fuel price is at FY2026-27 prices and the interest rate uses the 2025-26 MCLR. Neither is deflated to 2021-22.
-* The CERC interest rate and return on equity are nominal, while the NEP capex is in real 2021-22 terms. The capital recovery factor at the nominal pre-tax WACC therefore gives a level nominal annuity (as a tariff does), which overstates a real levelised cost against the IEA basis. The effect is largest for capital-heavy sources (solar, wind, hydro) and is one reason CEA-basis solar is far above IEA. No inflation figure is applied, because none is sourced here.
+* **Capex and fixed O&M** (NEP, 2021-22 prices, `price_year` in `cea_costs.csv`): x 175.923 / 157.087 = **1.11991**, the MoSPI GDP deflator (2011-12 series) of FY2024-25 over FY2021-22. FY2024-25 stands for 2024, because MoSPI publishes the deflator by fiscal year only.
+* **Coal fuel** (CEA, 2021-22 prices, `year_basis`): the same factor, 2.4 -> 2.688 Rs/kWh.
+* **Biomass fuel** (CERC, FY2026-27 prices, `year_basis`): the published deflator ends in FY2025-26 (176.890), so FY2026-27 is extended at the RBI CPI target of 4 percent a year (176.890 x 1.04 = 183.966), which is not an official figure and is labelled as such in the provenance note. Factor 175.923 / 183.966 = 0.95628, so 6.177 -> 5.907 Rs/kWh.
+* **Exchange rate**: FY2024-25 rupees are converted at the RBI calendar-2024 average, **Rs 83.6693 per USD**.
+* **WACC**: the CERC interest rate and return on equity are nominal, so the pre-tax WACC of 12.585 percent is made real with the Fisher relation at the RBI CPI target (4 percent, Gazette notification S.O. 1580(E) of 25 Mar 2026): (1.12585 / 1.04) - 1 = **8.255 percent**. The capital recovery factor is then a real annuity on real capex. The sensitivity rows `cost_basis_cea_pi2` and `cost_basis_cea_pi6` in `outputs/sensitivity_mix.csv` take the RBI tolerance band, 2 and 6 percent (real WACC 10.378 and 6.212 percent).
+* The interest rate rests on the 2025-26 SBI MCLR and the return on equity is a regulatory rate; as rates they carry no price year and are not deflated.
+
+CEA-basis costs before regional scaling, USD/MWh (before: 2021-22 USD at the FY2021-22 rate with the nominal WACC; after: real 2024 USD at 4 percent inflation): coal 66.20 -> 57.98, hydro 73.27 -> 53.45, solar 40.75 -> 30.11, onshore wind 54.57 -> 40.32, offshore wind 63.76 -> 47.11, bioenergy 119.41 -> 98.97. Nuclear and gas keep their IEA cost (70 and 95).
 
 ---
 

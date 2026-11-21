@@ -1213,8 +1213,9 @@ void App::data_sources() {
          "Upper bounds on generation; NISE 2014 and NIWE 120 m as mix sensitivities"},
         {"Capacity factors", "CEA NEP 2022-32; Ember observed", "Potential to generation conversion"},
         {"Costs 2047", "IEA WEO 2025; SECI auctions; CERC", "Least-cost optimisation"},
-        {"CEA cost basis", "CEA NEP 2022-32 capital costs; CERC RE tariff order 2026 (WACC); CEA and CERC fuel; RBI rate "
-         "(secondary)", "Mix sensitivity only (cost_basis_cea)"},
+        {"CEA cost basis", "CEA NEP 2022-32 capital costs; CERC RE tariff order 2026 (WACC); CEA and CERC fuel; MoSPI GDP "
+         "deflator, RBI 2024 rate and RBI CPI target (secondary)",
+         "Mix sensitivity only, in real 2024 USD (cost_basis_cea; _pi2 and _pi6 at 2% and 6% inflation)"},
         {"Emission factors", "CEA CO2 Baseline Database v22 (FY2025-26; v21 kept as history)", "CO2 of each plan"},
         {"Inter-regional corridors", "CEA / NEP Vol II (2032 plan)", "Transfer limits and losses"},
         {"Nuclear pipeline", "DAE / NPCIL",
@@ -1527,7 +1528,7 @@ void App::data_mix() {
                 100 * sc_.requirement_quantile, with_commas(planned).c_str(), with_commas(p90).c_str());
   help(b);
   // Solved only while this view is open, on a worker thread, and again only when the policy or
-  // the requirement changes (CachedTask): the other views never wait for these 12 solves.
+  // the requirement changes (CachedTask): the other views never wait for these 16 solves.
   const MixSensitivityKey key{&alloc, s.policy, s.requirement, j.requirement_p90};
   using MixState = CachedTask<MixSensitivityKey, MixEvidence>::State;
   const MixState ms = mix_.request(key, [key] {

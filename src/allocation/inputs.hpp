@@ -90,16 +90,33 @@ struct AllocationInputs {
   // wind_height): NISE 2014 solar technical potential and NIWE 120 m wind potential, each x
   // the same regional CUF x 8.76 as the defaults (NISE 2025 ground-mounted, NIWE 150 m).
   std::array<double, kRegions> solar_potential_nise2014_twh{}, wind_120m_potential_twh{};
+  // Every cost is in real 2024 USD (core/price_base.hpp), the price year of IEA WEO 2025.
   RegionTech cost{};            // USD/MWh in 2047 (regional resource quality applied): IEA basis, the default
+  // Regional resource quality applied to the national solar and onshore wind costs of both
+  // bases: mean regional CUF / the region's CUF (1 for the other sources).
+  std::array<double, kRegions> solar_cost_scale{}, wind_cost_scale{};
   // CEA cost basis (PolicySettings::cost_basis), USD/MWh with the same regional resource
   // quality: cea_lcoe_rs_per_kwh on the CEA NEP 2022-32 inputs (cea_costs.csv) with a CERC
-  // pre-tax WACC, CEA/CERC fuel costs and an RBI exchange rate (cea_cost_basis.csv). Sources
-  // with no NEP capex (nuclear, gas) keep their IEA cost (cea_from_iea).
+  // pre-tax WACC and CEA/CERC fuel costs (cea_cost_basis.csv), on real 2024 USD: capex
+  // (2021-22 prices) and fuel (each at its own price year) moved to FY2024-25 rupees with the
+  // MoSPI GDP deflator, converted at the calendar-2024 RBI average, and the nominal CERC WACC
+  // made real with the Fisher relation at the RBI CPI target. Sources with no NEP capex
+  // (nuclear, gas) keep their IEA cost (cea_from_iea). cost_cea and cea_lcoe_usd_per_mwh are
+  // at the default inflation (cea_inflation_target); cea_cost_table gives any other.
   RegionTech cost_cea{};
   std::array<double, kTechs> cea_lcoe_usd_per_mwh{};  // national CEA-basis cost before regional scaling
   std::array<bool, kTechs> cea_from_iea{};            // true: the CEA basis keeps the IEA cost
-  double cea_wacc = 0;          // pre-tax WACC, fraction
-  double cea_inr_per_usd = 0;   // Rs per USD
+  // NEP inputs of each CEA-basis source in FY2024-25 rupees (capex Rs crore per MW, fuel Rs/kWh).
+  struct CeaNep {
+    double capex_cr_per_mw = 0, fixed_om_pct = 0, life_years = 0, cuf = 0, fuel_rs_per_kwh = 0;
+  };
+  std::array<CeaNep, kTechs> cea_nep{};
+  double cea_firm_premium = 0;     // IEA-basis round-the-clock premium over solar, USD/MWh (national)
+  double cea_wacc_nominal = 0;     // CERC pre-tax WACC, nominal, fraction
+  double cea_inflation_target = 0; // RBI CPI target, fraction: the default inflation of the real WACC
+  double cea_wacc = 0;             // real pre-tax WACC at cea_inflation_target (Fisher), fraction
+  double cea_capex_deflator = 0;   // GDP deflator FY2024-25 / FY2021-22 (NEP capex price year)
+  double cea_inr_per_usd = 0;      // Rs per USD: RBI calendar-2024 average
   std::array<double, kTechs> emission_t_per_mwh{};
   std::string emission_period;  // CEA CO2 Baseline Database period of emission_t_per_mwh
   std::array<double, kRegions> nuclear_units{};  // reactor units built or in pipeline
@@ -151,5 +168,13 @@ struct AllocationInputs {
 };
 
 AllocationInputs load_allocation_inputs(const std::string& repo_root);
+
+// CEA-basis costs in real 2024 USD/MWh at an expected inflation rate (fraction): the real
+// pre-tax WACC is real_rate(cea_wacc_nominal, inflation); everything else is fixed. National
+// costs (before regional scaling), and the table by region (solar and wind scaled by regional
+// CUF as in the IEA basis). Nuclear and gas: the IEA cost. Firmed RE: CEA solar + the IEA-basis
+// round-the-clock premium. Throws std::invalid_argument if inflation <= -1.
+std::array<double, kTechs> cea_lcoe_usd(const AllocationInputs& in, double inflation);
+RegionTech cea_cost_table(const AllocationInputs& in, double inflation);
 
 }  // namespace e47

@@ -1,5 +1,6 @@
 add_library(e47_core STATIC
   core/csv.cpp
+  core/price_base.cpp
   forecast/panel.cpp
   forecast/models.cpp
   forecast/backtest.cpp

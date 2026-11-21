@@ -51,9 +51,10 @@ double AllocationResult::nonfossil_share() const {
 
 double AllocationResult::unserved_total() const { return std::accumulate(unserved.begin(), unserved.end(), 0.0); }
 
-const RegionTech& cost_table(const AllocationInputs& in, const PolicySettings& p) {
+RegionTech cost_table(const AllocationInputs& in, const PolicySettings& p) {
+  if (!(p.cea_inflation > -1.0)) throw std::invalid_argument("cea_inflation must be above -100 percent");
   if (p.cost_basis == kCostIEA) return in.cost;
-  if (p.cost_basis == kCostCEA) return in.cost_cea;
+  if (p.cost_basis == kCostCEA) return cea_cost_table(in, p.cea_inflation);
   throw std::invalid_argument("cost_basis must be 0 (IEA) or 1 (CEA)");
 }
 
@@ -207,7 +208,7 @@ AllocationResult solve_least_cost(const AllocationInputs& in, const PolicySettin
   const double gas_min = gas_min_twh(in, p);  // throws on a share outside [0, 1]
   const Bounds b = make_bounds(in, p, req);
   const double total_req = std::accumulate(req.begin(), req.end(), 0.0);
-  const RegionTech& unit_cost = cost_table(in, p);
+  const RegionTech unit_cost = cost_table(in, p);
 
   std::vector<double> cost(nvar, 0.0), lo(nvar, 0.0), hi(nvar, kHighsInf);
   for (int r = 0; r < kRegions; ++r)
@@ -535,8 +536,23 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
   };
   static const Spec specs[] = {
       {"base", "the policy as given", [](PolicySettings&) {}},
-      {"cost_basis_cea", "CEA NEP 2022-32 cost basis (CERC WACC, CEA and CERC fuel, RBI rate); nuclear and gas at IEA",
-       [](PolicySettings& p) { p.cost_basis = kCostCEA; }},
+      {"cost_basis_cea",
+       "CEA NEP 2022-32 cost basis in real 2024 USD (CERC WACC made real at the RBI target, 4%; CEA and CERC fuel; "
+       "MoSPI GDP deflator; RBI 2024 rate); nuclear and gas at IEA",
+       [](PolicySettings& p) {
+         p.cost_basis = kCostCEA;
+         p.cea_inflation = 0.04;
+       }},
+      {"cost_basis_cea_pi2", "the same CEA cost basis with the CERC WACC made real at 2% inflation (RBI lower tolerance)",
+       [](PolicySettings& p) {
+         p.cost_basis = kCostCEA;
+         p.cea_inflation = 0.02;
+       }},
+      {"cost_basis_cea_pi6", "the same CEA cost basis with the CERC WACC made real at 6% inflation (RBI upper tolerance)",
+       [](PolicySettings& p) {
+         p.cost_basis = kCostCEA;
+         p.cea_inflation = 0.06;
+       }},
       {"solar_potential_nise2014", "solar potential: NISE 2014 technical potential instead of NISE 2025 ground-mounted",
        [](PolicySettings& p) { p.solar_potential_set = kSolarNise2014; }},
       {"wind_120m", "onshore wind potential: NIWE 120 m instead of 150 m", [](PolicySettings& p) { p.wind_height = 120; }},
@@ -572,7 +588,7 @@ AllocationResult allocate_by_score(const AllocationInputs& in, const PolicySetti
                                    const std::array<double, kRegions>& req,
                                    const std::array<double, kTechs>& national) {
   Bounds b = make_bounds(in, p, req);
-  const RegionTech& unit_cost = cost_table(in, p);
+  const RegionTech unit_cost = cost_table(in, p);
   AllocationResult res;
   res.requirement = req;
   for (int s = 0; s < kTechs; ++s) {

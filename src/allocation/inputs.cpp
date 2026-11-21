@@ -10,6 +10,7 @@
 #include <stdexcept>
 
 #include "../core/csv.hpp"
+#include "../core/price_base.hpp"
 #include "../regional/convergence.hpp"  // normalize_state
 
 namespace e47 {
@@ -224,6 +225,34 @@ double cea_lcoe_rs_per_kwh(double capex_cr_per_mw, double fixed_om_pct, double l
   const double kwh_per_mw = cuf * 8760.0 * 1000.0;       // a year
   return (capital_recovery_factor(wacc, life_years) + fixed_om_pct / 100.0) * capex_rs_per_mw / kwh_per_mw +
          fuel_rs_per_kwh;
+}
+
+std::array<double, kTechs> cea_lcoe_usd(const AllocationInputs& in, double inflation) {
+  const double wacc = real_rate(in.cea_wacc_nominal, inflation);  // throws if inflation <= -1
+  if (!(in.cea_inr_per_usd > 0)) throw std::invalid_argument("CEA cost basis: inputs not loaded");
+  std::array<double, kTechs> cc{};
+  for (int s : {kCoal, kHydro, kSolar, kWind, kOffshore, kBio}) {
+    const AllocationInputs::CeaNep& n = in.cea_nep[s];
+    cc[s] = cea_lcoe_rs_per_kwh(n.capex_cr_per_mw, n.fixed_om_pct, n.life_years, n.cuf, n.fuel_rs_per_kwh, wacc) *
+            1000.0 / in.cea_inr_per_usd;
+  }
+  // Nuclear and gas keep the IEA cost, which is the same in every region.
+  for (int s : {kGas, kNuclear}) cc[s] = in.cost[0][s];
+  cc[kFirmRE] = cc[kSolar] + in.cea_firm_premium;
+  return cc;
+}
+
+RegionTech cea_cost_table(const AllocationInputs& in, double inflation) {
+  const std::array<double, kTechs> cc = cea_lcoe_usd(in, inflation);
+  RegionTech t{};
+  for (int r = 0; r < kRegions; ++r)
+    for (int s = 0; s < kTechs; ++s) {
+      double v = cc[s];
+      if (s == kSolar) v *= in.solar_cost_scale[r];
+      if (s == kWind) v *= in.wind_cost_scale[r];
+      t[r][s] = v;
+    }
+  return t;
 }
 
 AllocationInputs load_allocation_inputs(const std::string& root) {
@@ -798,25 +827,61 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     in.notes.push_back("Offshore wind potential: NIWE initial assessment (Gujarat, Tamil Nadu) x CEA offshore CUF.");
   }
 
-  // 5. Costs, USD/MWh in 2047.
+  // 5. Costs, USD/MWh in 2047, on one price base: real 2024 USD (core/price_base.hpp).
+  const PriceBase prices = PriceBase::load(root + "/" + "data/external/macro/price_indices.csv");
   {
     const CsvTable t = CsvTable::read(te + "/lcoe.csv");
     std::map<std::string, std::map<int, double>> iea;
     std::vector<double> coal_tariff, hydro_tariff, bio_tariff, rtc_tariff, solar_avg;
+    std::map<std::string, std::set<std::string>> tariff_years;  // tariff group -> the rows' years
+    std::string rebased;                                         // IEA rows not in 2024 USD
     for (size_t r = 0; r < t.rows(); ++r) {
       const std::string tech = t.str(r, t.col("technology")), metric = t.str(r, t.col("cost_metric"));
       const std::string proj = t.str(r, t.col("project_or_auction"));
-      const double v = t.num(r, t.col("value_central"));
+      double v = t.num(r, t.col("value_central"));
       const double yr = t.num(r, t.col("year"));
+      const std::string& year = t.str(r, t.col("year"));
       if (std::isnan(v)) continue;
-      if (metric == "lcoe_projection" && !std::isnan(yr)) iea[tech][static_cast<int>(yr)] = v;
-      if (tech == "coal" && metric == "discovered_tariff") coal_tariff.push_back(v);
-      if (tech == "large_hydro" && metric == "levelised_tariff") hydro_tariff.push_back(v);
-      if (tech == "biomass" && metric == "regulated_tariff") bio_tariff.push_back(v);
+      if (metric == "lcoe_projection" && !std::isnan(yr)) {
+        // IEA rows are "USD(<price year>)/MWh"; any price year other than 2024 is rebased.
+        const std::string unit = t.str(r, t.col("unit"));
+        if (unit.size() != 13 || unit.rfind("USD(", 0) != 0 || unit.substr(8) != ")/MWh")
+          throw std::runtime_error("lcoe.csv: IEA row without a USD(year)/MWh unit: " + tech + " " + year + ", '" + unit + "'");
+        const int price_year = std::stoi(unit.substr(4, 4));
+        if (price_year != kPriceBaseYear) {
+          v = prices.usd_rebase(v, price_year, kPriceBaseYear);
+          rebased += strf("%s%s %s (USD %d)", rebased.empty() ? "" : ", ", tech.c_str(), year.c_str(), price_year);
+        }
+        iea[tech][static_cast<int>(yr)] = v;
+      }
+      auto take = [&](std::vector<double>& to, const char* group) {
+        to.push_back(v);
+        tariff_years[group].insert(year);
+      };
+      if (tech == "coal" && metric == "discovered_tariff") take(coal_tariff, "coal");
+      if (tech == "large_hydro" && metric == "levelised_tariff") take(hydro_tariff, "hydro");
+      if (tech == "biomass" && metric == "regulated_tariff") take(bio_tariff, "biomass");
       if (tech == "fdre_rtc" && metric == "discovered_tariff" && proj.find("RTC") != std::string::npos)
-        rtc_tariff.push_back(v);
-      if (tech == "solar" && metric == "discovered_tariff" && proj.rfind("Average", 0) == 0) solar_avg.push_back(v);
+        take(rtc_tariff, "round the clock");
+      if (tech == "solar" && metric == "discovered_tariff" && proj.rfind("Average", 0) == 0) take(solar_avg, "solar");
     }
+    std::string years;
+    for (const auto& [group, ys] : tariff_years) {
+      std::string list;
+      for (const std::string& y : ys) list += (list.empty() ? "" : " and ") + y;
+      years += strf("%s%s %s", years.empty() ? "" : ", ", group.c_str(), list.c_str());
+    }
+    in.notes.push_back(strf(
+        "Price base: real 2024 USD, the price year of IEA WEO 2025 (indices, rates and targets in "
+        "data/external/macro/price_indices.csv, all official, secondary). IEA WEO 2025 LCOE (lcoe.csv): %s. Hydro, "
+        "bioenergy and the firmed-RE premium are ratios of Indian rupee tariffs to new-coal tariffs applied to the "
+        "2047 IEA coal cost; a ratio of rupee tariffs is inflation-neutral, so it is applied unchanged (tariff years: "
+        "%s). Storage and the inter-regional corridors carry no cost input (storage is sized physically; corridor "
+        "flows carry a 0.5 USD/MWh numerical wheeling cost) and offshore wind is priced by its IEA row. The CEA cost "
+        "basis is converted to real 2024 USD (its own note). Model settings in USD (the unserved-energy penalty, the "
+        "carbon price) are read in real 2024 USD.",
+        rebased.empty() ? "every row is USD(2024)/MWh, no conversion" : ("rebased with the US GDP deflator: " + rebased).c_str(),
+        years.c_str()));
     auto at2047 = [&](const std::string& tech) {
       const auto& m = iea.at(tech);
       const double a = m.at(2035), b = m.at(2050);
@@ -840,11 +905,15 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       mean_solar += cuf_solar[r] / kRegions;
       mean_wind += cuf_wind[r] / kRegions;
     }
+    for (int r = 0; r < kRegions; ++r) {
+      in.solar_cost_scale[r] = mean_solar / cuf_solar[r];
+      in.wind_cost_scale[r] = mean_wind / cuf_wind[r];
+    }
     for (int r = 0; r < kRegions; ++r)
       for (int s = 0; s < kTechs; ++s) {
         double v = c[s];
-        if (s == kSolar) v *= mean_solar / cuf_solar[r];
-        if (s == kWind) v *= mean_wind / cuf_wind[r];
+        if (s == kSolar) v *= in.solar_cost_scale[r];
+        if (s == kWind) v *= in.wind_cost_scale[r];
         in.cost[r][s] = v;
       }
     in.notes.push_back("Costs: IEA WEO 2025 India LCOE projections interpolated to 2047 (coal, gas, nuclear, solar, wind).");
@@ -852,10 +921,14 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
     in.notes.push_back("Firmed RE: 2047 solar cost plus the current round-the-clock RE premium over plain solar, held constant in real terms.");
     in.notes.push_back("Solar and wind cost scaled by regional CUF relative to the mean regional CUF.");
 
-    // 5b. CEA cost basis (sensitivity): CEA NEP 2022-32 inputs with a CERC pre-tax WACC,
-    //     CEA and CERC fuel costs and an RBI exchange rate. All secondary.
+    // 5b. CEA cost basis (sensitivity): CEA NEP 2022-32 inputs with a CERC pre-tax WACC and
+    //     CEA and CERC fuel costs, all secondary, put on the price base of the IEA costs (real
+    //     2024 USD): capex and fuel are moved from their own price years to FY2024-25 rupees
+    //     with the MoSPI GDP deflator (FY2024-25 stands for 2024), converted at the RBI
+    //     calendar-2024 average, and the nominal CERC WACC is made real with the Fisher relation
+    //     at the RBI CPI target (cea_cost_table takes any other inflation).
     struct NepRow {
-      std::string year;
+      std::string year, price_year;
       double capex = kNaN, om = kNaN, life = kNaN, cuf = kNaN, heat_rate = kNaN;
     };
     std::map<std::string, NepRow> nep;  // the latest year_basis row of each source
@@ -864,14 +937,19 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       for (size_t r = 0; r < n.rows(); ++r) {
         const std::string tech = n.str(r, n.col("tech")), year = n.str(r, n.col("year_basis"));
         if (nep.count(tech) && nep[tech].year >= year) continue;
-        nep[tech] = {year, n.num(r, n.col("capex_cr_per_mw")), n.num(r, n.col("fixed_om_pct")),
-                     n.num(r, n.col("life_years")), n.num(r, n.col("cuf")), n.num(r, n.col("heat_rate"))};
+        nep[tech] = {year, n.str(r, n.col("price_year")), n.num(r, n.col("capex_cr_per_mw")),
+                     n.num(r, n.col("fixed_om_pct")), n.num(r, n.col("life_years")), n.num(r, n.col("cuf")),
+                     n.num(r, n.col("heat_rate"))};
       }
     }
     std::map<std::string, double> basis;
+    std::map<std::string, std::string> basis_year;  // year_basis: the price year of a price row
     {
       const CsvTable b = CsvTable::read(root + "/" + "data/external/techno_economic/cea_cost_basis.csv");
-      for (size_t r = 0; r < b.rows(); ++r) basis[b.str(r, b.col("parameter"))] = b.num(r, b.col("value"));
+      for (size_t r = 0; r < b.rows(); ++r) {
+        basis[b.str(r, b.col("parameter"))] = b.num(r, b.col("value"));
+        basis_year[b.str(r, b.col("parameter"))] = b.str(r, b.col("year_basis"));
+      }
     }
     auto param = [&](const char* k) {
       auto it = basis.find(k);
@@ -880,60 +958,77 @@ AllocationInputs load_allocation_inputs(const std::string& root) {
       return it->second;
     };
     const double debt = param("debt_share") / 100.0, rate = param("interest_rate"), roe = param("return_on_equity_pretax");
-    // The CERC rates are nominal, the NEP capex real (2021-22 prices): the CRF below is a level
-    // nominal annuity, as in a tariff, which overstates a real levelised cost (stated in the note).
-    in.cea_wacc = 0.01 * (debt * rate + (1.0 - debt) * roe);
-    in.cea_inr_per_usd = param("inr_per_usd");
-    const double coal_fuel = param("coal_fuel_cost");
+    in.cea_wacc_nominal = 0.01 * (debt * rate + (1.0 - debt) * roe);
+    in.cea_inflation_target = prices.inflation_target();
+    in.cea_wacc = real_rate(in.cea_wacc_nominal, in.cea_inflation_target);
+    in.cea_inr_per_usd = prices.inr_per_usd(kPriceBaseRatePeriod);
     auto nep_row = [&](const char* k) -> const NepRow& {
       auto it = nep.find(k);
       if (it == nep.end() || std::isnan(it->second.capex) || std::isnan(it->second.om) || std::isnan(it->second.life) ||
-          std::isnan(it->second.cuf))
+          std::isnan(it->second.cuf) || it->second.price_year.empty())
         throw std::runtime_error(std::string("cea_costs.csv: incomplete row for ") + k);
       return it->second;
     };
+    // Rupees of fiscal year fy in FY2024-25 rupees; an extension past the published deflator
+    // (at the RBI target) is collected for the note.
+    std::set<std::string> extensions;
+    auto to_base = [&](double v, const std::string& fy) {
+      std::string note;
+      const double x = prices.deflate_inr(v, fy, kPriceBaseFy, PriceBase::Index::kGdpDeflator, &note);
+      if (!note.empty()) extensions.insert(note);
+      return x;
+    };
+    const std::string coal_fuel_year = basis_year.at("coal_fuel_cost");
+    const std::string bio_price_year = basis_year.at("biomass_fuel_price");
+    const double coal_fuel_raw = param("coal_fuel_cost");
+    const double coal_fuel = to_base(coal_fuel_raw, coal_fuel_year);
     const NepRow& bio_row = nep_row("bioenergy");
     if (std::isnan(bio_row.heat_rate)) throw std::runtime_error("cea_costs.csv: no bioenergy heat rate");
-    const double bio_fuel = bio_row.heat_rate / param("biomass_gcv") * param("biomass_fuel_price") / 1000.0;
-    auto usd = [&](const char* k, double fuel) {
+    const double bio_fuel_raw = bio_row.heat_rate / param("biomass_gcv") * param("biomass_fuel_price") / 1000.0;
+    const double bio_fuel = to_base(bio_fuel_raw, bio_price_year);
+    std::set<std::string> capex_years;
+    auto fill = [&](int s, const char* k, double fuel) {
       const NepRow& n = nep_row(k);
-      return cea_lcoe_rs_per_kwh(n.capex, n.om, n.life, n.cuf, fuel, in.cea_wacc) * 1000.0 / in.cea_inr_per_usd;
+      in.cea_nep[s] = {to_base(n.capex, n.price_year), n.om, n.life, n.cuf, fuel};
+      capex_years.insert(n.price_year);
     };
-    auto& cc = in.cea_lcoe_usd_per_mwh;
-    cc[kCoal] = usd("coal", coal_fuel);
-    cc[kHydro] = usd("hydro", 0.0);
-    cc[kSolar] = usd("solar", 0.0);
-    cc[kWind] = usd("wind", 0.0);
-    cc[kOffshore] = usd("offshore_wind", 0.0);
-    cc[kBio] = usd("bioenergy", bio_fuel);
-    for (int s : {kGas, kNuclear}) {  // no NEP capex for new gas or nuclear plants
-      cc[s] = c[s];
-      in.cea_from_iea[s] = true;
-    }
-    cc[kFirmRE] = cc[kSolar] + (c[kFirmRE] - c[kSolar]);  // the same round-the-clock premium
-    for (int r = 0; r < kRegions; ++r)
-      for (int s = 0; s < kTechs; ++s) {
-        double v = cc[s];
-        if (s == kSolar) v *= mean_solar / cuf_solar[r];
-        if (s == kWind) v *= mean_wind / cuf_wind[r];
-        in.cost_cea[r][s] = v;
-      }
+    fill(kCoal, "coal", coal_fuel);
+    fill(kHydro, "hydro", 0.0);
+    fill(kSolar, "solar", 0.0);
+    fill(kWind, "wind", 0.0);
+    fill(kOffshore, "offshore_wind", 0.0);
+    fill(kBio, "bioenergy", bio_fuel);
+    for (int s : {kGas, kNuclear}) in.cea_from_iea[s] = true;  // no NEP capex for new gas or nuclear plants
+    in.cea_firm_premium = c[kFirmRE] - c[kSolar];               // the same round-the-clock premium
+    in.cea_lcoe_usd_per_mwh = cea_lcoe_usd(in, in.cea_inflation_target);
+    in.cost_cea = cea_cost_table(in, in.cea_inflation_target);
+    const auto& cc = in.cea_lcoe_usd_per_mwh;
+    std::string capex_list, ext_notes;
+    for (const std::string& y : capex_years)
+      capex_list += strf("%s%s prices x %.5f", capex_list.empty() ? "" : "; ", y.c_str(), to_base(1.0, y));
+    for (const std::string& e : extensions) ext_notes += " " + e;
+    const int fy0 = fiscal_start_year(*capex_years.begin());
+    in.cea_capex_deflator = to_base(1.0, *capex_years.begin());
     in.notes.push_back(strf(
-        "CEA cost basis (sensitivity, cost_basis 1; all secondary): CRF(pre-tax WACC, life) x capex / (CUF x 8,760) "
-        "+ fixed O&M + fuel, with the CEA NEP 2022-32 capex, O&M, life and CUF (cea_costs.csv, 2021-22 prices; solar "
-        "at its %s capex). Pre-tax WACC %.3f%% = %.0f%% debt at %.2f%% + %.0f%% equity at %.2f%% (CERC RE Tariff "
-        "Regulations 2024 as applied in order 12/SM/2026). Fuel: coal %.2f Rs/kWh (CEA Optimal Generation Capacity "
-        "Mix 2029-30, midpoint of 1.3-3.5, 2021-22 prices); bioenergy %.3f Rs/kWh (NEP heat rate x CERC FY2026-27 "
-        "biomass price / GCV). Rs %.4f per USD (RBI, FY2021-22 average). Coal %.1f, hydro %.1f, solar %.1f, onshore "
-        "wind %.1f, offshore wind %.1f, bioenergy %.1f USD/MWh before regional scaling. The NEP has no capex for new "
-        "nuclear or gas plants, so nuclear and gas keep the IEA cost (%.1f and %.1f); firmed RE = CEA solar + the "
-        "IEA-basis round-the-clock premium. Not converted to 2024 USD, the IEA price year. The CERC interest rate and "
-        "return on equity are nominal while the NEP capex is in real 2021-22 terms, so the CRF gives a level nominal "
-        "annuity (as a tariff does); this overstates a real levelised cost against the IEA basis, most for the "
-        "capital-heavy sources (solar, wind, hydro), and is one reason CEA-basis solar is far above IEA.",
-        nep_row("solar").year.c_str(), 100 * in.cea_wacc, 100 * debt, rate, 100 * (1 - debt), roe, coal_fuel, bio_fuel,
-        in.cea_inr_per_usd, cc[kCoal], cc[kHydro], cc[kSolar], cc[kWind], cc[kOffshore], cc[kBio], cc[kNuclear],
-        cc[kGas]));
+        "CEA cost basis (sensitivity, cost_basis 1; all secondary), in real 2024 USD: CRF(real pre-tax WACC, life) x "
+        "capex / (CUF x 8,760) + fixed O&M + fuel, with the CEA NEP 2022-32 capex, O&M, life and CUF (cea_costs.csv; "
+        "solar at its %s capex). Every rupee figure is moved to FY2024-25 rupees, the fiscal-year proxy for 2024, with "
+        "the MoSPI GDP deflator (2011-12 series; FY%s %.3f, FY2024-25 %.3f), then converted at the RBI calendar-2024 "
+        "average, Rs %.4f per USD. Capex: %s. Fuel: coal %.2f Rs/kWh at %s prices (CEA Optimal Generation Capacity "
+        "Mix 2029-30, midpoint of 1.3-3.5) -> %.3f Rs/kWh; bioenergy %.3f Rs/kWh at %s prices (NEP heat rate x CERC "
+        "biomass price / GCV) -> %.3f Rs/kWh.%s WACC: the CERC pre-tax rate %.3f%% (%.0f%% debt at %.2f%% + %.0f%% "
+        "equity at %.2f%%, CERC RE Tariff Regulations 2024 as applied in order 12/SM/2026) is nominal, so it is made "
+        "real with the Fisher relation at the RBI CPI target of %.0f%%: (1 + %.5f) / (1 + %.2f) - 1 = %.3f%% "
+        "(PolicySettings::cea_inflation; the sensitivity rows take the RBI band, 2%% and 6%%). Coal %.1f, hydro "
+        "%.1f, solar %.1f, onshore wind %.1f, offshore wind %.1f, bioenergy %.1f USD/MWh before regional scaling. The "
+        "NEP has no capex for new nuclear or gas plants, so nuclear and gas keep the IEA cost (%.1f and %.1f); firmed "
+        "RE = CEA solar + the IEA-basis round-the-clock premium (%.1f USD/MWh).",
+        nep_row("solar").year.c_str(), fiscal_label(fy0).c_str(), prices.inr_index(fy0),
+        prices.inr_index(fiscal_start_year(kPriceBaseFy)), in.cea_inr_per_usd, capex_list.c_str(), coal_fuel_raw,
+        coal_fuel_year.c_str(), coal_fuel, bio_fuel_raw, bio_price_year.c_str(), bio_fuel, ext_notes.c_str(),
+        100 * in.cea_wacc_nominal, 100 * debt, rate, 100 * (1 - debt), roe, 100 * in.cea_inflation_target,
+        in.cea_wacc_nominal, in.cea_inflation_target, 100 * in.cea_wacc, cc[kCoal], cc[kHydro], cc[kSolar], cc[kWind],
+        cc[kOffshore], cc[kBio], cc[kNuclear], cc[kGas], in.cea_firm_premium));
   }
 
   // 6. Emission factors (tCO2/MWh), CEA CO2 Baseline Database: the latest period.

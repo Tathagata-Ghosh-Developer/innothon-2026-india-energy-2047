@@ -4,7 +4,7 @@ This folder holds the official price indices, exchange rates and the inflation t
 It supports design section A of `docs/plans/2026-11-21-inflation-features-design.md`.
 All sources were fetched and read on **2026-11-21**.
 Every source in this folder is **secondary**: the project's primary sources are only NPP and the Renewable India dataset (`docs/data_audit.md`).
-Every source is official: a government statistical office (NSO/MoSPI, the Office of the Economic Adviser, US BLS, US BEA) or the central bank (RBI).
+Every source is official: a government statistical office (NSO/MoSPI, the Office of the Economic Adviser, US BLS, US BEA) or a central bank (RBI; the US Federal Reserve's FOMC for the US inflation goal).
 Every value traces to a file that was fetched and read; nothing was filled from memory.
 Where an official figure does not exist yet, the row is either left out or built from official figures with a stated formula and marked **DERIVED** in `notes`.
 
@@ -20,7 +20,7 @@ Where an official figure does not exist yet, the row is either left out or built
 
 ## File
 
-`price_indices.csv`, long format, 191 rows.
+`price_indices.csv`, long format, 192 rows.
 Columns: `series, unit, period, value, base, source_name, source_url, source_location, accessed, notes`.
 
 | series | periods | content |
@@ -40,6 +40,7 @@ Columns: `series, unit, period, value, base, source_name, source_url, source_loc
 | `rbi_inflation_target_cpi`, `..._lower_tolerance`, `..._upper_tolerance` | FY2016-17 to FY2030-31 | The CPI inflation target (4) and band (2, 6) under section 45ZA of the RBI Act, one row per fiscal year covered by a notification |
 | `us_cpi_u_all_items` | 2020 to 2025 | US CPI-U, U.S. city average, all items, 1982-84=100, annual average |
 | `us_gdp_implicit_price_deflator` | 2020 to 2025 | US GDP implicit price deflator, 2017=100 |
+| `us_fomc_inflation_goal_pce` | 2026 | The FOMC longer-run inflation goal (2 percent, PCE price index), as reaffirmed effective 27 Jan 2026 |
 
 ---
 
@@ -161,6 +162,12 @@ Values: 2020 105.377, 2021 110.159, 2022 118.026, 2023 122.451, 2024 125.587, 20
 Check: nominal GDP (A191RC) / real GDP in chained 2017 dollars (A191RX) x 100 agrees within 0.001 in every year.
 BEA's API needs a registration key, so the published flat file was used.
 
+**Federal Open Market Committee, "Statement on Longer-Run Goals and Monetary Policy Strategy", adopted effective 24 Jan 2012, as reaffirmed effective 27 Jan 2026.**
+URL `https://www.federalreserve.gov/monetarypolicy/files/FOMC_LongerRunGoals.pdf`, fetched and read on 2026-11-21; raw copy `raw/us_fed/FOMC_LongerRunGoals.pdf`.
+Page 1, fourth paragraph: "The Committee reaffirms its judgment that inflation at the rate of 2 percent, as measured by the annual change in the price index for personal consumption expenditures, is most consistent over the longer run with the Federal Reserve's statutory maximum employment and price stability mandates."
+Row `us_fomc_inflation_goal_pce`, period 2026 (the year of the latest reaffirmation), value 2.
+The goal is stated for the PCE price index, not the GDP deflator. The model uses it only to extend the US GDP deflator past 2025 and for the information-only nominal USD outlook (`site_summary.json`, `nominal_outlook`); no headline cost uses it.
+
 ## 7. Price basis of the organiser dataset's GSDP
 
 Question: is `GSDP (crore INR)` in `data/raw/competition/renewable_energy_dataset.csv` at constant or current prices?
@@ -190,6 +197,7 @@ Question: is `GSDP (crore INR)` in `data/raw/competition/renewable_energy_datase
 | `rbi_target/` | RBI Annual Report 2025-26 Chapter III, Report on Currency and Finance 2020-21 Chapter II, Monetary Policy Framework discussion paper (HTML pages) |
 | `us_bls/` | BLS API responses for CUUR0000SA0 (annual averages and monthly values, gzip) |
 | `us_bea/` | BEA NIPA annual flat file and series register (gzip) |
+| `us_fed/` | FOMC Statement on Longer-Run Goals and Monetary Policy Strategy (PDF, reaffirmed effective 27 Jan 2026) |
 | `upstream_renewable_india/` | Upstream README, CSV and notebook of the organiser dataset (gzip) |
 
 ## Not found or not used

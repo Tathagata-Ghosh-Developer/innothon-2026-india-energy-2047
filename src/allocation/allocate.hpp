@@ -48,6 +48,10 @@ struct PolicySettings {
   std::array<double, kTechs> cost_mult{1, 1, 1, 1, 1, 1, 1, 1, 1};
   // Published-figure sensitivities (outputs/sensitivity_mix.csv); the defaults are the main run.
   int cost_basis = kCostIEA;                 // kCostIEA: IEA WEO 2025; kCostCEA: CEA NEP inputs (inputs.hpp)
+  // Expected inflation (fraction) that makes the nominal CERC WACC of the CEA basis real (Fisher
+  // relation, cea_cost_table). Default: the RBI CPI target, 4 percent (price_indices.csv); the
+  // RBI tolerance band (2 and 6 percent) gives the sensitivity rows. The IEA basis ignores it.
+  double cea_inflation = 0.04;
   int solar_potential_set = kSolarNise2025;  // kSolarNise2025 or kSolarNise2014
   int wind_height = 150;                     // NIWE potential at 150 m (default) or 120 m
   // Gas kept for peaking and as a bridge for variable renewables (gas_min_twh): national gas
@@ -66,8 +70,10 @@ struct PolicySettings {
 // national gas build cap. Throws std::invalid_argument if the share is not in [0, 1].
 double gas_min_twh(const AllocationInputs& in, const PolicySettings& p);
 
-// Cost table of the policy's cost basis, USD/MWh by region and source. Throws on an unknown basis.
-const RegionTech& cost_table(const AllocationInputs& in, const PolicySettings& p);
+// Cost table of the policy's cost basis, real 2024 USD/MWh by region and source: the IEA table,
+// or the CEA table at the policy's cea_inflation. Throws std::invalid_argument on an unknown
+// basis or a cea_inflation of -100 percent or below.
+RegionTech cost_table(const AllocationInputs& in, const PolicySettings& p);
 // Generation potential (TWh a year) of source s in region r under the policy's solar set and
 // wind height; other sources: AllocationInputs::potential_twh. Throws on an unknown set or height.
 double potential_twh(const AllocationInputs& in, const PolicySettings& p, int r, int s);
@@ -178,9 +184,10 @@ std::vector<TornadoRow> policy_tornado(const AllocationInputs& in, const PolicyS
 
 // Sensitivity of the mix to the published figures behind it (outputs/sensitivity_mix.csv).
 // Each case is a copy of `base` with one setting changed; `base` itself is never modified.
-// Cases, in order: base; cost_basis_cea (CEA NEP cost basis); solar_potential_nise2014;
-// wind_120m; build_low and build_central (build_case low and central; the Robust preset,
-// the usual base, is already on the high case). Each case is solved at `requirement` and at
+// Cases, in order: base; cost_basis_cea (CEA NEP cost basis, real WACC at the RBI target of 4
+// percent); cost_basis_cea_pi2 and cost_basis_cea_pi6 (the same at 2 and 6 percent, the RBI
+// tolerance band); solar_potential_nise2014; wind_120m; build_low and build_central
+// (build_case low and central; the Robust preset, the usual base, is already on the high case). Each case is solved at `requirement` and at
 // `requirement_p90`. Solves run in parallel.
 struct MixSensitivityRow {
   std::string name, description;
@@ -192,7 +199,7 @@ std::vector<MixSensitivityRow> mix_sensitivity(const AllocationInputs& in, const
                                                const std::array<double, kRegions>& requirement,
                                                const std::array<double, kRegions>& requirement_p90);
 // Everything one mix_sensitivity call reads, to cache its rows (CachedTask in core/cached_task.hpp):
-// the dashboard runs the 12 solves only while its mix evidence view is open, and again only when
+// the dashboard runs the 16 solves only while its mix evidence view is open, and again only when
 // one of these changes. `inputs` is compared by address: a pipeline's inputs never change.
 struct MixSensitivityKey {
   const AllocationInputs* inputs = nullptr;
