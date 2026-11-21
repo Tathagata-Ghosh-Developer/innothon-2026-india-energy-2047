@@ -7,6 +7,7 @@
 #include <set>
 
 #include "../core/csv.hpp"
+#include "../core/price_base.hpp"
 #include "../core/stats.hpp"
 #include "../regional/convergence.hpp"  // normalize_state
 #include "mc.hpp"                       // kRegions, region_name
@@ -100,7 +101,7 @@ PanelFit fe_slope(const std::vector<PanelObs>& obs) {
   return f;
 }
 
-StatePanelData state_panel_data(const std::string& repo_root) {
+StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis* basis) {
   const fs::path root(repo_root);
   StatePanelData d;
   d.first_year = kFirst;
@@ -145,7 +146,8 @@ StatePanelData state_panel_data(const std::string& repo_root) {
   // 2. Challenge dataset: population and GSDP (crore INR) by state and year. The year
   //    before the window is read for the repeated-GSDP rule only.
   struct StateYear {
-    double pop = kNaN, gsdp = kNaN;
+    double pop = kNaN, gsdp = kNaN;  // gsdp at constant prices (after the price-basis correction)
+    double gsdp_read = kNaN;         // as read: the repeated-value rule compares these
   };
   std::set<std::string> names;  // every state name in the dataset, any year
   std::map<std::string, std::map<int, StateYear>> org;
@@ -162,7 +164,8 @@ StatePanelData state_panel_data(const std::string& repo_root) {
       const double p = t.num(i, cp), g = t.num(i, cg);
       StateYear& v = org[s][static_cast<int>(y)];
       v.pop = p > 0 ? p : kNaN;
-      v.gsdp = g > 0 ? g : kNaN;
+      v.gsdp_read = g > 0 ? g : kNaN;
+      v.gsdp = g > 0 && basis ? basis->constant_2011_12(t.str(i, cs), static_cast<int>(y), g) : v.gsdp_read;
       if (y >= kFirst && p > 0) all_pop[static_cast<int>(y)] += p;
     }
   }
@@ -204,7 +207,7 @@ StatePanelData state_panel_data(const std::string& repo_root) {
         continue;
       }
       const StateYear* prev = at(year - 1);
-      if (prev && prev->gsdp == cur->gsdp) {  // placeholder copied from the year before
+      if (prev && prev->gsdp_read == cur->gsdp_read) {  // placeholder copied from the year before
         ++d.n_stale;
         continue;
       }

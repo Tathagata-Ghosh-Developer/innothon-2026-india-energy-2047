@@ -8,6 +8,8 @@
 
 #include "../core/csv.hpp"
 #include "../core/philox.hpp"
+#include "../core/price_base.hpp"
+#include "../regional/convergence.hpp"  // normalize_state
 #include "models.hpp"
 
 namespace e47 {
@@ -28,13 +30,15 @@ double interp(const std::map<int, double>& m, int year) {
 }
 
 struct StateYear {
-  double pop = 0, gsdp = 0;
+  double pop = 0, gsdp = 0;  // gsdp at constant prices (after the price-basis correction)
+  double gsdp_read = 0;      // as read: the repeated-value rule compares these
+  bool in_income = true;     // false: left out of income growth (GsdpOptions::exclude_states)
 };
 
 }  // namespace
 
 IndiaSeries load_india_series(const std::string& npp_csv, const std::string& organiser_csv,
-                              const std::string& urban_csv, int first, int last) {
+                              const std::string& urban_csv, int first, int last, const GsdpOptions& gsdp) {
   // 1. NPP national generation by fiscal year.
   std::map<int, IndiaObs> gen;
   {
@@ -55,15 +59,27 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
     }
   }
 
-  // 2. Organiser data: state population and real GSDP.
+  // 2. Organiser data: state population and real GSDP. A state-year listed in the price-basis
+  //    file is at current prices and is deflated to constant 2011-12 prices here.
   std::map<int, std::map<std::string, StateYear>> org;
+  IndiaSeries s;
   {
+    std::vector<std::string> excluded;
+    for (const std::string& e : gsdp.exclude_states) excluded.push_back(normalize_state(e));
     const CsvTable t = CsvTable::read(organiser_csv);
     const size_t cs = t.col("State"), cy = t.col("Year"), cp = t.col("Population"), cg = t.col("GSDP (crore INR)");
     for (size_t i = 0; i < t.rows(); ++i) {
       const double y = t.num(i, cy), p = t.num(i, cp), g = t.num(i, cg);
       if (std::isnan(y) || std::isnan(p) || std::isnan(g) || p <= 0 || g <= 0) continue;
-      org[static_cast<int>(y)][lower(trim(t.str(i, cs)))] = {p, g};
+      const std::string& name = t.str(i, cs);
+      const int year = static_cast<int>(y);
+      StateYear v{p, g, g, true};
+      if (gsdp.basis && gsdp.basis->is_current(name, year)) {
+        v.gsdp = gsdp.basis->constant_2011_12(name, year, g);
+        ++s.gsdp_current_corrected;
+      }
+      v.in_income = std::find(excluded.begin(), excluded.end(), normalize_state(name)) == excluded.end();
+      org[year][lower(trim(name))] = v;
     }
   }
   if (org.empty()) throw std::runtime_error("organiser dataset is empty");
@@ -79,7 +95,6 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
     }
   }
 
-  IndiaSeries s;
   s.organiser_first = org.begin()->first;
   s.organiser_last = org.rbegin()->first;
   first = std::max(first, s.organiser_first);
@@ -90,7 +105,8 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
   // Population growth uses every matched state. Income per person uses only the
   // states whose GSDP actually changed: a value copied unchanged from the year
   // before is a placeholder (several states repeat one figure for 2006-2010),
-  // and counting it as zero growth would understate national growth.
+  // and counting it as zero growth would understate national growth. The rule
+  // compares the values as read, before any price-basis correction.
   std::map<int, double> dp, dpc;
   for (int t = first + 1; t <= last; ++t) {
     auto a = org.find(t - 1), b = org.find(t);
@@ -101,8 +117,12 @@ IndiaSeries load_india_series(const std::string& npp_csv, const std::string& org
       if (it == a->second.end()) continue;
       p0 += it->second.pop;
       p1 += v1.pop;
-      if (v1.gsdp == it->second.gsdp) {
+      if (v1.gsdp_read == it->second.gsdp_read) {
         ++s.stale_pairs_skipped;
+        continue;
+      }
+      if (!v1.in_income || !it->second.in_income) {
+        ++s.income_excluded_pairs;
         continue;
       }
       q0 += it->second.pop;

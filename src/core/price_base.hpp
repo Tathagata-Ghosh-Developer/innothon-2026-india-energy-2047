@@ -86,4 +86,36 @@ class PriceBase {
   int target_last_fy_ = 0;
 };
 
+// Price basis of the challenge dataset's GSDP (data/external/macro/gsdp_price_basis.csv,
+// columns state, from_year, basis, note). The dataset's GSDP is at constant 2011-12 prices
+// from 2011 (dataset year t = fiscal year t to t+1), except the states listed here, whose
+// values from from_year are at current prices (basis "current_prices"). This is an
+// inflation correction of a mis-based series, not new estimation data: a listed value is
+// divided by the India GDP deflator of its fiscal year (2011-12 = 1), the MoSPI national
+// deflator (secondary), so that it is on the same constant 2011-12 prices as the others.
+struct GsdpBasisRow {
+  std::string state;  // as written in the file
+  std::string key;    // normalised name (normalize_state)
+  int from_year = 0;  // first dataset year at current prices
+  std::string basis, note;
+};
+
+class GsdpPriceBasis {
+ public:
+  GsdpPriceBasis() = default;  // no corrections
+  // Reads the list. Throws on a missing column, a basis other than "current_prices", a
+  // from_year before 2011 (the dataset's 2011-12 base year), or a state listed twice.
+  static GsdpPriceBasis load(const std::string& basis_csv, const PriceBase& prices);
+
+  bool is_current(const std::string& state, int year) const;
+  // GSDP of dataset year `year` at constant 2011-12 prices: a listed state-year is divided by
+  // the GDP deflator of FY year-(year+1) / 100; any other value is returned unchanged.
+  double constant_2011_12(const std::string& state, int year, double gsdp) const;
+  const std::vector<GsdpBasisRow>& rows() const { return rows_; }
+
+ private:
+  std::vector<GsdpBasisRow> rows_;
+  PriceBase prices_;  // a copy: the deflator outlives the PriceBase it was loaded with
+};
+
 }  // namespace e47

@@ -18,7 +18,7 @@ Where an official figure does not exist yet, the row is either left out or built
 * Raw copies of every file are in `raw/` (table at the end). They are git-ignored by the repository's `data/**/raw/**` rules; JSON, text and CSV downloads were gzip-compressed so that the same rules cover them.
 * The extraction and check scripts were kept outside the repository, because the project code is C++.
 
-## File
+## Files
 
 `price_indices.csv`, long format, 192 rows.
 Columns: `series, unit, period, value, base, source_name, source_url, source_location, accessed, notes`.
@@ -41,6 +41,9 @@ Columns: `series, unit, period, value, base, source_name, source_url, source_loc
 | `us_cpi_u_all_items` | 2020 to 2025 | US CPI-U, U.S. city average, all items, 1982-84=100, annual average |
 | `us_gdp_implicit_price_deflator` | 2020 to 2025 | US GDP implicit price deflator, 2017=100 |
 | `us_fomc_inflation_goal_pce` | 2026 | The FOMC longer-run inflation goal (2 percent, PCE price index), as reaffirmed effective 27 Jan 2026 |
+
+`gsdp_price_basis.csv`, one row per state whose challenge-dataset GSDP is at current prices.
+Columns: `state, from_year, basis, note`; `basis` is `current_prices`, and `note` carries the evidence (section 7).
 
 ---
 
@@ -182,6 +185,15 @@ Question: is `GSDP (crore INR)` in `data/raw/competition/renewable_energy_datase
 * **Finding: from 2011 the values are at constant 2011-12 prices, with dataset year t matching fiscal year t to t+1.** The exception is Jammu and Kashmir, whose values from 2012 equal MoSPI current prices (for example 2016: 124,848 against current 124,848 and constant 100,203).
 * From 2019 onward most values no longer match any MoSPI vintage (for example Maharashtra 2022: 1,974,483 against 2,286,037 constant), and 2021 to 2023 rise by nearly equal steps in several states, which fits the README's statement that missing values were predicted. The 2024 values are below 2023 in 32 of 34 states (equal in the other 2).
 * Values before 2011 were not checked against an official 2004-05 series here; the data audit already treats them as constant 2004-05 prices with a base change in 2011.
+
+**Correction in the model (since 2026-11-21).**
+This is an inflation correction of a mis-based series, not new estimation data: the GSDP values stay the challenge dataset's own, and only their price basis is made consistent.
+
+* `gsdp_price_basis.csv` lists Jammu and Kashmir from 2012 at current prices. 2012 to 2021 equal the MoSPI current-price values exactly; 2022 to 2024 match no MoSPI vintage but are at the current-price level (MoSPI current 209,816, 236,059 and 262,358 against constant 122,640, 133,543 and 141,739), so they are treated as current prices too. 2011 is the base year and equal at both prices.
+* The model (`src/core/price_base.hpp`, `GsdpPriceBasis`) divides each listed value by the MoSPI national GDP deflator of its fiscal year (`india_gdp_deflator`, 2011-12 = 100; official, secondary). A state deflator would be closer, but the national one is the official index in this folder.
+* Check against the MoSPI constant-price values (our computation): 2016 124,848 / 1.25052 = 99,837 against 100,203 (-0.4 percent); 2012 to 2021 within -2.0 to +4.2 percent; 2022 +7.9, 2023 +5.8 and 2024 -3.5 percent (the predicted years).
+* Every reader of the dataset's GSDP applies it: national income growth (`load_india_series`), the relative incomes and the convergence speed of the regional split (`estimate_convergence`), and the state panel diagnostic. The repeated-value rule (a GSDP equal to the year before is a placeholder) compares the values as read.
+* `outputs/sensitivity_2047.csv` row `jk_excluded` leaves Jammu and Kashmir out of national income growth instead of deflating it.
 
 ---
 

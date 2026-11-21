@@ -4,7 +4,9 @@
 //  3. inr_to_usd_known: RBI reference-rate averages, calendar and fiscal year.
 //  4. beyond_data_uses_target: a year past the published series is extended at the RBI
 //     CPI target (India) or the FOMC goal (US), and the extension is noted.
-//  5. default_plan_unchanged_by_price_base: the IEA costs are already real 2024 USD, so the
+//  5. jk_deflated: the challenge dataset's Jammu and Kashmir GSDP (current prices from
+//     2012) deflated to constant 2011-12 prices; the loader then sees real growth only.
+//  6. default_plan_unchanged_by_price_base: the IEA costs are already real 2024 USD, so the
 //     default plan at a fixed requirement is the plan of commit a314521 to the last digit.
 // Usage: test_price_base <repo_root>
 #include <cmath>
@@ -103,6 +105,78 @@ void beyond_data_uses_target(const PriceBase& pb) {
   check(std::abs(u - 100.0 * 1.02 * 1.02) < 1e-9 && !us.empty(), "US deflator past 2025: x 1.02 a year, noted");
 }
 
+void jk_deflated(const std::string& root, const PriceBase& pb, const fs::path& tmp) {
+  std::printf("jk_deflated\n");
+  const GsdpPriceBasis basis = GsdpPriceBasis::load(root + "/data/external/macro/gsdp_price_basis.csv", pb);
+  check(basis.is_current("Jammu And Kashmir", 2012) && basis.is_current("jammu and kashmir", 2024) &&
+            !basis.is_current("Jammu And Kashmir", 2011) && !basis.is_current("Maharashtra", 2016),
+        "listed: Jammu and Kashmir from 2012; not 2011, not another state");
+  // MoSPI GSDP, 2011-12 series, Jammu & Kashmir FY2016-17: current 124,848, constant 100,203
+  // (data/external/macro/SOURCES.md, section 7). The dataset's 2016 value is 124,848.
+  const double v = basis.constant_2011_12("Jammu And Kashmir", 2016, 124848.0);
+  std::printf("    2016: 124,848 at current prices -> %.1f at 2011-12 prices (MoSPI constant 100,203, %+.2f%%)\n", v,
+              100.0 * (v / 100203.0 - 1.0));
+  check(std::abs(v / 100203.0 - 1.0) < 0.05, "2016 within 5% of the MoSPI constant-price value 100,203");
+  check(std::abs(v - 124848.0 / 1.25052) < 1e-6, "divided by the national GDP deflator of FY2016-17 (125.052 / 100)");
+  check(basis.constant_2011_12("Jammu And Kashmir", 2011, 78256.0) == 78256.0, "2011 (base year): unchanged");
+  check(basis.constant_2011_12("Maharashtra", 2016, 1.0) == 1.0, "a state not listed: unchanged");
+
+  // Loader: state A is at constant prices, B at current prices (listed), both growing 5% a
+  // year in real terms. After the correction the national growth is the real 5% only.
+  fs::create_directories(tmp);
+  const fs::path npp = tmp / "npp.csv", org = tmp / "org.csv", urb = tmp / "urb.csv", lst = tmp / "basis.csv";
+  {
+    std::ofstream f(npp);
+    f << "fiscal_year,fy_start_year,thermal_gwh,hydro_gwh,nuclear_gwh,res_gwh,total_gwh\n";
+    for (int y = 2011; y <= 2014; ++y) f << y << "-" << (y + 1) % 100 << "," << y << ",900,50,25,25,1000\n";
+  }
+  {
+    std::ofstream f(org);
+    f << "State,Year,Population,GSDP (crore INR)\n";
+    f.precision(17);
+    for (int y = 2011; y <= 2014; ++y) {
+      const std::string fy = std::to_string(y) + "-" + (((y + 1) % 100) < 10 ? "0" : "") + std::to_string((y + 1) % 100);
+      f << "A," << y << ",1000000," << 100.0 * std::pow(1.05, y - 2011) << "\n";
+      f << "B," << y << ",1000000," << 100.0 * std::pow(1.05, y - 2011) * pb.deflate_inr(1.0, "2011-12", fy) << "\n";
+    }
+  }
+  {
+    std::ofstream f(urb);
+    f << "state,year,value,source\n";
+    for (int y : {2010, 2015}) f << "India," << y << ",30,World Urbanization Prospects 2018\n";
+  }
+  {
+    std::ofstream f(lst);
+    f << "state,from_year,basis,note\nB,2012,current_prices,test row\n";
+  }
+  const GsdpPriceBasis b2 = GsdpPriceBasis::load(lst.string(), pb);
+  GsdpOptions with;
+  with.basis = &b2;
+  const IndiaSeries raw = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014);
+  const IndiaSeries fixed = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, with);
+  GsdpOptions drop;
+  drop.exclude_states = {"b"};
+  const IndiaSeries only_a = load_india_series(npp.string(), org.string(), urb.string(), 2011, 2014, drop);
+  bool real = fixed.gpc_growth.size() == 3, inflated = raw.gpc_growth.size() == 3, a_only = only_a.gpc_growth.size() == 3;
+  for (size_t k = 0; k < 3 && real && inflated && a_only; ++k) {
+    real &= std::abs(fixed.gpc_growth[k] - std::log(1.05)) < 1e-12;
+    inflated &= raw.gpc_growth[k] > std::log(1.05) + 1e-3;
+    a_only &= std::abs(only_a.gpc_growth[k] - std::log(1.05)) < 1e-12;
+  }
+  std::printf("    loader growth 2012: raw %.5f, corrected %.5f, B left out %.5f (ln 1.05 = %.5f)\n",
+              raw.gpc_growth.empty() ? 0.0 : raw.gpc_growth[0], fixed.gpc_growth.empty() ? 0.0 : fixed.gpc_growth[0],
+              only_a.gpc_growth.empty() ? 0.0 : only_a.gpc_growth[0], std::log(1.05));
+  check(inflated, "uncorrected: the current-price state adds inflation to income growth");
+  check(real, "corrected: income growth is the real 5% a year");
+  check(fixed.gsdp_current_corrected == 3 && raw.gsdp_current_corrected == 0, "three state-years deflated (2012-2014)");
+  check(a_only, "a state left out of income growth: growth from the others only");
+
+  // The model: every Jammu and Kashmir year from 2012 to 2024 is deflated.
+  const Pipeline pl(root, CoreModel::kIndia);
+  std::printf("    pipeline: %d state-years deflated\n", pl.fitted().india.gsdp_current_corrected);
+  check(pl.fitted().india.gsdp_current_corrected == 13, "pipeline: Jammu and Kashmir 2012-2024 (13 state-years) deflated");
+}
+
 void default_plan_unchanged_by_price_base(const std::string& root) {
   std::printf("default_plan_unchanged_by_price_base\n");
   const AllocationInputs in = load_allocation_inputs(root);
@@ -159,6 +233,7 @@ int main(int argc, char** argv) {
     deflate_known(pb);
     inr_to_usd_known(pb);
     beyond_data_uses_target(pb);
+    jk_deflated(root, pb, fs::temp_directory_path() / "e47_test_price_base");
     default_plan_unchanged_by_price_base(root);
     std::printf(fails ? "FAILED (%d)\n" : "ok\n", fails);
     return fails ? 1 : 0;

@@ -456,7 +456,7 @@ std::string fy_label(int y);  // "FY2023-24"; defined below
 // generation per person against the national figure. Sections: data (sources), fit,
 // spread (summary), state (one row per matched state), note (what was left out).
 void write_state_panel_check(const fs::path& out, const fs::path& root, const Pipeline& pl, SiteSummary& site) {
-  const StatePanelData d = state_panel_data(root.string());
+  const StatePanelData d = state_panel_data(root.string(), &pl.gsdp_basis());  // GSDP on constant 2011-12 prices
   const PanelFit f = fe_slope(d.obs);
   site.panel = f;
   site.panel_data = d;
@@ -493,7 +493,9 @@ void write_state_panel_check(const fs::path& out, const fs::path& root, const Pi
   row("data", "population_and_gsdp", kNaN,
       "challenge dataset (data/raw/competition/renewable_energy_dataset.csv), years " + window +
           "; a GSDP equal to the year before is a placeholder and that state-year is left out; the 2024 GSDP is not "
-          "used; names matched with normalize_state only");
+          "used; names matched with normalize_state only; GSDP at constant 2011-12 prices (states listed in "
+          "data/external/macro/gsdp_price_basis.csv are at current prices and are deflated with the MoSPI GDP "
+          "deflator, secondary)");
   row("fit", "slope", f.slope,
       "within (state fixed effects) OLS of ln(generation per person) on ln(GSDP per person), " + window +
           ". Diagnostic only, never used by the forecast");
@@ -1197,6 +1199,9 @@ int main(int argc, char** argv) {
                 ff.last, fit.india.splice_growth, ff.beta, ff.beta_se, ff.fd_beta);
     std::printf("  urban excess gamma prior: mean %.2f sd %.2f (%s)\n", fit.gamma_mean, fit.gamma_sd,
                 fit.gamma_source.c_str());
+    std::printf("  GSDP price basis: %d state-years at current prices deflated to 2011-12 prices (MoSPI GDP deflator; "
+                "data/external/macro/gsdp_price_basis.csv)\n",
+                fit.india.gsdp_current_corrected);
     {
       // Rolling-origin backtest: mean absolute percentage error by horizon (1..5 years).
       CsvWriter w((out / "backtest_horizon.csv").string());
@@ -1250,6 +1255,15 @@ int main(int argc, char** argv) {
       row("anchor_shift", fit.anchor_shift,
           "base-year anchor moved to fitted + mean residual of FY2021-22..FY2023-24 when |resid| > resid_sd");
       row("splice_growth", fit.india.splice_growth, "imputed ln growth of GSDP per person for 2011");
+      {
+        std::string listed;
+        for (const GsdpBasisRow& b : pl.gsdp_basis().rows())
+          listed += (listed.empty() ? "" : ", ") + b.state + " from " + std::to_string(b.from_year);
+        row("gsdp_current_price_state_years", fit.india.gsdp_current_corrected,
+            "challenge-dataset state-years at current prices (" + (listed.empty() ? std::string("none") : listed) +
+                "; data/external/macro/gsdp_price_basis.csv) deflated to constant 2011-12 prices with the MoSPI GDP "
+                "deflator (secondary): an inflation correction of a mis-based series, not new estimation data");
+      }
       row("gamma_mean", fit.gamma_mean, fit.gamma_source);
       row("gamma_sd", fit.gamma_sd, "");
       row("g_hist_mean", drv.g_hist_mean, "mean ln growth of GSDP per person (organiser data)");
@@ -1444,6 +1458,7 @@ int main(int argc, char** argv) {
       struct Case {
         std::string name, desc;
         std::function<void(ScenarioControls&)> apply;
+        const Pipeline* on = nullptr;  // another pipeline (other data options); nullptr: pl
       };
       // Elasticity cases: one OLS standard error of the FY2011-12 onward fit either way,
       // each window on its own, and the mixture recentred on the first-difference estimate.
@@ -1477,6 +1492,17 @@ int main(int argc, char** argv) {
                       names.empty() ? "none" : names.c_str(), a.low, a.high, f.years[last], scaled.c_str());
         new_loads_case = b;
       }
+      // Jammu and Kashmir left out of national income growth: its GSDP in the challenge dataset is
+      // at current prices from 2012, which the main run corrects with the MoSPI GDP deflator; this
+      // run drops the state from income growth instead, and re-estimates the elasticity.
+      PipelineOptions no_jk;
+      no_jk.income_exclude_states = {"Jammu and Kashmir"};
+      const Pipeline jk(root.string(), CoreModel::kIndia, kDefaultBootstrapReplicates, no_jk);
+      char jk_desc[400];
+      std::snprintf(jk_desc, sizeof jk_desc,
+                    "Jammu and Kashmir left out of national income growth instead of deflating its current-price GSDP "
+                    "(2012 onward) with the MoSPI GDP deflator; elasticity re-estimated: S1 beta %.3f, S3 beta %.3f",
+                    jk.fitted().india_fit.beta, jk.fitted().india_fit_full.beta);
       const Case cases[] = {
           {"base", "India elasticity with the excess-urbanisation prior", [](ScenarioControls&) {}},
           {"no_urban_term", "gamma = 0: no urbanisation effect beyond income (UN population path still used)",
@@ -1505,12 +1531,13 @@ int main(int argc, char** argv) {
           // (outputs/new_loads_2047.csv), on a copy of the default controls.
           {"new_loads_published", new_loads_case,
            [&new_loads](ScenarioControls& s) { apply_new_loads(s, new_loads); }},
+          {"jk_excluded", jk_desc, [](ScenarioControls&) {}, &jk},
       };
       std::printf("sensitivity (2047 national, TWh P5 / P50 / P95):\n");
       for (const Case& k : cases) {
         ScenarioControls s = c;
         k.apply(s);
-        const ForecastResult r = pl.forecast(s);
+        const ForecastResult r = (k.on ? *k.on : pl).forecast(s);
         const auto& q = r.quant.q[0][r.years.size() - 1];
         w.field(k.name).field(k.desc).field(q[0], 6).field(q[3], 6).field(q[6], 6);
         w.endrow();

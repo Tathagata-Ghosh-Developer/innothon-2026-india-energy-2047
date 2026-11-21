@@ -7,6 +7,7 @@
 
 #include "../core/csv.hpp"
 #include "../core/philox.hpp"
+#include "../core/price_base.hpp"
 #include "../core/stats.hpp"
 
 namespace e47 {
@@ -61,7 +62,7 @@ double speed(double slope, int span) {
 }  // namespace
 
 ConvergenceResult estimate_convergence(const std::string& path, int year0, int year1, int replicates,
-                                       unsigned long long seed) {
+                                       unsigned long long seed, const GsdpPriceBasis* basis) {
   const CsvTable t = CsvTable::read(path);
   const size_t c_state = t.col("State"), c_year = t.col("Year");
   const size_t c_pop = t.col("Population"), c_gsdp = t.col("GSDP (crore INR)");
@@ -69,9 +70,10 @@ ConvergenceResult estimate_convergence(const std::string& path, int year0, int y
   std::map<std::string, StateIncome> by_state;
   std::map<int, double> nat_gsdp, nat_pop;
   for (size_t r = 0; r < t.rows(); ++r) {
-    const double y = t.num(r, c_year), p = t.num(r, c_pop), g = t.num(r, c_gsdp);
-    if (std::isnan(y) || std::isnan(p) || std::isnan(g) || p <= 0 || g <= 0) continue;
+    const double y = t.num(r, c_year), p = t.num(r, c_pop), g_read = t.num(r, c_gsdp);
+    if (std::isnan(y) || std::isnan(p) || std::isnan(g_read) || p <= 0 || g_read <= 0) continue;
     const int year = static_cast<int>(y);
+    const double g = basis ? basis->constant_2011_12(t.str(r, c_state), year, g_read) : g_read;
     const std::string s = normalize_state(t.str(r, c_state));
     auto& si = by_state[s];
     si.state = s;

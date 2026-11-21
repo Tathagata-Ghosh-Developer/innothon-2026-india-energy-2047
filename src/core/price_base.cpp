@@ -3,8 +3,10 @@
 #include <cctype>
 #include <cmath>
 #include <cstdio>
+#include <set>
 #include <stdexcept>
 
+#include "../regional/convergence.hpp"  // normalize_state
 #include "csv.hpp"
 
 namespace e47 {
@@ -163,6 +165,46 @@ double PriceBase::inr_per_usd(const std::string& period) const {
   if (it == inr_per_usd_.end())
     throw std::invalid_argument("price base: no RBI rupee-dollar average for period '" + period + "'");
   return it->second;
+}
+
+GsdpPriceBasis GsdpPriceBasis::load(const std::string& path, const PriceBase& prices) {
+  const CsvTable t = CsvTable::read(path);
+  const size_t cs = t.col("state"), cy = t.col("from_year"), cb = t.col("basis"), cn = t.col("note");
+  GsdpPriceBasis g;
+  g.prices_ = prices;
+  std::set<std::string> seen;
+  for (size_t r = 0; r < t.rows(); ++r) {
+    GsdpBasisRow row;
+    row.state = trim(t.str(r, cs));
+    row.key = normalize_state(row.state);
+    const double y = t.num(r, cy);
+    row.basis = trim(t.str(r, cb));
+    row.note = t.str(r, cn);
+    const std::string where = path + " row " + std::to_string(r + 2) + " (" + row.state + ")";
+    if (row.key.empty()) throw std::runtime_error("GSDP price basis: no state in " + where);
+    if (std::isnan(y) || y < 2011) throw std::runtime_error("GSDP price basis: from_year must be 2011 or later in " + where);
+    if (row.basis != "current_prices")
+      throw std::runtime_error("GSDP price basis: basis must be current_prices in " + where);
+    if (!seen.insert(row.key).second) throw std::runtime_error("GSDP price basis: state listed twice in " + where);
+    row.from_year = static_cast<int>(y);
+    // Every listed year must have a deflator (published, or extended at the RBI target).
+    (void)prices.inr_index(row.from_year);
+    g.rows_.push_back(row);
+  }
+  return g;
+}
+
+bool GsdpPriceBasis::is_current(const std::string& state, int year) const {
+  const std::string key = normalize_state(state);
+  for (const GsdpBasisRow& r : rows_)
+    if (r.key == key) return year >= r.from_year;
+  return false;
+}
+
+double GsdpPriceBasis::constant_2011_12(const std::string& state, int year, double gsdp) const {
+  if (!is_current(state, year)) return gsdp;
+  const double d = prices_.inr_index(year) / prices_.inr_index(2011);  // 2011-12 = 1
+  return gsdp / d;
 }
 
 }  // namespace e47

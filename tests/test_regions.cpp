@@ -137,8 +137,9 @@ void shares(const Pipeline& pl, const Dataset& d) {
 }
 
 // The regional rework must leave the national forecast as it was. Reference values:
-// the 2047 national quantiles of the model before the rework (CPU, 2^18 draws,
-// default seed); the tolerance allows for Monte Carlo noise only.
+// the 2047 national quantiles of the model (CPU, 2^18 draws, default seed), updated on
+// 2026-11-21 for the Jammu and Kashmir GSDP price-basis correction (before it: P5 3214.085,
+// P50 4699.020, P95 7002.236); the tolerance allows for Monte Carlo noise only.
 void national_unchanged(const Pipeline& pl) {
   std::printf("national 2047 forecast unchanged by the regional split\n");
   ScenarioControls c;
@@ -147,7 +148,7 @@ void national_unchanged(const Pipeline& pl) {
   const ForecastResult f = pl.forecast(c);
   const auto& q = f.quant.q[0][f.years.size() - 1];
   std::printf("    %d: P5 %.3f  P50 %.3f  P95 %.3f TWh\n", f.years.back(), q[0], q[3], q[6]);
-  const double before[3] = {3214.085, 4699.020, 7002.236};  // P5, P50, P95
+  const double before[3] = {3187.139, 4684.099, 7021.520};  // P5, P50, P95
   const int k[3] = {0, 3, 6};
   const char* name[3] = {"P5", "P50", "P95"};
   check(f.years.back() == 2047, "last projection year is 2047");
@@ -399,7 +400,7 @@ void new_loads_excludes_overlap(const Pipeline& pl, const fs::path& tmp) {
               zero, with, with - head);
   check(z.addon_lo == 0 && z.addon_hi == 0 && zero == head,
         "overlapping loads only: zero add-on, headline P50 unchanged");
-  check(std::abs(head / 4699.020 - 1) < 0.005, "headline P50 within 0.5% of 4699.0 TWh");
+  check(std::abs(head / 4684.099 - 1) < 0.005, "headline P50 within 0.5% of 4684.1 TWh");
   check(with - head >= added.low && with - head <= added.high,
         "the add-on moves the P50 by an amount inside its range");
 

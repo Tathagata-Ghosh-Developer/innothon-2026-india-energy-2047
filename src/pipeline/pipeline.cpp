@@ -144,10 +144,16 @@ CentralPath central_path(const Fitted& fit, const McInputs& in, const std::vecto
 
 }  // namespace
 
-Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std::move(root)) {
+Pipeline::Pipeline(std::string root, CoreModel core, int replicates, PipelineOptions options)
+    : root_(std::move(root)), options_(std::move(options)) {
   const fs::path r(root_);
   fit_.core = core;
   int last = 0;
+  // Price indices (secondary) and the price basis of the challenge dataset's GSDP: states
+  // whose GSDP is at current prices are deflated to constant 2011-12 prices wherever the
+  // GSDP is read (an inflation correction of a mis-based series, not new estimation data).
+  prices_ = PriceBase::load((r / "data/external/macro/price_indices.csv").string());
+  gsdp_basis_ = GsdpPriceBasis::load((r / "data/external/macro/gsdp_price_basis.csv").string(), prices_);
 
   if (core == CoreModel::kCrossCountry) {
     // 1a. Cross-country panel models (secondary check).
@@ -212,9 +218,12 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     // 1b. India-only core (primary): NPP generation + organiser population and GSDP.
     fit_.model_names = {"India elasticity + urban prior", "India elasticity, no urban term",
                         "Damped trend (benchmark)"};
+    GsdpOptions gsdp;
+    gsdp.basis = &gsdp_basis_;
+    gsdp.exclude_states = options_.income_exclude_states;
     fit_.india = load_india_series((r / "data/raw/npp/npp_national_generation_fy.csv").string(),
                                    (r / "data/raw/competition/renewable_energy_dataset.csv").string(),
-                                   (r / "data/external/urbanization.csv").string(), kIndiaFirst, kIndiaLast);
+                                   (r / "data/external/urbanization.csv").string(), kIndiaFirst, kIndiaLast, gsdp);
     const IndiaSeries& s = fit_.india;
     last = s.obs.back().year;
     fit_.india_fit = fit_india(s, kIndiaEstFirst, last);
@@ -332,7 +341,7 @@ Pipeline::Pipeline(std::string root, CoreModel core, int replicates) : root_(std
     fit_.boot = boot_for(ScenarioControls{});
   }
   fit_.convergence = estimate_convergence((r / "data/raw/competition/renewable_energy_dataset.csv").string(), 2006,
-                                          2024, 4000, 99);
+                                          2024, 4000, 99, &gsdp_basis_);
 
   // 2. National drivers
   drv_.base_year = last;

@@ -116,7 +116,7 @@ void elasticity_shift_monotone(const std::string& root) {
               hi, s1, s3);
   check(lo < mid && mid < hi, "median rises with beta_shift (-0.063 < 0 < +0.063)");
   check(std::isfinite(s1) && std::isfinite(s3), "S1-only and S3-only windows give finite medians");
-  check(s3 >= s1, "S3-only median >= S1-only median (S3 beta 0.866 > S1 0.828)");
+  check(s3 >= s1, "S3-only median >= S1-only median (S3 beta 0.872 > S1 0.835)");
 
   // Window selection: slot 4 of a replicate is beta (no urban term, no decline), so the
   // mean over the packed array must equal the mean of that window's half.

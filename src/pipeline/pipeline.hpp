@@ -10,6 +10,7 @@
 #include "../allocation/allocate.hpp"
 #include "../allocation/storage.hpp"
 #include "../core/csv.hpp"  // kNaN
+#include "../core/price_base.hpp"
 #include "../forecast/backtest.hpp"
 #include "../forecast/india.hpp"
 #include "../forecast/mc.hpp"
@@ -262,10 +263,20 @@ struct PopulationConsistency {
   std::vector<PopulationGrowth> rows;  // India first, then the states
 };
 
+// Data options of a Pipeline; the defaults are the main run.
+//   income_exclude_states: states left out of national income growth (GsdpOptions in
+//     forecast/india.hpp), a sensitivity only (outputs/sensitivity_2047.csv, jk_excluded).
+struct PipelineOptions {
+  std::vector<std::string> income_exclude_states;
+};
+
 class Pipeline {
  public:
+  // Reads data/external/macro/price_indices.csv and gsdp_price_basis.csv with the rest: the
+  // challenge dataset's GSDP is read on constant 2011-12 prices everywhere it is used (national
+  // income, the regional split's relative incomes and convergence).
   explicit Pipeline(std::string repo_root, CoreModel core = CoreModel::kIndia,
-                    int bootstrap_replicates = kDefaultBootstrapReplicates);
+                    int bootstrap_replicates = kDefaultBootstrapReplicates, PipelineOptions options = {});
 
   CoreModel core() const { return fit_.core; }
   const Fitted& fitted() const { return fit_; }
@@ -273,6 +284,9 @@ class Pipeline {
   std::vector<float> boot_for(const ScenarioControls& c) const;
   const DriverData& drivers() const { return drv_; }
   const AllocationInputs& allocation_inputs() const { return alloc_in_; }
+  const PriceBase& price_base() const { return prices_; }
+  const GsdpPriceBasis& gsdp_basis() const { return gsdp_basis_; }
+  const PipelineOptions& options() const { return options_; }
   const StorageInputs& storage_inputs() const { return storage_in_; }
 
   McInputs build_inputs(const ScenarioControls& c) const;
@@ -302,6 +316,9 @@ class Pipeline {
 
  private:
   std::string root_;
+  PipelineOptions options_;
+  PriceBase prices_;
+  GsdpPriceBasis gsdp_basis_;
   Fitted fit_;
   DriverData drv_;
   AllocationInputs alloc_in_;

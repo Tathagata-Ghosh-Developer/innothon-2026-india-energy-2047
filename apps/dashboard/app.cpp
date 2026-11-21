@@ -1415,7 +1415,7 @@ void App::data_requirement() {
   if (!panel_read_) {
     panel_read_ = true;
     try {
-      panel_ = state_panel_data(root_.string());
+      panel_ = state_panel_data(root_.string(), &pl_->gsdp_basis());  // GSDP on constant 2011-12 prices
       panel_fit_ = fe_slope(panel_.obs);
     } catch (const std::exception& e) {
       panel_error_ = e.what();

@@ -24,6 +24,8 @@
 
 namespace e47 {
 
+class GsdpPriceBasis;  // core/price_base.hpp
+
 // One state-year. A state the caller could not match carries NaN values.
 struct PanelObs {
   std::string state;  // normalised name (normalize_state)
@@ -80,7 +82,8 @@ struct StatePanelData {
 // matched with normalize_state only (no fuzzy matching), so a name the dataset does not
 // have is skipped and reported, never assigned to another state. The dataset's 2024
 // GSDP is never read (the window ends at FY2023-24).
-StatePanelData state_panel_data(const std::string& repo_root);
+// basis: the GSDP price-basis corrections (Pipeline::gsdp_basis()); nullptr reads GSDP as is.
+StatePanelData state_panel_data(const std::string& repo_root, const GsdpPriceBasis* basis = nullptr);
 
 // fe_slope over state_panel_data(repo_root).obs.
 PanelFit state_panel_check(const std::string& repo_root);
