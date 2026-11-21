@@ -18,6 +18,7 @@ All CSVs are UTF-8, comma-separated, with a header row. Each has a `source_url` 
 | `policy_targets.csv` | 147 | National targets (500 GW, net zero 2070, NDC 2022, 100 GW nuclear) and NEP 2022-32 demand, capacity and generation benchmarks |
 | `nep2023_state_demand.csv` | 135 | NEP 2022-32 / 20th EPS state-wise energy requirement (MU) and peak demand (MW) for 2021-22, 2026-27, 2031-32 |
 | `new_loads.csv` | 5 | Secondary. Published 2050 electricity estimates (low, central, high TWh) for electric vehicles, green hydrogen, data centres, space cooling and electric cooking, for a separate scenario outside the headline |
+| `demand_features.csv` | 44 | Secondary. Catalogue of every driver of the 2047 utility generation requirement, with signed TWh adjustments (low, central, high) for the 11 quantified feature-layer rows, all from official sources |
 
 The helper and extraction scripts were kept outside the repository and are not committed. The prose below is the record of each extraction step (table, page, filters, unit conversions), detailed enough to repeat by hand or in any language.
 
@@ -482,6 +483,91 @@ Page numbers are printed pages, with PDF pages in the CSV's `source_location`.
 
 ---
 
+## 11. demand_features.csv (secondary; a feature layer, never the headline)
+
+Columns: `feature, group, mechanism, sign, year_basis, twh_low, twh_central, twh_high, overlap_history, increment_rule, in_model, source_name, source_url, source_location, accessed, notes`. 44 rows, one per driver.
+
+**Purpose.** Design B of `docs/plans/2026-11-21-inflation-features-design.md`: list every factor that can change India's FY2047-48 utility generation requirement (NPP scope), and quantify, from official sources only, the ones the core forecast does not already carry. The core forecast (4,703 TWh median in FY2047-48 from 1,698 TWh in FY2023-24) is estimated on population, real income and urbanisation and stays the headline. Every source here is **secondary**; none is NPP or the Renewable India dataset.
+
+**Conventions**
+- `sign`: `+1` raises utility generation, `-1` lowers it, for the driver as described in `mechanism`.
+- `twh_low`, `twh_central`, `twh_high`: the size of the adjustment to FY2047-48 gross utility generation, as a positive number, already reduced to the part beyond the trend that `increment_rule` defines and already grossed up to the generation basis. The layer applies `sign x twh`. Full levels before the trend rule and gross-up are in `notes`. They are filled only for `in_model = layer` and are blank otherwise.
+- `in_model`: `core` (estimated in the core model), `driver` (an existing model uncertainty or setting), `layer` (this feature layer), `excluded_rule` (captive generation, by the organisers' ruling of 16 Nov 2026, D12) or `context` (not quantified; `notes` give the reason).
+- `overlap_history`: overlap with the FY2006-07 to FY2023-24 trend that the income elasticity carries (`yes`, `partial`, `no`).
+- **Trend rule** (loads that already exist): the core forecast carries each existing load growing with total generation, x2.7697 from FY2023-24 (1,698.03 TWh) to FY2047-48 (4,703.0 TWh median, `outputs/forecast_national_regional.csv`; x1.8604 to FY2037-38). Only `level2047 - level2023 x 2.7697` is beyond trend. For supply-side rows (T&D, auxiliary use, imports) the rule is the change in rate or level from FY2023-24.
+- **Year conversion.** A 2050 value is scaled linearly from the FY2023-24 base: `level2047 = base + (level2050 - base) x 24/27`. A value for an earlier year (2030, 2031-32, 2035-36, 2037-38, 2041-42) is held flat to 2047 unless `notes` state a continuation rule. No value was extrapolated without saying so.
+- **Gross-up to generation** (CEA General Review 2025, FY2023-24): T&D loss 17.63% and auxiliary use 6.15% (106,650.46 of 1,734,375.09 GWh), Table 6.1; regional transmission losses 3.39% (31,926.61 of 941,638.13 GWh), Table 6.2. Factors: LT/distribution loads x1.2936 = 1/((1-0.1763)(1-0.0615)); HT/EHV loads x1.1029 = 1/((1-0.0339)(1-0.0615)); bus-bar energy x1.0655 = 1/(1-0.0615).
+- **Unit factors** (all official): 1 Mtoe = 11.63 TWh (1 kWh = 860 kcal); 50 kWh per kg of hydrogen and a 50% grid share (CEA 20th EPS); rooftop CUF 17% with 75% self-consumed, and solar pumps of 7.5 HP at 17% CUF (CEA 20th EPS); large hydro PLF 32-40% (NITI Power); BESS and PSP round-trip efficiency 88% and 80% (CEA NGAP 2026).
+- **Low, central, high.** Low and high are the smallest and largest official cases for 2047 after the rules above. Central is the current-policy case where one exists (NITI CPS, NGHM, scheme targets), otherwise the 2047-dated figure; where a row has only one official anchor, central equals low and the high case is a stated continuation. For partly overlapping loads with no official split (space cooling, efficiency) low and central are 0 and high is the whole excess over trend.
+
+**Counts by `in_model`:** core 7, driver 3, layer 11, excluded_rule 1, context 22.
+
+**Feature-layer values (TWh in FY2047-48, generation basis)**
+
+| feature | sign | low | central | high | official basis |
+|---|---|---|---|---|---|
+| t_and_d_losses | -1 | 386.2 | 464.6 | 476.3 | EPS T&D 9.36% (2041-42) held; NITI 8.6% (2047, between 12% in 2030 and 8% in 2050); EPS path extended to 7.43% |
+| auxiliary_consumption | -1 | 91.6 | 91.6 | 110.5 | GR2025 per-mode auxiliary rates on the NITI 2050 CPS / NZS generation mix |
+| storage_round_trip_losses | +1 | 72.2 | 150.1 | 150.1 | NGAP 2035-36 storage (888 GWh) held; MoP/CEA 2047 storage (2,380 GWh), one cycle a day, RTE 88% / 80% |
+| cross_border_imports | -1 | 10.9 | 13.1 | 15.3 | NEP 5,856 MW hydro imports by 2032 at PLF 32/36/40%, less 6.15 TWh in FY2023-24 |
+| rooftop_solar | -1 | 24.7 | 24.7 | 134.9 | EPS 50 GW by 2031-32 held; official path continued to 126.3 GW |
+| pm_kusum_c_pump_solarisation | -1 | 13.0 | 37.7 | 38.6 | 12.0 lakh pumps solarised (Dec 2025); 35 lakh target; 35.8 lakh sanctioned |
+| efficiency_beyond_trend | -1 | 0.0 | 0.0 | 125.3 | NITI NZS minus CPS residential appliances (109 TWh in 2050) |
+| transport_electrification | +1 | 511.9 | 511.9 | 525.2 | NITI transport electricity 47 / 48 Mtoe in 2050 (road EVs, rail, metro) |
+| green_hydrogen | +1 | 137.9 | 230.4 | 682.3 | NGHM 5 MMT held; NITI CPS 470 / NZS 1,392 TWh in 2050; half on the grid |
+| data_centres | +1 | 356.2 | 397.1 | 397.1 | NITI Power 400 TWh (2050) scaled; NITI Overview 394 TWh (2047) |
+| space_cooling | +1 | 0.0 | 0.0 | 252.3 | ICAP space cooling 135 TWh (2017-18) to 585 TWh (2037-38), excess over trend held |
+
+Each row's `notes` give the arithmetic, and `source_location` the page or table.
+
+**What replaces `new_loads.csv`.** The think-tank values in `new_loads.csv` are replaced by official figures where one exists: electric vehicles (TERI, CEEW) by NITI's transport electricity; the hydrogen central value (TERI) by NITI CPS, plus CEA's 50% grid share; the data-centre high value (BloombergNEF) by NITI's 2047-dated 394 TWh; space cooling (TERI, IEA) by the MoEFCC India Cooling Action Plan. Electric cooking has no official TWh figure (only TERI), so it is `context`. `new_loads.csv` itself is unchanged.
+
+**Sources** (raw copies in `raw/demand_features/`, except files already archived elsewhere in `raw/` or `data/raw/`; PDFs are not committed). Accessed 21 Nov 2026 unless stated.
+
+| source | publisher and date | URL | page / table used | raw file |
+|---|---|---|---|---|
+| All India Electricity Statistics, General Review 2025 (FY2023-24) | CEA, Jan 2026 | https://cea.nic.in/api/dashboardReports/download-pdf/en/aec4372e-3df2-4782-9887-b75d10407572 | Table 6.1 PDF p. 103 (T&D 17.63%, auxiliary 6.15%, imports 6,147.23 GWh, exports 11,295.19 GWh); Table 6.2 p. 104 (transmission losses, exports by country); Tables 6.5.0-6.5.6 pp. 107-113 (auxiliary by mode); Table 9.1 p. 137 (sales by category: railways 33,917.67 GWh, agriculture 275,484.96 GWh) | `data/raw/generation/downloads/cea/cea_gr2025_fy2023-24.pdf` (archived 15 Nov 2026) |
+| Growth of Electricity Sector in India from 1947-2025 | CEA, Nov 2025 | https://cea.nic.in/api/dashboardReports/download-pdf/en/e15a21a7-2864-4611-b0f8-75956818ea68 | Chart 29 PDF p. 58 (T&D losses by year: 28.65% 2006-07, 17.63% 2023-24) | `data/raw/generation/downloads/cea/cea_growth_of_electricity_sector_1947-2025.pdf` |
+| Report of the 20th Electric Power Survey, Volume I | CEA, Nov 2022 | https://web.archive.org/web/20240509005047/https://cea.nic.in/wp-content/uploads/notification/2023/02/Volume_I_Report_of_20th_Electric_Power_Survey.pdf (original CEA link now 404) | Table 4 PDF p. 9 and Table 6.1 p. 167 (T&D ex-bus 13.76% 2031-32, 10.97% 2036-37, 9.36% 2041-42); Table 13 p. 13 (moderate scenario); Sec. 1.5.1 p. 26 (EV 27 BU 2031-32); 1.5.2 p. 27 (rooftop 50 GW, CUF 17%, 75%, 55 BU); 1.5.3 p. 28 (KUSUM-C 7.5 HP, CUF 17%); 1.5.4 p. 29 (hydrogen 50 kWh/kg, half on grid, 250 BU); 1.5.5 p. 29 (AT&C 12-15% by 2024-25); 1.5.6 p. 30 (UNNATEE 285 BU in 2031) | `CEA_20th_EPS_Volume_I.pdf` |
+| National Electricity Plan (Vol I Generation) 2022-32 | CEA, Gazette 18.05.2023 | https://web.archive.org/web/20250716152340/http://cea.nic.in/wp-content/uploads/document_upload/2023/06/NEP_2022_32_FINAL_GAZETTE.pdf | PDF p. 133 (demand includes EE, EV, hydrogen; rooftop 17.6 / 55.8 BU outside it); Table 5.5 p. 137 (hydro imports 5,856 MW till 2032); Annexure 5.1 p. 155 (BESS round-trip losses 12%); Sec. 13.5 p. 314 (BESS in single-cycle mode) | `raw/nep2023/NEP_2022_32_FINAL_GAZETTE.pdf` (archived 15 Nov 2026) |
+| National Generation Adequacy Plan (2026-27 to 2035-36) | CEA, 19 Mar 2026 | https://cea.nic.in/api/dashboardReports/download-pdf/en/36629574-0b05-4244-8992-c8c6bb87a4d9 (listed at https://cea.nic.in/reports/dashboardView?headingId=106&subHeadingId=1005&title=Generation&lang=en) | Fig. 4.5 PDF p. 43 (storage 2035-36: PSP 567 GWh, BESS 321 GWh); Annexure-B p. 71 (round-trip efficiency PSP 80%, BESS 88%); PDF pp. 28-29 (demand includes EVs, hydrogen, data centres) | `CEA_National_Generation_Adequacy_Plan_2026-27_to_2035-36.pdf` |
+| National Framework for Promoting Energy Storage Systems | Ministry of Power, Aug 2023 (hosted by MNRE) | https://mnre.gov.in/static/uploads/2025/07/23089825a74040f9e3adaffd8c4edfbf.pdf | Para 3.3 PDF p. 6 (CEA: 320 GW, 2,380 GWh by 2047; 1,840 GWh BESS, 540 GWh PSP) | `MoP_National_Framework_Energy_Storage_Systems_2023.pdf` |
+| Scenarios Towards Viksit Bharat and Net Zero, Sectoral Insights: Power (Vol. 7) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Power.pdf | Table E.1 PDF p. 24; p. 37 (deficit 11.1% 2008-09 to 0.1% 2024-25; supply hours); Table 2.1 p. 48 (PM-KUSUM as on 30.12.2025); p. 58 (CPS definition); pp. 59-62 (sector assumptions, 29.74% captive in industry, 8.5 Mt hydrogen CPS 2050); p. 63 (data centres 1.4 GW in 2024); p. 66 (hydro PLF 32-40%); pp. 70-72 (sector demand 2050/2070, transport about 550 TWh, data centres 400 TWh 2050); Sec. 4.3 p. 74 (T&D about 12% by 2030, 8% by 2050); Table 4.2 p. 79 (generation mix) | `raw/new_loads/NITI_2026_Sectoral_Insights_Power_Vol7.pdf` (archived 18 Nov 2026) |
+| Sectoral Insights: Transport (Vol. 3) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Transport.pdf | Table 4.6 PDF p. 92 and text p. 93 (transport electricity 47 Mtoe CPS, 48 Mtoe NZS in 2050) | `raw/new_loads/NITI_2026_Sectoral_Insights_Transport_Vol3.pdf` |
+| Sectoral Insights: Buildings (Vol. 5) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-Sectoral-Insights-Buildings.pdf | Sec. 4.5.1 PDF p. 79 (lighting 66 / 62 TWh 2050; cooling 123 TWh 2020, 834 / 596 TWh 2070), p. 81 (heating 96 / 76; other appliances 277 / 192 TWh in 2050); Fig. 4.9 p. 87 | `raw/new_loads/NITI_2026_Sectoral_Insights_Buildings_Vol5.pdf` |
+| An Overview (Vol. 1) | NITI Aayog, Feb 2026 | https://niti.gov.in/sites/default/files/2026-02/Scenarios-Towards-Viksit-Bharat-and-Net-Zero-%20An-Overview-Vol1.pdf | PDF p. 101 (hydrogen 470 TWh CPS, 1,392 TWh NZS in 2050); p. 143 (data centres 45 GW = 394 TWh in 2047) | `raw/new_loads/NITI_2026_Scenarios_Viksit_Bharat_Net_Zero_Overview_Vol1.pdf` |
+| India Cooling Action Plan | MoEFCC Ozone Cell, Mar 2019 | https://ozonecell.nic.in/wp-content/uploads/2019/03/INDIA-COOLING-ACTION-PLAN-e-circulation-version080319.pdf | Figure D and Ch. 3-4 summaries, PDF p. 17 (space cooling about 135 TWh 2017-18, about 585 TWh 2037-38; intervention about 30% lower; pack-houses 2.4 / 5.2 TWh) | `MoEFCC_India_Cooling_Action_Plan_2019.pdf` |
+| National Green Hydrogen Mission | MNRE, Jan 2023 | https://mnre.gov.in/static/uploads/2025/07/d220a22eefbd5a0d315f292872584ea1.pdf | PDF p. 24 (at least 5 MMT a year by 2030, about 125 GW of RE) | `MNRE_National_Green_Hydrogen_Mission_2023.pdf` |
+| Guidelines for PM-Surya Ghar: Muft Bijli Yojana (CFA component) | MNRE, file dated 16.04.2024 (the PDF heading reads "Draft Guidelines") | https://mnre.gov.in/static/uploads/2025/07/f33438b00a6b6ef9609cd33aae52ba60.pdf | PDF p. 5 (1 crore households; 1,000 BU over 25 years), p. 6 (30 GW) | `MNRE_PM_Surya_Ghar_Guidelines_2024.pdf` |
+| Comprehensive guidelines for PM-KUSUM | MNRE, file dated 17.01.2024 | https://mnre.gov.in/static/uploads/2025/08/ec489eee69a412c6bebfcfdb38296ed1.pdf | Para 2.1 PDF p. 2 (A 10,000 MW; B 14 lakh pumps; C 35 lakh pumps incl. feeder-level; 34,800 MW by March 2026) | `MNRE_PM_KUSUM_Comprehensive_Guidelines_2024.pdf` |
+| Renewable Energy Statistics 2023-24 and 2024-25 | MNRE | https://cdnbbsr.s3waas.gov.in/s3716e1b8c6cd17b771da77391355749f3/uploads/2024/10/20241029512325464.pdf ; https://cdnbbsr.s3waas.gov.in/s3716e1b8c6cd17b771da77391355749f3/uploads/2025/11/20251106791170361.pdf | 2023-24 PDF p. 27 (rooftop 11.87 GW); 2024-25 PDF p. 28 (rooftop 17.02 GW, off-grid/KUSUM 4.74 GW on 31.03.2025) | `raw/mnre_re_statistics/` |
+| India Energy Scenario for the Year 2023-24 (2nd ed.) | BEE, Dec 2024 | https://web.archive.org/web/20251009042216/https://beeindia.gov.in/sites/default/files/India_Energy_Scenario_for_the_Year_2023-24.pdf (original BEE link now 404) | Table 25 PDF p. 134 (electricity savings 2023-24: UJALA 182.00, S&L 89.84, PAT 40.11, SLNP 8.8, star rating 0.64, total 321.39 BU) | `BEE_India_Energy_Scenario_2023-24.pdf` |
+| Impact of Energy Efficiency Measures for the Year 2022-23 | BEE (study by Deloitte for BEE), Dec 2023 | https://beeindia.gov.in/WriteReadData/L45218/6482394116468231.pdf | PDF p. 3 (307.33 BU in 2022-23); p. 184 (railways non-traction 2.453 BU) | `BEE_Impact_of_EE_Measures_2022-23.pdf` |
+| Economic Survey 2024-25, Chapter 5 | Ministry of Finance, 31 Jan 2025 | https://www.indiabudget.gov.in/budget2025-26/economicsurvey/doc/eschapter/echap05.pdf | Para 5.1 PDF p. 1 (around 8 per cent at constant prices for about a decade or two); para 5.31 p. 15 | `MoF_Economic_Survey_2024-25_chap05.pdf` |
+| Provisional Estimates of Annual GDP for 2024-25 | MoSPI (NSO), 30 May 2025 | https://www.mospi.gov.in/sites/default/files/press_release/NAD_PR_30may2025.pdf | Statement 4 PDF p. 12 (GVA at current prices by sector) | `MoSPI_NAD_PR_2025-05-30.pdf` |
+| Assessment of Climate Change over the Indian Region | MoES, 2020 (Springer, open access) | https://link.springer.com/content/pdf/bfm:978-981-15-4327-2/1 (book: https://doi.org/10.1007/978-981-15-4327-2) | Executive Summary PDF p. 10 (0.7 C, 1901-2018), p. 11 (4.4 C by 2100, RCP8.5), p. 12 (heat waves 3-4 times) | `MoES_2020_Climate_Change_Indian_Region_frontmatter.pdf` |
+| Renewable consumption obligation, S.O. 4617(E) | Ministry of Power, Gazette 20 Oct 2023 | https://egazette.gov.in/WriteReadData/2023/249637.pdf | English text PDF p. 3 (43.33% in 2029-30) | `MoP_RCO_Notification_SO4617E_2023-10-20.pdf` |
+| Carbon Credit Trading Scheme 2023, S.O. 2825(E) | Ministry of Power, Gazette 28 Jun 2023 | https://egazette.gov.in/WriteReadData/2023/246859.pdf | English text PDF p. 6 | `MoP_CCTS_2023_SO2825E.pdf` |
+| Greening the Steel Sector in India: Roadmap and Action Plan | Ministry of Steel, Sept 2024 | https://steel.gov.in/sites/default/files/2025-03/GSI%20Report.pdf | Executive Summary PDF p. 21 (steel electricity 94 TWh 2021-22, 184 TWh 2030-31) | `MoS_Greening_Steel_Sector_Roadmap_2024.pdf` |
+| India-Nepal Bilateral Brief | MEA, 20 Jun 2024 | https://www.mea.gov.in/Portal/ForeignRelation/Open-bilateral-brief-20-June-2024.pdf | PDF p. 3 (long-term power trade agreement finalised; no quantity) | `MEA_India_Nepal_Bilateral_Brief_2024-06-20.pdf` |
+
+Population (Technical Group, UN WPP 2024), urbanisation (UN WUP 2018), national GDP (RBI) and the COP26/NDC targets are the sources already described in sections 2, 3, 4 and 8; the `core` and `driver` rows cite them only to confirm what the model uses.
+
+**Extraction and checks**
+- Text was read with `pdftotext -layout`; each value was located by PDF page (a form-feed count) and checked against the printed table or sentence.
+- CEA's site no longer serves several older links. The 20th EPS and BEE's 2023-24 report were taken from Internet Archive captures of their original URLs. CEA's new reports were found through the `dashboardView` listing pages. MNRE files were found through MNRE's public site API (`/cms/wp-json/wp/v2/search`), which returns the `static/uploads` PDF links.
+- The CSV was checked with a structure script: 16 fields on every row; `sign` in {+1, -1}; `in_model` in the five allowed values; `overlap_history` in {yes, partial, no}; `0 <= low <= central <= high` on every quantified row; TWh values only on `layer` rows; an official host in every quantified row's `source_url` and no think-tank URL.
+
+**Caveats**
+- **Overlap with the trend.** The T&D row (change in loss rate from FY2023-24) overlaps the estimated elasticity: the 2006-07 to 2023-24 fall from 28.65% to 17.63% is inside the history, so the trend already implies continued falls. Its values are an upper bound on the effect beyond trend. The same history also contains a closing supply deficit (11.1% in 2008-09 to 0.1% in 2024-25) and large realised efficiency savings (321.39 BU in 2023-24, of which UJALA 182 BU is largely a one-off). These push the trend in opposite directions; the row `trend_carryover_losses_deficit` records them without a TWh value.
+- **Double counting between rows.** Rail and metro are inside `transport_electrification`. Hotter weather is inside the cooling projections. Hydrogen for steel is inside `green_hydrogen`. Distributed RE under the RCO overlaps rooftop solar and PM-KUSUM. If the Part 2 plan already adds storage losses, `storage_round_trip_losses` must not be added again.
+- **Gross-up interaction.** New loads are grossed up at FY2023-24 loss rates. If `t_and_d_losses` is active, those gross-ups are up to about 10% too high.
+- **Captive and off-grid supply.** Hydrogen uses CEA's 50% grid share; the co-located half is captive and outside NPP. Data-centre captive supply has no official share and is not removed. Whether feeder-level solar (PM-KUSUM C) and Component A plants are counted in NPP utility generation is not stated in the sources.
+- **Year bases.** Only the T&D path (EPS to 2041-42, NITI to 2050) and the data-centre figure (NITI Overview, 2047) reach near 2047. Other rows hold or scale earlier or later official years, as their notes state.
+- **No official figure** for electric cooking (TWh), desalination, metro electricity, price elasticity, real tariffs to 2047, export volumes to 2047, or electricity per cooling degree day. These rows are `context`.
+
+---
+
 ## Coverage and gaps (all files)
 
 - **Population:**
@@ -504,4 +590,5 @@ Page numbers are printed pages, with PDF pages in the CSV's `source_location`.
   - GHI and wind density are derived from global gridded products (NASA POWER, Global Wind Atlas), not from an official Indian state table, which was not found.
 - **Nuclear** (section 7): reactor types for the in-principle sites are not stated in the sources.
 - **New loads** (section 10): no source gives a 2047 value across the range, so every row is 2050. Data centres rest on two sources and electric cooking on one.
+- **Demand features** (section 11): only T&D losses and data centres have official values for or near 2047; other rows hold or scale official values for 2030 to 2050. No official TWh figure was found for electric cooking, desalination, metro, price effects, exports to 2047 or degree-day sensitivity.
 - **Census 2011 direct tables:** censusindia.gov.in timed out. Census 2011 values are taken as reproduced in the Technical Group report (population and urban share), and areas are taken from ISFR 2023.
