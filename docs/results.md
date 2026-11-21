@@ -127,7 +127,7 @@ The elasticity is estimated for India as a whole; its sensitivities are in secti
 
 ### 1.6 Demand features (a separate layer, outside the headline)
 
-Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 44 drivers, each from an official source (secondary).
+Every other driver of the 2047 requirement is listed in [demand_features.md](demand_features.md): 44 drivers. Every quantified size comes from an official source (secondary); six unquantified rows have no external source.
 7 are estimated in the core forecast, 3 are existing drivers or settings, 1 is excluded by the organisers' ruling (captive generation) and 22 are context.
 The other 11 are quantified as signed TWh adjustments to FY2047-48 generation, beyond the historical trend, and form a layer that is never the headline (`outputs/feature_scenarios_2047.csv`):
 

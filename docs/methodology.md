@@ -247,7 +247,7 @@ On the central path ln income per person rises by 1.04, so each 0.01 of elastici
 The elasticity learns only what is in the 2006-2024 history.
 Drivers that the history does not carry, or carries only in part, form a separate layer that is never the headline ([decisions.md](decisions.md), D14; the full catalogue is [demand_features.md](demand_features.md)).
 
-**Catalogue.** `data/external/demand_features.csv` lists 44 drivers of FY2047-48 utility generation, every one from an official source (secondary). Each row has a sign, a treatment and an overlap flag against the trend:
+**Catalogue.** `data/external/demand_features.csv` lists 44 drivers of FY2047-48 utility generation. Every quantified size comes from an official source (secondary); six unquantified rows name no external source (three where no official figure was found, three that point to the model's own runs). Each row has a sign, a treatment and an overlap flag against the trend:
 
 | Treatment | Rows | Meaning |
 | --- | --- | --- |

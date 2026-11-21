@@ -750,7 +750,7 @@ void App::tab_mix() {
                 alloc.emission_t_per_mwh[kCoal], alloc.emission_t_per_mwh[kGas]);
   stat_card("CO2 from generation", with_commas(a.co2_mt) + " Mt", ef, w);
   ImGui::SameLine();
-  stat_card("Generation cost", with_commas(a.cost_busd) + " bn USD/yr", "2047 levelised costs (IEA WEO 2025 basis)", w);
+  stat_card("Generation cost", with_commas(a.cost_busd) + " bn USD/yr", "2047 levelised costs, real 2024 USD (IEA WEO 2025 basis)", w);
   ImGui::SameLine();
   stat_card("Unmet requirement", with_commas(unserved, 1) + " TWh", unserved > 0.1 ? "Constraints too tight: relax a limit" : "System is adequate", w);
 
@@ -1559,8 +1559,8 @@ void App::data_requirement() {
     };
     char b[1024];
     std::snprintf(b, sizeof b,
-                  "%d drivers of the FY2047-48 requirement (data/external/demand_features.csv, official sources, "
-                  "secondary): %d estimated in the core forecast, %d uncertainties or settings of it, %d quantified in "
+                  "%d drivers of the FY2047-48 requirement (data/external/demand_features.csv; every quantified "
+                  "size from an official source, secondary):%d estimated in the core forecast, %d uncertainties or settings of it, %d quantified in "
                   "the feature layer, %d excluded by the organisers' ruling and %d context only. Layer values are "
                   "signed TWh in FY2047-48, already cut to the part beyond the historical trend and on a generation "
                   "basis. T&D losses overlap the trend, so their value is an upper bound (0 at central). Every "

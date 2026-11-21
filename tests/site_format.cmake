@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.26)
 file(MAKE_DIRECTORY "${WORK}")
 file(WRITE "${WORK}/summary.json" [=[
 {"schema": 1, "a": 0.1038, "b": 0.0653, "c": 12.0049, "d": 1234.5, "e": -0.0004, "f": 0.0099, "g": 100.07, "h": 1234567.8, "i": 0.0105,
+ "j": 0.835, "k": 4687.775, "l": -2.45, "m": 0.83499,
  "n": null, "o": {"k": "x"}, "arr": [1, 2, 3], "ea": [], "eo": {}, "es": "",
  "grp": [{"k": "a", "v": 1, "s": {"t": 1}}, {"k": "a", "v": 2, "s": {"t": 1}}, {"k": "b", "v": 3, "s": {"t": 2}}, {"k": "a", "v": 4, "s": {"t": 2}}]}
 ]=])
@@ -52,6 +53,10 @@ endfunction()
 
 _render("{{a|r3}};{{b|r3}};{{c|2}};{{d|0}};{{e|r1}};{{f|r2}};{{g|r1}};{{a|+1}};{{h|0}};{{i|r3}}"
         "0.104;0.065;12.00;1,235;0.0;0.01;100.1;+0.1;1,234,568;0.011")
+# Halves stored as the nearest double below them (0.835 is 0.83499999999999996) still
+# round up; a value truly below a half still rounds down.
+_render("{{j|2}};{{k|2}};{{l|r1}};{{m|2}}"
+        "0.84;4,687.78;-2.5;0.83")
 
 # Kept part, fallback for a missing key (whose values are never read), null counts as
 # missing, nested keys, no else part, and each blocks inside a kept part.

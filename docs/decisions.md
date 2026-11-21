@@ -500,7 +500,7 @@ The rules do not change:
   - lambda = -ln(1 + slope x S) / S, where S is the mean span (17.06 years).
   - lambda falls from 0.0208 to 0.0021 (s.e. 0.0051): convergence is essentially absent. The national forecast does not depend on it.
 - **Demand-feature layer** (R22, R23, R24; `src/pipeline/demand_features.hpp`; the catalogue is [demand_features.md](demand_features.md)).
-  - `data/external/demand_features.csv` lists 44 drivers, all from official sources: 7 estimated in the core forecast, 3 existing drivers or settings, 11 quantified feature rows (the layer), 1 excluded by rule (captive generation) and 22 context rows.
+  - `data/external/demand_features.csv` lists 44 drivers; every quantified size comes from an official source, and six unquantified rows have no external source (three where no official figure was found, three that point to the model's own runs): 7 estimated in the core forecast, 3 existing drivers or settings, 11 quantified feature rows (the layer), 1 excluded by rule (captive generation) and 22 context rows.
   - The 11 layer rows are signed TWh adjustments to FY2047-48 utility generation. They are already reduced to their part beyond the historical trend and grossed up to generation.
   - Seven named scenarios: Core, Features central, Electrification high, Efficiency and distributed, Climate stress, All upside and All downside. A joint Monte Carlo adds independent feature draws to each core draw. A P90 plan test solves the Robust plan at the joint P50 and P90.
   - Each adjustment is ramped linearly from the base year, like the existing add-on. Feature draws use their own Philox stream, so the headline draws are bit-identical.

@@ -434,7 +434,7 @@ Every other setting is the default, with the same seed and draws as the headline
 | All downside | Every row that raises generation low, every row that lowers it high (T&D losses at their upper bound) | +177.3 | 3,368 | 4,865 | 7,198 | +3.8% |
 
 TWh in FY2047-48.
-A constant adjustment shifts every quantile by its total (up to histogram binning, under 0.05 TWh).
+A constant adjustment shifts every quantile by its total (up to histogram binning, about 0.1 TWh).
 
 Regional medians, TWh:
 

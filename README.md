@@ -23,7 +23,7 @@ Scope: the country's total utility generation as published by the National Power
 - Holdout years not used in fitting: FY2024-25 error -3.3%, FY2025-26 error +0.5%; both inside the model's 90% range.
 - Income is the largest driver but not the only one: of the growth to FY2047-48 on the central path, income accounts for 88%, population for 15% and urbanisation beyond income for 5%, while the fading of the high FY2023-24 level takes back 7% (`outputs/growth_decomposition_2047.csv`).
 - Income growth dominates the uncertainty: +-1.5 points of growth moves the 2047 median by +31% / -24%.
-- Every other driver of the requirement, 44 in all, is catalogued from official sources in [docs/demand_features.md](docs/demand_features.md). The 11 that the history does not carry form a labelled layer outside the headline: with every feature at its central value the median is 5,810 TWh (+23.9%), with the features drawn jointly 5,668 TWh (+20.9%; P5 4,130, P95 8,017), and the median of every combination of feature levels lies between All downside (4,865) and All upside (6,555).
+- Every other driver of the requirement, 44 in all, is catalogued in [docs/demand_features.md](docs/demand_features.md), each quantified size from an official source. The 11 that the history does not carry form a labelled layer outside the headline: with every feature at its central value the median is 5,810 TWh (+23.9%), with the features drawn jointly 5,668 TWh (+20.9%; P5 4,130, P95 8,017), and the median of every combination of feature levels lies between All downside (4,865) and All upside (6,555).
 - Independent cross-country check, used for justification and not for estimation (153 countries, total generation in calendar 2047): 4,528 TWh.
 
 The regional split uses only the challenge data: the population and GSDP of 34 states and union territories in the Renewable India dataset, with each state's own income applied state by state (the income gaps barely converge: 0.2 percent a year), state populations grown at the UN's India growth plus each state's own 2019-2024 offset, and the grid region NPP reports each state under.
@@ -60,13 +60,14 @@ The decks and talk materials ([docs/beamer/](docs/beamer/), [docs/deck/](docs/de
 Only **energy generated** (GWh or TWh) is used for forecasting and comparison.
 Installed capacity and energy consumption are never forecasting inputs or comparison metrics.
 The core 2047 prediction (Part 1: the national requirement and its regional split) uses only the two challenge datasets: NPP generation and the organiser state population and GSDP.
+One series in them is corrected for inflation: Jammu and Kashmir's GSDP, which the dataset gives at current prices from FY2012-13, is put on constant prices with the MoSPI GDP deflator (secondary); the run without Jammu and Kashmir gives 4,683 TWh.
 The organisers' written ruling of 16 November 2026 is applied: NPP generation only (no captive generation), the regional split from the challenge data, and the cross-country model and resource potentials for justification only ([docs/decisions.md](docs/decisions.md), D12).
 The generation mix (Part 2) uses published figures, as the kickoff guidance allows publicly available literature for the growth rates and constraints of each energy source: build limits (CEA NEP 2022-32, NITI Aayog, DAE), committed builds, resource potentials (NISE, NIWE, CEA), costs (IEA WEO 2025, with a CEA cost basis as a sensitivity) and emission factors (CEA CO2 Baseline Database v22.0), each labelled secondary.
 Asked whether these may act as limits and prices in the mix, the organisers replied "Use insights from this data source"; a clarification has been requested and no reply has come yet. None of these figures enters the 2047 requirement.
 The organiser dataset in [data/raw/competition/](data/raw/competition/) contains installed-capacity columns; only its State, Year, Zone, Population and GSDP columns are read.
 The two organiser sources, the National Power Portal (<https://npp.gov.in/landing-home>) and the Renewable India dataset (<https://github.com/chrisjaimyantony/renewable-india-dataset>), are the primary, trusted sources; every other source is secondary and labelled as such.
 The headline is estimated on the two datasets. The demand features (official sources, secondary) are a labelled layer outside it; where a source gives capacity or end-use electricity, the feature is converted explicitly to TWh of generation.
-Every money figure is in real 2024 USD, converted with official price indices (MoSPI, RBI, BEA, BLS; secondary).
+Every money figure is in real 2024 USD, converted with official price indices (MoSPI, RBI, BEA; secondary).
 See [docs/data_audit.md](docs/data_audit.md).
 
 ## Method in one paragraph
