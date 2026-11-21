@@ -706,8 +706,8 @@ void App::tab_regions() {
   help("The national total is split by each state's population and income (challenge dataset: population growing at "
        "the state's own 2019-2024 rate relative to India's; GSDP per person converging) through the same income "
        "response as the national model; states are placed in the grid regions NPP reports them under. It is not "
-       "where power is generated: today the Western and Eastern regions generate more than their share and export "
-       "to the North.");
+       "where power is generated: today the Western region generates well above its share of the requirement, and "
+       "the Eastern region a little above its share, and both export to other regions.");
 }
 
 void App::tab_mix() {
