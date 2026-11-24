@@ -40,9 +40,10 @@
   #err { display: none; max-width: 640px; color: #ff8080; white-space: pre-wrap; }
   #note { max-width: 36rem; color: #9aa6b2; font-size: 13px; }
   /* Cross-document view transition with the summary page (web/landing.html): the pages
-     cross-fade, and when the dashboard is opened from its screenshot there, the screenshot
+     cross-fade, and when the dashboard is opened from its preview there, the preview
      grows into this loading screen (both carry the name "dashboard"). Off for visitors who
-     prefer reduced motion. */
+     prefer reduced motion. The summary page can also show this page in a frame; links back
+     to it use target="_top" so they leave the frame. */
   @media (prefers-reduced-motion: no-preference) {
     @view-transition { navigation: auto; }
     #overlay { view-transition-name: dashboard; }
@@ -53,7 +54,7 @@
 </head>
 <body>
 <div id="top">
-  <a href="../">&larr; Summary</a>
+  <a href="../" target="_top">&larr; Summary</a>
   <p id="alt">Interactive dashboard drawn on a canvas, not readable by screen readers; every headline result is on the summary page as text and tables.</p>
 </div>
 <div id="wrap"><canvas id="canvas" tabindex="-1" role="img" aria-label="Interactive dashboard: India's electricity generation forecast to 2047 by region, the 2047 generation mix, uncertainty and policy settings" aria-describedby="alt" oncontextmenu="event.preventDefault()"></canvas></div>
@@ -63,7 +64,7 @@
   <div id="msg" role="status" aria-live="polite">Loading...</div>
   <div id="err" role="alert"></div>
   <p id="note">The model downloads about 6 MB once, then runs the forecast and the 2047 plan on your computer; the first view takes a few seconds.</p>
-  <noscript><p>The interactive model needs JavaScript. The results are on the <a href="../">summary page</a>.</p></noscript>
+  <noscript><p>The interactive model needs JavaScript. The results are on the <a href="../" target="_top">summary page</a>.</p></noscript>
 </div>
 <script>
   // Only Module is global: the Emscripten runtime declares its own globals (out, err, ...).

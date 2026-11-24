@@ -18,6 +18,87 @@
 <meta property="og:url" content="https://india-energy-2047.vercel.app/">
 <meta property="og:title" content="India Energy 2047: forecast and regional plan">
 <meta property="og:description" content="{{national.p50|0}} TWh needed in {{years.target_label}} (80% range {{national.p10|0}} to {{national.p90|0}} TWh), with a regional plan to meet it.">
+<!-- The share image (web/og-image.png) is a title card with no model numbers, so it never goes stale. -->
+<meta property="og:image" content="https://india-energy-2047.vercel.app/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="India Energy 2047: India's electricity generation requirement and a regional plan to meet it. Team The Losers, IISc Bengaluru.">
+<meta property="og:site_name" content="India Energy 2047">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="keywords" content="India electricity generation 2047, TWh forecast, India generation requirement FY2047-48, regional generation mix India, National Power Portal">
+<!-- The same summary as Markdown; / also returns it for Accept: text/markdown (web/vercel.json). -->
+<link rel="alternate" type="text/markdown" href="/index.md" title="India Energy 2047 (Markdown)">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://india-energy-2047.vercel.app/#website",
+      "url": "https://india-energy-2047.vercel.app/",
+      "name": "India Energy 2047",
+      "description": "A forecast of the electricity India must generate in FY2047-48, with its uncertainty, and a least-cost generation mix for each grid region.",
+      "inLanguage": "en",
+      "keywords": ["India electricity generation 2047", "TWh forecast", "India generation requirement FY2047-48", "regional generation mix India", "National Power Portal"],
+      "creator": { "@id": "https://india-energy-2047.vercel.app/#team" },
+      "publisher": { "@id": "https://india-energy-2047.vercel.app/#team" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://india-energy-2047.vercel.app/#team",
+      "name": "Team The Losers",
+      "description": "A team from the Indian Institute of Science, Bengaluru, that built India Energy 2047 for ExxonMobil INNOTHON 2026.",
+      "url": "https://india-energy-2047.vercel.app/about",
+      "parentOrganization": { "@type": "CollegeOrUniversity", "name": "Indian Institute of Science", "url": "https://iisc.ac.in/" },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Indian Institute of Science",
+        "addressLocality": "Bengaluru",
+        "addressRegion": "Karnataka",
+        "postalCode": "560012",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "questions and corrections",
+        "url": "https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/issues",
+        "availableLanguage": "en"
+      },
+      "sameAs": ["https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047"]
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://india-energy-2047.vercel.app/#results",
+      "name": "India Energy 2047 model results",
+      "description": "Every model result shown on the India Energy 2047 site: India's electricity generation requirement to FY2047-48 (TWh, median and range), its split into the NPP grid regions, and the recommended regional generation mix. Written by the model run and published with the site.",
+      "url": "https://india-energy-2047.vercel.app/",
+      "keywords": ["India electricity generation 2047", "TWh forecast", "electricity generation requirement", "regional generation mix"],
+      "spatialCoverage": { "@type": "Place", "name": "India" },
+      "variableMeasured": "Electricity generation requirement, TWh a year",
+      "isAccessibleForFree": true,
+      "creator": { "@id": "https://india-energy-2047.vercel.app/#team" },
+      "distribution": {
+        "@type": "DataDownload",
+        "encodingFormat": "application/json",
+        "contentUrl": "https://india-energy-2047.vercel.app/summary.json"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://india-energy-2047.vercel.app/app/#app",
+      "name": "India Energy 2047 dashboard",
+      "url": "https://india-energy-2047.vercel.app/app/",
+      "description": "Interactive dashboard of the India Energy 2047 model: change an assumption and the national forecast, the regional split and the generation mix recompute in the browser (WebAssembly).",
+      "applicationCategory": "ReferenceApplication",
+      "operatingSystem": "Any current desktop browser",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "creator": { "@id": "https://india-energy-2047.vercel.app/#team" }
+    }
+  ]
+}
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23002f6c'/%3E%3Cpath d='M9 1 3 9h4l-1 6 6-8H8z' fill='%23ffffff'/%3E%3C/svg%3E">
 <!-- A navigation to or from the dashboard waits for the hero, so its cross-fade never shows a blank page. -->
 <link rel="expect" href="#hero" blocking="render">
@@ -322,16 +403,66 @@
   .stats { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
   .stat { display: flex; gap: var(--space-s); align-items: flex-start; padding: var(--space-m); background: var(--card-soft); border: 1px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-sm); }
   .stat--accent { border-inline-start: 4px solid var(--navy-fill); }
-  /* The dashboard card shows the product: a screenshot above its text, and the whole card
-     follows its one link (the link's ::after covers the card; one tab stop, one name). */
+  /* The dashboard card shows the product: a preview of the dashboard above its text, and the
+     card follows its link (the link's ::after covers the card). The "Run the live model here"
+     button sits above that cover. */
   .stat--app { position: relative; flex-wrap: wrap; transition: border-color var(--dur-state) ease; }
   .stat--app:hover { border-color: var(--navy); }
   .stat__shot {
     display: block; flex: 1 0 100%; overflow: clip; border: 1px solid var(--line); border-radius: var(--radius-s);
-    background: var(--app-ground); /* shown until the image decodes */
+    background: var(--app-ground);
   }
-  .stat__shot img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 800 / 417; }
   .stat__link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-l); }
+  .stat__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-m); margin-block-start: var(--space-2xs); }
+  .stat__actions .stat__link { display: inline-flex; align-items: center; min-block-size: 2.75rem; font-weight: 650; }
+  .live-run { display: none; position: relative; z-index: 1; }
+  .live-run .icon { inline-size: 1rem; block-size: 1rem; fill: currentColor; stroke: none; }
+  /* The live model needs a wide screen; on a phone the card offers only the link. */
+  @media (min-width: 64rem) and (min-height: 36rem) { .js .live-run { display: inline-flex; } }
+
+  /* Dashboard preview: an inline SVG drawn from the same summary as the text, in the dashboard's
+     own dark colours in both page themes. The figures in it are template values, so it always
+     matches the page. */
+  .pv { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 640 / 334; font-family: var(--font); }
+  .pv text { font-size: 10px; fill: #9aa6b2; }
+  .pv .pv__h { font-size: 12px; font-weight: 650; fill: #e6edf5; }
+  .pv .pv__title { font-size: 13px; font-weight: 650; fill: #e6edf5; }
+  .pv .pv__on { fill: #e6edf5; }
+  .pv .pv__value { font-size: 19px; font-weight: 750; fill: #f1f5fa; font-variant-numeric: tabular-nums; }
+  .pv__ground { fill: #0f1217; }
+  .pv__side { fill: #151a21; }
+  .pv__rule { stroke: #252c36; stroke-width: 1; }
+  .pv__btn { fill: #24476f; }
+  .pv__btn--on { fill: #3a72b4; }
+  .pv__track { fill: #1f2731; }
+  .pv__knob { fill: #4c8ed9; }
+  .pv__tab { fill: #1c2733; }
+  .pv__tab--on { fill: #2f5b8f; }
+  .pv__card { fill: #161b22; stroke: #2a323d; }
+  .pv__plot { fill: #12171d; stroke: #252c36; }
+  .pv__legend { fill: #0f1217; fill-opacity: 0.8; }
+  .pv__grid { stroke: #252c36; stroke-width: 1; fill: none; }
+  .pv__base { stroke: #4a5562; stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+  .pv__band { fill: #2c5a97; fill-opacity: 0.6; }
+  .pv__med { stroke: #8ab8ff; stroke-width: 2; fill: none; }
+  .pv__obs { stroke: #e6edf5; stroke-width: 2; fill: none; }
+  .pv__dot { stroke: #8ab8ff; stroke-width: 7; stroke-linecap: round; }
+
+  /* The live model, opened in the page by "Run the live model here": the real dashboard
+     (app/) in a frame, below the hero. */
+  .live { margin-block-start: var(--space-l); padding: var(--space-s); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-lg); }
+  .live:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .live__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs) var(--space-m); margin-block-end: var(--space-s); }
+  .live__head { display: grid; gap: 0.125rem; min-inline-size: 0; }
+  .live__title { display: flex; align-items: center; gap: var(--space-xs); font-size: 1.25rem; font-weight: 750; }
+  .live__note { color: var(--ink-3); font-size: var(--text-s); }
+  .live__actions { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+  .live__iframe {
+    display: block; inline-size: 100%; block-size: clamp(26rem, 100dvh - var(--header-h) - 10rem, 52rem);
+    border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--app-ground); color-scheme: dark;
+  }
+  .live { transition: opacity var(--dur-open) var(--ease-out); }
+  @starting-style { .live { opacity: 0; } }
   .stat__body { display: grid; gap: var(--space-2xs); min-inline-size: 0; flex: 1; }
   .stat__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2xs) var(--space-s); }
   .stat__value { color: var(--ink); font-size: 1.75rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
@@ -739,7 +870,9 @@
   .site-footer__title { margin-block-end: var(--space-2xs); color: var(--ink-2); font-size: var(--text-s); font-weight: 800; }
   .site-footer__links { display: grid; padding: 0; list-style: none; }
   .site-footer__links a { display: inline-flex; align-items: center; min-block-size: 2.25rem; font-weight: 600; }
-  @media (pointer: coarse) { .site-footer__links a { min-block-size: 2.75rem; } }
+  .site-footer__meta { display: flex; flex-wrap: wrap; gap: 0 var(--space-m); padding: 0; list-style: none; }
+  .site-footer__meta a { display: inline-flex; align-items: center; min-block-size: 2.25rem; font-weight: 600; }
+  @media (pointer: coarse) { .site-footer__links a, .site-footer__meta a { min-block-size: 2.75rem; } }
   .site-footer__base { display: grid; gap: var(--space-2xs); margin-block-start: var(--space-l); padding-block-start: var(--space-m); border-block-start: 1px solid var(--line); }
   @media (min-width: 48rem) { .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; } }
 
@@ -820,6 +953,10 @@
 
     /* Strength map: the circles resize to the chosen source */
     .smap__fill { transition: transform 300ms var(--ease-in-out), fill var(--dur-state) ease; }
+
+    /* The live model's panel rises a little as it fades in (the fade alone runs for everyone) */
+    .live { transition: opacity var(--dur-open) var(--ease-out), translate var(--dur-open) var(--ease-out); }
+    @starting-style { .live { translate: 0 0.75rem; } }
   }
   /* Chart reveal, once: the national fan chart draws from the first observed year to 2047,
      so the forecast visibly grows out of the record. Only this chart moves; the bar charts
@@ -854,6 +991,7 @@
   <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5h6l-1 8 8.5-11h-6z"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13 15-14-1 10-6 15-14 15M5 19l7-7"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
   <symbol id="i-spread" viewBox="0 0 24 24"><path d="M3 20h18M3 16c6 0 11-3 18-11M3 16c6 0 11-1 18-3"/></symbol>
 </svg>
 
@@ -932,23 +1070,85 @@
           <p class="stat__text"><span class="num">{{plan.co2_mt|0}} Mt</span> CO₂ and <span class="num">{{plan.cost_busd|0}} bn USD</span> a year (real 2024 USD), against <span class="num">{{plan.base_policy.co2_mt|0}} Mt</span> and <span class="num">{{plan.base_policy.cost_busd|0}} bn USD</span> under base policy; <span class="num">{{plan.unmet_twh|0}} TWh</span> unmet at the median.</p>
         </div>
       </li>
-      <!-- The screenshot is web/img, exported from docs/img/1_national_forecast.png (cmake/Web.cmake).
-           On wide screens it is the largest element of the first screen, hence fetchpriority="high"
-           (the page loads no other image, so this costs a phone nothing). -->
+      <!-- Preview of the dashboard's national forecast view, drawn at build time from the same
+           summary values as the text (the same chart data as the forecast section), so it can
+           never show other numbers than the page. Explicit size, no image request. -->
       <li class="stat stat--accent stat--app">
-        <picture class="stat__shot">
-          <source type="image/avif" srcset="img/dashboard-forecast-480.avif 480w, img/dashboard-forecast-800.avif 800w, img/dashboard-forecast-1200.avif 1200w" sizes="(min-width: 64rem) 29rem, calc(100vw - 5rem)">
-          <source type="image/webp" srcset="img/dashboard-forecast-480.webp 480w, img/dashboard-forecast-800.webp 800w, img/dashboard-forecast-1200.webp 1200w" sizes="(min-width: 64rem) 29rem, calc(100vw - 5rem)">
-          <img src="img/dashboard-forecast-800.webp" width="800" height="417" fetchpriority="high" alt="The dashboard's national forecast view: assumption sliders on the left; on the right, the headline figures and the forecast chart with its uncertainty bands">
-        </picture>
+        <div class="stat__shot">
+          <svg class="pv" viewBox="0 0 640 334" width="640" height="334" role="img" aria-labelledby="pv-title">
+            <title id="pv-title">Preview of the dashboard's national forecast view: assumption sliders, the headline figures and the forecast chart with its 80% range, drawn from the same results as this page</title>
+            <rect class="pv__ground" width="640" height="334"/>
+            <rect class="pv__side" width="152" height="334"/>
+            <path class="pv__rule" d="M152.5 0V334"/>
+            <text class="pv__h" x="12" y="22">Scenario</text>
+            <rect class="pv__btn pv__btn--on" x="12" y="31" width="36" height="18" rx="3"/><text class="pv__on" x="30" y="43.5" text-anchor="middle">Base</text>
+            <rect class="pv__btn" x="52" y="31" width="38" height="18" rx="3"/><text class="pv__on" x="71" y="43.5" text-anchor="middle">High</text>
+            <rect class="pv__btn" x="94" y="31" width="36" height="18" rx="3"/><text class="pv__on" x="112" y="43.5" text-anchor="middle">Low</text>
+            <text x="12" y="68">Income growth</text><rect class="pv__track" x="12" y="74" width="128" height="12" rx="2"/><rect class="pv__knob" x="86" y="74" width="8" height="12" rx="2"/>
+            <text x="12" y="102">Growth slowdown</text><rect class="pv__track" x="12" y="108" width="128" height="12" rx="2"/><rect class="pv__knob" x="58" y="108" width="8" height="12" rx="2"/>
+            <text x="12" y="136">Urban share</text><rect class="pv__track" x="12" y="142" width="128" height="12" rx="2"/><rect class="pv__knob" x="72" y="142" width="8" height="12" rx="2"/>
+            <text x="12" y="170">Population band</text><rect class="pv__track" x="12" y="176" width="128" height="12" rx="2"/><rect class="pv__knob" x="72" y="176" width="8" height="12" rx="2"/>
+            <text x="12" y="204">Elasticity decline</text><rect class="pv__track" x="12" y="210" width="128" height="12" rx="2"/><rect class="pv__knob" x="14" y="210" width="8" height="12" rx="2"/>
+            <text x="12" y="238">Usable solar land</text><rect class="pv__track" x="12" y="244" width="128" height="12" rx="2"/><rect class="pv__knob" x="64" y="244" width="8" height="12" rx="2"/>
+            <text class="pv__h" x="12" y="284">Policy</text>
+            <rect class="pv__btn" x="12" y="293" width="36" height="18" rx="3"/><text class="pv__on" x="30" y="305.5" text-anchor="middle">Base</text>
+            <rect class="pv__btn pv__btn--on" x="52" y="293" width="46" height="18" rx="3"/><text class="pv__on" x="75" y="305.5" text-anchor="middle">Robust</text>
+            <rect class="pv__btn" x="102" y="293" width="42" height="18" rx="3"/><text class="pv__on" x="123" y="305.5" text-anchor="middle">Nuclear</text>
+            <text class="pv__title" x="164" y="22">India Electricity Generation 2047</text>
+            <rect class="pv__tab pv__tab--on" x="164" y="31" width="100" height="18" rx="3"/><text class="pv__on" x="214" y="43.5" text-anchor="middle">National forecast</text>
+            <rect class="pv__tab" x="268" y="31" width="116" height="18" rx="3"/><text class="pv__on" x="326" y="43.5" text-anchor="middle">Regional requirement</text>
+            <rect class="pv__tab" x="388" y="31" width="110" height="18" rx="3"/><text class="pv__on" x="443" y="43.5" text-anchor="middle">{{years.target}} generation mix</text>
+            <rect class="pv__card" x="164.5" y="60.5" width="146" height="54" rx="4"/>
+            <text x="175" y="78">{{years.target_label}} median</text>
+            <text class="pv__value" x="175" y="103">{{national.p50|0}} TWh</text>
+            <rect class="pv__card" x="318.5" y="60.5" width="170" height="54" rx="4"/>
+            <text x="329" y="78">80% of scenarios, TWh</text>
+            <text class="pv__value" x="329" y="103">{{national.p10|0}}–{{national.p90|0}}</text>
+            <rect class="pv__card" x="496.5" y="60.5" width="131" height="54" rx="4"/>
+            <text x="507" y="78">vs {{years.base_label}}</text>
+            <text class="pv__value" x="507" y="103">{{national.multiple_of_base|1}}×</text>
+            <rect class="pv__plot" x="164.5" y="124.5" width="463" height="197" rx="4"/>
+            <svg x="176" y="136" width="440" height="152" viewBox="{{national.chart.x0}} -{{national.chart.ymax|r0}} {{national.chart.span}} {{national.chart.ymax|r0}}" preserveAspectRatio="none" overflow="visible">
+              <!--each national.chart.ticks--><path class="pv__grid" vector-effect="non-scaling-stroke" d="M{{national.chart.x0}} -{{@|r0}}h{{national.chart.span}}"/><!--/each-->
+              <path class="pv__base" vector-effect="non-scaling-stroke" d="M{{years.base}} 0V-{{national.chart.ymax|r0}}"/>
+              <path class="pv__band" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p90|r1}}<!--/each--><!--each-reverse national.forecast-->L{{@.year}} -{{@.p10|r1}}<!--/each-->Z"/>
+              <path class="pv__obs" vector-effect="non-scaling-stroke" d="M<!--each national.history--> {{@.year}} -{{@.twh|r1}}<!--/each-->"/>
+              <path class="pv__med" vector-effect="non-scaling-stroke" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p50|r1}}<!--/each-->"/>
+              <path class="pv__dot" vector-effect="non-scaling-stroke" d="M{{years.target}} -{{national.p50|r1}}h0"/>
+            </svg>
+            <rect class="pv__legend" x="180" y="140" width="112" height="50" rx="3"/>
+            <rect class="pv__band" x="186" y="146" width="14" height="8"/><text x="206" y="153">80% of scenarios</text>
+            <path class="pv__med" d="M186 166h14"/><text x="206" y="169">Median</text>
+            <path class="pv__obs" d="M186 181h14"/><text x="206" y="184">Observed (NPP)</text>
+            <text x="176" y="306">{{national.history.0.label}}</text>
+            <text x="616" y="306" text-anchor="end">{{years.target_label}}</text>
+          </svg>
+        </div>
         <span class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-monitor"/></svg></span>
         <div class="stat__body">
           <div class="stat__top"><p class="stat__value">Live dashboard</p><span class="pill">Interactive</span></div>
-          <p class="stat__text">Change an assumption and the forecast, the regional split and the mix rerun in your browser. About 6 MB on first load; best in a current desktop browser. <a class="stat__link" href="app/">Open the dashboard</a></p>
+          <p class="stat__text">Change an assumption and the forecast, the regional split and the mix rerun in your browser. About 6 MB on first load; best in a current desktop browser.</p>
+          <p class="stat__actions"><button type="button" class="button button--ghost button--small live-run" aria-expanded="false" aria-controls="live"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-play"/></svg>Run the live model here</button><a class="stat__link" href="app/">Open the dashboard</a></p>
         </div>
       </li>
     </ul>
   </div>
+
+  <!-- The live model in this page. Hidden until "Run the live model here" is pressed; the
+       script at the end then creates the dashboard's frame (app/). Nothing loads before. -->
+  <section class="container live" id="live" aria-labelledby="live-title" tabindex="-1" hidden>
+    <div class="live__bar">
+      <div class="live__head">
+        <h2 class="live__title" id="live-title"><span class="live-dot" aria-hidden="true"></span>Live dashboard</h2>
+        <p class="live__note">The full model, running in this page. The first start downloads about 6 MB. Tab and Shift+Tab move out of it.</p>
+      </div>
+      <div class="live__actions">
+        <a class="button button--ghost button--small" href="app/">Open full screen</a>
+        <button type="button" class="button button--ghost button--small live__close">Close<span class="visually-hidden"> the live dashboard</span></button>
+      </div>
+    </div>
+    <div class="live__frame"></div>
+  </section>
 </section>
 
 <section class="section section--band" id="glance" aria-labelledby="glance-title">
@@ -1843,6 +2043,13 @@
       </div>
     </div>
     <div class="site-footer__base">
+      <nav aria-label="About this site">
+        <ul class="site-footer__meta">
+          <li><a href="about">About</a></li>
+          <li><a href="contact">Contact</a></li>
+          <li><a href="privacy">Privacy</a></li>
+        </ul>
+      </nav>
       <p>Every model result on this page is written by the model run (energy2047, command line) to site_summary.json and placed here when the site is built.</p>
     </div>
   </div>
@@ -1913,11 +2120,70 @@
     document.documentElement.classList.add('reveal-armed');
   })();
 
-  // Opening the dashboard while its screenshot is on screen: the screenshot grows into the
+  // The live model in this page. "Run the live model here" creates the dashboard's frame (app/)
+  // only when pressed, so the page itself never loads the model. The frame is same-origin and
+  // every path is served with COOP/COEP, so it is cross-origin isolated and the dashboard's
+  // threads (SharedArrayBuffer) run in it. The dashboard keeps Tab for its canvas, so Tab and
+  // Shift+Tab pressed in the frame are handed back to this page: Shift+Tab to the Close
+  // button before the frame, Tab to the next control after the panel. Close removes the frame,
+  // which stops the model, and returns focus to the button.
+  (function () {
+    var run = document.querySelector('.live-run');
+    var live = document.getElementById('live');
+    if (!run || !live) return;
+    var slot = live.querySelector('.live__frame');
+    var close = live.querySelector('.live__close');
+    var frame = null;
+    function nextAfter(el) {
+      var all = document.querySelectorAll('a[href], button, summary, [tabindex="0"]');
+      for (var i = 0; i < all.length; i++) {
+        var c = all[i];
+        if (el.contains(c) || !(el.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING)) continue;
+        if (!c.disabled && c.getClientRects().length) return c;
+      }
+      return null;
+    }
+    function handBack(e) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      (e.shiftKey ? close : nextAfter(live) || close).focus();
+    }
+    function open() {
+      if (!frame) {
+        frame = document.createElement('iframe');
+        frame.className = 'live__iframe';
+        frame.title = 'Live dashboard: the India Energy 2047 model running in this page';
+        frame.setAttribute('allow', 'cross-origin-isolated');
+        frame.addEventListener('load', function () {
+          try { frame.contentWindow.addEventListener('keydown', handBack, true); } catch (err) { /* not same-origin */ }
+        });
+        frame.src = 'app/';
+        slot.appendChild(frame);
+        live.hidden = false;
+        run.setAttribute('aria-expanded', 'true');
+      }
+      live.focus({ preventScroll: true });
+      live.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+    function shut() {
+      if (frame) { frame.remove(); frame = null; }
+      live.hidden = true;
+      run.setAttribute('aria-expanded', 'false');
+      run.focus();
+    }
+    run.addEventListener('click', open);
+    close.addEventListener('click', shut);
+    live.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !live.hidden) { e.preventDefault(); shut(); }
+    });
+  })();
+
+  // Opening the dashboard while its preview is on screen: the preview grows into the
   // dashboard's loading screen (web/shell.html names that view-transition element too).
   // The name is set only for that navigation and cleared when this page shows again.
   (function () {
-    var shot = document.querySelector('.stat__shot img');
+    var shot = document.querySelector('.stat__shot');
     if (!shot) return;
     window.addEventListener('pageswap', function (e) {
       if (!e.viewTransition || !e.activation || !e.activation.entry) return;

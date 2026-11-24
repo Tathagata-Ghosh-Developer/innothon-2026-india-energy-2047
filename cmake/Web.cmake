@@ -150,13 +150,15 @@ target_link_options(e47_dashboard PRIVATE
 # --- Static site ---------------------------------------------------------------
 # Target e47_site stages the deployable site in <build>/site:
 #   index.html    landing page: web/landing.html filled from outputs/site_summary.json
-#                 (written by the native energy2047 run) by cmake/Site.cmake
+#                 (written by the native energy2047 run) by cmake/Site.cmake; its dashboard
+#                 preview is an inline SVG drawn from the same values, so no image shows results
+#   index.md      the same summary as Markdown: web/landing.md filled by cmake/Site.cmake
+#                 from the same summary (served for / with Accept: text/markdown, see vercel.json)
 #   summary.json  that summary, linked from the page
-#   img/          landing-page images from web/img: WebP and AVIF exports (480, 800 and
-#                 1200 px wide) of docs/img/1_national_forecast.png; export them again
-#                 when that screenshot changes, since it shows model results
 #   app/          the dashboard (index.html, .js, .wasm, .data)
-#   robots.txt, vercel.json
+#   about.html, contact.html, privacy.html, pages.css   static pages, no model numbers
+#   404.html, 404.md   not-found pages for browsers and for Accept: text/markdown
+#   llms.txt, sitemap.xml, robots.txt, og-image.png (share card, no model numbers), vercel.json
 # Not part of ALL: it needs outputs/site_summary.json, which only the native run writes.
 set(E47_SITE "${CMAKE_BINARY_DIR}/site")
 set(E47_SITE_SUMMARY "${PROJECT_SOURCE_DIR}/outputs/site_summary.json" CACHE FILEPATH
@@ -166,13 +168,19 @@ add_custom_target(e47_site
   COMMAND ${CMAKE_COMMAND} -E make_directory "${E47_SITE}/app"
   COMMAND ${CMAKE_COMMAND} "-DSUMMARY=${E47_SITE_SUMMARY}" "-DTEMPLATE=${PROJECT_SOURCE_DIR}/web/landing.html"
           "-DOUT=${E47_SITE}/index.html" -P "${PROJECT_SOURCE_DIR}/cmake/Site.cmake"
+  COMMAND ${CMAKE_COMMAND} "-DSUMMARY=${E47_SITE_SUMMARY}" "-DTEMPLATE=${PROJECT_SOURCE_DIR}/web/landing.md"
+          "-DOUT=${E47_SITE}/index.md" -P "${PROJECT_SOURCE_DIR}/cmake/Site.cmake"
   COMMAND ${CMAKE_COMMAND} -E copy "${E47_SITE_SUMMARY}" "${E47_SITE}/summary.json"
   COMMAND ${CMAKE_COMMAND} -E copy
           "${CMAKE_BINARY_DIR}/web/index.html" "${CMAKE_BINARY_DIR}/web/index.js"
           "${CMAKE_BINARY_DIR}/web/index.wasm" "${CMAKE_BINARY_DIR}/web/index.data" "${E47_SITE}/app/"
   COMMAND ${CMAKE_COMMAND} -E copy
-          "${PROJECT_SOURCE_DIR}/web/vercel.json" "${PROJECT_SOURCE_DIR}/web/robots.txt" "${E47_SITE}/"
-  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/web/img" "${E47_SITE}/img"
+          "${PROJECT_SOURCE_DIR}/web/vercel.json" "${PROJECT_SOURCE_DIR}/web/robots.txt"
+          "${PROJECT_SOURCE_DIR}/web/llms.txt" "${PROJECT_SOURCE_DIR}/web/sitemap.xml"
+          "${PROJECT_SOURCE_DIR}/web/about.html" "${PROJECT_SOURCE_DIR}/web/contact.html"
+          "${PROJECT_SOURCE_DIR}/web/privacy.html" "${PROJECT_SOURCE_DIR}/web/pages.css"
+          "${PROJECT_SOURCE_DIR}/web/404.html" "${PROJECT_SOURCE_DIR}/web/404.md"
+          "${PROJECT_SOURCE_DIR}/web/og-image.png" "${E47_SITE}/"
   COMMENT "Staging the site (landing page + dashboard under app/) in ${E47_SITE}"
   VERBATIM)
 add_dependencies(e47_site e47_dashboard)

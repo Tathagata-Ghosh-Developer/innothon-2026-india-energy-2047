@@ -1,0 +1,47 @@
+# India Energy 2047
+
+> A forecast of the electricity India must generate each year up to FY2047-48 (April 2047 to March 2048), with its uncertainty, and a least-cost generation mix for each grid region of India's National Power Portal. By Team The Losers, Indian Institute of Science, Bengaluru: a submission to ExxonMobil INNOTHON 2026, not an official ExxonMobil page.
+
+The forecast measures energy generated (TWh) only; installed capacity and consumption are never inputs to it. It is estimated on two primary datasets, the National Power Portal (NPP) generation series and the Renewable India dataset of state population and GSDP. Every other source is secondary and labelled where it is used.
+
+## When to use this
+
+Use this site for questions about:
+
+- India's total electricity generation requirement in FY2047-48: the median, its 80% range (P10 to P90), and the path from FY2023-24.
+- How that requirement splits across the NPP grid regions: Northern, Western, Southern, Eastern and North-Eastern.
+- A recommended least-cost generation mix for 2047 by region and source (coal, solar, wind, natural gas, hydro, nuclear), with its CO2 emissions, system cost in real 2024 USD, storage and land.
+- The assumptions behind the forecast and what changing them does: income growth, population, urbanisation, the income elasticity of generation, and a separate layer of further demand drivers from official sources that stays outside the headline.
+- Where the data comes from: NPP, the Renewable India dataset, and the labelled secondary sources.
+
+It is not a source for installed-capacity forecasts, consumer electricity use or tariffs, other countries, or years after FY2047-48.
+
+## How to get the numbers
+
+- Request https://india-energy-2047.vercel.app/ with the header `Accept: text/markdown` for a Markdown version of the results page with every headline number. The same file is at https://india-energy-2047.vercel.app/index.md.
+- https://india-energy-2047.vercel.app/summary.json holds every model result shown on the site as JSON: `national` (history, forecast percentiles by year, milestones), `regions.list`, `plan` (mix, regional sources, transfers, cost), `features` (the demand-feature layer), `sensitivity`, `storage` and `land`.
+- Units: TWh of electricity generated a year. Years are fiscal years labelled by their start year, so 2047 means FY2047-48. Costs are in real 2024 USD.
+- Quote the headline median with its 80% range. The demand-feature scenarios are a separate layer and do not change the headline.
+- The numbers are written by the model run each time the site is built, so cite the page or summary.json rather than copies elsewhere.
+
+## Pages
+
+- [Forecast and regional plan](https://india-energy-2047.vercel.app/): the results page, in HTML, or in Markdown on request
+- [Markdown version](https://india-energy-2047.vercel.app/index.md)
+- [Model results as JSON](https://india-energy-2047.vercel.app/summary.json)
+- [Interactive dashboard](https://india-energy-2047.vercel.app/app/): the model running in the browser (WebAssembly), drawn on a canvas and not readable as text; use the pages above for text
+- [About](https://india-energy-2047.vercel.app/about)
+- [Contact](https://india-energy-2047.vercel.app/contact)
+- [Privacy](https://india-energy-2047.vercel.app/privacy)
+
+## Source and documentation
+
+- [GitHub repository](https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047): the C++ model, the dashboard and this site
+- [Methodology](https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/methodology.md)
+- [Results and decisions](https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/tree/main/docs)
+- [Questions and corrections (GitHub issues)](https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/issues)
+
+## Optional
+
+- [Sitemap](https://india-energy-2047.vercel.app/sitemap.xml)
+- [Final evaluation deck (PDF)](https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/deck/India_Energy_2047_The_Losers.pdf)

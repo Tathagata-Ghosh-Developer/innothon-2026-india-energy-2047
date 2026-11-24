@@ -52,7 +52,9 @@ build_web.cmd -DE47_WEB_CROSS_COUNTRY=OFF   :: smaller data package, see "Data p
 | --- | --- | --- | --- |
 | `index.html` | 64 KB | 14 KB | landing page: `web/landing.html` filled from `outputs/site_summary.json` |
 | `summary.json` | 16 KB | 4 KB | copy of `outputs/site_summary.json`, linked from the page |
-| `robots.txt`, `vercel.json` | | | copied from `web/` |
+| `index.md` | | | Markdown version of the landing page: `web/landing.md` filled from the same summary; sent for `/` when the request asks for `Accept: text/markdown` |
+| `robots.txt`, `vercel.json`, `llms.txt`, `sitemap.xml`, `og-image.png` | | | copied from `web/`; `llms.txt` tells agents what the site answers and where the numbers are; the preview image carries no model numbers |
+| `about.html`, `contact.html`, `privacy.html`, `404.html`, `404.md`, `pages.css` | | | static pages copied from `web/`, served at `/about`, `/contact`, `/privacy`; the two 404 bodies (HTML, and Markdown for `Accept: text/markdown`) |
 | `app/index.html` | 4 KB | 2 KB | dashboard page from `web/shell.html`: top bar with the link back, loading status, full-window canvas |
 | `app/index.js` | 0.3 MB | 0.1 MB | Emscripten runtime and data-package index |
 | `app/index.wasm` | 3.8 MB | 1.4 MB | dashboard, pipeline and HiGHS |
@@ -145,7 +147,8 @@ Live site: <https://india-energy-2047.vercel.app> (Vercel project `india-energy-
 | `/summary.json` | the numbers on the landing page |
 
 `web/dist` is deployed as a static site; no build runs on Vercel.
-`web/vercel.json` (copied into `web/dist`) sets the `/app` redirect, the COOP/COEP headers for every path, `application/wasm` for `.wasm`, and `Cache-Control: public, max-age=0, must-revalidate`.
+`web/vercel.json` (copied into `web/dist`) uses Vercel `routes`: the `/app` redirect, the COOP/COEP/CORP headers for every path, `application/wasm` for `.wasm`, `Cache-Control: public, max-age=0, must-revalidate`, Markdown for `/` when the request sends `Accept: text/markdown` (with `Vary: Accept`), clean URLs for the about, contact and privacy pages, and a 404 status with an HTML or Markdown body for missing paths.
+The landing page has no images of model results: its dashboard preview is drawn from the summary when the page is rendered, so it always matches the numbers around it. "Run the live model here" loads the dashboard in a frame only when clicked.
 The landing page loads nothing from other origins, so the headers do not affect it.
 File names are not content-hashed, so browsers revalidate with the ETag rather than keep a stale `.wasm` after a redeploy.
 
