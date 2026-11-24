@@ -11,6 +11,13 @@
 // the CUDA driver (src/forecast/mc_gpu.cu). WGSL has no 64-bit integers, so the seed
 // and the draw index are pairs of u32 words, and Philox's 32 x 32 -> 64-bit product
 // is rebuilt exactly from 16-bit halves.
+//
+// The ctest suite mc_parity fails when mc.hpp or philox.hpp no longer match the hashes
+// on the next line, so a change made only on the C++ side cannot reach the site
+// unnoticed. After porting a change here and passing /app/?selftest=1, set the line to
+// the one the failing test prints. Last checked on 24 November 2026 (self-test pass on
+// an NVIDIA RTX 3070 Ti Laptop GPU and an Intel Gen-12lp integrated GPU).
+// Synced with mc.hpp fnv1a64 8f3afa4cb30aac72 and philox.hpp fnv1a64 f3c4c64b25110392
 
 const kMaxYears: u32 = 32u;
 const kBins: u32 = 1024u;

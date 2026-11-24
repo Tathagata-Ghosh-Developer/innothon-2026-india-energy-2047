@@ -444,7 +444,7 @@ Quantiles are read from those histograms.
 - **Web path:** on the visitor's GPU through WebGPU when the browser offers it, with up to the native 4,194,304 draws (fewer on a GPU too slow to run them in about 0.4 s). The kernel is `src/forecast/mc_webgpu.wgsl`, a direct WGSL port of the float kernel; WGSL has no 64-bit integers, so Philox's 32 x 32-bit product is rebuilt exactly from 16-bit halves. Without WebGPU, or after any WebGPU error, the same C++ kernel compiled to WebAssembly runs on CPU threads with fewer draws. See [deployment.md](deployment.md).
 
 A parity test checks that CPU double, CPU float and GPU float agree within 0.2 percent at the 5th, 50th and 95th percentiles of every series, and that the per-draw feature totals of the kernel equal the host's sum of the feature draws.
-In the browser, `/app/?selftest=1` runs the WebGPU kernel and the CPU float path on the same inputs and seed and requires identical Philox outputs, the same model and bootstrap replicate in every kept draw, and per-year quantiles within 0.1 percent (P50) and 0.5 percent (P5, P95).
+In the browser, `/app/?selftest=1` runs the WebGPU kernel and the CPU float path on the same inputs and seed and requires identical Philox outputs, the same model and bootstrap replicate in every kept draw, and per-year quantiles within 0.1 percent (P50) and 0.5 percent (P5, P95). Because CI cannot run that browser check, ctest's `mc_parity` suite fails whenever `mc.hpp` or `philox.hpp` changes after the WGSL port was last checked (a hash recorded in the WGSL file), so a change made only on the C++ side cannot reach the site unnoticed.
 The CUDA kernel passes the Compute Sanitizer memcheck, initcheck, racecheck and synccheck tools with no errors.
 
 | Run | 1,048,576 scenarios |

@@ -5,7 +5,10 @@
 // constant features give exactly the ensemble of the same constant add-on.
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
+#include <stdexcept>
+#include <string>
 #include <vector>
 
 #include "forecast/mc.hpp"
@@ -95,9 +98,58 @@ int compare_feature_keep(const char* label, const McInputs& in, const McResult& 
 
 int run();
 
-int main() {
+// The browser's WebGPU kernel (src/forecast/mc_webgpu.wgsl) is a second copy of the
+// per-draw physics in mc.hpp and of the Philox generator in philox.hpp, checked only by
+// the in-browser self-test (/app/?selftest=1), which CI cannot run. This tripwire records,
+// in a line of the WGSL file, a hash of the two C++ files as they were when the port was
+// last checked; any later change to either file fails the test until the WGSL port is
+// updated, the self-test passes again and the line is updated with the hashes printed here.
+namespace {
+
+uint64_t fnv1a64_file(const std::string& path) {
+  std::FILE* f = std::fopen(path.c_str(), "rb");
+  if (!f) throw std::runtime_error("cannot open " + path);
+  uint64_t h = 1469598103934665603ull;
+  for (int c; (c = std::fgetc(f)) != EOF;) {
+    if (c == '\r') continue;  // the same hash for LF and CRLF checkouts
+    h ^= static_cast<unsigned char>(c);
+    h *= 1099511628211ull;
+  }
+  std::fclose(f);
+  return h;
+}
+
+int wgsl_sync_check(const std::string& root) {
+  const uint64_t mc = fnv1a64_file(root + "/src/forecast/mc.hpp");
+  const uint64_t philox = fnv1a64_file(root + "/src/core/philox.hpp");
+  char want[160];
+  std::snprintf(want, sizeof want, "// Synced with mc.hpp fnv1a64 %016llx and philox.hpp fnv1a64 %016llx",
+                static_cast<unsigned long long>(mc), static_cast<unsigned long long>(philox));
+  std::FILE* f = std::fopen((root + "/src/forecast/mc_webgpu.wgsl").c_str(), "rb");
+  if (!f) throw std::runtime_error("cannot open src/forecast/mc_webgpu.wgsl");
+  std::string text;
+  char buf[4096];
+  for (size_t n; (n = std::fread(buf, 1, sizeof buf, f)) > 0;) text.append(buf, n);
+  std::fclose(f);
+  if (text.find(want) != std::string::npos) {
+    std::printf("wgsl port in sync with mc.hpp and philox.hpp: ok\n");
+    return 0;
+  }
+  std::printf("FAIL wgsl port: src/forecast/mc.hpp or src/core/philox.hpp changed since\n"
+              "  src/forecast/mc_webgpu.wgsl was last checked. Port the change to the WGSL file,\n"
+              "  open /app/?selftest=1 in a WebGPU browser until it reports pass, then set the\n"
+              "  file's sync line to:\n  %s\n",
+              want);
+  return 1;
+}
+
+}  // namespace
+
+int main(int argc, char** argv) {
   try {
-    return run();
+    int fails = run();
+    if (argc > 1) fails += wgsl_sync_check(argv[1]);
+    return fails == 0 ? 0 : 1;
   } catch (const std::exception& e) {
     std::printf("error: %s\n", e.what());
     return 2;
