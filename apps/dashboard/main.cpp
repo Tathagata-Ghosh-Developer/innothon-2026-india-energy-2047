@@ -20,6 +20,16 @@
 #endif
 
 #include "app.hpp"
+#ifdef E47_WEBGPU
+#include "forecast/mc_webgpu.hpp"
+
+// Integer value of a query-string parameter of the page URL, or `fallback` when absent.
+// ?gpu=0 keeps the Monte Carlo on the CPU; ?selftest=1 runs the WebGPU parity self-test.
+EM_JS(int, e47_query_int, (const char* name, int fallback), {
+  var v = new URLSearchParams(location.search).get(UTF8ToString(name));
+  return v === null ? fallback : (parseInt(v, 10) || 0);
+});
+#endif
 
 namespace {
 
@@ -206,8 +216,16 @@ int main(int argc, char** argv) {
   (void)shot_tab;
   (void)settle;
   g_window = window;
+#ifdef E47_WEBGPU
+  // The Monte Carlo runs on the visitor's GPU when the browser offers WebGPU; the set-up
+  // is asynchronous and falls back to the CPU on any failure (forecast/mc_webgpu.hpp).
+  if (e47_query_int("gpu", 1) != 0) e47::webgpu_init();
+#endif
   g_app = new e47::App(root);  // root is "/" (the preloaded data package is mounted there)
   g_app->set_fonts(body, head, big);
+#ifdef E47_WEBGPU
+  g_app->set_selftest(e47_query_int("selftest", 0));
+#endif
   emscripten_set_main_loop(web_frame, 0, true);
   return 0;
 #else

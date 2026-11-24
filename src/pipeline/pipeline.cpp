@@ -11,6 +11,9 @@
 #include "../core/philox.hpp"
 #include "../core/stats.hpp"
 #include "../regional/states.hpp"
+#ifdef E47_WEBGPU
+#include "../forecast/mc_webgpu.hpp"
+#endif
 
 namespace e47 {
 
@@ -561,6 +564,18 @@ ForecastResult Pipeline::forecast(const ScenarioControls& c) const {
   f.inputs = build_inputs(c);
   const std::vector<float> boot = boot_for(c);
   calibrate_hist_ranges(f.inputs, boot, c.seed);
+#ifdef E47_WEBGPU
+  // Browser: the visitor's GPU through WebGPU when it is ready. On any WebGPU error the
+  // CPU path takes over (WebGPU stays off from then on) with at most the CPU default
+  // draw count, so a large GPU ensemble does not turn into a long CPU run.
+  if (c.use_gpu && webgpu_state() == WebGpuState::kReady) {
+    try {
+      f.mc = run_mc_webgpu(f.inputs, boot, c.seed, c.draws, 65536);
+    } catch (const std::exception&) {
+      f.mc = run_mc_cpu(f.inputs, boot, c.seed, std::min<uint64_t>(c.draws, 1ull << kDefaultDrawsLog2), 65536, true);
+    }
+  } else
+#endif
   if (c.use_gpu && cuda_available())
     f.mc = run_mc_gpu(f.inputs, boot, c.seed, c.draws, 65536);
   else

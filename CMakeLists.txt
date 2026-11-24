@@ -6,12 +6,14 @@ option(BUILD_DASHBOARD "Build the Dear ImGui dashboard" ON)
 option(BUILD_TESTS "Build unit and parity tests" ON)
 
 # WebAssembly build (emcmake, see build_web.cmd and docs/deployment.md):
-# CPU only, no OpenMP, dashboard only.
+# no CUDA, no OpenMP, dashboard only. The Monte Carlo runs on the visitor's GPU through
+# WebGPU when the browser offers it (E47_WEBGPU), on CPU threads otherwise.
 if(EMSCRIPTEN)
   enable_language(C)  # HiGHS has C sources; enabled here so cmake/CompilerFlags.cmake can extend the C flags
   set(ENABLE_CUDA OFF CACHE BOOL "" FORCE)
   set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(BUILD_DASHBOARD ON CACHE BOOL "" FORCE)
+  option(E47_WEBGPU "Run the dashboard's Monte Carlo on the visitor's GPU through WebGPU when available" ON)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)

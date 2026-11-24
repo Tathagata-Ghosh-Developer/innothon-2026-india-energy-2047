@@ -9,12 +9,48 @@
 #include <numeric>
 
 #include "core/stats.hpp"
+#ifdef E47_WEBGPU
+#include "forecast/mc_webgpu.hpp"
+#include "webgpu_selftest.hpp"
+#endif
 
 namespace e47 {
 
 namespace {
 
 using namespace std::chrono_literals;
+
+#ifdef E47_WEBGPU
+// Browser with WebGPU: more scenarios than the CPU default kDefaultDrawsLog2, sized to the
+// visitor's GPU on the first GPU update (size_gpu_ensemble): a timed probe of
+// 2^kGpuProbeLog2 draws on the dashboard's inputs picks the largest 2^n, up to the native
+// default 2^22 = 4,194,304, whose ensemble should take about kGpuBudgetMs, so that a full
+// update stays under about a second. The first ensemble waits at most kGpuWait for the set-up.
+constexpr int kWebGpuDrawsLog2 = 22;
+constexpr int kGpuProbeLog2 = 18;
+constexpr double kGpuBudgetMs = 400;
+constexpr auto kGpuWait = 5s;
+
+// Runs on the update's worker thread. On a WebGPU error (WebGPU is then off) returns the CPU
+// default, and the update runs on the CPU.
+int size_gpu_ensemble(const Pipeline& pl, const ScenarioControls& c) {
+  try {
+    McInputs in = pl.build_inputs(c);
+    const std::vector<float> boot = pl.boot_for(c);
+    calibrate_hist_ranges(in, boot, c.seed);
+    // The first run after the set-up is slow (cold clocks, first use), so it is not timed.
+    run_mc_webgpu(in, boot, c.seed, 1ull << kGpuProbeLog2);
+    const double ms = run_mc_webgpu(in, boot, c.seed, 1ull << kGpuProbeLog2).ms;
+    const int n = std::clamp(
+        kGpuProbeLog2 + static_cast<int>(std::floor(std::log2(kGpuBudgetMs / std::max(ms, 1.0)))),
+        kDefaultDrawsLog2, kWebGpuDrawsLog2);
+    std::printf("WebGPU ensemble: 2^%d draws (2^%d took %.0f ms)\n", n, kGpuProbeLog2, ms);
+    return n;
+  } catch (const std::exception&) {
+    return kDefaultDrawsLog2;
+  }
+}
+#endif
 
 const ImVec4 kTechColor[kTechs] = {
     {0.42f, 0.42f, 0.45f, 1}, {0.85f, 0.55f, 0.25f, 1}, {0.62f, 0.45f, 0.85f, 1},
@@ -83,6 +119,9 @@ App::App(std::filesystem::path root) : root_(std::move(root)) {
 
 App::~App() {
   if (job_.valid()) job_.wait();
+#ifdef E47_WEBGPU
+  if (selftest_job_.valid()) selftest_job_.wait();
+#endif
   for (auto& l : loading_)
     if (l.valid()) l.wait();
 }
@@ -127,13 +166,63 @@ void App::poll() {
   if (busy_ && job_.wait_for(0s) == std::future_status::ready) {
     try {
       Job j = job_.get();
+#ifdef E47_WEBGPU
+      if (j.gpu_draws_log2 > 0) {
+        // The first GPU update sized the ensemble to this GPU and already ran at that size.
+        gpu_draws_log2_ = j.gpu_draws_log2;
+        if (draws_log2_ == kWebGpuDrawsLog2) draws_log2_ = j.gpu_draws_log2;
+      }
+#endif
       if (j.core == core_) cur_ = std::make_shared<Job>(std::move(j));
     } catch (const std::exception& e) {
       error_ = e.what();
     }
     busy_ = false;
   }
-  if (pl_ && dirty_ && !busy_) launch();
+  if (pl_ && dirty_ && !busy_ && gpu_gate()) launch();
+#ifdef E47_WEBGPU
+  // Parity self-test (?selftest=1), once the first result is on screen.
+  if (selftest_ && !selftest_started_ && pl_ && cur_ && !busy_ && webgpu_state() != WebGpuState::kPending) {
+    selftest_started_ = true;
+    const Pipeline* pl = pl_;
+    const ScenarioControls c = sc_;
+    const bool timings = selftest_ == 2;
+    selftest_job_ = std::async(std::launch::async, [pl, c, timings] { run_webgpu_selftest(*pl, c, timings); });
+  }
+#endif
+}
+
+// Browser: follows the WebGPU set-up (forecast/mc_webgpu.hpp). The first ensemble waits
+// for it (at most kGpuWait) so that it runs on the GPU when there is one. A GPU that
+// becomes ready gets more scenarios (sized on its first update); a GPU that fails later
+// brings back the CPU default. Native builds: always true.
+bool App::gpu_gate() {
+#ifdef E47_WEBGPU
+  const WebGpuState s = webgpu_state();
+  if (static_cast<int>(s) != gpu_seen_) {
+    const WebGpuState before = static_cast<WebGpuState>(gpu_seen_);
+    gpu_seen_ = static_cast<int>(s);
+    if (s == WebGpuState::kReady && sc_.use_gpu && draws_log2_ == kDefaultDrawsLog2) {
+      draws_log2_ = kWebGpuDrawsLog2;
+      size_gpu_ = true;
+      dirty_ = true;
+    }
+    if (s == WebGpuState::kFailed && before == WebGpuState::kReady && draws_log2_ > kDefaultDrawsLog2) {
+      draws_log2_ = kDefaultDrawsLog2;
+      dirty_ = true;
+    }
+  }
+  if (s == WebGpuState::kPending && std::chrono::steady_clock::now() - created_ < kGpuWait) return false;
+#endif
+  return true;
+}
+
+int App::default_draws_log2() const {
+#ifdef E47_WEBGPU
+  if (sc_.use_gpu && webgpu_state() == WebGpuState::kReady)
+    return gpu_draws_log2_ > 0 ? gpu_draws_log2_ : kWebGpuDrawsLog2;
+#endif
+  return kDefaultDrawsLog2;
 }
 
 void App::launch() {
@@ -141,15 +230,28 @@ void App::launch() {
   busy_ = true;
   sc_.draws = 1ull << draws_log2_;
   const Pipeline* pl = pl_;
-  const ScenarioControls c = sc_;
+  ScenarioControls c = sc_;  // not const: the job may resize the GPU ensemble in its copy
   const PolicySettings p = pol_;
   const int core = core_;
   const std::string note = layer_note();
-  job_ = std::async(std::launch::async, [pl, c, p, core, note] {
+  bool size_gpu = false;  // browser: size the ensemble to the GPU in this update
+#ifdef E47_WEBGPU
+  size_gpu = size_gpu_ && c.use_gpu && webgpu_state() == WebGpuState::kReady && draws_log2_ == kWebGpuDrawsLog2;
+  size_gpu_ = false;
+#endif
+  job_ = std::async(std::launch::async, [pl, c, p, core, note, size_gpu]() mutable {
     Timer t;
     Job j;
     j.core = core;
     j.layer_note = note;
+#ifdef E47_WEBGPU
+    if (size_gpu) {
+      j.gpu_draws_log2 = size_gpu_ensemble(*pl, c);
+      c.draws = 1ull << j.gpu_draws_log2;
+    }
+#else
+    (void)size_gpu;
+#endif
     j.forecast = pl->forecast(c);
     j.strategy = pl->strategy(j.forecast, c, p);
     // Evidence tables (data tab). The decomposition and the state table belong to the India
@@ -442,6 +544,18 @@ void App::sidebar() {
   if (ImGui::SliderInt("##draws", &draws_log2_, 16, 25)) dirty_ = true;
   ImGui::SetItemTooltip("%s scenarios", with_commas(std::pow(2.0, draws_log2_)).c_str());
   if (cuda_available()) dirty_ |= ImGui::Checkbox("Use GPU (CUDA)", &sc_.use_gpu);
+#ifdef E47_WEBGPU
+  if (webgpu_state() == WebGpuState::kReady) {
+    if (ImGui::Checkbox("Use GPU (WebGPU)", &sc_.use_gpu)) {
+      draws_log2_ = default_draws_log2();
+      size_gpu_ = sc_.use_gpu && gpu_draws_log2_ == 0;
+      dirty_ = true;
+    }
+    ImGui::SetItemTooltip("Run the scenario ensemble on this computer's graphics card (%s), up to 2^%d scenarios "
+                          "by default, as many as it computes in about %.1f s. Off: CPU threads, 2^%d scenarios.",
+                          webgpu_device_name().c_str(), kWebGpuDrawsLog2, kGpuBudgetMs / 1000, kDefaultDrawsLog2);
+  }
+#endif
 
   ImGui::Spacing();
   if (font_head_) ImGui::PushFont(font_head_);
@@ -514,7 +628,7 @@ void App::sidebar() {
   ImGui::SameLine();
   if (ImGui::Button("Reset scenario")) {
     sc_ = ScenarioControls{};
-    draws_log2_ = kDefaultDrawsLog2;
+    draws_log2_ = default_draws_log2();
     feature_scenario_ = 0;
     dirty_ = true;
   }

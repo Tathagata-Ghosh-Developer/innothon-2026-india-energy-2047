@@ -178,7 +178,7 @@ Nine ctest suites: CPU-GPU Monte Carlo parity, allocation, storage, the cost-CO2
 *If pressed:* GitHub's runners have no GPU, so in CI the parity test compares double and single precision on the CPU; the CPU-GPU check runs on our GPU machine.
 
 **36. Why is the browser slower, and do its numbers differ?** *Owner: Gaurav.*
-The browser has no GPU and one compute thread, so it runs 65,536 futures and 300 bootstrap replicates instead of 4.2 million and 2,000. A full update takes several seconds. Its medians and ranges agree with the native run within about 0.5 percent, so the last digit can differ from the slides.
+Since 24 November the browser uses the visitor's graphics card through WebGPU where it can: a WGSL port of the C++ draw function runs up to the full 4,194,304 futures (sized to the card; about 0.1 s for the ensemble on our RTX 3070 Ti), checked by an in-browser self-test against the CPU path (identical random draws; medians within 0.0002 percent). Without WebGPU it falls back to 65,536 futures on the browser's CPU threads, and 300 bootstrap replicates instead of 2,000; then medians and ranges agree with the native run within about 0.5 percent, so the last digit can differ from the slides.
 
 **37. Can we reproduce it and see the code?** *Owner: Gaurav.*
 Yes. One command, `energy2047` with the repository path, regenerates every output with a fixed seed (20470815) and a counter-based random generator, so runs repeat exactly. Every input has a provenance row in `docs/data_audit.md`. The repository is public on GitHub, with the code, the tests and the documentation.
@@ -198,7 +198,7 @@ Next: act on the organisers' reply on published figures; an hourly capacity-expa
 | 2047 median (FY2047-48) | 4,688 TWh; 2.76 times FY2023-24 (1,698 TWh); 4.3 percent a year; 2,990 TWh more |
 | 80 percent range (P10 to P90) | 3,471 to 6,408 TWh |
 | 90 percent range (P5 to P95), on the dashboard card | 3,190 to 7,021 TWh |
-| Futures | 4.2 million (4,194,304) native; 65,536 in the browser |
+| Futures | 4.2 million (4,194,304) native; in the browser up to 4,194,304 on a WebGPU graphics card, otherwise 65,536 |
 | Regional medians | North 1,342; West 1,276; South 1,188; East 730; North-East 151 TWh |
 | Milestones (median) | FY2030-31 2,262; FY2035-36 2,879; FY2040-41 3,585 TWh |
 | Elasticity | 0.84 (0.835, s.e. 0.065), nationally; effective 0.74 (0.742) on state income in the split |
