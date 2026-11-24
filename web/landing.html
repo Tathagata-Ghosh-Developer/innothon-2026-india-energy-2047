@@ -19,6 +19,8 @@
 <meta property="og:title" content="India Energy 2047: forecast and regional plan">
 <meta property="og:description" content="{{national.p50|0}} TWh needed in {{years.target_label}} (80% range {{national.p10|0}} to {{national.p90|0}} TWh), with a regional plan to meet it.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23002f6c'/%3E%3Cpath d='M9 1 3 9h4l-1 6 6-8H8z' fill='%23ffffff'/%3E%3C/svg%3E">
+<!-- A navigation to or from the dashboard waits for the hero, so its cross-fade never shows a blank page. -->
+<link rel="expect" href="#hero" blocking="render">
 <script>document.documentElement.classList.add('js');</script>
 <style>
   /* Tokens: white page, navy headings, red for the primary action (contrast checked in both schemes). */
@@ -39,6 +41,8 @@
     --navy-tint: #eef4fc;
     --red: #cf1730;
     --red-hover: #a90f26;
+    --red-glow: rgb(207 23 48 / 0.28);
+    --red-edge: rgb(207 23 48 / 0.25);
     --on-red: #ffffff;
     --red-ink: #b3132a;
     --red-tint: #fdf2f3;
@@ -47,6 +51,7 @@
     --chart-band: rgb(0 47 108 / 0.13);
     --chart-area: rgb(0 47 108 / 0.10);
     --chart-track: #eef1f4;
+    --app-ground: #0f1217; /* the dashboard's own background (web/shell.html) */
     --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05);
     --shadow-md: 0 4px 12px -2px rgb(0 47 108 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
     --shadow-lg: 0 10px 25px -3px rgb(0 47 108 / 0.10), 0 4px 8px -4px rgb(0 0 0 / 0.05);
@@ -68,13 +73,13 @@
     --scen-core: #50575f;
     --scen-feature: #2a78d6;
     --scen-joint: #eb6834;
-    /* Space and type */
+    /* Space and type. The section rhythm is fluid: 3rem on a phone, 4.5rem from about 1300px. */
     --space-2xs: 0.375rem;
     --space-xs: 0.625rem;
     --space-s: 1rem;
     --space-m: 1.5rem;
     --space-l: 2.5rem;
-    --space-xl: 4.5rem;
+    --space-xl: clamp(3rem, 2rem + 3vw, 4.5rem);
     --text-xs: 0.8125rem;
     --text-s: 0.875rem;
     --text-m: 1rem;
@@ -82,6 +87,16 @@
     --radius-m: 10px;
     --radius-l: 16px;
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Motion: one ease-out for things that enter or answer a press, one ease-in-out for
+       things that move or resize on screen. Spatial motion runs only without a
+       reduced-motion preference; colour changes always run. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --dur-press: 160ms;
+    --dur-state: 150ms;
+    --dur-open: 250ms;
+    /* Height of the sticky header (0 where it does not stick) */
+    --header-h: 0rem;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -130,7 +145,11 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-padding-block-start: var(--space-s); }
+  html {
+    -webkit-text-size-adjust: 100%; overflow-x: clip;
+    /* Anchored sections and focused controls land below the sticky header */
+    scroll-padding-block-start: calc(var(--header-h) + var(--space-s));
+  }
   body {
     margin: 0;
     background: var(--bg);
@@ -138,10 +157,13 @@
     font: var(--text-m)/1.6 var(--font);
     font-variant-numeric: lining-nums;
     overflow-wrap: break-word;
+    overflow-x: clip;
   }
   h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
   h1, h2, h3, h4 { color: var(--ink); line-height: 1.2; text-wrap: balance; }
-  a { color: var(--navy); text-underline-offset: 0.2em; }
+  /* Running text: about 80 characters a line at most, and no one-word last lines */
+  p { max-inline-size: 75ch; text-wrap: pretty; }
+  a { color: var(--navy); text-underline-offset: 0.2em; transition: color var(--dur-state) ease, text-decoration-color var(--dur-state) ease; }
   a:hover { text-decoration-thickness: 2px; }
   svg { display: block; max-inline-size: 100%; }
   table { border-collapse: collapse; }
@@ -151,7 +173,7 @@
     position: absolute; inline-size: 1px; block-size: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
   }
-  .skip-links { position: absolute; inset-inline-start: var(--space-s); inset-block-start: 0; z-index: 10; }
+  .skip-links { position: absolute; inset-inline-start: var(--space-s); inset-block-start: 0; z-index: 30; }
   .skip-link {
     position: absolute; inset-block-start: -10rem; white-space: nowrap;
     padding: var(--space-xs) var(--space-s); background: var(--navy-fill); color: var(--on-navy);
@@ -170,28 +192,42 @@
   }
   .icon-box--red { background: var(--red-tint); color: var(--red-ink); }
 
-  /* Buttons and pills */
+  /* Buttons and pills. Every pressable control answers a press with a small scale-down
+     (spatial, so only without a reduced-motion preference); hover is a colour step. */
   .button {
     display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
     min-block-size: 2.75rem; padding-inline: 1.375rem; border: 1px solid transparent; border-radius: var(--radius-s);
     font-weight: 750; line-height: 1.2; text-decoration: none; letter-spacing: 0.01em;
+    transition: background-color var(--dur-state) ease, border-color var(--dur-state) ease, color var(--dur-state) ease, box-shadow var(--dur-state) ease;
   }
-  .button--primary { background: var(--red); color: var(--on-red); box-shadow: 0 2px 8px rgb(207 23 48 / 0.28); }
-  .button--primary:hover { background: var(--red-hover); }
+  .button--primary { background: var(--red); color: var(--on-red); box-shadow: 0 2px 8px var(--red-glow); }
+  .button--primary:hover { background: var(--red-hover); box-shadow: 0 1px 4px var(--red-glow); }
   .button--ghost { border-color: var(--line-strong); background: var(--card); color: var(--ink); }
-  .button--ghost:hover { border-color: var(--navy); }
-  .button--small { padding-inline: 1rem; font-size: var(--text-s); }
+  .button--ghost:hover { border-color: var(--navy); background: var(--navy-tint); }
+  .button--small { padding-inline: var(--space-s); font-size: var(--text-s); }
   .pill {
     display: inline-flex; align-items: center; gap: var(--space-2xs); min-block-size: 1.75rem;
     padding: 0.125rem 0.75rem; border: 1px solid var(--line); border-radius: 999px; background: var(--card-soft);
     color: var(--ink-2); font-size: var(--text-xs); font-weight: 650; line-height: 1.3; white-space: nowrap;
   }
   .pill--navy { border-color: var(--line); background: var(--card); color: var(--navy); }
-  .pill--red { border-color: rgb(207 23 48 / 0.25); background: var(--red-tint); color: var(--red-ink); }
+  .pill--red { border-color: var(--red-edge); background: var(--red-tint); color: var(--red-ink); }
   .pill .icon { inline-size: 1rem; block-size: 1rem; }
 
-  /* Header */
-  .site-header { border-block-end: 1px solid var(--line); background: var(--bg); }
+  /* Header. From 48rem (and a screen at least 36rem tall) it sticks to the top; where the
+     browser supports scroll-state queries it gains a shadow once stuck. Nothing changes size
+     when stuck, so the page cannot jump. On phones it scrolls away with the page. */
+  .site-header__bar {
+    border-block-end: 1px solid var(--line); background: var(--bg);
+    transition: box-shadow var(--dur-state) ease, border-color var(--dur-state) ease;
+  }
+  @media (min-width: 48rem) and (min-height: 36rem) {
+    :root { --header-h: 7.5rem; }
+    .site-header { position: sticky; inset-block-start: 0; z-index: 20; container: site-header / scroll-state; }
+    @container site-header scroll-state(stuck: block-start) {
+      .site-header__bar { border-block-end-color: var(--line-strong); box-shadow: var(--shadow-md); }
+    }
+  }
   .site-header__inner {
     display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand cta" "tag tag" "nav nav";
     align-items: center; gap: var(--space-xs) var(--space-s); padding-block: var(--space-xs);
@@ -207,12 +243,17 @@
   .site-header__tag { grid-area: tag; justify-self: start; white-space: normal; }
   .site-header__cta { grid-area: cta; }
   .site-nav { grid-area: nav; }
+  /* The script at the end marks the link of the section on screen (.is-current and
+     aria-current). It does not use CSS scroll-target-group, which always marks some link and
+     so would mark Forecast while the hero and the at-a-glance section are on screen. */
   .site-nav__list { display: flex; flex-wrap: wrap; gap: 0 var(--space-2xs); margin-inline: -0.5rem; padding: 0; list-style: none; }
   .site-nav__link {
     display: inline-flex; align-items: center; min-block-size: 2.75rem; padding-inline: 0.5rem;
-    color: var(--ink); font-size: 0.9375rem; font-weight: 650; text-decoration: none; border-radius: var(--radius-s);
+    color: var(--ink); font-size: 0.9375rem; font-weight: 650; border-radius: var(--radius-s);
+    text-decoration-line: underline; text-decoration-thickness: 2px; text-decoration-color: transparent; text-underline-offset: 0.4em;
   }
-  .site-nav__link:hover { color: var(--navy); text-decoration: underline; }
+  .site-nav__link:hover { color: var(--navy); text-decoration-color: currentColor; }
+  .site-nav__link.is-current { color: var(--navy); text-decoration-color: var(--red); }
   @media (min-width: 26rem) { .brand__mark { display: block; } }
   @media (min-width: 48rem) {
     .site-header__inner { grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: "brand tag . cta" "nav nav nav nav"; }
@@ -264,6 +305,8 @@
   /* Hero */
   .hero { padding-block: var(--space-l) var(--space-xl); }
   .hero__grid { display: grid; gap: var(--space-l); align-items: center; }
+  .hero__grid > * { min-inline-size: 0; }
+  .hero__pills .pill { white-space: normal; }  /* the long pill wraps on a 320px screen instead of running past it */
   .hero__pills { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-block-end: var(--space-m); }
   .hero__title { font-size: clamp(2.125rem, 1.25rem + 3.3vw, 3.5rem); font-weight: 800; letter-spacing: -0.028em; line-height: 1.1; }
   .hero__line { display: block; }
@@ -277,14 +320,26 @@
   .fact__value { color: var(--ink); font-weight: 750; line-height: 1.35; }
   .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-s); }
   .stats { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
-  .stat { display: flex; gap: var(--space-s); align-items: flex-start; padding: var(--space-m); background: var(--card-soft); border: 1px solid var(--line); border-radius: 15px; box-shadow: var(--shadow-sm); }
+  .stat { display: flex; gap: var(--space-s); align-items: flex-start; padding: var(--space-m); background: var(--card-soft); border: 1px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-sm); }
   .stat--accent { border-inline-start: 4px solid var(--navy-fill); }
+  /* The dashboard card shows the product: a screenshot above its text, and the whole card
+     follows its one link (the link's ::after covers the card; one tab stop, one name). */
+  .stat--app { position: relative; flex-wrap: wrap; transition: border-color var(--dur-state) ease; }
+  .stat--app:hover { border-color: var(--navy); }
+  .stat__shot {
+    display: block; flex: 1 0 100%; overflow: clip; border: 1px solid var(--line); border-radius: var(--radius-s);
+    background: var(--app-ground); /* shown until the image decodes */
+  }
+  .stat__shot img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 800 / 417; }
+  .stat__link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-l); }
   .stat__body { display: grid; gap: var(--space-2xs); min-inline-size: 0; flex: 1; }
   .stat__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2xs) var(--space-s); }
   .stat__value { color: var(--ink); font-size: 1.75rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
   .stat__value--red { color: var(--red-ink); }
   .stat__text { color: var(--ink-2); font-size: 0.9375rem; }
   @media (min-width: 30rem) { .hero__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* Below 24rem (a 320px phone) the stat icons give way so the large figures fit */
+  @media (max-width: 23.99rem) { .stat > .icon-box { display: none; } .stat__value { white-space: normal; } }
   @media (min-width: 64rem) {
     .hero__grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--space-xl); }
   }
@@ -302,11 +357,13 @@
   .chips { display: none; flex-wrap: wrap; gap: var(--space-xs); margin-block-start: var(--space-m); padding: 0; }
   .js .chips { display: flex; }
   .chip {
-    display: inline-flex; align-items: center; gap: var(--space-2xs); min-block-size: 2.75rem; padding-inline: 1rem;
+    display: inline-flex; align-items: center; gap: var(--space-2xs); min-block-size: 2.75rem; padding-inline: var(--space-s);
     border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--card); color: var(--ink);
     font: inherit; font-size: 0.9375rem; font-weight: 700; cursor: pointer;
+    transition: background-color var(--dur-state) ease, border-color var(--dur-state) ease, color var(--dur-state) ease;
   }
   .chip:hover { border-color: var(--navy); }
+  .chip[aria-pressed="false"]:hover { background: var(--navy-tint); }
   .chip[aria-pressed="true"] { border-color: var(--navy-fill); background: var(--navy-fill); color: var(--on-navy); }
   .chip__dot { inline-size: 0.75rem; block-size: 0.75rem; border-radius: 50%; background: var(--swatch); box-shadow: 0 0 0 2px var(--card); }
   .smap-wrap, .js-only { display: none; }
@@ -317,7 +374,8 @@
   .smap__base { fill: var(--card); stroke: var(--line-strong); stroke-width: 1.5; }
   .smap__fill {
     fill: var(--vec-color, var(--navy)); stroke: var(--card); stroke-width: 2;
-    transform: scale(var(--level, 0)); transform-box: fill-box; transform-origin: center; transition: transform 0.35s ease;
+    transform: scale(var(--level, 0)); transform-box: fill-box; transform-origin: center;
+    transition: fill var(--dur-state) ease;
   }
   .smap__name { fill: var(--ink); font-size: 16px; font-weight: 700; }
   .smap__val { display: none; fill: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -340,16 +398,18 @@
   .js .strength[data-vector="hydro"] .smap__val[data-v="hydro"],
   .js .strength[data-vector="nuclear"] .smap__val[data-v="nuclear"] { display: inline; }
   .smap__note { margin-block-start: var(--space-xs); text-align: center; }
-  .vec-cards { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
-  .js .vec-cards > :not(.is-active) { display: none; }
-  .vec-card { display: grid; gap: var(--space-xs); align-content: start; padding: var(--space-m); background: var(--card); border: 1.5px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-md); }
-  .js .vec-card { border-color: var(--navy-fill); }
-  .vec-card__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); }
-  .vec-card__swatch { inline-size: 0.875rem; block-size: 0.875rem; border-radius: 50%; background: var(--swatch); }
-  .vec-card__title { font-size: 1.25rem; font-weight: 750; }
-  .vec-card__head .pill { margin-inline-start: auto; }
-  .vec-card__summary { color: var(--ink); font-weight: 600; }
-  .vec-card__why { color: var(--ink-2); font-size: 0.9375rem; }
+  .vec-panels { display: grid; gap: var(--space-s); padding: 0; list-style: none; }
+  .js .vec-panels > :not(.is-active) { display: none; }
+  /* A panel inside the card, not a second card: a surface step and a hairline, no shadow */
+  .vec-panel { display: grid; gap: var(--space-xs); align-content: start; padding: var(--space-m); background: var(--card-soft); border: 1.5px solid var(--line); border-radius: var(--radius-m); }
+  .js .vec-panel { border-color: var(--navy-fill); transition: opacity var(--dur-state) var(--ease-out); }
+  @starting-style { .js .vec-panel.is-active { opacity: 0; } }
+  .vec-panel__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2xs) var(--space-xs); }
+  .vec-panel__swatch { inline-size: 0.875rem; block-size: 0.875rem; border-radius: 50%; background: var(--swatch); }
+  .vec-panel__title { font-size: 1.25rem; font-weight: 750; }
+  .vec-panel__head .pill { margin-inline-start: auto; }
+  .vec-panel__summary { color: var(--ink); font-weight: 600; }
+  .vec-panel__why { color: var(--ink-2); font-size: 0.9375rem; }
   .vec-table { inline-size: 100%; font-size: var(--text-s); font-variant-numeric: tabular-nums lining-nums; }
   .vec-table th, .vec-table td { padding: 0.3rem 0.5rem 0.3rem 0; border-block-end: 1px solid var(--line); text-align: start; }
   .vec-table thead th { color: var(--ink-3); font-weight: 650; }
@@ -357,10 +417,10 @@
   .vec-table .is-num { text-align: end; white-space: nowrap; }
   .vec-table__bar { inline-size: 35%; }
   .vec-table__bar span { display: block; block-size: 0.5rem; border-radius: 0 4px 4px 0; background: var(--swatch); min-inline-size: 1px; }
-  @media (min-width: 40rem) { .vec-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .js .vec-cards { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 63.99rem) { .js .vec-cards { order: -1; } }  /* the chosen card right under the chips */
+  @media (min-width: 40rem) { .vec-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); } .js .vec-panels { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 63.99rem) { .js .vec-panels { order: -1; } }  /* the chosen card right under the chips */
   @media (min-width: 64rem) {
-    .vec-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .vec-panels { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .js .strength__body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
   }
 
@@ -447,11 +507,37 @@
 
   /* Data tables */
   .data { min-inline-size: 0; color: var(--ink-2); font-size: var(--text-s); }  /* in a grid figure, a wide table scrolls instead of widening the figure */
+  /* The toggle draws its own disclosure chevron next to the label: it points to the inline
+     end while closed and turns down when open. */
   .data__toggle {
-    display: inline-flex; align-items: center; min-block-size: 2.75rem; cursor: pointer;
-    color: var(--navy); font-weight: 700;
+    display: inline-flex; align-items: center; gap: var(--space-2xs); min-block-size: 2.75rem; cursor: pointer;
+    color: var(--navy); font-weight: 700; list-style: none;
   }
+  .data__toggle::-webkit-details-marker { display: none; }
+  .data__toggle::before {
+    content: ""; flex: none; inline-size: 1em; block-size: 1em; background-color: currentColor; rotate: -90deg;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+  .data__toggle:dir(rtl)::before { rotate: 90deg; }
+  .data[open] > .data__toggle::before { rotate: 0deg; }
+  .data__toggle:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
+  /* Opening and closing slide the content's height (where interpolate-size exists; elsewhere
+     it opens at once). The clip keeps the sliding content inside the box. */
+  :is(.data, .faq__item)::details-content { interpolate-size: allow-keywords; overflow: clip; contain: layout; }
+  :is(.data, .faq__item):not([open])::details-content { block-size: 0; }
   .data__scroll { overflow-x: auto; }
+  /* A focused table region shows its ring on the whole disclosure: the clip above and the
+     sticky row labels below would cut or cover a ring drawn on the region itself. */
+  .data:has(.data__scroll:focus-visible) { outline: 3px solid var(--navy); outline-offset: 4px; }
+  .data__scroll:focus-visible { outline: none; }
+  @supports not selector(:has(*)) { .data__scroll:focus-visible { outline: 3px solid var(--navy); outline-offset: -3px; } }
+  /* Wide tables keep their row labels in view while they scroll sideways */
+  .data__scroll { container: data-scroll / scroll-state; }
+  .data__scroll .table { border-collapse: separate; border-spacing: 0; }
+  .data__scroll :is(tbody th[scope="row"], thead th:first-child) { position: sticky; inset-inline-start: 0; z-index: 1; background: var(--card); }
+  @container data-scroll scroll-state(scrollable: inline-start) {
+    :is(tbody th[scope="row"], thead th:first-child) { box-shadow: inset -1px 0 var(--line-strong); }
+  }
   .table { inline-size: 100%; font-variant-numeric: tabular-nums lining-nums; }
   .table__caption { padding-block-end: var(--space-2xs); color: var(--ink-3); text-align: start; }
   .table__head, .table__cell { padding: var(--space-2xs) var(--space-xs); border-block-end: 1px solid var(--line); text-align: start; }
@@ -490,7 +576,7 @@
   /* What else drives 2047: drivers by treatment, scenario ranges, the driver catalogue */
   .counts { display: grid; gap: var(--space-s); margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
   .count { display: grid; gap: var(--space-2xs); align-content: start; padding: var(--space-s); background: var(--card); border: 1px solid var(--line); border-block-start: 4px solid var(--navy-fill); border-radius: var(--radius-m); box-shadow: var(--shadow-sm); }
-  .count__value { color: var(--ink); font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .count__value { color: var(--ink); font-size: 2rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums lining-nums; }
   .count__label { color: var(--ink); font-weight: 700; line-height: 1.3; }
   .count__text { color: var(--ink-3); font-size: var(--text-s); }
   /* Range chart: one horizontal TWh axis from --min to --min + --span (ticks every quarter). */
@@ -524,7 +610,7 @@
     inset-inline-start: clamp(0%, (var(--p50) - var(--min)) / var(--span) * 100%, 100%);
   }
   .rng__end {
-    position: absolute; inset-block-start: 50%; translate: 0 -50%; padding-inline: 0.375rem; color: var(--ink-2);
+    position: absolute; inset-block-start: 50%; translate: 0 -50%; padding-inline: var(--space-2xs); color: var(--ink-2);
     font-size: var(--text-xs); line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: 0; transition: opacity 0.15s ease;
     background: var(--navy-tint); border-radius: 3px;
   }
@@ -575,7 +661,7 @@
   .sources__item { display: flex; gap: var(--space-xs); align-items: baseline; }
   .tag {
     flex: none; display: inline-block; min-inline-size: 5.75rem; padding: 0.0625rem 0.5rem; border: 1px solid transparent; border-radius: 4px;
-    font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.06em; text-align: center; text-transform: uppercase;
+    font-size: var(--text-xs); font-weight: 700; line-height: 1.5; text-align: center;
   }
   .tag--primary { background: var(--navy-fill); color: var(--on-navy); }
   .tag--secondary { border-color: var(--line-strong); color: var(--ink-2); }
@@ -585,7 +671,7 @@
   .steps { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
   .method { display: grid; gap: var(--space-m); align-items: start; }
   .step { display: grid; gap: var(--space-xs); }
-  .step__no { color: var(--navy); font-size: var(--text-s); font-weight: 800; letter-spacing: 0.06em; }
+  .step__no { color: var(--navy); font-size: var(--text-s); font-weight: 800; }
   .step__title { font-size: 1.625rem; font-weight: 800; letter-spacing: -0.01em; }
   .step__sub { color: var(--ink-3); font-size: var(--text-s); font-weight: 700; }
   .step__box { margin-block-start: var(--space-xs); padding: var(--space-s); border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--card-soft); font-size: 0.9375rem; }
@@ -604,8 +690,9 @@
     display: flex; align-items: center; justify-content: center; min-block-size: 2.75rem; margin-block-start: var(--space-xs);
     padding: var(--space-2xs) var(--space-s); border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--card-soft);
     color: var(--navy); font-size: var(--text-s); font-weight: 750; text-align: center; text-decoration: none;
+    transition: background-color var(--dur-state) ease, border-color var(--dur-state) ease;
   }
-  .deliverable__link:hover { border-color: var(--navy); text-decoration: underline; }
+  .deliverable__link:hover { border-color: var(--navy); background: var(--navy-tint); text-decoration: underline; }
   @media (min-width: 48rem) { .deliverables { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 64rem) { .deliverables { grid-template-columns: repeat(6, minmax(0, 1fr)); } .deliverable { grid-column: span 2; } .deliverable:nth-child(4) { grid-column: 2 / span 2; } }
 
@@ -628,16 +715,18 @@
 
   /* FAQ accordion */
   .faq { display: grid; gap: var(--space-s); }
-  .faq__item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-sm); }
+  .faq__item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-l); box-shadow: var(--shadow-sm); transition: border-color var(--dur-state) ease; }
   .faq__item[open] { border-color: var(--navy-fill); border-inline-start: 4px solid var(--red); }
   .faq__q {
     display: flex; align-items: center; gap: var(--space-s); min-block-size: 2.75rem; padding: var(--space-m);
     color: var(--ink); font-size: 1.0625rem; font-weight: 750; line-height: 1.4; cursor: pointer; list-style: none;
+    border-radius: var(--radius-l); transition: color var(--dur-state) ease;
   }
+  .faq__q:hover { color: var(--navy); }
   .faq__q::-webkit-details-marker { display: none; }
   .faq__no { flex: none; color: var(--navy); font-variant-numeric: tabular-nums; }
-  .faq__text { flex: 1; }
-  .faq__chev { color: var(--ink-3); transition: rotate 0.2s ease; }
+  .faq__text { flex: 1; text-wrap: pretty; }
+  .faq__chev { color: var(--ink-3); }
   .faq__item[open] .faq__chev { rotate: 180deg; }
   .faq__a { display: grid; gap: var(--space-xs); padding: 0 var(--space-m) var(--space-m) calc(var(--space-m) + 2.25rem); border-block-start: 1px solid var(--line); padding-block-start: var(--space-s); }
   .faq__a ul { display: grid; gap: var(--space-2xs); padding-inline-start: 1.25rem; }
@@ -650,19 +739,20 @@
   .site-footer__title { margin-block-end: var(--space-2xs); color: var(--ink-2); font-size: var(--text-s); font-weight: 800; }
   .site-footer__links { display: grid; padding: 0; list-style: none; }
   .site-footer__links a { display: inline-flex; align-items: center; min-block-size: 2.25rem; font-weight: 600; }
+  @media (pointer: coarse) { .site-footer__links a { min-block-size: 2.75rem; } }
   .site-footer__base { display: grid; gap: var(--space-2xs); margin-block-start: var(--space-l); padding-block-start: var(--space-m); border-block-start: 1px solid var(--line); }
   @media (min-width: 48rem) { .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; } }
 
   /* Head beside content on wide screens (timeline, FAQ) */
   @media (min-width: 64rem) {
     .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.618fr); gap: var(--space-xl); align-items: start; }
-    .split > .section__head { position: sticky; inset-block-start: var(--space-l); margin-block-end: 0; }
+    .split > .section__head { position: sticky; inset-block-start: calc(var(--header-h) + var(--space-l)); margin-block-end: 0; }
     .method { grid-template-columns: minmax(0, 1.618fr) minmax(0, 1fr); gap: var(--space-l); }
-    .method__aside { position: sticky; inset-block-start: var(--space-l); }
+    .method__aside { position: sticky; inset-block-start: calc(var(--header-h) + var(--space-l)); }
   }
 
   @media (max-width: 29.99rem) {
-    .card, .figure, .stat, .vec-card, .stage__card, .callout { padding: var(--space-s); }
+    .card, .figure, .stat, .vec-panel, .stage__card, .callout { padding: var(--space-s); }
     .faq__q { padding: var(--space-s); }
     .faq__a { padding: var(--space-s); }
     .stage { grid-template-columns: 2.5rem minmax(0, 1fr); gap: var(--space-xs); }
@@ -676,9 +766,70 @@
     .smap__fill { fill: Highlight; }
     .card--topline::before { background: CanvasText; }
     .rng__bar, .rng__dot, .rng__track::before { forced-color-adjust: none; background: CanvasText; }
+    .data__toggle::before { forced-color-adjust: none; background-color: LinkText; }
+    .site-nav__link { text-decoration-line: none; }
+    .site-nav__link.is-current { text-decoration-line: underline; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+
+  /* Rendering: the long sections after the first screens skip layout and paint until they
+     come near the viewport. The sizes are average section heights; once a section has been
+     drawn the browser keeps its real height (auto). */
+  @media screen {
+    :is(#drivers, #regions, #mix, #evidence, #method, #deliverables, #timeline, #faq) { content-visibility: auto; contain-intrinsic-size: auto 170rem; }
+  }
+  @media screen and (min-width: 48rem) {
+    :is(#drivers, #regions, #mix, #evidence, #method, #deliverables, #timeline, #faq) { contain-intrinsic-size: auto 130rem; }
+  }
+  @media screen and (min-width: 64rem) {
+    :is(#drivers, #regions, #mix, #evidence, #method, #deliverables, #timeline, #faq) { contain-intrinsic-size: auto 97rem; }
+  }
+
+  /* Motion. Everything below moves things in space, so it runs only for visitors who have not
+     asked for reduced motion; with that preference the page is static and complete (colour
+     and opacity changes above still run). Content never depends on motion: the chart
+     reveal hides nothing until the script has armed it. The hero entrance moves but never
+     hides: content that starts at opacity 0 is not counted as painted until it shows, which
+     would hold back Largest Contentful Paint. */
+  @keyframes rise { from { translate: 0 var(--rise, 0.75rem); } }
+  @keyframes fade-in { from { opacity: 0; } }
+  @keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @media (prefers-reduced-motion: no-preference) {
+    /* Cross-document view transition between this page and the dashboard (web/shell.html) */
+    @view-transition { navigation: auto; }
+
+    /* Hero entrance, once per load: the headline leads, the rest follows within 200ms */
+    .enter { animation: rise 600ms var(--ease-out) var(--delay, 0ms) backwards; }
+    .enter--fade { animation-name: fade-in; animation-duration: 400ms; }
+
+    /* Press feedback */
+    .button, .chip, .deliverable__link {
+      transition-property: background-color, border-color, color, box-shadow, scale;
+      transition-duration: var(--dur-state), var(--dur-state), var(--dur-state), var(--dur-state), var(--dur-press);
+      transition-timing-function: ease, ease, ease, ease, var(--ease-out);
+    }
+    :is(.button, .chip, .deliverable__link):active { scale: 0.97; }
+
+    /* Disclosures: the chevron turns and the content slides open */
+    .faq__chev, .data__toggle::before { transition: rotate var(--dur-state) var(--ease-out); }
+    :is(.data, .faq__item)::details-content {
+      transition-property: block-size, content-visibility;
+      transition-duration: var(--dur-open);
+      transition-timing-function: var(--ease-out);
+      transition-behavior: allow-discrete;
+    }
+
+    /* Strength map: the circles resize to the chosen source */
+    .smap__fill { transition: transform 300ms var(--ease-in-out), fill var(--dur-state) ease; }
+  }
+  /* Chart reveal, once: the national fan chart draws from the first observed year to 2047,
+     so the forecast visibly grows out of the record. Only this chart moves; the bar charts
+     and tables are data to read and stay still. The script adds .reveal-armed to the page
+     and .is-revealed to the chart as it scrolls into view. */
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .js.reveal-armed .fan__plot:not(.is-revealed) .fan__data { clip-path: inset(0 100% 0 0); }
+    .js.reveal-armed .fan__plot:not(.is-revealed) .fan__end { opacity: 0; }
+    .fan__plot.is-revealed .fan__data { animation: wipe 1100ms var(--ease-in-out) backwards; }
+    .fan__plot.is-revealed .fan__end { animation: fade-in 300ms var(--ease-out) 850ms backwards; }
   }
 </style>
 </head>
@@ -712,6 +863,7 @@
 </div>
 
 <header class="site-header">
+  <div class="site-header__bar">
   <div class="container site-header__inner">
     <a class="brand" href="./">
       <svg class="brand__mark" width="36" height="36" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect width="16" height="16" rx="3.5" fill="#002f6c"/><path d="M9 1.8 4 9h3.2l-.8 5.2L11.8 7H8.4z" fill="#ffffff"/></svg>
@@ -731,24 +883,25 @@
     </nav>
     <a class="button button--primary button--small site-header__cta" href="app/">Open the dashboard</a>
   </div>
+  </div>
 </header>
 
 <main id="main-content" tabindex="-1">
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" id="hero" aria-labelledby="hero-title">
   <div class="container hero__grid">
     <div>
-      <div class="hero__pills">
+      <div class="hero__pills enter enter--fade">
         <span class="pill pill--navy">Team The Losers, IISc Bengaluru</span>
         <span class="pill pill--red"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>Presented at the final evaluation, 21 Nov 2026</span>
       </div>
-      <p class="hero__update"><strong>Updated on 21 November 2026, after the final evaluation.</strong> Every cost is now in real 2024 USD, Jammu and Kashmir's income is corrected for inflation, the regional split is re-estimated, and {{features.counts.total|0}} further demand drivers, including AI data centres, are shown outside the headline. The national median moved from 4,703 to <span class="num">{{national.p50|0}} TWh</span>; the largest regional changes are Southern, 1,068 to <span class="num">{{regions.list.2.p50_twh|0}}</span>, and Eastern, 840 to <span class="num">{{regions.list.3.p50_twh|0}} TWh</span>. The deck and slides are updated to match; <a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/decisions.md#d14-inflation-and-the-full-set-of-demand-drivers-2026-11-21">decision D14 lists every change</a>.</p>
-      <h1 class="hero__title" id="hero-title">
+      <p class="hero__update enter" style="--delay: 80ms; --rise: 0.5rem"><strong>Updated on 21 November 2026, after the final evaluation.</strong> Every cost is now in real 2024 USD, Jammu and Kashmir's income is corrected for inflation, the regional split is re-estimated, and {{features.counts.total|0}} further demand drivers, including AI data centres, are shown outside the headline. The national median moved from 4,703 to <span class="num">{{national.p50|0}} TWh</span>; the largest regional changes are Southern, 1,068 to <span class="num">{{regions.list.2.p50_twh|0}}</span>, and Eastern, 840 to <span class="num">{{regions.list.3.p50_twh|0}} TWh</span>. The deck and slides are updated to match; <a href="https://github.com/Tathagata-Ghosh-Developer/innothon-2026-india-energy-2047/blob/main/docs/decisions.md#d14-inflation-and-the-full-set-of-demand-drivers-2026-11-21">decision D14 lists every change</a>.</p>
+      <h1 class="hero__title enter" id="hero-title">
         <span class="hero__line">India needs about <span class="num">{{national.p50|0}} TWh</span> in {{years.target_label}}.</span>
         <span class="hero__line hero__line--navy">Generated where each region is strongest.</span>
       </h1>
-      <p class="hero__lead">Our forecast of the electricity India must generate, estimated on the National Power Portal (NPP) and the Renewable India dataset, and a least-cost generation mix for each of the {{len regions.list}} grid regions that plays to its strengths.</p>
-      <ul class="hero__facts">
+      <p class="hero__lead enter" style="--delay: 120ms; --rise: 0.5rem">Our forecast of the electricity India must generate, estimated on the National Power Portal (NPP) and the Renewable India dataset, and a least-cost generation mix for each of the {{len regions.list}} grid regions that plays to its strengths.</p>
+      <ul class="hero__facts enter" style="--delay: 170ms; --rise: 0.375rem">
         <li class="fact">
           <span class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-database"/></svg></span>
           <span><span class="fact__label">Forecast built on</span><br><span class="fact__value">NPP generation, Renewable India state data, UN population paths</span></span>
@@ -758,13 +911,13 @@
           <span><span class="fact__label">Uncertainty</span><br><span class="fact__value"><span class="num">{{scenarios|0}}</span> scenarios, P10 to P90</span></span>
         </li>
       </ul>
-      <div class="hero__actions">
+      <div class="hero__actions enter" style="--delay: 200ms; --rise: 0.375rem">
         <a class="button button--primary" href="app/">Open the dashboard</a>
         <a class="button button--ghost" href="#forecast">See the forecast</a>
       </div>
     </div>
 
-    <ul class="stats" aria-label="Headline results">
+    <ul class="stats enter" style="--delay: 140ms" aria-label="Headline results">
       <li class="stat">
         <span class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-calendar"/></svg></span>
         <div class="stat__body">
@@ -779,11 +932,19 @@
           <p class="stat__text"><span class="num">{{plan.co2_mt|0}} Mt</span> CO₂ and <span class="num">{{plan.cost_busd|0}} bn USD</span> a year (real 2024 USD), against <span class="num">{{plan.base_policy.co2_mt|0}} Mt</span> and <span class="num">{{plan.base_policy.cost_busd|0}} bn USD</span> under base policy; <span class="num">{{plan.unmet_twh|0}} TWh</span> unmet at the median.</p>
         </div>
       </li>
-      <li class="stat stat--accent">
+      <!-- The screenshot is web/img, exported from docs/img/1_national_forecast.png (cmake/Web.cmake).
+           On wide screens it is the largest element of the first screen, hence fetchpriority="high"
+           (the page loads no other image, so this costs a phone nothing). -->
+      <li class="stat stat--accent stat--app">
+        <picture class="stat__shot">
+          <source type="image/avif" srcset="img/dashboard-forecast-480.avif 480w, img/dashboard-forecast-800.avif 800w, img/dashboard-forecast-1200.avif 1200w" sizes="(min-width: 64rem) 29rem, calc(100vw - 5rem)">
+          <source type="image/webp" srcset="img/dashboard-forecast-480.webp 480w, img/dashboard-forecast-800.webp 800w, img/dashboard-forecast-1200.webp 1200w" sizes="(min-width: 64rem) 29rem, calc(100vw - 5rem)">
+          <img src="img/dashboard-forecast-800.webp" width="800" height="417" fetchpriority="high" alt="The dashboard's national forecast view: assumption sliders on the left; on the right, the headline figures and the forecast chart with its uncertainty bands">
+        </picture>
         <span class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-monitor"/></svg></span>
         <div class="stat__body">
           <div class="stat__top"><p class="stat__value">Live dashboard</p><span class="pill">Interactive</span></div>
-          <p class="stat__text">Change an assumption and the forecast, the regional split and the mix rerun in your browser. About 6 MB on first load; best in a current desktop browser. <a href="app/">Open the dashboard</a></p>
+          <p class="stat__text">Change an assumption and the forecast, the regional split and the mix rerun in your browser. About 6 MB on first load; best in a current desktop browser. <a class="stat__link" href="app/">Open the dashboard</a></p>
         </div>
       </li>
     </ul>
@@ -868,41 +1029,41 @@
           <p class="note smap__note"><!--if plan.vectors-->Schematic, not to scale. Circle area: each region's part of that source in the recommended {{years.target_label}} plan, relative to the largest.<!--else-->Schematic, not to scale. Filled: the regions with the strongest published resource for that source, not plan results. The plan's TWh by region and source are in the <a href="app/">dashboard</a>.<!--/if--></p>
         </div>
 
-        <ul class="vec-cards">
-          <li class="vec-card is-active" id="vec-coal" data-vector="coal" style="--swatch: var(--series-coal)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Coal</h4><span class="pill">Firm, kept for now</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.coal.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.coal.share_pct|1}}% of the plan. <!--if plan.vectors.coal.lead-->Largest share in the {{plan.vectors.coal.lead}} region (<span class="num">{{plan.vectors.coal.lead_twh|0}} TWh</span>, {{plan.vectors.coal.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Eastern and Western regions.<!--/if--></p>
-            <p class="vec-card__why">India's coal lies under Jharkhand, Odisha and Chhattisgarh, and most of today's coal fleet is in the Eastern and Western regions. The fleet is young, so the plan keeps at least {{plan.tradeoff.coal_floor_pct|0}}% of each region's {{years.base_label}} coal output; a CO₂ cap can cut the rest cheaply.</p>
+        <ul class="vec-panels">
+          <li class="vec-panel is-active" id="vec-coal" data-vector="coal" style="--swatch: var(--series-coal)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Coal</h4><span class="pill">Firm, kept for now</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.coal.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.coal.share_pct|1}}% of the plan. <!--if plan.vectors.coal.lead-->Largest share in the {{plan.vectors.coal.lead}} region (<span class="num">{{plan.vectors.coal.lead_twh|0}} TWh</span>, {{plan.vectors.coal.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Eastern and Western regions.<!--/if--></p>
+            <p class="vec-panel__why">India's coal lies under Jharkhand, Odisha and Chhattisgarh, and most of today's coal fleet is in the Eastern and Western regions. The fleet is young, so the plan keeps at least {{plan.tradeoff.coal_floor_pct|0}}% of each region's {{years.base_label}} coal output; a CO₂ cap can cut the rest cheaply.</p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Coal generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.coal.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.coal.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.coal.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.coal.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.coal.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.coal.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.coal.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.coal.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.coal.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.coal.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.coal.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.coal.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.coal.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.coal.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.coal.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
-          <li class="vec-card" id="vec-solar" data-vector="solar" style="--swatch: var(--series-solar)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Solar</h4><span class="pill">Largest resource</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.solar.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.solar.share_pct|1}}% of the plan. <!--if plan.vectors.solar.lead-->Largest share in the {{plan.vectors.solar.lead}} region (<span class="num">{{plan.vectors.solar.lead_twh|0}} TWh</span>, {{plan.vectors.solar.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Northern and Western regions.<!--/if--></p>
-            <p class="vec-card__why">Rajasthan, in the Northern grid region, holds the largest published solar potential; the Western region's states (Maharashtra, Madhya Pradesh, Gujarat) hold the most together (NISE 2025, ground-mounted). The plan may use {{plan.settings.solar_land_pct|0}}% of that potential, rooftop and agri-PV included; usable land, not cost, is what limits solar.</p>
+          <li class="vec-panel" id="vec-solar" data-vector="solar" style="--swatch: var(--series-solar)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Solar</h4><span class="pill">Largest resource</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.solar.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.solar.share_pct|1}}% of the plan. <!--if plan.vectors.solar.lead-->Largest share in the {{plan.vectors.solar.lead}} region (<span class="num">{{plan.vectors.solar.lead_twh|0}} TWh</span>, {{plan.vectors.solar.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Northern and Western regions.<!--/if--></p>
+            <p class="vec-panel__why">Rajasthan, in the Northern grid region, holds the largest published solar potential; the Western region's states (Maharashtra, Madhya Pradesh, Gujarat) hold the most together (NISE 2025, ground-mounted). The plan may use {{plan.settings.solar_land_pct|0}}% of that potential, rooftop and agri-PV included; usable land, not cost, is what limits solar.</p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Solar generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.solar.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.solar.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.solar.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.solar.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.solar.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.solar.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.solar.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.solar.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.solar.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.solar.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.solar.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.solar.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.solar.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.solar.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.solar.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
-          <li class="vec-card" id="vec-wind" data-vector="wind" style="--swatch: var(--series-wind)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Wind</h4><span class="pill">Pairs with solar</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.wind.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.wind.share_pct|1}}% of the plan. <!--if plan.vectors.wind.lead-->Largest share in the {{plan.vectors.wind.lead}} region (<span class="num">{{plan.vectors.wind.lead_twh|0}} TWh</span>, {{plan.vectors.wind.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Western and Southern regions.<!--/if--></p>
-            <p class="vec-card__why">The strongest winds at 150 m hub height blow over Gujarat, Karnataka and Tamil Nadu (NIWE), with offshore zones off Gujarat and Tamil Nadu. Wind is strongest in the monsoon months, when solar output dips. The plan may use {{plan.settings.wind_land_pct|0}}% of the onshore potential.</p>
+          <li class="vec-panel" id="vec-wind" data-vector="wind" style="--swatch: var(--series-wind)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Wind</h4><span class="pill">Pairs with solar</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.wind.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.wind.share_pct|1}}% of the plan. <!--if plan.vectors.wind.lead-->Largest share in the {{plan.vectors.wind.lead}} region (<span class="num">{{plan.vectors.wind.lead_twh|0}} TWh</span>, {{plan.vectors.wind.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Western and Southern regions.<!--/if--></p>
+            <p class="vec-panel__why">The strongest winds at 150 m hub height blow over Gujarat, Karnataka and Tamil Nadu (NIWE), with offshore zones off Gujarat and Tamil Nadu. Wind is strongest in the monsoon months, when solar output dips. The plan may use {{plan.settings.wind_land_pct|0}}% of the onshore potential.</p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Wind generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.wind.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.wind.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.wind.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.wind.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.wind.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.wind.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.wind.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.wind.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.wind.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.wind.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.wind.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.wind.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.wind.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.wind.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.wind.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
-          <li class="vec-card" id="vec-gas" data-vector="gas" style="--swatch: var(--series-gas)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Natural gas</h4><span class="pill">Transition fuel</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.gas.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.gas.share_pct|1}}% of the plan. <!--if plan.vectors.gas.lead-->Largest share in the {{plan.vectors.gas.lead}} region (<span class="num">{{plan.vectors.gas.lead_twh|0}} TWh</span>, {{plan.vectors.gas.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Western region.<!--/if--></p>
-            <p class="vec-card__why">Most of India's gas power stations and LNG import terminals are on the west coast, in Gujarat and Maharashtra. <!--if plan.committed-->The <span class="num">{{plan.committed.gas_min_twh|0}} TWh</span> is a policy floor, not a least-cost choice: gas kept for peaking and as a bridge for solar and wind, set from the existing fleet's best year ({{plan.committed.gas_fleet_floor_label}}). Each region is held at its {{years.base_label}} share of it.<!--if storage.gas_evening_pct--> The hour-by-hour check puts <span class="num">{{storage.gas_evening_pct|0}}%</span> of it in the evening peak, 18:00 to 24:00 IST.<!--/if--><!--else-->Gas earns its place in the evening peak and as a bridge for solar and wind, not as energy over a whole year.<!--/if--></p>
+          <li class="vec-panel" id="vec-gas" data-vector="gas" style="--swatch: var(--series-gas)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Natural gas</h4><span class="pill">Transition fuel</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.gas.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.gas.share_pct|1}}% of the plan. <!--if plan.vectors.gas.lead-->Largest share in the {{plan.vectors.gas.lead}} region (<span class="num">{{plan.vectors.gas.lead_twh|0}} TWh</span>, {{plan.vectors.gas.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Western region.<!--/if--></p>
+            <p class="vec-panel__why">Most of India's gas power stations and LNG import terminals are on the west coast, in Gujarat and Maharashtra. <!--if plan.committed-->The <span class="num">{{plan.committed.gas_min_twh|0}} TWh</span> is a policy floor, not a least-cost choice: gas kept for peaking and as a bridge for solar and wind, set from the existing fleet's best year ({{plan.committed.gas_fleet_floor_label}}). Each region is held at its {{years.base_label}} share of it.<!--if storage.gas_evening_pct--> The hour-by-hour check puts <span class="num">{{storage.gas_evening_pct|0}}%</span> of it in the evening peak, 18:00 to 24:00 IST.<!--/if--><!--else-->Gas earns its place in the evening peak and as a bridge for solar and wind, not as energy over a whole year.<!--/if--></p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Natural gas generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.gas.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.gas.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.gas.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.gas.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.gas.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.gas.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.gas.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.gas.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.gas.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.gas.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.gas.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.gas.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.gas.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.gas.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.gas.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
-          <li class="vec-card" id="vec-hydro" data-vector="hydro" style="--swatch: var(--series-hydro)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Hydro</h4><span class="pill">Clean and flexible</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.hydro.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.hydro.share_pct|1}}% of the plan. <!--if plan.vectors.hydro.lead-->Largest share in the {{plan.vectors.hydro.lead}} region (<span class="num">{{plan.vectors.hydro.lead_twh|0}} TWh</span>, {{plan.vectors.hydro.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the North-Eastern and Northern regions.<!--/if--></p>
-            <p class="vec-card__why">Most untapped large-hydro potential is on the Himalayan rivers of Arunachal Pradesh, Himachal Pradesh, Uttarakhand and Jammu and Kashmir (CEA reassessment). Reservoirs can also shift output into the hours of highest need.</p>
+          <li class="vec-panel" id="vec-hydro" data-vector="hydro" style="--swatch: var(--series-hydro)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Hydro</h4><span class="pill">Clean and flexible</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.hydro.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.hydro.share_pct|1}}% of the plan. <!--if plan.vectors.hydro.lead-->Largest share in the {{plan.vectors.hydro.lead}} region (<span class="num">{{plan.vectors.hydro.lead_twh|0}} TWh</span>, {{plan.vectors.hydro.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the North-Eastern and Northern regions.<!--/if--></p>
+            <p class="vec-panel__why">Most untapped large-hydro potential is on the Himalayan rivers of Arunachal Pradesh, Himachal Pradesh, Uttarakhand and Jammu and Kashmir (CEA reassessment). Reservoirs can also shift output into the hours of highest need.</p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Hydro generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.hydro.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.hydro.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.hydro.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.hydro.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.hydro.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.hydro.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.hydro.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.hydro.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.hydro.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.hydro.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.hydro.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.hydro.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.hydro.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.hydro.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.hydro.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
-          <li class="vec-card" id="vec-nuclear" data-vector="nuclear" style="--swatch: var(--series-nuclear)">
-            <div class="vec-card__head"><span class="vec-card__swatch" aria-hidden="true"></span><h4 class="vec-card__title">Nuclear</h4><span class="pill">Long-term firm power</span></div>
-            <p class="vec-card__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.nuclear.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.nuclear.share_pct|1}}% of the plan. <!--if plan.vectors.nuclear.lead-->Largest share in the {{plan.vectors.nuclear.lead}} region (<span class="num">{{plan.vectors.nuclear.lead_twh|0}} TWh</span>, {{plan.vectors.nuclear.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Southern region.<!--/if--></p>
-            <p class="vec-card__why">Units operate, are being built or are sanctioned at Kudankulam and Kalpakkam in Tamil Nadu and Kaiga in Karnataka, with further sites in the Western and Northern regions. The plan allows nuclear up to {{plan.settings.nuclear_max_pct|0}}% of generation; it grows most when CO₂ is capped.</p>
+          <li class="vec-panel" id="vec-nuclear" data-vector="nuclear" style="--swatch: var(--series-nuclear)">
+            <div class="vec-panel__head"><span class="vec-panel__swatch" aria-hidden="true"></span><h4 class="vec-panel__title">Nuclear</h4><span class="pill">Long-term firm power</span></div>
+            <p class="vec-panel__summary"><!--if plan.vectors--><span class="num">{{plan.vectors.nuclear.twh|0}} TWh</span> in {{years.target_label}}, {{plan.vectors.nuclear.share_pct|1}}% of the plan. <!--if plan.vectors.nuclear.lead-->Largest share in the {{plan.vectors.nuclear.lead}} region (<span class="num">{{plan.vectors.nuclear.lead_twh|0}} TWh</span>, {{plan.vectors.nuclear.lead_share_pct|0}}%).<!--else-->Not chosen by the least-cost plan.<!--/if--><!--else-->Published resource: strongest in the Southern region.<!--/if--></p>
+            <p class="vec-panel__why">Units operate, are being built or are sanctioned at Kudankulam and Kalpakkam in Tamil Nadu and Kaiga in Karnataka, with further sites in the Western and Northern regions. The plan allows nuclear up to {{plan.settings.nuclear_max_pct|0}}% of generation; it grows most when CO₂ is capped.</p>
             <!--if plan.vectors--><table class="vec-table"><caption class="visually-hidden">Nuclear generation by region, {{years.target_label}}, recommended plan</caption><thead><tr><th scope="col">Region</th><th scope="col" class="is-num">TWh</th><th scope="col" class="is-num">Share</th><td class="vec-table__bar" aria-hidden="true"></td></tr></thead><tbody><tr><th scope="row">{{regions.list.0.name}}</th><td class="is-num">{{plan.vectors.nuclear.regions.0.twh|0}}</td><td class="is-num">{{plan.vectors.nuclear.regions.0.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.nuclear.regions.0.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.1.name}}</th><td class="is-num">{{plan.vectors.nuclear.regions.1.twh|0}}</td><td class="is-num">{{plan.vectors.nuclear.regions.1.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.nuclear.regions.1.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.2.name}}</th><td class="is-num">{{plan.vectors.nuclear.regions.2.twh|0}}</td><td class="is-num">{{plan.vectors.nuclear.regions.2.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.nuclear.regions.2.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.3.name}}</th><td class="is-num">{{plan.vectors.nuclear.regions.3.twh|0}}</td><td class="is-num">{{plan.vectors.nuclear.regions.3.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.nuclear.regions.3.share_pct|r1}}%"></span></td></tr><tr><th scope="row">{{regions.list.4.name}}</th><td class="is-num">{{plan.vectors.nuclear.regions.4.twh|0}}</td><td class="is-num">{{plan.vectors.nuclear.regions.4.share_pct|0}}%</td><td class="vec-table__bar" aria-hidden="true"><span style="inline-size: {{plan.vectors.nuclear.regions.4.share_pct|r1}}%"></span></td></tr></tbody></table><!--/if-->
           </li>
         </ul>
@@ -912,7 +1073,7 @@
   </div>
 </section>
 
-<section class="section" id="forecast" aria-labelledby="forecast-title">
+<section class="section" id="forecast" aria-labelledby="forecast-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Forecast</p>
@@ -928,10 +1089,12 @@
             <desc id="fan-desc">Observed generation rose from {{national.history.0.twh|0}} TWh in {{national.history.0.label}} to {{national.base_twh|0}} TWh in {{years.base_label}}. The forecast median reaches {{national.p50|0}} TWh in {{years.target_label}}; 80% of scenarios lie between {{national.p10|0}} and {{national.p90|0}} TWh.</desc>
             <!--each national.chart.ticks--><path class="fan__grid" vector-effect="non-scaling-stroke" d="M{{national.chart.x0}} -{{@|r0}}h{{national.chart.span}}"/><!--/each-->
             <path class="fan__base" vector-effect="non-scaling-stroke" d="M{{years.base}} 0V-{{national.chart.ymax|r0}}"/>
-            <path class="fan__band" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p90|r1}}<!--/each--><!--each-reverse national.forecast-->L{{@.year}} -{{@.p10|r1}}<!--/each-->Z"/>
-            <path class="fan__observed" vector-effect="non-scaling-stroke" d="M<!--each national.history--> {{@.year}} -{{@.twh|r1}}<!--/each-->"/>
-            <path class="fan__median" vector-effect="non-scaling-stroke" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p50|r1}}<!--/each-->"/>
-            <path class="fan__dot" vector-effect="non-scaling-stroke" d="M{{years.target}} -{{national.p50|r1}}h0"/>
+            <g class="fan__data">
+              <path class="fan__band" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p90|r1}}<!--/each--><!--each-reverse national.forecast-->L{{@.year}} -{{@.p10|r1}}<!--/each-->Z"/>
+              <path class="fan__observed" vector-effect="non-scaling-stroke" d="M<!--each national.history--> {{@.year}} -{{@.twh|r1}}<!--/each-->"/>
+              <path class="fan__median" vector-effect="non-scaling-stroke" d="M{{years.base}} -{{national.base_twh|r1}}<!--each national.forecast-->L{{@.year}} -{{@.p50|r1}}<!--/each-->"/>
+              <path class="fan__dot" vector-effect="non-scaling-stroke" d="M{{years.target}} -{{national.p50|r1}}h0"/>
+            </g>
           </svg>
           <!--each national.chart.ticks--><span class="fan__tick" aria-hidden="true" style="inset-block-end: calc({{@|r0}} / {{national.chart.ymax|r0}} * 100%)">{{@|0}}</span><!--/each-->
           <span class="fan__end" aria-hidden="true" style="inset-block-end: calc({{national.p90|r0}} / {{national.chart.ymax|r0}} * 100%)">P90 {{national.p90|0}}</span>
@@ -1025,7 +1188,7 @@
      top of the headline and never changes it. The scenario chart is HTML: each row places its
      range and median on one TWh axis with CSS calc() from the values in its style attribute;
      the axis runs from --min to --min + --span in .rng (CSS) and the ticks below match it. -->
-<section class="section section--band" id="drivers" aria-labelledby="drivers-sec-title">
+<section class="section section--band" id="drivers" aria-labelledby="drivers-sec-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Drivers</p>
@@ -1127,7 +1290,7 @@
   </div>
 </section>
 
-<section class="section" id="regions" aria-labelledby="regions-title">
+<section class="section" id="regions" aria-labelledby="regions-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Regions</p>
@@ -1200,7 +1363,7 @@
   </div>
 </section>
 
-<section class="section section--band" id="mix" aria-labelledby="mix-title">
+<section class="section section--band" id="mix" aria-labelledby="mix-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Mix</p>
@@ -1339,7 +1502,7 @@
   </div>
 </section>
 
-<section class="section" id="evidence" aria-labelledby="evidence-title">
+<section class="section" id="evidence" aria-labelledby="evidence-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Evidence</p>
@@ -1423,7 +1586,7 @@
   </div>
 </section>
 
-<section class="section section--band" id="method" aria-labelledby="method-title">
+<section class="section section--band" id="method" aria-labelledby="method-title" tabindex="-1">
   <div class="container">
     <div class="section__head">
       <p class="kicker">Method</p>
@@ -1583,7 +1746,7 @@
   </div>
 </section>
 
-<section class="section" id="faq" aria-labelledby="faq-title">
+<section class="section" id="faq" aria-labelledby="faq-title" tabindex="-1">
   <div class="container split">
     <div class="section__head">
       <p class="kicker">FAQ</p>
@@ -1692,16 +1855,79 @@
     var root = document.getElementById('strength');
     if (!root) return;
     var chips = root.querySelectorAll('.chip');
-    var cards = root.querySelectorAll('.vec-card');
+    var cards = root.querySelectorAll('.vec-panel');
     var status = document.getElementById('strength-status');
     function show(vector) {
       root.setAttribute('data-vector', vector);
       for (var i = 0; i < chips.length; i++) chips[i].setAttribute('aria-pressed', chips[i].getAttribute('data-vector') === vector ? 'true' : 'false');
       for (var k = 0; k < cards.length; k++) cards[k].classList.toggle('is-active', cards[k].getAttribute('data-vector') === vector);
       var card = document.getElementById('vec-' + vector);
-      if (card && status) status.textContent = card.querySelector('.vec-card__title').textContent + ': ' + card.querySelector('.vec-card__summary').textContent;
+      if (card && status) status.textContent = card.querySelector('.vec-panel__title').textContent + ': ' + card.querySelector('.vec-panel__summary').textContent;
     }
     for (var i = 0; i < chips.length; i++) chips[i].addEventListener('click', function (e) { show(e.currentTarget.getAttribute('data-vector')); });
+  })();
+
+  // Current section in the navigation: an IntersectionObserver finds the section under the
+  // middle of the viewport and marks its link (.is-current, aria-current). A section that is
+  // not in the navigation keeps the link of the last linked section before it (deliverables
+  // and timeline: Method), or none before the first (hero, at a glance).
+  (function () {
+    var links = document.querySelectorAll('.site-nav__link');
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var byId = {};
+    for (var i = 0; i < links.length; i++) byId[links[i].getAttribute('href').slice(1)] = links[i];
+    var sections = document.querySelectorAll('main > section');
+    var linkFor = new Map(), last = null;
+    for (var k = 0; k < sections.length; k++) {
+      if (byId[sections[k].id]) last = byId[sections[k].id];
+      linkFor.set(sections[k], last);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var current = linkFor.get(entry.target);
+        for (var j = 0; j < links.length; j++) {
+          links[j].classList.toggle('is-current', links[j] === current);
+          if (links[j] === current) links[j].setAttribute('aria-current', 'true');
+          else links[j].removeAttribute('aria-current');
+        }
+      });
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    sections.forEach(function (s) { io.observe(s); });
+  })();
+
+  // Fan chart reveal (styles: "Chart reveal"). Only without a reduced-motion preference; it
+  // plays once, as the chart scrolls into view. Nothing is hidden until this has run.
+  (function () {
+    if (!('IntersectionObserver' in window) || !matchMedia('screen and (prefers-reduced-motion: no-preference)').matches) return;
+    var charts = document.querySelectorAll('.fan__plot');
+    if (!charts.length) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-revealed');
+        io.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    charts.forEach(function (c) { io.observe(c); });
+    document.documentElement.classList.add('reveal-armed');
+  })();
+
+  // Opening the dashboard while its screenshot is on screen: the screenshot grows into the
+  // dashboard's loading screen (web/shell.html names that view-transition element too).
+  // The name is set only for that navigation and cleared when this page shows again.
+  (function () {
+    var shot = document.querySelector('.stat__shot img');
+    if (!shot) return;
+    window.addEventListener('pageswap', function (e) {
+      if (!e.viewTransition || !e.activation || !e.activation.entry) return;
+      if (!/\/app\/(index\.html)?$/.test(new URL(e.activation.entry.url).pathname)) return;
+      var r = shot.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < window.innerHeight) shot.style.viewTransitionName = 'dashboard';
+    });
+    var clear = function () { shot.style.viewTransitionName = ''; };
+    window.addEventListener('pagereveal', clear);
+    window.addEventListener('pageshow', clear);
   })();
 </script>
 </body>

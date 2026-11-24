@@ -152,6 +152,9 @@ target_link_options(e47_dashboard PRIVATE
 #   index.html    landing page: web/landing.html filled from outputs/site_summary.json
 #                 (written by the native energy2047 run) by cmake/Site.cmake
 #   summary.json  that summary, linked from the page
+#   img/          landing-page images from web/img: WebP and AVIF exports (480, 800 and
+#                 1200 px wide) of docs/img/1_national_forecast.png; export them again
+#                 when that screenshot changes, since it shows model results
 #   app/          the dashboard (index.html, .js, .wasm, .data)
 #   robots.txt, vercel.json
 # Not part of ALL: it needs outputs/site_summary.json, which only the native run writes.
@@ -169,6 +172,7 @@ add_custom_target(e47_site
           "${CMAKE_BINARY_DIR}/web/index.wasm" "${CMAKE_BINARY_DIR}/web/index.data" "${E47_SITE}/app/"
   COMMAND ${CMAKE_COMMAND} -E copy
           "${PROJECT_SOURCE_DIR}/web/vercel.json" "${PROJECT_SOURCE_DIR}/web/robots.txt" "${E47_SITE}/"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/web/img" "${E47_SITE}/img"
   COMMENT "Staging the site (landing page + dashboard under app/) in ${E47_SITE}"
   VERBATIM)
 add_dependencies(e47_site e47_dashboard)
