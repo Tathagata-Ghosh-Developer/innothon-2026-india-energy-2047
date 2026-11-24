@@ -91,7 +91,7 @@ The region map is a schematic of the five grid regions (node positions only sugg
 | | Native | Web |
 | --- | --- | --- |
 | Compiler | MSVC, `/O2 /arch:AVX2`, OpenMP, CUDA | Emscripten (clang), `-O3 -msimd128`, `E47_WEB=1` |
-| Monte Carlo | CUDA GPU or OpenMP on all cores | CPU, one thread (WebAssembly has no OpenMP runtime; the OpenMP loops run serially) |
+| Monte Carlo | CUDA GPU or OpenMP on all cores | the visitor's GPU through WebGPU when available (see below); otherwise CPU web workers |
 | Background work | `std::async` threads | the same code on web workers (`-pthread`, pool of 4) |
 | Window and GL | GLFW 3.4, OpenGL 3.3 core | Emscripten's GLFW 3 (`-sUSE_GLFW=3`), WebGL 2, `#version 300 es` shaders, device pixel ratio |
 | LP solver | HiGHS v1.11.0, multithreaded | HiGHS v1.11.0, single thread (`HIGHS_NO_DEFAULT_THREADS`) |
@@ -100,6 +100,18 @@ The region map is a schematic of the five grid regions (node positions only sugg
 | Screenshots (`--shot`) | yes: `docs/img/1_*.png` to `6_*.png` (one per tab) and the data tab's evidence views `6b_data_requirement_evidence.png`, `6c_data_mix_evidence.png` | no |
 
 `E47_WEB` is defined for all project code in the web build and selects smaller defaults (`kDefaultDrawsLog2`, `kDefaultBootstrapReplicates` in `src/pipeline/pipeline.hpp`).
+
+### Monte Carlo on the visitor's GPU (WebGPU)
+
+When the browser offers WebGPU, the dashboard runs the Monte Carlo on the visitor's GPU (CMake option `E47_WEBGPU`, on by default in the web build):
+
+- **Kernel.** `src/forecast/mc_webgpu.wgsl` is a direct WGSL port of `simulate_draw<float>()` and the histogram update (`src/forecast/mc.hpp`, `src/forecast/mc_gpu.cu`). WGSL has no 64-bit integers, so Philox's 32 x 32-bit product is rebuilt exactly from 16-bit halves. `cmake/EmbedText.cmake` embeds the shader in a generated header at build time.
+- **Host.** `src/forecast/mc_webgpu.cpp`, C++ on the WebGPU C API of Emscripten's `emdawnwebgpu` port (`--use-port=emdawnwebgpu`). The device belongs to the main browser thread. The background job hands it the ensemble and waits; the main thread submits the work and returns to the browser, and the results arrive in a buffer-mapping callback, so neither JSPI nor Asyncify is needed and the page keeps drawing.
+- **Draws.** With a GPU the dashboard runs up to 2^22 = 4,194,304 scenarios (the native default). The first GPU update sizes the ensemble to the GPU: a timed probe of 2^18 draws on the dashboard's inputs picks the largest 2^n, from 2^16 to 2^22, whose ensemble should take about 0.4 s, so a full update stays under about a second on slower GPUs too. The header reads, for example, "4,194,304 scenarios on GPU NVIDIA Ampere (WebGPU)": browsers often hide the device name, so the adapter shows as vendor and architecture. The "Use GPU (WebGPU)" check box switches to the CPU path with 2^16.
+- **Fallback.** No WebGPU (no `navigator.gpu`, no adapter, a failed device or pipeline) or any later WebGPU error: the CPU path runs as before, with at most 2^16 draws after a failure, and the console gets one line saying why. `/app/?gpu=0` keeps the Monte Carlo on the CPU.
+- **Self-test.** `/app/?selftest=1` runs the WebGPU kernel and the CPU float path on the same inputs and seed: 262,146 raw Philox outputs bit for bit, then four cases (the dashboard settings at 2^20 draws; three model slots, the joint demand-feature draws and a synthetic cross-country layout at 2^18). Each case needs the same model and bootstrap replicate in all 65,536 kept draws and per-year quantiles of every series within 0.1 percent (P50) and 0.5 percent (P5, P95). The console gets one line per check; `<html data-webgpu-selftest>` becomes `pass`, `fail`, `skipped` (no WebGPU) or `error`, and `window.e47SelfTest` holds the numbers. `?selftest=2` adds timings at 2^22 and 2^24 draws.
+
+Measured in headless Chrome 157 on an RTX 3070 Ti Laptop GPU (`--enable-unsafe-webgpu --force-high-performance-gpu`): the self-test passes with largest relative quantile differences of 2.2e-6 at P50 and 1.3e-5 at P5 and P95, and no Philox, model or replicate differences. The ensemble of 4,194,304 draws takes 0.13 s on WebGPU against 19.8 s on 8 CPU threads; a full dashboard update with 4,194,304 GPU draws takes about 0.4 s against about 0.3 s for 65,536 CPU draws. The WebGPU code adds 43 KB to `index.js` and 87 KB to `index.wasm` (8 KB and 19 KB with Brotli).
 
 ### Data package
 
@@ -192,7 +204,7 @@ Measured in Chrome on the development laptop (16 logical cores, served from loca
 | Scenario or policy change (full update) | 4.0 to 4.6 s |
 | Switch to the cross-country core | about 19 s (16 MB CSV, model fits) |
 
-- **No GPU and no CUDA.** The Monte Carlo runs on the CPU in WebAssembly.
+- **No CUDA.** The Monte Carlo runs on the visitor's GPU through WebGPU when the browser offers it (up to 2^22 draws), otherwise on the CPU in WebAssembly (the numbers in this table).
 - **One compute thread.** WebAssembly has no OpenMP runtime, so the Monte Carlo, the bootstrap and the tornado LP runs are serial. The page stays responsive because the work runs on a web worker; the header shows "Recomputing..." meanwhile.
 - **Fewer draws and replicates.** The web defaults are 2^16 Monte Carlo draws (native 2^22) and 300 bootstrap replicates (native 2,000). The "Scenarios (2^n)" slider still goes higher, at about 3.4 s per 2^16 draws. Medians and 90% ranges agree with the native build to within about 0.5%.
 - **Download.** About 6 MB on first load with Vercel's Brotli compression (12.7 MB uncompressed, most of it the cross-country CSV), then cached.
