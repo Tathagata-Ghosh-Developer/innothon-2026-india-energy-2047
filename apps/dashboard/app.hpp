@@ -35,6 +35,10 @@ class App {
     font_head_ = heading;
     font_big_ = big;
   }
+#ifdef E47_WEBGPU
+  // Browser: 1 = run the WebGPU parity self-test after the first result, 2 = with timings.
+  void set_selftest(int mode) { selftest_ = mode; }
+#endif
 
  private:
   struct Job {
@@ -50,6 +54,7 @@ class App {
     std::array<double, kTechs> national_hi{};  // national upper bound by source (national_upper_bound_twh)
     std::string evidence_error;             // why a table above is missing
     std::string layer_note;  // the add-on or feature scenario outside the headline; empty for the headline
+    int gpu_draws_log2 = 0;  // browser: ensemble size this update chose for the GPU (0 = not sized here)
     double total_ms = 0;
   };
   // The mix sensitivity (20 LP solves): computed only while the mix evidence view is open, on a
@@ -60,6 +65,8 @@ class App {
   };
 
   void poll();
+  bool gpu_gate();               // false while the first ensemble waits for the browser's WebGPU set-up
+  int default_draws_log2() const;  // default scenario count (2^n) of the current device
   void launch();
   void request_core(int core);
   void sidebar();
@@ -117,6 +124,17 @@ class App {
   ImFont* font_body_ = nullptr;
   ImFont* font_head_ = nullptr;
   ImFont* font_big_ = nullptr;
+#ifdef E47_WEBGPU
+  // Browser WebGPU state as last seen by poll(), the GPU ensemble size, and the parity
+  // self-test (?selftest=1).
+  int gpu_seen_ = 0;        // WebGpuState
+  bool size_gpu_ = false;   // the next GPU update sizes the ensemble to the GPU
+  int gpu_draws_log2_ = 0;  // ensemble size chosen for this GPU (0 = not yet)
+  std::chrono::steady_clock::time_point created_ = std::chrono::steady_clock::now();
+  int selftest_ = 0;
+  bool selftest_started_ = false;
+  std::future<void> selftest_job_;
+#endif
 };
 
 }  // namespace e47
